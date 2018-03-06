@@ -2,7 +2,9 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 // Module to control application life.
 // const app = electron.app
 
+// Start the server
 require('../api/server');
+
 // const productController = require('./product/controller');
 // const requester = require('./requester');
 

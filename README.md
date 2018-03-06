@@ -1,4 +1,5 @@
 # CryptoBeast - ReactJS
+
 # Electron, React with Material-UI design theme and SQLite with Sequelize
 
 
@@ -22,10 +23,9 @@ You should then see a Devtron tab added.
     - [repository description](https://github.com/facebook/create-react-app)
 
 * Material-UI Design - Template for React
-    - [based on standard](https://github.com/mui-org/material-ui)
+    - [documentation - based on](https://material-ui-next.com/)
+    - [documentation](https://creativetimofficial.github.io/material-dashboard-react/#/documentation/tutorial)
     - [repository description](https://github.com/creativetimofficial/material-dashboard-react)
-    - [tutorial](https://creativetimofficial.github.io/material-dashboard-react/#/documentation/tutorial)
-    - [live demo](https://creativetimofficial.github.io/material-dashboard-react/#/dashboard)
 
 * Electron - 'Back-end'
     - [repository description](https://github.com/electron/electron)

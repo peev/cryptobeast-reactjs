@@ -70,7 +70,7 @@ const Sidebar = ({ ...props }) => {
       <Hidden mdUp>
         <Drawer
           type="temporary"
-          anchor="right"
+          anchor="left"
           open={props.open}
           classes={{
             paper: classes.drawerPaper,
@@ -88,7 +88,6 @@ const Sidebar = ({ ...props }) => {
           {image !== undefined ? (
             <div
               className={classes.background}
-              style={{ backgroundImage: "url(" + image + ")" }}
             />
           ) : null}
         </Drawer>
@@ -99,7 +98,7 @@ const Sidebar = ({ ...props }) => {
           type="permanent"
           open
           classes={{
-            paper: classes.drawerPaper
+            paper: classes.drawerPaper,
           }}
         >
           {brand}

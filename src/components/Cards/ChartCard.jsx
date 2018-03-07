@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   withStyles,
   Card,
@@ -6,10 +6,10 @@ import {
   CardHeader,
   CardActions,
   Typography
-} from "material-ui";
-import PropTypes from "prop-types";
+} from 'material-ui';
+import PropTypes from 'prop-types';
 
-import chartCardStyle from "variables/styles/chartCardStyle";
+import chartCardStyle from 'variables/styles/chartCardStyle';
 
 function ChartCard({ ...props }) {
   const {
@@ -26,7 +26,7 @@ function ChartCard({ ...props }) {
     <Card className={classes.card}>
       <CardHeader
         className={
-          classes.cardHeader + " " + classes[chartColor + "CardHeader"]
+          classes.cardHeader + ' ' + classes[chartColor + 'CardHeader']
         }
         subheader={chart}
       />
@@ -43,10 +43,10 @@ function ChartCard({ ...props }) {
           <props.statIcon
             className={
               classes.cardStatsIcon +
-              " " +
-              classes[statIconColor + "CardStatsIcon"]
+              ' ' +
+              classes[statIconColor + 'CardStatsIcon']
             }
-          />{" "}
+          />{' '}
           {statLink !== undefined ? (
             <a href={statLink.href} className={classes.cardStatsLink}>
               {statLink.text}
@@ -61,8 +61,8 @@ function ChartCard({ ...props }) {
 }
 
 ChartCard.defaultProps = {
-  statIconColor: "gray",
-  chartColor: "purple"
+  statIconColor: 'gray',
+  chartColor: 'purple'
 };
 
 ChartCard.propTypes = {
@@ -72,15 +72,15 @@ ChartCard.propTypes = {
   text: PropTypes.node,
   statIcon: PropTypes.func.isRequired,
   statIconColor: PropTypes.oneOf([
-    "warning",
-    "primary",
-    "danger",
-    "success",
-    "info",
-    "rose",
-    "gray"
+    'warning',
+    'primary',
+    'danger',
+    'success',
+    'info',
+    'rose',
+    'gray'
   ]),
-  chartColor: PropTypes.oneOf(["orange", "green", "red", "blue", "purple"]),
+  chartColor: PropTypes.oneOf(['orange', 'green', 'red', 'blue', 'purple']),
   statLink: PropTypes.object,
   statText: PropTypes.node
 };

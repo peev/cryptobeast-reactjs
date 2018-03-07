@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import profileCardStyle from "variables/styles/profileCardStyle";
 
 function ProfileCard({ ...props }) {
-  const { classes, subtitle, title, description, footer, avatar } = props;
+  const { classes, subtitle, title, description, avatar } = props;
   return (
     <Card className={classes.card}>
       <CardHeader
@@ -39,9 +39,6 @@ function ProfileCard({ ...props }) {
           </Typography>
         ) : null}
       </CardContent>
-      <CardActions className={classes.textAlign + " " + classes.cardActions}>
-        {footer}
-      </CardActions>
     </Card>
   );
 }
@@ -51,7 +48,6 @@ ProfileCard.propTypes = {
   title: PropTypes.node,
   subtitle: PropTypes.node,
   description: PropTypes.node,
-  footer: PropTypes.node,
   avatar: PropTypes.string
 };
 

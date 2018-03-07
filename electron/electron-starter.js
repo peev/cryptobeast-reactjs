@@ -3,7 +3,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 // const app = electron.app
 
 // Start the server
-require('../api/server');
+// require('../api/server');
 
 // const productController = require('./product/controller');
 // const requester = require('./requester');

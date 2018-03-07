@@ -6,7 +6,7 @@ import { RegularCard, P, A, ItemGrid } from "components";
 
 import iconsStyle from "variables/styles/iconsStyle";
 
-function Icons({ ...props }) {
+function Ledgers({ ...props }) {
   return (
     <Grid container>
       <ItemGrid xs={12} sm={12} md={12}>
@@ -60,8 +60,8 @@ function Icons({ ...props }) {
   );
 }
 
-Icons.propTypes = {
+Ledgers.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(iconsStyle)(Icons);
+export default withStyles(iconsStyle)(Ledgers);

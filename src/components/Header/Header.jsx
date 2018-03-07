@@ -1,19 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Menu } from "material-ui-icons";
+import Modal from '../Modal/Modal';
+import ControlledOpenSelect from '../PortSelect/PortSelect';
 import {
   withStyles,
   AppBar,
   Toolbar,
   IconButton,
   Hidden,
-  Button
+  Button,
+
 } from "material-ui";
 import cx from "classnames";
 
-import headerStyle from "variables/styles/headerStyle.jsx";
+import headerStyle from "variables/styles/headerStyle";
 
 import HeaderLinks from "./HeaderLinks";
+
 
 function Header({ ...props }) {
   function makeBrand() {
@@ -39,6 +43,9 @@ function Header({ ...props }) {
             {makeBrand()}
           </Button>
         </div>
+        <ControlledOpenSelect />
+
+        <Modal />
         <Hidden smDown implementation="css">
           <HeaderLinks />
         </Hidden>

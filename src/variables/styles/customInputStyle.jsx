@@ -6,7 +6,7 @@ import {
   primaryColor,
   dangerColor,
   successColor,
-  defaultFont
+  defaultFont,
 } from "variables/styles";
 
 const customInputStyle = {

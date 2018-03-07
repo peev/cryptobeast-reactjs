@@ -21,11 +21,9 @@ import IconButton from './CustomButtons/IconButton';
 
 import CustomInput from './CustomInput/CustomInput';
 
-// ##############################
-// // // Footer
+// #############################
 // #############################
 
-import Footer from './Footer/Footer';
 
 // ##############################
 // // // Grid
@@ -92,8 +90,7 @@ export {
   IconButton,
   // CustomInput
   CustomInput,
-  // Footer
-  Footer,
+  // 
   // Grid
   ItemGrid,
   // Header

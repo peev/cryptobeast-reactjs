@@ -11,7 +11,7 @@ import {
 
 import avatar from "assets/img/faces/marc.jpg";
 
-function UserProfile({ ...props }) {
+function AssetMovements({ ...props }) {
   return (
     <div>
       <Grid container>
@@ -122,7 +122,7 @@ function UserProfile({ ...props }) {
                 </Grid>
               </div>
             }
-            footer={<Button color="primary">Update Profile</Button>}
+           
           />
         </ItemGrid>
         <ItemGrid xs={12} sm={12} md={4}>
@@ -131,11 +131,7 @@ function UserProfile({ ...props }) {
             subtitle="CEO / CO-FOUNDER"
             title="Alec Thompson"
             description="Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is..."
-            footer={
-              <Button color="primary" round>
-                Follow
-              </Button>
-            }
+            
           />
         </ItemGrid>
       </Grid>
@@ -143,4 +139,4 @@ function UserProfile({ ...props }) {
   );
 }
 
-export default UserProfile;
+export default AssetMovements;

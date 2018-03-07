@@ -52,8 +52,18 @@ const defaultFont = {
   fontWeight: '300',
   lineHeight: '1.5em',
 };
+// OUR STYLES FROM CRYPTOBEAST!
+const navBackgroundColor = '#00BCD4';
+const textPrimary = '#212121';
+const textSecondary = '#757575';
+const whiteBackground = '#FFF';
+const primaryColor = '#EEEEEE'; //9c27b0 was original
+const lightPrimaryColor ='#B2EBF2';
+const accentColor = '#607D8B'; // For some buttons
+const tableDivider = '#BDBDBD';
+const redLetters = '#B94A48'; // For sale, withdrawal
+const greenLetters = '#70A800'; // for buy,deposit
 
-const primaryColor = '#9c27b0';
 const warningColor = '#ff9800';
 const dangerColor = '#f44336';
 const successColor = '#4caf50';
@@ -154,4 +164,13 @@ export {
   cardActions,
   cardHeader,
   defaultBoxShadow,
+  whiteBackground,
+  navBackgroundColor,
+  textPrimary,
+  textSecondary,
+  lightPrimaryColor,
+  accentColor,
+  tableDivider,
+  redLetters,
+  greenLetters,
 };

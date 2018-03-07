@@ -12,7 +12,8 @@ import {
   infoColor,
   successColor,
   warningColor,
-  dangerColor
+  dangerColor,
+  navBackgroundColor,
 } from "variables/styles";
 
 const sidebarStyle = theme => ({
@@ -23,6 +24,7 @@ const sidebarStyle = theme => ({
     bottom: "0",
     left: "0",
     zIndex: "1",
+    backgroundColor: navBackgroundColor,
     // overflow: 'auto',
     ...boxShadow,
     width: drawerWidth,
@@ -38,8 +40,8 @@ const sidebarStyle = theme => ({
       display: "block",
       top: "0",
       height: "100vh",
-      right: "0",
-      left: "auto",
+    
+      left: "0",
       zIndex: "1032",
       visibility: "visible",
       overflowY: "visible",
@@ -63,7 +65,6 @@ const sidebarStyle = theme => ({
       height: "1px",
       right: "15px",
       width: "calc(100% - 30px)",
-      backgroundColor: "rgba(180, 180, 180, 0.3)"
     }
   },
   logoLink: {
@@ -212,7 +213,8 @@ const sidebarStyle = theme => ({
     overflow: "auto",
     width: "260px",
     zIndex: "4",
-    overflowScrolling: 'touch'
+    overflowScrolling: 'touch',
+    backgroundColor : navBackgroundColor,
   }
 });
 

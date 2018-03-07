@@ -19,7 +19,6 @@ function RegularCard({ ...props }) {
     cardTitle,
     cardSubtitle,
     content,
-    footer,
   } = props;
 
   const plainCardClasses = cx({
@@ -45,10 +44,7 @@ function RegularCard({ ...props }) {
         title={cardTitle}
         subheader={cardSubtitle}
       />
-      <CardContent>{content}</CardContent>
-      {footer !== undefined ? (
-        <CardActions className={classes.cardActions}>{footer}</CardActions>
-      ) : null}
+      <CardContent>{content}</CardContent>  
     </Card>
   );
 }
@@ -64,7 +60,7 @@ RegularCard.propTypes = {
   cardTitle: PropTypes.node,
   cardSubtitle: PropTypes.node,
   content: PropTypes.node,
-  footer: PropTypes.node,
+
 };
 
 export default withStyles(regularCardStyle)(RegularCard);

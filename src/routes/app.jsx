@@ -1,10 +1,10 @@
-import DashboardPage from 'views/Dashboard/Dashboard.jsx';
-import UserProfile from 'views/UserProfile/UserProfile.jsx';
-import TableList from 'views/TableList/TableList.jsx';
-import Typography from 'views/Typography/Typography.jsx';
-import Icons from 'views/Icons/Icons.jsx';
-import Maps from 'views/Maps/Maps.jsx';
-import NotificationsPage from 'views/Notifications/Notifications.jsx';
+import SummaryPage from 'views/Summary/Summary.jsx';
+import AssetMovements from 'views/AssetMovements/AssetMovements.jsx';
+import Simulator from 'views/Simulator/Simulator.jsx';
+import TransactionHistory from 'views/TransactionHistory/TransactionHistory.jsx';
+import Ledgers from 'views/Ledgers/Ledgers.jsx';
+import Investors from 'views/Investors/Investors.jsx';
+import Analytics from 'views/Analytics/Analytics.jsx';
 
 import {
   Dashboard,
@@ -18,56 +18,56 @@ import {
 
 const appRoutes = [
   {
-    path: '/dashboard',
-    sidebarName: 'Dashboard',
-    navbarName: 'Material Dashboard',
+    path: '/summary',
+    sidebarName: 'Summary',
+    navbarName: 'Summary',
     icon: Dashboard,
-    component: DashboardPage,
+    component: SummaryPage,
   },
   {
-    path: '/user',
-    sidebarName: 'User Profile',
-    navbarName: 'Profile',
+    path: '/assetMovements',
+    sidebarName: 'Asset Movements',
+    navbarName: 'Asset Movements',
     icon: Person,
-    component: UserProfile,
+    component: AssetMovements,
   },
   {
-    path: '/table',
-    sidebarName: 'Table List',
-    navbarName: 'Table List',
+    path: '/Simulator',
+    sidebarName: 'Simulator',
+    navbarName: 'Simulator',
     icon: ContentPaste,
-    component: TableList,
+    component: Simulator,
   },
   {
-    path: '/typography',
-    sidebarName: 'Typography',
-    navbarName: 'Typography',
+    path: '/TransactionHistory',
+    sidebarName: 'Transaction History',
+    navbarName: 'Transaction History',
     icon: LibraryBooks,
-    component: Typography,
+    component: TransactionHistory,
   },
   {
-    path: '/icons',
-    sidebarName: 'Icons',
-    navbarName: 'Icons',
+    path: '/Ledgers',
+    sidebarName: 'Ledgers',
+    navbarName: 'Ledgers',
     icon: BubbleChart,
-    component: Icons,
+    component: Ledgers,
   },
   {
-    path: '/maps',
-    sidebarName: 'Maps',
-    navbarName: 'Map',
+    path: '/Investors',
+    sidebarName: 'Investors',
+    navbarName: 'Investors',
     icon: LocationOn,
-    component: Maps,
+    component: Investors,
   },
   {
-    path: '/notifications',
-    sidebarName: 'Notifications',
-    navbarName: 'Notifications',
+    path: '/Analytics',
+    sidebarName: 'Analytics',
+    navbarName: 'Analytics',
     icon: Notifications,
-    component: NotificationsPage,
+    component: Analytics,
   },
   {
-    redirect: true, path: '/', to: '/dashboard', navbarName: 'Redirect',
+    redirect: true, path: '/', to: '/summary', navbarName: 'Redirect',
   },
 ];
 

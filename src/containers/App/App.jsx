@@ -6,15 +6,18 @@ import PerfectScrollbar from 'perfect-scrollbar';
 import 'perfect-scrollbar/css/perfect-scrollbar.css';
 import { withStyles } from 'material-ui';
 
-import { Header, Footer, Sidebar } from 'components';
+import { Header, Sidebar } from 'components';
 
 import appRoutes from 'routes/app.jsx';
 
 import appStyle from 'variables/styles/appStyle.jsx';
+import {
+  navBackgroundColor,
+  textPrimary,
 
-import image from 'assets/img/sidebar-2.jpg';
+} from '../../variables/styles'
 import logo from 'assets/img/reactlogo.png';
-
+// import ControlledOpenSelect from '../../components/PortSelect/PortSelect';
 
 const switchRoutes = (
   <Switch>
@@ -55,14 +58,14 @@ class App extends React.Component {
     const { classes, ...rest } = this.props;
     return (
       <div className={classes.wrapper}>
+
         <Sidebar
           routes={appRoutes}
           logoText="Creative Tim"
           logo={logo}
-          image={image}
           handleDrawerToggle={this.handleDrawerToggle}
           open={this.state.mobileOpen}
-          color="blue"
+
           {...rest}
         />
         <div className={classes.mainPanel} ref="mainPanel">
@@ -71,6 +74,7 @@ class App extends React.Component {
             handleDrawerToggle={this.handleDrawerToggle}
             {...rest}
           />
+
           {/* On the /maps route we want the map to be on full screen - this is not possible if the content and container classes are present because they have some paddings which would make the map smaller */}
           {this.getRoute() ? (
             <div className={classes.content}>
@@ -79,7 +83,6 @@ class App extends React.Component {
           ) : (
               <div className={classes.map}>{switchRoutes}</div>
             )}
-          {this.getRoute() ? <Footer /> : null}
         </div>
       </div>
     );

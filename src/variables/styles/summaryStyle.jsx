@@ -4,7 +4,7 @@
 
 import { successColor } from "variables/styles";
 
-const dashboardStyle = {
+const summaryStyle = {
   successText: {
     color: successColor
   },
@@ -14,4 +14,4 @@ const dashboardStyle = {
   }
 };
 
-export default dashboardStyle;
+export default summaryStyle;

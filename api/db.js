@@ -8,13 +8,14 @@ const sequelize = new Sequelize('CryptoBeast', null, null, {
 
 const db = {};
 
-db.todo = sequelize.import(path.join(__dirname, '/models/todo.js'));
-db.user = sequelize.import(path.join(__dirname, '/models/user.js'));
+db.portfolio = sequelize.import(path.join(__dirname, '/models/portfolio.js'));
+// db.todo = sequelize.import(path.join(__dirname, '/models/todo.js'));
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.todo.belongsTo(db.user);
-db.user.hasMany(db.todo);
+// db.portfolio.hasMany(db.account);
+// db.todo.belongsTo(db.user);
+// db.user.hasMany(db.todo);
 
 module.exports = db;
 

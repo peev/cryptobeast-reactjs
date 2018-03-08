@@ -22,129 +22,142 @@ app.get('/', (req, res) => {
   res.send('ToDo API Root');
 });
 
-// GET requests /todos?completed=true
-app.get('/todos', (req, res) => {
-  const query = req.query;
-  const where = {};
+// POST /portfolio/create
+app.post('/portfolio/create', (req, res) => {
+  console.log(req.body);
 
-  if (query.hasOwnProperty('completed') && query.completed === 'true') {
-    where.completed = true;
-  } else if (query.hasOwnProperty('completed') && query.completed === 'false') {
-    where.completed = false;
-  }
+  const body = {
+    name: req.body.name,
+  };
 
-  if (query.hasOwnProperty('q') && query.q.length > 0) {
-    where.description = {
-      $like: `%${query.q}%`,
-    };
-  }
-  db.todo.findAll({ where })
-    .then((todos) => {
-      res.json(todos);
-    }, (e) => {
-      res.status(500).send();
+  db.portfolio.create(body)
+    .then((result) => {
+      console.log(result);
+    })
+    .catch((error) => {
+      res.status(400).json(error);
     });
 });
+// PUT /portfolio/update
 
-app.get('/todos/:id', (req, res) => {
-  const todoId = parseInt(req.params.id, 10);
 
-  db.todo.findById(todoId).then((todo) => {
-    if (todo) {
-      res.json(todo.toJSON());
-    } else {
-      res.status(404).send();
-    }
-  }, (e) => {
-    res.status(500).send();
-  });
-});
+// // GET requests /todos?completed=true
+// app.get('/todos', (req, res) => {
+//   const query = req.query;
+//   const where = {};
 
-// POST /todos
-app.post('/todos', (req, res) => {
-  const body = {
-    description: req.body.description,
-    completed: req.body.completed,
-  };
+//   if (query.hasOwnProperty('completed') && query.completed === 'true') {
+//     where.completed = true;
+//   } else if (query.hasOwnProperty('completed') && query.completed === 'false') {
+//     where.completed = false;
+//   }
 
-  db.todo.create(body)
-    .then((todo) => {
-      req.user.addTodo(todo)
-        .then(() => {
-          return todo.reload();
-        })
-        .then((todo) => {
-          res.json(todo.toJSON());
-        });
-    }, (e) => {
-      res.status(400).json(e);
-    });
-});
+//   if (query.hasOwnProperty('q') && query.q.length > 0) {
+//     where.description = {
+//       $like: `%${query.q}%`,
+//     };
+//   }
+//   db.todo.findAll({ where })
+//     .then((todos) => {
+//       res.json(todos);
+//     }, (e) => {
+//       res.status(500).send();
+//     });
+// });
 
-// DELETE Requests
-app.delete('/todos/:id', (req, res) => {
-  const todoId = parseInt(req.params.id, 10);
+// app.get('/todos/:id', (req, res) => {
+//   const todoId = parseInt(req.params.id, 10);
 
-  db.todo.destroy({
-    where: {
-      id: todoId,
-    },
-  }).then((rowsDeleted) => {
-    if (rowsDeleted === 0) {
-      res.status(400).json({
-        error: 'No todo with id',
-      });
-    } else {
-      res.status(204).send();
-    }
-  }, () => {
-    res.status(500).send();
-  });
-});
+//   db.todo.findById(todoId).then((todo) => {
+//     if (todo) {
+//       res.json(todo.toJSON());
+//     } else {
+//       res.status(404).send();
+//     }
+//   }, (e) => {
+//     res.status(500).send();
+//   });
+// });
 
-// PUT /todos/:id
-app.put('/todos/:id', (req, res) => {
-  const todoId = parseInt(req.params.id, 10);
-  const body = {
-    description: req.body.description,
-    completed: req.body.completed,
-  };
-  const attributes = {};
+// // POST /todos
+// app.post('/todos', (req, res) => {
+//   const body = {
+//     description: req.body.description,
+//     completed: req.body.completed,
+//   };
 
-  if (body.hasOwnProperty('completed')) {
-    attributes.completed = body.completed;
-  }
-  if (body.hasOwnProperty('description')) {
-    attributes.description = body.description;
-  }
+//   db.todo.create(body)
+//     .then((todo) => {
+//       req.user.addTodo(todo)
+//         .then(() => {
+//           return todo.reload();
+//         })
+//         .then((todo) => {
+//           res.json(todo.toJSON());
+//         });
+//     }, (e) => {
+//       res.status(400).json(e);
+//     });
+// });
 
-  db.todo.findById(todoId).then((todo) => {
-    if (todo) {
-      todo.update(attributes).then((todo) => {
-        res.json(todo.toJSON());
-      }, (e) => {
-        res.status(400).json(e);
-      });
-    } else {
-      res.status(404).send();
-    }
-  }, () => {
-    res.status(500).send();
-  });
-});
+// // DELETE Requests
+// app.delete('/todos/:id', (req, res) => {
+//   const todoId = parseInt(req.params.id, 10);
 
-app.post('/users', (req, res) => {
-  const body = {
-    email: req.body.email,
-    password: req.body.passowrd,
-  };
+//   db.todo.destroy({
+//     where: {
+//       id: todoId,
+//     },
+//   }).then((rowsDeleted) => {
+//     if (rowsDeleted === 0) {
+//       res.status(400).json({
+//         error: 'No todo with id',
+//       });
+//     } else {
+//       res.status(204).send();
+//     }
+//   }, () => {
+//     res.status(500).send();
+//   });
+// });
 
-  db.user.create(body).then((user) => {
-    res.json(user.toPublicJSON());
-  }, (e) => {
-    res.status(400).json(e);
-  });
-});
+// // PUT /todos/:id
+// app.put('/todos/:id', (req, res) => {
+//   const todoId = parseInt(req.params.id, 10);
+//   const body = {
+//     description: req.body.description,
+//     completed: req.body.completed,
+//   };
+//   const attributes = {};
+
+//   if (body.hasOwnProperty('completed')) {
+//     attributes.completed = body.completed;
+//   }
+//   if (body.hasOwnProperty('description')) {
+//     attributes.description = body.description;
+//   }
+
+//   db.todo.findById(todoId).then((todo) => {
+//     if (todo) {
+//       todo.update(attributes).then((todo) => {
+//         res.json(todo.toJSON());
+//       }, (e) => {
+//         res.status(400).json(e);
+//       });
+//     } else {
+//       res.status(404).send();
+//     }
+//   }, () => {
+//     res.status(500).send();
+//   });
+// });
+
+// app.post('/users', (req, res) => {
+//   const body = {
+//     email: req.body.email,
+//     password: req.body.passowrd,
+//   };
+// });
 
 // POST /users/login
 app.post('/users/login', (req, res) => {
@@ -152,18 +165,6 @@ app.post('/users/login', (req, res) => {
     email: req.body.email,
     password: req.body.passowrd,
   };
-
-  db.user.authenticate(body).then((user) => {
-    let token = user.generateToken('authentication');
-
-    if (token) {
-      res.header('Auth', token).json(user.toPublicJSON());
-    } else {
-      res.status(401).send();
-    }
-  }, () => {
-    res.status(401).send();
-  });
 });
 
 

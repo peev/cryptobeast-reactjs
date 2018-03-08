@@ -5,6 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Modal from 'material-ui/Modal';
 import Button from '../CustomButtons/Button';
+import axios from 'axios';
 
 function getModalStyle() {
   const top = 50;
@@ -31,16 +32,27 @@ const styles = theme => ({
 class CreatePortfolio extends React.Component {
   state = {
     open: false,
+    name: '',
   };
+
   handleOpen = () => {
     this.setState({ open: true });
   };
+
   handleClose = () => {
     this.setState({ open: false });
   };
 
   handleSave = () => {
-    { /*Add Axios Post to endpoint later on */ }
+    // Add Axios Post to endpoint later on
+    // console.log(this.name.input.value);
+    console.log(this.name.value);
+    const name = { name: this.name.value };
+
+    axios.post('http://localhost:3200/portfolio/create', name)
+      .then((result) => {
+        console.log(result);
+      })
 
     this.setState({ open: false });
   };
@@ -57,22 +69,28 @@ class CreatePortfolio extends React.Component {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <div style={getModalStyle()} className={classes.paper}>
+          <form style={getModalStyle()} className={classes.paper} onSubmit={() => this.handleSave}>
             <Typography
               variant="title"
               id="modal-title"
               style={{ fontSize: '18px', fontWeight: '400' }}
             >
-
               Create new Portfolio
             </Typography>
+
             <TextField
               placeholder="Portfolio name"
+<<<<<<< HEAD:src/components/Modal/CreatePortfolio.jsx
               value=""
 
+=======
+              // onChange={this.handleInputValue}
+              inputRef={el => this.name = el}
+>>>>>>> faaa2d9bb674ec6ba2e4d65144b11818fd6a25ef:src/components/Modal/Modal.jsx
             />
 
             <br />
+
             {/* Cancel BUTTON */}
             <Button
               style={{ display: 'inline-flex' }}
@@ -81,19 +99,18 @@ class CreatePortfolio extends React.Component {
 
             > Cancel
             </Button>
-            {/* SAVE BUTTON*/}
+
+            {/* SAVE BUTTON */}
             <Button
               style={{ display: 'inline-flex' }}
-              onClick={this.handleClose}
+              onClick={this.handleSave}
               color="primary"
-
-
+              type="submit"
             > Save
             </Button>
-          </div>
 
+          </form>
         </Modal>
-
       </div>
     );
   }

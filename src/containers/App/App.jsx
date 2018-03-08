@@ -17,7 +17,7 @@ import {
 
 } from '../../variables/styles'
 import logo from 'assets/img/reactlogo.png';
-import ControlledOpenSelect from '../../components/PortSelect/PortSelect';
+// import ControlledOpenSelect from '../../components/PortSelect/PortSelect';
 
 const switchRoutes = (
   <Switch>

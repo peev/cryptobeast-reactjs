@@ -27,8 +27,11 @@ You should then see a Devtron tab added.
     - [documentation](https://creativetimofficial.github.io/material-dashboard-react/#/documentation/tutorial)
     - [repository description](https://github.com/creativetimofficial/material-dashboard-react)
 
-* Electron - 'Back-end'
+* Electron
     - [repository description](https://github.com/electron/electron)
+
+* Express - Back-end REST API
+    - [repository description](https://github.com/expressjs/express)
 
 * SQLite3 - file based SQL
     - [repository description](https://github.com/mapbox/node-sqlite3)

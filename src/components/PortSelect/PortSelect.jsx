@@ -47,9 +47,9 @@ class ControlledOpenSelect extends React.Component {
           <InputLabel htmlFor="controlled-open-select">Select Portfolio</InputLabel>
           <Select
             open={this.state.open}
+            value={this.state.age}
             onClose={this.handleClose}
             onOpen={this.handleOpen}
-            value={this.state.age}
             onChange={this.handleChange}
             inputProps={{
               name: 'age',

@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('ToDo API Root');
+  res.send('CryptoBeast API Root');
 });
 
 // POST /portfolio/create
@@ -33,13 +33,48 @@ app.post('/portfolio/create', (req, res) => {
   db.portfolio.create(body)
     .then((result) => {
       console.log(result);
+      res.status(200).json(result);
     })
     .catch((error) => {
       res.status(400).json(error);
     });
 });
-// PUT /portfolio/update
 
+// PUT /portfolio/update
+app.put('/portfolio/update', (req, res) => {
+  console.log(req.body);
+
+  const body = {
+    name: req.body.name,
+  };
+
+  db.portfolio.update(body)
+    .then((result) => {
+      console.log(result);
+      res.status(200).json(result);
+    })
+    .catch((error) => {
+      res.status(400).json(error);
+    });
+});
+
+// DELETE /portfolio/delete
+app.delete('/portfolio/delete', (req, res) => {
+  console.log(req.body);
+
+  const body = {
+    name: req.body.name,
+  };
+
+  db.portfolio.create(body)
+    .then((result) => {
+      console.log(result);
+      res.status(200).json(result);
+    })
+    .catch((error) => {
+      res.status(400).json(error);
+    });
+});
 
 // // GET requests /todos?completed=true
 // app.get('/todos', (req, res) => {
@@ -167,9 +202,10 @@ app.post('/users/login', (req, res) => {
   };
 });
 
-
-db.sequelize.sync({ force: true }).then(() => {
-  app.listen(PORT, () => {
-    console.log(`Express listening on port ${PORT} !!`);
+// sync with 'force: true' will 'DROP TABLE IF EXISTS'
+db.sequelize.sync({ force: false })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Express listening on port ${PORT} !!`);
+    });
   });
-});

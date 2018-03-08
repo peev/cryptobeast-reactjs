@@ -28,7 +28,7 @@ const styles = theme => ({
   },
 });
 
-class SimpleModal extends React.Component {
+class UpdatePortfolioModal extends React.Component {
   state = {
     open: false,
   };
@@ -50,7 +50,8 @@ class SimpleModal extends React.Component {
 
     return (
       <div>
-        <Button onClick={this.handleOpen} color="primary">Create</Button>
+        <Button onClick={this.handleOpen} color="primary">Edit</Button>
+        
         <Modal
           style={{ minWidth: '0' }}
           aria-labelledby="simple-modal-title"
@@ -64,10 +65,11 @@ class SimpleModal extends React.Component {
               style={{ fontSize: '18px', fontWeight: '400' }}
             >
 
-              Create new Portfolio
+              Edit current portfolio
             </Typography>
             <TextField
               placeholder="Portfolio name"
+              value=""
 
             />
 
@@ -87,7 +89,7 @@ class SimpleModal extends React.Component {
               color="primary"
 
 
-            > Save
+            > Update
             </Button>
           </div>
 
@@ -98,11 +100,11 @@ class SimpleModal extends React.Component {
   }
 }
 
-SimpleModal.propTypes = {
+UpdatePortfolioModal.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
 // We need an intermediary variable for handling the recursive nesting.
-const SimpleModalWrapped = withStyles(styles)(SimpleModal);
+const UpdatePortfolioModalWrapped = withStyles(styles)(UpdatePortfolioModal);
 
-export default SimpleModalWrapped;
+export default UpdatePortfolioModalWrapped;

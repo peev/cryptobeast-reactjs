@@ -61,11 +61,8 @@ class App extends React.Component {
 
         <Sidebar
           routes={appRoutes}
-          logoText="Creative Tim"
-          logo={logo}
           handleDrawerToggle={this.handleDrawerToggle}
           open={this.state.mobileOpen}
-
           {...rest}
         />
         <div className={classes.mainPanel} ref="mainPanel">

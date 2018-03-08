@@ -33,9 +33,8 @@ class HeaderLinks extends React.Component {
     const { open } = this.state;
     return (
       <div>
-        
-       
-       
+
+
       </div>
     );
   }

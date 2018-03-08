@@ -1,7 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { NavLink } from "react-router-dom";
-import cx from "classnames";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { NavLink } from 'react-router-dom';
+
+import { Menu } from 'material-ui-icons';
+import cx from 'classnames';
 import {
   withStyles,
   Drawer,
@@ -10,27 +12,30 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from "material-ui";
+  IconButton,
+} from 'material-ui';
 
-import { HeaderLinks } from "components";
+import { HeaderLinks } from 'components';
 
-import sidebarStyle from "variables/styles/sidebarStyle.jsx";
+import sidebarStyle from 'variables/styles/sidebarStyle.jsx';
 
 const Sidebar = ({ ...props }) => {
   // verifies if routeName is the one active (in browser input)
   function activeRoute(routeName) {
-    return props.location.pathname.indexOf(routeName) > -1 ? true : false;
+    return props.location.pathname.indexOf(routeName) > -1;
   }
-  const { classes, color, logo, image, logoText, routes } = props;
+  const {
+ classes, color, logo, image, logoText, routes 
+} = props;
   const links = (
     <List className={classes.list}>
       {routes.map((prop, key) => {
         if (prop.redirect) return null;
         const listItemClasses = cx({
-          [" " + classes[color]]: activeRoute(prop.path),
+          [' ' + classes[color]]: activeRoute(prop.path),
         });
         const whiteFontClasses = cx({
-          [" " + classes.whiteFont]: activeRoute(prop.path),
+          [' ' + classes.whiteFont]: activeRoute(prop.path),
         });
         return (
           <NavLink
@@ -46,7 +51,7 @@ const Sidebar = ({ ...props }) => {
               <ListItemText
                 primary={prop.sidebarName}
                 className={classes.itemText + whiteFontClasses}
-                disableTypography={true}
+                disableTypography
               />
             </ListItem>
           </NavLink>
@@ -80,7 +85,7 @@ const Sidebar = ({ ...props }) => {
             keepMounted: true, // Better open performance on mobile.
           }}
         >
-          {brand}
+
           <div className={classes.sidebarWrapper}>
             <HeaderLinks />
             {links}
@@ -101,14 +106,7 @@ const Sidebar = ({ ...props }) => {
             paper: classes.drawerPaper,
           }}
         >
-          {brand}
           <div className={classes.sidebarWrapper}>{links}</div>
-          {image !== undefined ? (
-            <div
-              className={classes.background}
-              style={{ backgroundImage: "url(" + image + ")" }}
-            />
-          ) : null}
         </Drawer>
       </Hidden>
     </div>
@@ -116,7 +114,7 @@ const Sidebar = ({ ...props }) => {
 };
 
 Sidebar.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(sidebarStyle)(Sidebar);

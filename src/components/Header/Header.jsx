@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Menu } from 'material-ui-icons';
@@ -6,13 +5,6 @@ import CreatePortfolio from '../Modal/CreatePortfolio';
 import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
 import buttonStyle from '../../variables/styles/buttonStyle';
 import RegularButton from '../CustomButtons/Button';
-=======
-import React from "react";
-import PropTypes from "prop-types";
-import { Menu } from "material-ui-icons";
-import Modal from '../Modal/Modal';
-import ControlledOpenSelect from '../PortSelect/PortSelect';
->>>>>>> faaa2d9bb674ec6ba2e4d65144b11818fd6a25ef
 import {
   withStyles,
   AppBar,
@@ -21,18 +13,11 @@ import {
   Hidden,
   Button,
 
-<<<<<<< HEAD
 } from 'material-ui';
 import cx from 'classnames';
 import ControlledOpenSelect from '../PortSelect/PortSelect';
 
 import headerStyle from 'variables/styles/headerStyle.jsx';
-=======
-} from "material-ui";
-import cx from "classnames";
-
-import headerStyle from "variables/styles/headerStyle";
->>>>>>> faaa2d9bb674ec6ba2e4d65144b11818fd6a25ef
 
 import HeaderLinks from './HeaderLinks';
 
@@ -55,21 +40,17 @@ function Header({ ...props }) {
   return (
     <AppBar className={classes.appBar + appBarClasses} style={{ borderBottom: '2px solid #00BCD4' }}>
       <Toolbar className={classes.container}>
-<<<<<<< HEAD
-=======
         <div className={classes.flex}>
           {/* Here we create navbar brand, based on route name */}
           <Button href="#" className={classes.title}>
             {makeBrand()}
           </Button>
         </div>
-        <ControlledOpenSelect />
 
-        <Modal />
+      
         <Hidden smDown implementation="css">
           <HeaderLinks />
         </Hidden>
->>>>>>> faaa2d9bb674ec6ba2e4d65144b11818fd6a25ef
         <Hidden mdUp>
           <IconButton
             className={classes.appResponsive}

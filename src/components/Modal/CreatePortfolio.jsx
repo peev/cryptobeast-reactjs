@@ -80,13 +80,8 @@ class CreatePortfolio extends React.Component {
 
             <TextField
               placeholder="Portfolio name"
-<<<<<<< HEAD:src/components/Modal/CreatePortfolio.jsx
-              value=""
-
-=======
               // onChange={this.handleInputValue}
               inputRef={el => this.name = el}
->>>>>>> faaa2d9bb674ec6ba2e4d65144b11818fd6a25ef:src/components/Modal/Modal.jsx
             />
 
             <br />

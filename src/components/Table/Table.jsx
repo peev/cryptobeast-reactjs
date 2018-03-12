@@ -1,4 +1,8 @@
 import React from "react";
+
+import RegularButton from '../../components/CustomButtons/Button';
+
+import UpdatePortfolio from '../../components/Modal/UpdatePortfolio';
 import {
   withStyles,
   Table,
@@ -26,6 +30,7 @@ function CustomTable({ ...props }) {
                     className={classes.tableCell + " " + classes.tableHeadCell}
                     key={key}
                   >
+
                     {prop}
                   </TableCell>
                 );
@@ -38,9 +43,20 @@ function CustomTable({ ...props }) {
             return (
               <TableRow key={key}>
                 {prop.map((prop, key) => {
+                  if (3 <= key ) {
+                    return (
+                      <TableCell className={classes.tableCell} key={key}>
+                        {prop}
+
+                        <UpdatePortfolio />
+                      </TableCell>
+                    );
+                  };
                   return (
                     <TableCell className={classes.tableCell} key={key}>
                       {prop}
+
+                      
                     </TableCell>
                   );
                 })}
@@ -69,7 +85,7 @@ CustomTable.propTypes = {
     "gray"
   ]),
   tableHead: PropTypes.arrayOf(PropTypes.string),
-  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
+  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object))
 };
 
 export default withStyles(tableStyle)(CustomTable);

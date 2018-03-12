@@ -19,7 +19,7 @@ const styles = theme => ({
   },
 });
 
-class ControlledOpenSelect extends React.Component {
+class PortSelect extends React.Component {
   state = {
     age: '',
     open: false,
@@ -37,14 +37,30 @@ class ControlledOpenSelect extends React.Component {
     this.setState({ open: true });
   };
 
+  menuItemHandler = () => {
+    Object.keys(this.props.portfolios)
+      .map((el, i) => {
+        console.log(el);
+      })
+  }
+
+  componentDidMount = () => {
+    console.log('componentDidMount', this.props.portfolios);
+    // this.menuItemHandler();
+  }
+
+  componentWillReceiveProps() {
+    console.log('componentWillReceiveProps', this.props.portfolios);
+  }
+
   render() {
     const { classes } = this.props;
 
     return (
       <form autoComplete="off">
-
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="controlled-open-select">Select Portfolio</InputLabel>
+
           <Select
             open={this.state.open}
             value={this.state.age}
@@ -59,6 +75,7 @@ class ControlledOpenSelect extends React.Component {
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
+
           </Select>
         </FormControl>
       </form>
@@ -66,8 +83,8 @@ class ControlledOpenSelect extends React.Component {
   }
 }
 
-ControlledOpenSelect.propTypes = {
+PortSelect.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ControlledOpenSelect);
+export default withStyles(styles)(PortSelect);

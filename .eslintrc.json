@@ -19,6 +19,7 @@
         "no-unreachable": "warn",
         "no-unused-vars": "warn",
         "react/no-unused-state": "warn",
+        "react/jsx-filename-extension": "warn",
         "arrow-parens": "warn",
         "comma-dangle": "warn",
         "constructor-super": "warn",

@@ -6,6 +6,8 @@ import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 
+import { inject } from 'mobx-react';
+
 const styles = theme => ({
   button: {
     display: 'block',
@@ -19,13 +21,15 @@ const styles = theme => ({
   },
 });
 
+@inject('PortfolioStore')
 class ControlledOpenSelect extends React.Component {
   state = {
-    age: '',
+    selectedPortfolioId: '',
     open: false,
   };
 
   handleChange = (event) => {
+    console.log({ [event.target.name]: event.target.value })
     this.setState({ [event.target.name]: event.target.value });
   };
 
@@ -37,28 +41,54 @@ class ControlledOpenSelect extends React.Component {
     this.setState({ open: true });
   };
 
+  componentDidMount() {
+    const { PortfolioStore } = this.props;
+    PortfolioStore.getAllPortfolios();
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, PortfolioStore } = this.props;
+    let portfoliosNames;
+
+    if (PortfolioStore.portfolios) {
+      portfoliosNames = Object.keys(PortfolioStore.portfolios)
+        .map((port) => {
+          console.log(PortfolioStore.portfolios[port].name);
+
+          return (
+            <MenuItem
+              key={PortfolioStore.portfolios[port].id}
+              value={PortfolioStore.portfolios[port].id}
+            >
+              <em>{PortfolioStore.portfolios[port].name}</em>
+            </MenuItem>
+          );
+        });
+    }
+
+    // console.log('----PortSelect----', this.props.PortfolioStore.portfolios['0']);
 
     return (
       <form autoComplete="off">
 
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="controlled-open-select">Select Portfolio</InputLabel>
+
           <Select
             open={this.state.open}
-            value={this.state.age}
+            value={this.state.selectedPortfolioId}
             onClose={this.handleClose}
             onOpen={this.handleOpen}
             onChange={this.handleChange}
             inputProps={{
-              name: 'age',
+              name: 'selectedPortfolioId',
               id: 'controlled-open-select',
             }}
           >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
+            {portfoliosNames}
+            {/* <MenuItem value="">
+              <em>{PortfolioStore.name}</em>
+            </MenuItem> */}
           </Select>
         </FormControl>
       </form>

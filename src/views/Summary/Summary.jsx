@@ -36,6 +36,7 @@ import summaryStyle from 'variables/styles/summaryStyle';
 // test db
 import axios from 'axios';
 // const { ipcRenderer } = window.require('electron');
+import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
 
 class Summary extends React.Component {
   state = {
@@ -118,6 +119,7 @@ class Summary extends React.Component {
     return (
       <div>
         <Grid >
+          <AddInvestorWrapped />
         </Grid>
 
       </div>

@@ -12,7 +12,6 @@ function getModalStyle() {
   return {
     top: `${top}%`,
     left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
 
   };
 }
@@ -51,7 +50,7 @@ class UpdatePortfolioModal extends React.Component {
     return (
       <div>
         <Button onClick={this.handleOpen} color="primary">Edit</Button>
-        
+
         <Modal
           style={{ minWidth: '0' }}
           aria-labelledby="simple-modal-title"

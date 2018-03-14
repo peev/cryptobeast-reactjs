@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Menu } from 'material-ui-icons';
 import CreatePortfolio from '../Modal/CreatePortfolio';
@@ -17,76 +17,108 @@ import {
 import cx from 'classnames';
 import ControlledOpenSelect from '../PortSelect/PortSelect';
 
-import headerStyle from 'variables/styles/headerStyle.jsx';
+import headerStyle from '../../variables/styles/headerStyle.jsx';
 
 import HeaderLinks from './HeaderLinks';
+import axios from 'axios';
 
+class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      portfolios: {}
+    };
+  }
 
-function Header({ ...props }) {
-  function makeBrand() {
+  // componentWillMount() {
+  //   axios.get('http://localhost:3200/portfolio/all').then((result) => {
+  //     console.log(result);
+  //     this.setState({ portfolios: result });
+  //   })
+  // }
+  componentDidMount() {
+    axios.get('http://localhost:3200/portfolio/all').then((result) => {
+      console.log('componentDidMount', result);
+      this.setState({ portfolios: result });
+    })
+  }
+
+  makeBrand() {
     let name;
-    props.routes.map((prop, key) => {
-      if (prop.path === props.location.pathname) {
+    this.props.routes.map((prop, key) => {
+      if (prop.path === this.props.location.pathname) {
         name = prop.navbarName;
       }
       return null;
     });
     return name;
   }
-  const { classes, color } = props;
-  const appBarClasses = cx({
-    [` ${classes[color]}`]: color,
-  });
-  return (
-    <AppBar className={classes.appBar + appBarClasses} style={{ borderBottom: '2px solid #00BCD4' }}>
-      <Toolbar className={classes.container}>
-        <Hidden mdUp>
-          <IconButton
-            className={classes.appResponsive}
-            color="inherit"
-            aria-label="open drawer"
-            onClick={props.handleDrawerToggle}
-          >
-            <Menu />
-          </IconButton>
-        </Hidden>
-        <div className={classes.flex}>
-          {/* Here we create navbar brand, based on route name */}
-          <Button href="#" className={classes.title}>
-            {makeBrand()}
-          </Button>
-        </div>
 
 
-        <Hidden smDown implementation="css">
-          <HeaderLinks />
-        </Hidden>
-
-        <div
-          className={classes.flex}>
-
-          <ControlledOpenSelect />
-
-          <CreatePortfolio />
-          <UpdatePortfolioModal />
-          <div>
-            <RegularButton color="primary" >
-              Delete
-            </RegularButton>
+  render() {
+    console.log('render', this.state.portfolios);
+    const { classes, color } = this.props;
+    const appBarClasses = cx({
+      [` ${classes[color]}`]: color,
+    });
+    return (
+      <AppBar className={classes.appBar + appBarClasses} style={{ borderBottom: '2px solid #00BCD4' }}>
+        <Toolbar className={classes.container}>
+          <div className={classes.flex}>
+            {/* Here we create navbar brand, based on route name */}
+            <Button href="#" className={classes.title}>
+              {this.makeBrand()}
+            </Button>
           </div>
-        </div>
-        <Hidden smDown implementation="css">
-          <HeaderLinks />
-        </Hidden>
 
-      </Toolbar>
-    </AppBar>
-  );
+
+          <Hidden mdUp>
+            <IconButton
+              className={classes.appResponsive}
+              color="inherit"
+              aria-label="open drawer"
+              onClick={this.props.handleDrawerToggle}
+            >
+              <Menu />
+            </IconButton>
+          </Hidden>
+          <div
+            className={classes.flex}
+
+          >
+
+            <Hidden smDown implementation="css">
+              <HeaderLinks />
+            </Hidden>
+          </div>
+          <div
+            className={classes.flex}>
+
+            <ControlledOpenSelect />
+
+            <CreatePortfolio />
+            <UpdatePortfolioModal />
+            <div>
+              <RegularButton color="primary" >
+                Delete
+              </RegularButton>
+            </div>
+          </div>
+          <Hidden smDown implementation="css">
+            <HeaderLinks />
+          </Hidden>
+
+        </Toolbar>
+      </AppBar>
+    );
+  }
+
 }
 
 Header.propTypes = {
   classes: PropTypes.object.isRequired,
   color: PropTypes.oneOf(['primary', 'info', 'success', 'warning', 'danger']),
+  // handleDrawerToggle: PropTypes.func,
 };
 
 export default withStyles(headerStyle, buttonStyle)(Header);

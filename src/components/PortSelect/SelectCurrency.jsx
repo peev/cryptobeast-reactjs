@@ -10,16 +10,14 @@ const styles = theme => ({
   button: {
     display: 'block',
     marginTop: theme.spacing.unit * 2,
-
   },
   formControl: {
     margin: theme.spacing.unit,
-    minWidth: 150,
-    float: 'left',
+    minWidth: '100%',
   },
 });
 
-class ControlledOpenSelect extends React.Component {
+class SelectCurrency extends React.Component {
   state = {
     age: '',
     open: false,
@@ -42,9 +40,10 @@ class ControlledOpenSelect extends React.Component {
 
     return (
       <form autoComplete="off">
-
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="controlled-open-select">Select Portfolio</InputLabel>
+        <FormControl className={classes.formControl} style={{ margin: 0 }}>
+          <InputLabel htmlFor="controlled-open-select">
+            Select Currency
+          </InputLabel>
           <Select
             open={this.state.open}
             value={this.state.age}
@@ -66,8 +65,8 @@ class ControlledOpenSelect extends React.Component {
   }
 }
 
-ControlledOpenSelect.propTypes = {
+SelectCurrency.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ControlledOpenSelect);
+export default withStyles(styles)(SelectCurrency);

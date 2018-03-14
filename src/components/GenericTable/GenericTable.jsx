@@ -10,9 +10,9 @@ import {
 
 import PropTypes from "prop-types";
 
-import tableStyle from "variables/styles/tableStyle";
+import tableStyle from "../../variables/styles/tableStyle";
 
-function CustomTable({ ...props }) {
+function GenericTable({ ...props }) {
   const { classes, tableHead, tableData, tableHeaderColor } = props;
   return (
     <div className={classes.tableResponsive}>
@@ -53,11 +53,11 @@ function CustomTable({ ...props }) {
   );
 }
 
-CustomTable.defaultProps = {
+GenericTable.defaultProps = {
   tableHeaderColor: "gray"
 };
 
-CustomTable.propTypes = {
+GenericTable.propTypes = {
   classes: PropTypes.object.isRequired,
   tableHeaderColor: PropTypes.oneOf([
     "warning",
@@ -72,4 +72,4 @@ CustomTable.propTypes = {
   tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
 };
 
-export default withStyles(tableStyle)(CustomTable);
+export default withStyles(tableStyle)(GenericTable);

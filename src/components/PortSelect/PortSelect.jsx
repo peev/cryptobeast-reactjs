@@ -6,7 +6,7 @@ import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 
-import { inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 
 const styles = theme => ({
   button: {
@@ -22,39 +22,43 @@ const styles = theme => ({
 });
 
 @inject('PortfolioStore')
+@observer
 class ControlledOpenSelect extends React.Component {
   state = {
     selectedPortfolioId: '',
     open: false,
+    portfoliosSize: null,
   };
 
-  handleChange = (event) => {
-    console.log({ [event.target.name]: event.target.value })
-    this.setState({ [event.target.name]: event.target.value });
+  componentDidMount() {
+    console.log(this.state.arePortfoliosLoaded);
+    const { PortfolioStore } = this.props;
+
+    PortfolioStore.getAllPortfolios();
+  }
+
+  handleOpen = () => {
+    this.setState({ open: true });
   };
 
   handleClose = () => {
     this.setState({ open: false });
   };
 
-  handleOpen = () => {
-    this.setState({ open: true });
+  handleChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+    // this.setState({ selectedPortfolioId: event.target.value }); // does same as above
   };
-
-  componentDidMount() {
-    const { PortfolioStore } = this.props;
-    PortfolioStore.getAllPortfolios();
-  }
 
   render() {
     const { classes, PortfolioStore } = this.props;
     let portfoliosNames;
 
     if (PortfolioStore.portfolios) {
+      console.log(PortfolioStore.portfolios);
+
       portfoliosNames = Object.keys(PortfolioStore.portfolios)
         .map((port) => {
-          console.log(PortfolioStore.portfolios[port].name);
-
           return (
             <MenuItem
               key={PortfolioStore.portfolios[port].id}

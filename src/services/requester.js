@@ -21,9 +21,9 @@ const requests = {
 };
 
 const Portfolios = {
-  getAllPortfolios: () =>
+  getAll: () =>
     requests.get('/portfolio/all'),
-  createPortfolio: portfolioName =>
+  create: portfolioName =>
     requests.post('/portfolio/create', portfolioName),
   // unfollow: username =>
   //   requests.del(`/portfolio/${username}/follow`)

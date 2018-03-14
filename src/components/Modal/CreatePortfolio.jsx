@@ -14,7 +14,6 @@ function getModalStyle() {
   return {
     top: `${top}%`,
     left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
 
   };
 }
@@ -24,7 +23,7 @@ const styles = theme => ({
     position: 'absolute',
     minWidth: '100px',
     backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[5],
+    boxShadow: theme.shadows[3],
     padding: theme.spacing.unit * 4,
 
   },
@@ -61,7 +60,7 @@ class CreatePortfolio extends React.Component {
       <div>
         <Button onClick={this.handleOpen} color="primary">Create</Button>
         <Modal
-          style={{ minWidth: '0' }}
+
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}

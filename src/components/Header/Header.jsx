@@ -72,9 +72,6 @@ class Header extends Component {
           </div>
 
 
-          <Hidden smDown implementation="css">
-            <HeaderLinks />
-          </Hidden>
           <Hidden mdUp>
             <IconButton
               className={classes.appResponsive}
@@ -90,6 +87,12 @@ class Header extends Component {
 
           >
 
+            <Hidden smDown implementation="css">
+              <HeaderLinks />
+            </Hidden>
+          </div>
+          <div
+            className={classes.flex}>
 
             <ControlledOpenSelect />
 

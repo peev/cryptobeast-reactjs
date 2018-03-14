@@ -5,6 +5,7 @@ import TransactionHistory from 'views/TransactionHistory/TransactionHistory.jsx'
 import Ledgers from 'views/Ledgers/Ledgers.jsx';
 import Investors from 'views/Investors/Investors.jsx';
 import Analytics from 'views/Analytics/Analytics.jsx';
+import Settings from 'views/Settings/Settings.jsx';
 
 import {
   Dashboard,
@@ -65,6 +66,13 @@ const appRoutes = [
     navbarName: 'Analytics',
     icon: Notifications,
     component: Analytics,
+  },
+  {
+    path: '/Settings',
+    sidebarName: 'Settings',
+    navBarName: 'Settings',
+    icon: Notifications,
+    component: Settings,
   },
   {
     redirect: true, path: '/', to: '/summary', navbarName: 'Redirect',

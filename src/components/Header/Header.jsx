@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Menu } from 'material-ui-icons';
-import CreatePortfolio from '../Modal/CreatePortfolio';
-import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
-import buttonStyle from '../../variables/styles/buttonStyle';
-import RegularButton from '../CustomButtons/Button';
 import {
   withStyles,
   AppBar,
@@ -16,31 +12,19 @@ import {
 } from 'material-ui';
 import cx from 'classnames';
 import ControlledOpenSelect from '../PortSelect/PortSelect';
+// import CreatePortfolio from '../Modal/CreatePortfolio';
+// import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
+// import RegularButton from '../CustomButtons/Button';
+import buttonStyle from '../../variables/styles/buttonStyle';
 
 import headerStyle from '../../variables/styles/headerStyle.jsx';
 
 import HeaderLinks from './HeaderLinks';
-import axios from 'axios';
 
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      portfolios: {}
-    };
-  }
-
-  // componentWillMount() {
-  //   axios.get('http://localhost:3200/portfolio/all').then((result) => {
-  //     console.log(result);
-  //     this.setState({ portfolios: result });
-  //   })
-  // }
-  componentDidMount() {
-    axios.get('http://localhost:3200/portfolio/all').then((result) => {
-      console.log('componentDidMount', result);
-      this.setState({ portfolios: result });
-    })
+    this.state = {};
   }
 
   makeBrand() {
@@ -96,13 +80,13 @@ class Header extends Component {
 
             <ControlledOpenSelect />
 
-            <CreatePortfolio />
-            <UpdatePortfolioModal />
+            {/* <CreatePortfolio /> */}
+            {/* <UpdatePortfolioModal />
             <div>
               <RegularButton color="primary" >
                 Delete
               </RegularButton>
-            </div>
+            </div> */}
           </div>
           <Hidden smDown implementation="css">
             <HeaderLinks />

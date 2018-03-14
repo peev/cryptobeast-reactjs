@@ -4,9 +4,11 @@ import { TextField } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Modal from 'material-ui/Modal';
-import Button from '../CustomButtons/Button';
 
 import { inject } from 'mobx-react';
+
+import Button from '../CustomButtons/Button';
+
 
 function getModalStyle() {
   const top = 50;

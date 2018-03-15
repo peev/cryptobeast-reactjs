@@ -6,35 +6,15 @@ import RegularButton from '../../components/CustomButtons/Button';
 // test db
 import axios from 'axios';
 // const { ipcRenderer } = window.require('electron');
-<<<<<<< HEAD
 import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
-import SelectInvestor from '../../components/PortSelect/SelectInvestor';
+import SelectInvestor from '../../components/Selectors/SelectInvestor';
 import GenericTable from '../../components/GenericTable/GenericTable';
+import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
 
-const styles = {
-  root: {
-    flexGrow: 1
-  },
-  paper: {
-    maxHeight: 500,
-    width: '100%',
-    padding: 10
-  },
-  p: {
-    borderBottom: '3px solid blue'
-  }
-};
-=======
-import AddInvestorWrapped from "../../components/Modal/InvestorModals/AddInvestor";
-import SelectInvestor from "../../components/Selectors/SelectInvestor";
-import GenericTable from "../../components/GenericTable/GenericTable";
-import EditInvestorWrapped from "../../components/Modal/InvestorModals/EditInvestor";
+import classes from './Investors.css';
 
-import classes from "./Investors.css";
-
->>>>>>> b05afb2d716368518869ac810369674ee1b556f0
 const dropStyle = {
-  width: "100%"
+  width: '100%'
 };
 
 class Investors extends React.Component {
@@ -49,14 +29,8 @@ class Investors extends React.Component {
 
     return (
       <div>
-<<<<<<< HEAD
-        <Grid>
-          <div style={{ display: 'inline-flex', width: '100%' }}>
-            <AddInvestorWrapped />
-=======
         <Grid container >
           <div className="InvButtonsGroup">
->>>>>>> b05afb2d716368518869ac810369674ee1b556f0
             <AddInvestorWrapped />
 
             <AddInvestorWrapped />
@@ -93,58 +67,32 @@ class Investors extends React.Component {
             <RegularButton color="primary">Export</RegularButton>
           </Paper>
         </Grid>
-<<<<<<< HEAD
-        <GenericTable
-          style={{ backgroundColor: '#FFF' }}
-          tableHead={[
-            'ID',
-            'Name',
-            'Date of Entry',
-            'Transaction date',
-            'Amount (USD)',
-            'Share price',
-            'New/Liquidated Shares'
-          ]}
-          tableData={[
-            [
-              '1',
-              'SomeINvestor',
-              'A day',
-              'Transaction Dates',
-              '1$',
-              '1$',
-              'Test'
-            ]
-          ]}
-        />
-=======
         <Grid container className="InvGrid">
           <Paper className="InvPaper">
             <GenericTable
               tableHead={[
-                "ID",
-                "Name",
-                "Date of Entry",
-                "Transaction date",
-                "Amount (USD)",
-                "Share price",
-                "New/Liquidated Shares"
+                'ID',
+                'Name',
+                'Date of Entry',
+                'Transaction date',
+                'Amount (USD)',
+                'Share price',
+                'New/Liquidated Shares'
               ]}
               tableData={[
                 [
-                  "1",
-                  "SomeINvestor",
-                  "A day",
-                  "Transaction Dates",
-                  "1$",
-                  "1$",
-                  "Test"
+                  '1',
+                  'SomeINvestor',
+                  'A day',
+                  'Transaction Dates',
+                  '1$',
+                  '1$',
+                  'Test'
                 ]
               ]}
             />
           </Paper>
         </Grid>
->>>>>>> b05afb2d716368518869ac810369674ee1b556f0
       </div>
     );
   }

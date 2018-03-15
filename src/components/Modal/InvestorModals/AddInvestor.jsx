@@ -8,13 +8,8 @@ import axios from 'axios';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
 //import DatePicker from 'material-ui/DatePicker';
-<<<<<<< HEAD
 import SelectCurrency from '../../PortSelect/SelectCurrency';
 import Button from '../../CustomButtons/Button';
-=======
-import SelectCurrency from '../../Selectors/SelectCurrency';
-import Button from "../../CustomButtons/Button";
->>>>>>> b05afb2d716368518869ac810369674ee1b556f0
 
 import { inject, observer } from 'mobx-react';
 

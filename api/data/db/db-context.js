@@ -6,17 +6,19 @@ const path = require('path');
 const init = () => {
   const sequelize = new Sequelize('CryptoBeast', null, null, {
     dialect: 'sqlite',
-    storage: path.join(__dirname, '..', '..', 'DB', 'CryptoBeast.db'),
+    storage: path.join(__dirname, '..', 'CryptoBeast.db'),
   });
 
   const db = {};
 
-  db.portfolio = sequelize.import(path.join(__dirname, '..', '/models/portfolio.js'));
+  // TODO: Add new models here
+  db.portfolio = sequelize.import(path.join(__dirname, '/models/portfolio.js'));
   // db.todo = sequelize.import(path.join(__dirname, '/models/todo.js'));
 
   db.sequelize = sequelize;
   db.Sequelize = Sequelize;
 
+  // TODO: Configure model connections here (one-to-one/one-to-many etc.)
   // db.portfolio.hasMany(db.account);
   // db.todo.belongsTo(db.user);
   // db.user.hasMany(db.todo);

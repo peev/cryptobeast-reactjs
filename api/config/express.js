@@ -25,9 +25,10 @@ const init = (data) => {
     next();
   });
 
+  // TODO: Here you can add new middleware
   // require('./passport').applyTo(app, data);
 
-  // Routes
+  // TODO: Create router for every new model and add it here
   require('../routes/portfolio/portfolio-router').attachTo(app, data);
 
   return app;

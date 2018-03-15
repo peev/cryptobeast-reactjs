@@ -11,7 +11,7 @@ import {
 } from 'material-ui';
 
 import cx from 'classnames';
-import ControlledOpenSelect from '../PortSelect/PortSelect';
+import ControlledOpenSelect from '../Selectors/PortSelect';
 // import CreatePortfolio from '../Modal/CreatePortfolio';
 // import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
 // import RegularButton from '../CustomButtons/Button';
@@ -27,16 +27,6 @@ class Header extends Component {
     this.state = {};
   }
 
-  makeBrand() {
-    let name;
-    this.props.routes.map((prop, key) => {
-      if (prop.path === this.props.location.pathname) {
-        name = prop.navbarName;
-      }
-      return null;
-    });
-    return name;
-  }
 
   render() {
     console.log('render', this.state.portfolios);
@@ -45,11 +35,9 @@ class Header extends Component {
       [` ${classes[color]}`]: color,
     });
     return (
-      <AppBar
-        className={classes.appBar + appBarClasses}
-        style={{ borderBottom: '2px solid #00BCD4' }}
-      >
-        <Toolbar className={classes.container}>
+    
+        <Toolbar className={classes.container} 
+        style={{ borderBottom: '2px solid #00BCD4' }}>
           <div className={classes.flex}>
             {/* Here we create navbar brand, based on route name */}
             <Hidden mdUp>
@@ -62,16 +50,8 @@ class Header extends Component {
                 <Menu />
               </IconButton>
             </Hidden>
-            <Button href="#" className={classes.title}>
-              {this.makeBrand()}
-            </Button>
           </div>
 
-          <div className={classes.flex}>
-            <Hidden smDown implementation="css">
-              <HeaderLinks />
-            </Hidden>
-          </div>
           <div className={classes.flex}>
             <ControlledOpenSelect />
 
@@ -87,7 +67,7 @@ class Header extends Component {
             <HeaderLinks />
           </Hidden>
         </Toolbar>
-      </AppBar>
+      
     );
   }
 }

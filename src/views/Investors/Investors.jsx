@@ -6,6 +6,7 @@ import RegularButton from '../../components/CustomButtons/Button';
 // test db
 import axios from 'axios';
 // const { ipcRenderer } = window.require('electron');
+<<<<<<< HEAD
 import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
 import SelectInvestor from '../../components/PortSelect/SelectInvestor';
 import GenericTable from '../../components/GenericTable/GenericTable';
@@ -23,8 +24,17 @@ const styles = {
     borderBottom: '3px solid blue'
   }
 };
+=======
+import AddInvestorWrapped from "../../components/Modal/InvestorModals/AddInvestor";
+import SelectInvestor from "../../components/Selectors/SelectInvestor";
+import GenericTable from "../../components/GenericTable/GenericTable";
+import EditInvestorWrapped from "../../components/Modal/InvestorModals/EditInvestor";
+
+import classes from "./Investors.css";
+
+>>>>>>> b05afb2d716368518869ac810369674ee1b556f0
 const dropStyle = {
-  width: 200
+  width: "100%"
 };
 
 class Investors extends React.Component {
@@ -35,40 +45,46 @@ class Investors extends React.Component {
   };
 
   render() {
-    const { alignItems, direction, direction2, justify } = this.state;
+    const { alignItems, direction, justify } = this.state;
 
     return (
       <div>
+<<<<<<< HEAD
         <Grid>
           <div style={{ display: 'inline-flex', width: '100%' }}>
             <AddInvestorWrapped />
+=======
+        <Grid container >
+          <div className="InvButtonsGroup">
+>>>>>>> b05afb2d716368518869ac810369674ee1b556f0
             <AddInvestorWrapped />
 
             <AddInvestorWrapped />
             <AddInvestorWrapped />
+            <EditInvestorWrapped />
           </div>
         </Grid>
-        <Grid container style={styles.root}>
-          <Paper style={styles.paper}>
+        <Grid container className="InvGrid">
+          <Paper className="InvPaper">
             <Grid container direction={direction}>
               <h4>INDIVIDUAL SUMMARY</h4>
             </Grid>
 
-            <Grid container direction={direction2}>
-              <Grid item xs={3} direction={direction2}>
+            <Grid container >
+              <Grid item xs={3} >
                 <SelectInvestor style={dropStyle} />
               </Grid>
-              <Grid item xs={3} direction={direction2}>
+              <Grid item xs={3} >
                 <p>Shares Held:</p>
                 <p>Weighted entry price:</p>
                 <p>Current Share Price:</p>
               </Grid>
-              <Grid item xs={3} direction={direction2}>
+              <Grid item xs={3} >
                 <p>Shares Held:</p>
                 <p>Weighted entry price:</p>
                 <p>Current Share Price:</p>
               </Grid>
-              <Grid item xs={3} direction={direction2}>
+              <Grid item xs={3} >
                 <p>Shares Held:</p>
                 <p>Weighted entry price:</p>
                 <p>Current Share Price:</p>
@@ -77,6 +93,7 @@ class Investors extends React.Component {
             <RegularButton color="primary">Export</RegularButton>
           </Paper>
         </Grid>
+<<<<<<< HEAD
         <GenericTable
           style={{ backgroundColor: '#FFF' }}
           tableHead={[
@@ -100,6 +117,34 @@ class Investors extends React.Component {
             ]
           ]}
         />
+=======
+        <Grid container className="InvGrid">
+          <Paper className="InvPaper">
+            <GenericTable
+              tableHead={[
+                "ID",
+                "Name",
+                "Date of Entry",
+                "Transaction date",
+                "Amount (USD)",
+                "Share price",
+                "New/Liquidated Shares"
+              ]}
+              tableData={[
+                [
+                  "1",
+                  "SomeINvestor",
+                  "A day",
+                  "Transaction Dates",
+                  "1$",
+                  "1$",
+                  "Test"
+                ]
+              ]}
+            />
+          </Paper>
+        </Grid>
+>>>>>>> b05afb2d716368518869ac810369674ee1b556f0
       </div>
     );
   }

@@ -55,11 +55,25 @@ const portfolioController = (repository) => {
       });
   };
 
+  const addAccountToPortfolio = (req, res) => {
+    const accountData = req.body;
+
+    repository.portfolio.addAccount(accountData)
+      .then((response) => {
+        console.log('-------------', response);
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        return res.json(error);
+      });
+  };
+
   return {
     getAllPortfolios,
     createPortfolio,
     updatePortfolio,
     removePortfolio,
+    addAccountToPortfolio,
   };
 };
 

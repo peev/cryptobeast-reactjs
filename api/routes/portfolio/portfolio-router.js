@@ -16,7 +16,10 @@ const attachTo = (app, data) => {
     })
     .delete('/delete', (req, res) => {
       return portfolioController.removePortfolio(req, res);
-    });
+    })
+    .post('/addAccount', (req, res) => {
+      return portfolioController.addAccountToPortfolio(req, res);
+    })
 
   app.use('/portfolio', router);
 };

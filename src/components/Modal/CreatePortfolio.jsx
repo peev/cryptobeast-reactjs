@@ -5,7 +5,8 @@ import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Modal from 'material-ui/Modal';
 import Button from '../CustomButtons/Button';
-import axios from 'axios';
+
+import { inject } from 'mobx-react';
 
 function getModalStyle() {
   const top = 50;
@@ -28,6 +29,7 @@ const styles = theme => ({
   },
 });
 
+@inject('PortfolioStore')
 class CreatePortfolio extends React.Component {
   state = {
     open: false,
@@ -43,16 +45,10 @@ class CreatePortfolio extends React.Component {
   };
 
   handleSave = () => {
-    // Add Axios Post to endpoint later on
-    // console.log(this.name.input.value);
-    console.log(this.name.value);
-    const name = { name: this.name.value };
+    const inputName = { name: this.name.value };
 
-    axios.post('http://localhost:3200/portfolio/create', name)
-      .then((result) => {
-        console.log(result);
-
-      })
+    const { PortfolioStore } = this.props;
+    PortfolioStore.createPortfolio(inputName);
 
     this.setState({ open: false });
   };
@@ -64,7 +60,7 @@ class CreatePortfolio extends React.Component {
       <div>
         <Button onClick={this.handleOpen} color="primary">Create</Button>
         <Modal
-        
+
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}

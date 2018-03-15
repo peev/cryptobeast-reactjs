@@ -6,7 +6,7 @@ class PortfolioStore {
   selectedPortfolio = null;
 
   @observable
-  portfolios = null;
+  portfolios = {};
 
   @observable
   arePortfoliosLoaded = false;
@@ -17,7 +17,7 @@ class PortfolioStore {
       // get from api
       requester.Portfolios.getAll()
         .then((result) => {
-          console.log('getAllPortfolios', result.data);
+          // console.log('getAllPortfolios', result.data);
 
           this.portfolios = { ...result.data };
         })

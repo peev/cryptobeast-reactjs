@@ -1,45 +1,30 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { Menu } from "material-ui-icons";
-import CreatePortfolio from "../Modal/CreatePortfolio";
-import UpdatePortfolioModal from "../Modal/UpdatePortfolio";
-import buttonStyle from "../../variables/styles/buttonStyle";
-import RegularButton from "../CustomButtons/Button";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Menu } from 'material-ui-icons';
 import {
   withStyles,
   AppBar,
   Toolbar,
   IconButton,
   Hidden,
-  Button
-} from "material-ui";
-import cx from "classnames";
-import ControlledOpenSelect from "../PortSelect/PortSelect";
+  Button,
+} from 'material-ui';
 
-import headerStyle from "../../variables/styles/headerStyle.jsx";
+import cx from 'classnames';
+import ControlledOpenSelect from '../PortSelect/PortSelect';
+// import CreatePortfolio from '../Modal/CreatePortfolio';
+// import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
+// import RegularButton from '../CustomButtons/Button';
+import buttonStyle from '../../variables/styles/buttonStyle';
 
-import HeaderLinks from "./HeaderLinks";
-import axios from "axios";
+import headerStyle from '../../variables/styles/headerStyle.jsx';
+
+import HeaderLinks from './HeaderLinks';
 
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      portfolios: {}
-    };
-  }
-
-  // componentWillMount() {
-  //   axios.get('http://localhost:3200/portfolio/all').then((result) => {
-  //     console.log(result);
-  //     this.setState({ portfolios: result });
-  //   })
-  // }
-  componentDidMount() {
-    axios.get("http://localhost:3200/portfolio/all").then(result => {
-      console.log("componentDidMount", result);
-      this.setState({ portfolios: result });
-    });
+    this.state = {};
   }
 
   makeBrand() {
@@ -54,15 +39,15 @@ class Header extends Component {
   }
 
   render() {
-    console.log("render", this.state.portfolios);
+    console.log('render', this.state.portfolios);
     const { classes, color } = this.props;
     const appBarClasses = cx({
-      [` ${classes[color]}`]: color
+      [` ${classes[color]}`]: color,
     });
     return (
       <AppBar
         className={classes.appBar + appBarClasses}
-        style={{ borderBottom: "2px solid #00BCD4" }}
+        style={{ borderBottom: '2px solid #00BCD4' }}
       >
         <Toolbar className={classes.container}>
           <div className={classes.flex}>
@@ -90,11 +75,13 @@ class Header extends Component {
           <div className={classes.flex}>
             <ControlledOpenSelect />
 
-            <CreatePortfolio />
-            <UpdatePortfolioModal />
+            {/* <CreatePortfolio /> */}
+            {/* <UpdatePortfolioModal />
             <div>
-              <RegularButton color="primary">Delete</RegularButton>
-            </div>
+              <RegularButton color="primary" >
+                Delete
+              </RegularButton>
+            </div> */}
           </div>
           <Hidden smDown implementation="css">
             <HeaderLinks />
@@ -107,7 +94,7 @@ class Header extends Component {
 
 Header.propTypes = {
   classes: PropTypes.object.isRequired,
-  color: PropTypes.oneOf(["primary", "info", "success", "warning", "danger"])
+  color: PropTypes.oneOf(['primary', 'info', 'success', 'warning', 'danger']),
   // handleDrawerToggle: PropTypes.func,
 };
 

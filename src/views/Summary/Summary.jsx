@@ -33,11 +33,16 @@ import {
 
 import summaryStyle from 'variables/styles/summaryStyle';
 
-// test db
-import axios from 'axios';
-// const { ipcRenderer } = window.require('electron');
+import { inject, observer } from 'mobx-react';
+
+import CreatePortfolio from '../../components/Modal/CreatePortfolio';
+
 import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
 
+import './Summary.css';
+
+@inject('PortfolioStore')
+@observer
 class Summary extends React.Component {
   state = {
     value: 0,
@@ -46,13 +51,13 @@ class Summary extends React.Component {
 
   getProductsHandler = () => {
     // HTTP call to api
-    axios.get('http://localhost:3200/todos')
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // axios.get('http://localhost:3200/todos')
+    //   .then((response) => {
+    //     console.log(response);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
 
     // console.log('getProductsHandler', ipcRenderer);
 
@@ -116,12 +121,28 @@ class Summary extends React.Component {
   }
 
   render() {
-    return (
-      <div>
-        <Grid >
-          <AddInvestorWrapped />
-        </Grid>
+    const { PortfolioStore } = this.props;
+    let createPortfolio;
+    let other;
 
+    if (!PortfolioStore.portfolios.hasOwnProperty('0')) {
+      createPortfolio = (
+        <div className="createPortfolio">
+          <p>You currently have no portfolio to display. Please create a portfolio to start</p>
+          <CreatePortfolio />
+        </div>
+      )
+    } else {
+      other = <p>Summary is working</p>
+    }
+
+    return (
+      <div className="Summary">
+        <Grid >
+          {createPortfolio}
+          {other}
+          {/* <AddInvestorWrapped /> */}
+        </Grid>
       </div>
     );
   }

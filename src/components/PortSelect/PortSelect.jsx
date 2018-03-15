@@ -31,7 +31,6 @@ class ControlledOpenSelect extends React.Component {
   };
 
   componentDidMount() {
-    console.log(this.state.arePortfoliosLoaded);
     const { PortfolioStore } = this.props;
 
     PortfolioStore.getAllPortfolios();
@@ -46,31 +45,25 @@ class ControlledOpenSelect extends React.Component {
   };
 
   handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
-    // this.setState({ selectedPortfolioId: event.target.value }); // does same as above
+    this.setState({ [event.target.name]: event.target.value }); // 'selectedPortfolioId: event.target.value' does same as above
   };
 
   render() {
     const { classes, PortfolioStore } = this.props;
-    let portfoliosNames;
 
-    if (PortfolioStore.portfolios) {
-      console.log(PortfolioStore.portfolios);
+    const portfoliosToShow = Object.keys(PortfolioStore.portfolios)
+      .map((port) => {
+        return (
+          <MenuItem
+            key={PortfolioStore.portfolios[port].id}
+            value={PortfolioStore.portfolios[port].id}
+          >
+            <em>{PortfolioStore.portfolios[port].name}</em>
+          </MenuItem>
+        );
+      });
 
-      portfoliosNames = Object.keys(PortfolioStore.portfolios)
-        .map((port) => {
-          return (
-            <MenuItem
-              key={PortfolioStore.portfolios[port].id}
-              value={PortfolioStore.portfolios[port].id}
-            >
-              <em>{PortfolioStore.portfolios[port].name}</em>
-            </MenuItem>
-          );
-        });
-    }
-
-    // console.log('----PortSelect----', this.props.PortfolioStore.portfolios['0']);
+    // const noPortfolios = <MenuItem value={1}><em>None</em></MenuItem>;
 
     return (
       <form autoComplete="off">
@@ -89,10 +82,8 @@ class ControlledOpenSelect extends React.Component {
               id: 'controlled-open-select',
             }}
           >
-            {portfoliosNames}
-            {/* <MenuItem value="">
-              <em>{PortfolioStore.name}</em>
-            </MenuItem> */}
+            {portfoliosToShow.length > 0 ? portfoliosToShow : <MenuItem value={1}><em>None</em></MenuItem>}
+            {/* {portfoliosToShow} */}
           </Select>
         </FormControl>
       </form>

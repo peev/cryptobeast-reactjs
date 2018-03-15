@@ -1,6 +1,6 @@
-const portfolioController = (data) => {
+const portfolioController = (repository) => {
   const getAllPortfolios = (req, res) => {
-    data.portfolio.getAllPortfolios()
+    repository.portfolio.getAll()
       .then((response) => {
         res.status(200).send(response);
       })
@@ -12,7 +12,7 @@ const portfolioController = (data) => {
   const createPortfolio = (req, res) => {
     const portfolioData = req.body;
 
-    data.portfolio.createPortfolio(portfolioData)
+    repository.portfolio.create(portfolioData)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -25,7 +25,7 @@ const portfolioController = (data) => {
     // const id = req.params.id;
     const portfolioData = req.body;
 
-    data.portfolio.updatePortfolio(portfolioData)
+    repository.portfolio.update(portfolioData)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -34,12 +34,21 @@ const portfolioController = (data) => {
       });
   };
 
-  const deletePortfolio = (req, res) => {
+  const removePortfolio = (req, res) => {
     const portfolioData = req.body;
 
-    data.portfolio.deletePortfolio(portfolioData)
+    repository.portfolio.remove(portfolioData)
       .then((response) => {
-        res.status(200).send(response);
+        switch (response) {
+          case 1:
+            res.status(200).send(`${response}`);
+            break;
+          case 0:
+            res.status(404).send(`${response}`);
+            break;
+          default:
+            break;
+        }
       })
       .catch((error) => {
         return res.json(error);
@@ -50,7 +59,7 @@ const portfolioController = (data) => {
     getAllPortfolios,
     createPortfolio,
     updatePortfolio,
-    deletePortfolio,
+    removePortfolio,
   };
 };
 

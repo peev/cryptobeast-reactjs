@@ -1,8 +1,8 @@
 const constants = require('./config/constants');
 
-require('./db/db').init()
-  .then((db) => {
-    return require('./data/data').init(db);
+require('./data/db/db-context').init()
+  .then((dbContext) => {
+    return require('./data/repositories/repository-factory').init(dbContext);
   })
   .then((data) => {
     return require('./config/express').init(data);

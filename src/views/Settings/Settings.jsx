@@ -2,6 +2,9 @@ import React from 'react';
 import { Grid } from 'material-ui';
 import { RegularCard, ItemGrid, Table } from 'components';
 import IconButton from '../../components/CustomButtons/IconButton';
+import CreatePortfolio from '../../components/Modal/CreatePortfolio';
+import UpdatePortfolioModal from '../../components/Modal/UpdatePortfolio';
+import RegularButton from '../../components/CustomButtons/Button';
 
 const Settings = ({ ...props }) => {
   return (
@@ -28,16 +31,23 @@ const Settings = ({ ...props }) => {
               tableHeaderColor="primary"
               tableHead={['Name', 'Number of Shares', 'Current share price', 'Total Amount', 'Edit', 'Delete']}
               tableData={[
-                ['Poloniex', 'Inactive', 'test','', ''],
+                ['Poloniex', 'Inactive', 'test', '', ''],
               ]}
 
             />
           }
         />
       </ItemGrid>
+      <ItemGrid xs={12} sm={12} md={12}>
+        <UpdatePortfolioModal />
+        <div>
+          <RegularButton color="primary" >
+            Delete
+              </RegularButton>
+        </div>
+      </ItemGrid>
     </Grid>
   );
-
 };
 
 export default Settings;

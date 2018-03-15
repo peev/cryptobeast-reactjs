@@ -1,20 +1,20 @@
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
-class PortfolioStore {
+class InvestorStore {
   @observable
-  selectedPortfolio = null;
-
-  @observable
-  portfolios = {};
-
-  @observable
-  arePortfoliosLoaded = false;
-
-  constructor() {
-    requester.Portfolios.getAll()
-      .then(this.onPortfoliosLoaded)
-      .catch(this.onError);
+  values = {
+    founder: false,
+    fullName: '',
+    email: '',
+    telephone: '',
+    dateOfEntry: '',
+    depositedCurrency: '',
+    depositedAmount: 0,
+    depositUsdEquiv: 0,
+    managementFee: 0,
+    sharePriceAtEntryDate: 0,
+    purchasedShares: 0,
   }
 
   @computed
@@ -30,6 +30,10 @@ class PortfolioStore {
   }
 
   @action
+  setTelephone(telephone) {
+    this.values.telephone = telephone;
+  }
+
   createPortfolio(portfolioName) {
     // send to api
     requester.Portfolios.create(portfolioName)
@@ -49,4 +53,4 @@ class PortfolioStore {
   // to be implemented later on
 }
 
-export default new PortfolioStore();
+export default new InvestorStore();

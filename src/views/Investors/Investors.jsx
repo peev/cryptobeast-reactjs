@@ -1,14 +1,14 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles, Grid, TextField } from "material-ui";
-import Paper from "material-ui/Paper";
-import RegularButton from "../../components/CustomButtons/Button";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles, Grid, TextField } from 'material-ui';
+import Paper from 'material-ui/Paper';
+import RegularButton from '../../components/CustomButtons/Button';
 // test db
-import axios from "axios";
+import axios from 'axios';
 // const { ipcRenderer } = window.require('electron');
-import AddInvestorWrapped from "../../components/Modal/InvestorModals/AddInvestor";
-import SelectInvestor from "../../components/PortSelect/SelectInvestor";
-import GenericTable from "../../components/GenericTable/GenericTable";
+import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
+import SelectInvestor from '../../components/PortSelect/SelectInvestor';
+import GenericTable from '../../components/GenericTable/GenericTable';
 
 const styles = {
   root: {
@@ -16,11 +16,11 @@ const styles = {
   },
   paper: {
     maxHeight: 500,
-    width: "100%",
+    width: '100%',
     padding: 10
   },
   p: {
-    borderBottom: "3px solid blue"
+    borderBottom: '3px solid blue'
   }
 };
 const dropStyle = {
@@ -29,9 +29,9 @@ const dropStyle = {
 
 class Investors extends React.Component {
   state = {
-    direction: "row",
-    justify: "flex-end",
-    alignItems: "center"
+    direction: 'row',
+    justify: 'flex-end',
+    alignItems: 'center'
   };
 
   render() {
@@ -40,7 +40,7 @@ class Investors extends React.Component {
     return (
       <div>
         <Grid>
-          <div style={{ display: "inline-flex", width: "100%" }}>
+          <div style={{ display: 'inline-flex', width: '100%' }}>
             <AddInvestorWrapped />
             <AddInvestorWrapped />
 
@@ -78,25 +78,25 @@ class Investors extends React.Component {
           </Paper>
         </Grid>
         <GenericTable
-          style={{ backgroundColor: "#FFF" }}
+          style={{ backgroundColor: '#FFF' }}
           tableHead={[
-            "ID",
-            "Name",
-            "Date of Entry",
-            "Transaction date",
-            "Amount (USD)",
-            "Share price",
-            "New/Liquidated Shares"
+            'ID',
+            'Name',
+            'Date of Entry',
+            'Transaction date',
+            'Amount (USD)',
+            'Share price',
+            'New/Liquidated Shares'
           ]}
           tableData={[
             [
-              "1",
-              "SomeINvestor",
-              "A day",
-              "Transaction Dates",
-              "1$",
-              "1$",
-              "Test"
+              '1',
+              'SomeINvestor',
+              'A day',
+              'Transaction Dates',
+              '1$',
+              '1$',
+              'Test'
             ]
           ]}
         />

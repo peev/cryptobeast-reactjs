@@ -5,7 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Modal from 'material-ui/Modal';
 
-import { inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 
 import Button from '../CustomButtons/Button';
 
@@ -32,6 +32,7 @@ const styles = theme => ({
 });
 
 @inject('PortfolioStore')
+@observer
 class CreatePortfolio extends React.Component {
   state = {
     open: false,

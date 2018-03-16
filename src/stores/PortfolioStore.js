@@ -12,7 +12,7 @@ class PortfolioStore {
   arePortfoliosLoaded = false;
 
   constructor() {
-    requester.Portfolios.getAll()
+    requester.Portfolio.getAll()
       .then(this.onPortfoliosLoaded)
       .catch(this.onError);
   }
@@ -26,13 +26,13 @@ class PortfolioStore {
   @action.bound
   onPortfoliosLoaded(result) {
     this.portfolios = { ...result.data };
-    this.arePortfoliosLoaded = true;
+    // this.arePortfoliosLoaded = true;s
   }
 
   @action
   createPortfolio(portfolioName) {
     // send to api
-    requester.Portfolios.create(portfolioName)
+    requester.Portfolio.create(portfolioName)
       .then((result) => {
         console.log('createPortfolio', result.data);
       })

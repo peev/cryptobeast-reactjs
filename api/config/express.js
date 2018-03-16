@@ -30,6 +30,7 @@ const init = (data) => {
 
   // TODO: Create router for every new model and add it here
   require('../routes/portfolio/portfolio-router').attachTo(app, data);
+  require('../routes/investor/investor-router').attachTo(app, data);
 
   return app;
 };

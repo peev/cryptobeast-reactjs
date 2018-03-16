@@ -11,34 +11,39 @@ class PortfolioStore {
   @observable
   arePortfoliosLoaded = false;
 
-  @action
-  getAllPortfolios() {
-    if (!this.arePortfoliosLoaded) {
-      // get from api
-      requester.Portfolios.getAll()
-        .then((result) => {
-          // console.log('getAllPortfolios', result.data);
+  constructor() {
+    requester.Portfolio.getAll()
+      .then(this.onPortfoliosLoaded)
+      .catch(this.onError);
+  }
 
-          this.portfolios = { ...result.data };
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+  @computed
+  getLength() {
+    return Object.keys(this.portfolios).length;
+  }
 
-    this.arePortfoliosLoaded = true;
+
+  @action.bound
+  onPortfoliosLoaded(result) {
+    this.portfolios = { ...result.data };
+    // this.arePortfoliosLoaded = true;s
   }
 
   @action
   createPortfolio(portfolioName) {
     // send to api
-    requester.Portfolios.create(portfolioName)
+    requester.Portfolio.create(portfolioName)
       .then((result) => {
         console.log('createPortfolio', result.data);
       })
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  @action.bound
+  onError(err) {
+    console.log(err);
   }
 
   // to be implemented later on

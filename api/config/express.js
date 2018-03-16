@@ -32,6 +32,7 @@ const init = (data) => {
   require('../routes/portfolio/portfolio-router').attachTo(app, data);
   require('../routes/market/market-router').attachTo(app, data);
   require('../routes/account/account-router').attachTo(app, data);
+  require('../routes/investor/investor-router').attachTo(app, data);
 
   return app;
 };

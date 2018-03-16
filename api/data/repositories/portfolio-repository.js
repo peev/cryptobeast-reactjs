@@ -3,16 +3,15 @@ const init = (db) => {
   // const getAll = () => {
   //   return db.portfolio.findAll();
   // };
-
-  // With Eager loading of assets, accounts and investors
-  const getAll = () => {
-    return db.Portfolio.findAll();
-  };
-
   const create = (request) => {
     const portfolioName = { name: request.name };
 
     return db.Portfolio.create(portfolioName);
+  };
+
+  // With Eager loading of assets, accounts and investors
+  const getAll = () => {
+    return db.Portfolio.findAll({ include: [db.Account] });
   };
 
   const update = (request) => {
@@ -32,32 +31,11 @@ const init = (db) => {
     });
   };
 
-  // account CRUD operations =============================================================
-  const addAccount = (request) => {
-    const newAccount = {
-      apiServiceName: request.apiServiceName,
-      apiKey: request.apiKey,
-      apiSecret: request.apiSecret,
-    };
-    const portfolioId = request.id;
-    return db.Portfolio.findById(portfolioId)
-      .then((selectedPortfolio) => {
-        db.Account.create(newAccount)
-          .then((result) => {
-            selectedPortfolio.addAccount(result)
-              .then((result2) => {
-                // return Promise.resolve(result2.id);
-              });
-          })
-      });
-  };
-
   return {
     getAll,
     create,
     update,
     remove,
-    addAccount,
   };
 };
 

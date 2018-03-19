@@ -27,7 +27,6 @@ class Header extends Component {
     this.state = {};
   }
 
-
   render() {
     console.log('render', this.state.portfolios);
     const { classes, color } = this.props;
@@ -35,39 +34,43 @@ class Header extends Component {
       [` ${classes[color]}`]: color,
     });
     return (
-    
-        <Toolbar className={classes.container} 
-        style={{ borderBottom: '2px solid #00BCD4' }}>
-          <div className={classes.flex}>
-            {/* Here we create navbar brand, based on route name */}
-            <Hidden mdUp>
-              <IconButton
-                className={classes.appResponsive}
-                color="inherit"
-                aria-label="open drawer"
-                onClick={this.props.handleDrawerToggle}
-              >
-                <Menu />
-              </IconButton>
-            </Hidden>
-          </div>
+      <Toolbar
+        className={classes.container}
+        style={{
+          borderBottom: '2px solid #00BCD4',
+          backgroundColor: '#303F9F',
+          color: 'white',
+        }}
+      >
+        <div className={classes.flex}>
+          {/* Here we create navbar brand, based on route name */}
+          <Hidden mdUp>
+            <IconButton
+              className={classes.appResponsive}
+              style={{color: '#FFF'}}
+              aria-label="open drawer"
+              onClick={this.props.handleDrawerToggle}
+            >
+              <Menu />
+            </IconButton>
+          </Hidden>
+        </div>
 
-          <div className={classes.flex}>
-            <ControlledOpenSelect />
+        <div className={classes.flex}>
+          <ControlledOpenSelect />
 
-            {/* <CreatePortfolio /> */}
-            {/* <UpdatePortfolioModal />
+          {/* <CreatePortfolio /> */}
+          {/* <UpdatePortfolioModal />
             <div>
               <RegularButton color="primary" >
                 Delete
               </RegularButton>
             </div> */}
-          </div>
-          <Hidden smDown implementation="css">
-            <HeaderLinks />
-          </Hidden>
-        </Toolbar>
-      
+        </div>
+        <Hidden smDown implementation="css">
+          <HeaderLinks />
+        </Hidden>
+      </Toolbar>
     );
   }
 }

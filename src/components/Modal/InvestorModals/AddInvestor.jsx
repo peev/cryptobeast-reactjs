@@ -8,9 +8,8 @@ import axios from "axios";
 import Typography from "material-ui/Typography";
 import Checkbox from "material-ui/Checkbox";
 //import DatePicker from 'material-ui/DatePicker';
-import SelectCurrency from '../../Selectors/SelectCurrency';
+import SelectCurrency from "../../Selectors/SelectCurrency";
 import Button from "../../CustomButtons/Button";
-
 
 const getModalStyle = () => {
   const top = 50;
@@ -73,7 +72,7 @@ class AddInvestor extends React.Component {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <form
+          <div
             style={getModalStyle()}
             className={classes.paper}
             onSubmit={() => this.handleSave}
@@ -157,7 +156,7 @@ class AddInvestor extends React.Component {
               {" "}
               Save
             </Button>
-          </form>
+          </div>
         </Modal>
       </div>
     );

@@ -69,7 +69,7 @@ class ControlledOpenSelect extends React.Component {
       <form autoComplete="off">
 
         <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="controlled-open-select">Select Portfolio</InputLabel>
+          <InputLabel htmlFor="controlled-open-select" stlye={{color:'#FFF'}}>Select Portfolio</InputLabel>
 
           <Select
             open={this.state.open}

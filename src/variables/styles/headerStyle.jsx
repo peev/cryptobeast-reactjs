@@ -5,7 +5,7 @@
 import {
   container,
   defaultFont,
-  primaryColor,
+  navBackgroundColor,
   defaultBoxShadow,
   infoColor,
   successColor,
@@ -58,7 +58,7 @@ const headerStyle = theme => ({
     top: '8px',
   },
   primary: {
-    backgroundColor: primaryColor,
+    backgroundColor: navBackgroundColor,
     color: '#FFFFFF',
     ...defaultBoxShadow,
   },

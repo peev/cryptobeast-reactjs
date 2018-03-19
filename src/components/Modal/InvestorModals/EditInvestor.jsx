@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TextField } from 'material-ui';
-import { Icon } from 'material-ui-icons';
 import { withStyles } from 'material-ui/styles';
 import Modal from 'material-ui/Modal';
-import axios from 'axios';
 import Typography from 'material-ui/Typography';
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
+// import { Icon } from 'material-ui-icons';
 
 const getModalStyle = () => {
   const top = 50;
@@ -86,23 +85,23 @@ class EditInvestor extends React.Component {
                 <SelectInvestor />
                 <TextField
                   placeholder="Full name"
-                  // inputRef={el =>this.name = el}
+                // inputRef={el =>this.name = el}
                 />
                 <br />
                 <TextField
                   placeholder="Telephone"
-                  // inputRef={el =>this.name = el}
+                // inputRef={el =>this.name = el}
                 />
               </div>
               <div style={{ display: 'inline-block' }}>
                 <TextField
                   placeholder="Email Adress "
-                  // inputRef={el =>this.name = el}
+                // inputRef={el =>this.name = el}
                 />
                 <br />
                 <TextField
                   placeholder="Management Fee %"
-                  // inputRef={el =>this.name = el}
+                // inputRef={el =>this.name = el}
                 />
               </div>
             </div>

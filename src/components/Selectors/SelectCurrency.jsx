@@ -5,6 +5,7 @@ import { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
+import { inject, observer } from 'mobx-react';
 
 const styles = theme => ({
   button: {
@@ -17,6 +18,8 @@ const styles = theme => ({
   },
 });
 
+@inject('InvestorStore')
+@observer
 class SelectCurrency extends React.Component {
   state = {
     age: '',

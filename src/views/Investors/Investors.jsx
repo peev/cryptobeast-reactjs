@@ -1,31 +1,32 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles, Grid, TextField } from "material-ui";
-import Paper from "material-ui/Paper";
-import RegularButton from "../../components/CustomButtons/Button";
-// test db
-import axios from "axios";
-// const { ipcRenderer } = window.require('electron');
-import AddInvestorWrapped from "../../components/Modal/InvestorModals/AddInvestor";
-import SelectInvestor from "../../components/Selectors/SelectInvestor";
-import GenericTable from "../../components/GenericTable/GenericTable";
-import EditInvestorWrapped from "../../components/Modal/InvestorModals/EditInvestor";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Grid } from 'material-ui';
+import Paper from 'material-ui/Paper';
 
-import classes from "./Investors.css";
+import RegularButton from '../../components/CustomButtons/Button';
+import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
+import SelectInvestor from '../../components/Selectors/SelectInvestor';
+import GenericTable from '../../components/GenericTable/GenericTable';
+import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
+
+// test db
+// const { ipcRenderer } = window.require('electron');
+import './Investors.css';
 
 const dropStyle = {
-  width: "100%"
+  width: '100%',
 };
 
 class Investors extends React.Component {
   state = {
-    direction: "row",
-    justify: "flex-end",
-    alignItems: "center"
+    direction: 'row',
+    // justify: 'flex-end',
+    // alignItems: 'center',
   };
 
   render() {
-    const { alignItems, direction, justify } = this.state;
+    const { direction } = this.state;
+    // const { alignItems, direction, justify } = this.state;
 
     return (
       <div>
@@ -34,7 +35,9 @@ class Investors extends React.Component {
             <AddInvestorWrapped />
 
             <AddInvestorWrapped />
+
             <AddInvestorWrapped />
+
             <EditInvestorWrapped />
           </div>
         </Grid>
@@ -71,23 +74,23 @@ class Investors extends React.Component {
           <Paper className="InvPaper">
             <GenericTable
               tableHead={[
-                "ID",
-                "Name",
-                "Date of Entry",
-                "Transaction date",
-                "Amount (USD)",
-                "Share price",
-                "New/Liquidated Shares"
+                'ID',
+                'Name',
+                'Date of Entry',
+                'Transaction date',
+                'Amount (USD)',
+                'Share price',
+                'New/Liquidated Shares',
               ]}
               tableData={[
                 [
-                  "1",
-                  "SomeINvestor",
-                  "A day",
-                  "Transaction Dates",
-                  "1$",
-                  "1$",
-                  "Test"
+                  '1',
+                  'SomeINvestor',
+                  'A day',
+                  'Transaction Dates',
+                  '1$',
+                  '1$',
+                  'Test',
                 ]
               ]}
             />
@@ -98,7 +101,4 @@ class Investors extends React.Component {
   }
 }
 
-Investors.propTypes = {
-  classes: PropTypes.object.isRequired
-};
 export default Investors;

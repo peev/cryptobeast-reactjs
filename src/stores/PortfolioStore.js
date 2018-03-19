@@ -8,40 +8,48 @@ class PortfolioStore {
   @observable
   portfolios = {};
 
-  @observable
-  arePortfoliosLoaded = false;
+  constructor() {
+    // eslint-disable-next-line no-unused-expressions
+    this.getPortfolios;
+  }
 
-  @action
-  getAllPortfolios() {
-    if (!this.arePortfoliosLoaded) {
-      // get from api
-      requester.Portfolios.getAll()
-        .then((result) => {
-          // console.log('getAllPortfolios', result.data);
+  @computed
+  getLength() {
+    return Object.keys(this.portfolios).length;
+  }
 
-          this.portfolios = { ...result.data };
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+  @computed get
+  currentPortfolios() {
+    return this.portfolios;
+  }
 
-    this.arePortfoliosLoaded = true;
+  @computed get
+  getPortfolios() {
+    return requester.Portfolio.getAll()
+      .then(this.onPortfoliosLoaded)
+      .catch(this.onError);
+  }
+
+  @action.bound
+  onPortfoliosLoaded(result) {
+    this.portfolios = { ...result.data };
   }
 
   @action
   createPortfolio(portfolioName) {
-    // send to api
-    requester.Portfolios.create(portfolioName)
-      .then((result) => {
-        console.log('createPortfolio', result.data);
+    requester.Portfolio.create(portfolioName)
+      .then(() => {
+        // eslint-disable-next-line no-unused-expressions
+        this.getPortfolios;
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch(this.onError);
   }
 
-  // to be implemented later on
+  @action.bound
+  // eslint-disable-next-line class-methods-use-this
+  onError(err) {
+    console.log(err);
+  }
 }
 
 export default new PortfolioStore();

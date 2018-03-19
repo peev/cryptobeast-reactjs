@@ -11,12 +11,8 @@ import { Header, Sidebar } from 'components';
 import appRoutes from 'routes/app.jsx';
 
 import appStyle from 'variables/styles/appStyle.jsx';
-import {
-  navBackgroundColor,
-  textPrimary,
-
-} from '../../variables/styles'
-import logo from 'assets/img/reactlogo.png';
+// import logo from 'assets/img/reactlogo.png';
+// import { navBackgroundColor, textPrimary } from '../../variables/styles';
 // import ControlledOpenSelect from '../../components/Selectors/PortSelect';
 
 const switchRoutes = (

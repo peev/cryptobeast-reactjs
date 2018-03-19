@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_ROOT = 'http://localhost:3200';
 
-const responseBody = res => res.body;
+// const responseBody = res => res.body;
 
 const requests = {
   get: url =>
@@ -21,7 +21,7 @@ const requests = {
 };
 
 // TODO: Add model http requests and create model store (mobx)
-const Portfolios = {
+const Portfolio = {
   getAll: () =>
     requests.get('/portfolio/all'),
   create: portfolioName =>
@@ -34,6 +34,20 @@ const Portfolios = {
   //   requests.del(`/portfolio/${username}/follow`)
 };
 
+const Investor = {
+  getAll: () =>
+    requests.get('/investor/all'),
+  create: investorData =>
+    requests.post('/investor/create', investorData),
+};
+
+const Market = {
+  getCurrencies: () =>
+    requests.get('/market/baseCurrencies'),
+};
+
 export default {
-  Portfolios,
+  Portfolio,
+  Investor,
+  Market,
 };

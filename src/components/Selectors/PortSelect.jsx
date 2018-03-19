@@ -30,11 +30,9 @@ class ControlledOpenSelect extends React.Component {
     portfoliosSize: null,
   };
 
-  componentDidMount() {
-    const { PortfolioStore } = this.props;
-
-    PortfolioStore.getAllPortfolios();
-  }
+  // componentDidMount() {
+  //   const { PortfolioStore } = this.props;
+  // }
 
   handleOpen = () => {
     this.setState({ open: true });

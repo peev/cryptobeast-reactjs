@@ -1,14 +1,6 @@
-const portfolioController = (repository) => {
-  const getAllPortfolios = (req, res) => {
-    repository.portfolio.getAll()
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
-      });
-  };
+const { responseHandler } = require('../utilities/response-handler');
 
+const portfolioController = (repository) => {
   const createPortfolio = (req, res) => {
     const portfolioData = req.body;
 
@@ -18,6 +10,16 @@ const portfolioController = (repository) => {
       })
       .catch((error) => {
         return res.json(error);
+      });
+  };
+
+  const getAllPortfolios = (req, res) => {
+    repository.portfolio.getAll()
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
       });
   };
 
@@ -38,18 +40,7 @@ const portfolioController = (repository) => {
     const portfolioData = req.body;
 
     repository.portfolio.remove(portfolioData)
-      .then((response) => {
-        switch (response) {
-          case 1:
-            res.status(200).send(`${response}`);
-            break;
-          case 0:
-            res.status(404).send(`${response}`);
-            break;
-          default:
-            break;
-        }
-      })
+      .then(result => responseHandler(res, result))
       .catch((error) => {
         return res.json(error);
       });

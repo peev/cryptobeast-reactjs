@@ -9,11 +9,13 @@ import indexRoutes from 'routes/index.jsx';
 
 import { Provider } from 'mobx-react';
 import PortfolioStore from './stores/PortfolioStore';
-import AssetsStore from './stores/AssetsStore';
+import AssetStore from './stores/AssetStore';
+import InvestorStore from './stores/InvestorStore';
 
 const stores = {
   PortfolioStore,
-  AssetsStore
+  AssetStore,
+  InvestorStore,
 };
 
 // For easier debugging

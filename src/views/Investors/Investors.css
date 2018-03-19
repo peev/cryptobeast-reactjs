@@ -1,26 +1,24 @@
-.InvGrid{
+.InvGrid {
     flex-grow: 1;
     margin: 0;
 }
 
-.InvPaper{
+.InvPaper {
     max-height: 500px;
     width: 100%;
     padding: 10px;
     margin-top: 20px;
-  
 }
 
-.InvPaper p{
+.InvPaper p {
     border-bottom: 2px solid black;
-
 }
 
-.InvPaper button{
-    float:right;
+.InvPaper button {
+    float: right;
 }
 
-.InvButtonsGroup{
+.InvButtonsGroup {
     width: 100%;
     display: inline-flex;
     justify-content: space-between;

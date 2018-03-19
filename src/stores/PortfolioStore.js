@@ -8,13 +8,8 @@ class PortfolioStore {
   @observable
   portfolios = {};
 
-  @observable
-  arePortfoliosLoaded = false;
-
   constructor() {
-    requester.Portfolio.getAll()
-      .then(this.onPortfoliosLoaded)
-      .catch(this.onError);
+    this.getPortfolios;
   }
 
   @computed
@@ -22,31 +17,36 @@ class PortfolioStore {
     return Object.keys(this.portfolios).length;
   }
 
+  @computed get
+  currentPortfolios() {
+    return this.portfolios;
+  }
+
+  @computed get
+  getPortfolios() {
+    return requester.Portfolio.getAll()
+      .then(this.onPortfoliosLoaded)
+      .catch(this.onError);
+  }
 
   @action.bound
   onPortfoliosLoaded(result) {
     this.portfolios = { ...result.data };
-    // this.arePortfoliosLoaded = true;s
   }
 
   @action
   createPortfolio(portfolioName) {
-    // send to api
     requester.Portfolio.create(portfolioName)
-      .then((result) => {
-        console.log('createPortfolio', result.data);
+      .then(() => {
+        this.getPortfolios;
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch(this.onError);
   }
 
   @action.bound
   onError(err) {
     console.log(err);
   }
-
-  // to be implemented later on
 }
 
 export default new PortfolioStore();

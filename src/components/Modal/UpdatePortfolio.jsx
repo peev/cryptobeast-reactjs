@@ -39,8 +39,6 @@ class UpdatePortfolioModal extends React.Component {
   };
 
   handleSave = () => {
-    { /*Add Axios Post to endpoint later on */ }
-
     this.setState({ open: false });
   };
 
@@ -62,32 +60,29 @@ class UpdatePortfolioModal extends React.Component {
               variant="title"
               id="modal-title"
               style={{ fontSize: '18px', fontWeight: '400' }}
-            >
-
-              Edit current portfolio
+            >Edit current portfolio
             </Typography>
+
             <TextField
               placeholder="Portfolio name"
               value=""
-
             />
 
             <br />
+
             {/* Cancel BUTTON */}
             <Button
               style={{ display: 'inline-flex' }}
               onClick={this.handleClose}
               color="primary"
-
             > Cancel
             </Button>
-            {/* SAVE BUTTON*/}
+
+            {/* SAVE BUTTON */}
             <Button
               style={{ display: 'inline-flex' }}
               onClick={this.handleClose}
               color="primary"
-
-
             > Update
             </Button>
           </div>

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_ROOT = 'http://localhost:3200';
 
-const responseBody = res => res.body;
+// const responseBody = res => res.body;
 
 const requests = {
   get: url =>

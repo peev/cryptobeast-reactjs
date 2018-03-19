@@ -1,10 +1,11 @@
 import React from 'react';
 import { Grid } from 'material-ui';
 import { RegularCard, ItemGrid, Table } from 'components';
-import IconButton from '../../components/CustomButtons/IconButton';
-import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 import UpdatePortfolioModal from '../../components/Modal/UpdatePortfolio';
 import RegularButton from '../../components/CustomButtons/Button';
+
+// import IconButton from '../../components/CustomButtons/IconButton';
+// import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 
 const Settings = ({ ...props }) => {
   return (
@@ -43,7 +44,7 @@ const Settings = ({ ...props }) => {
         <div>
           <RegularButton color="primary" >
             Delete
-              </RegularButton>
+          </RegularButton>
         </div>
       </ItemGrid>
     </Grid>

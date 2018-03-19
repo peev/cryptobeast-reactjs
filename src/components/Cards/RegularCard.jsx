@@ -4,7 +4,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardActions,
+  // CardActions,
 } from 'material-ui';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
@@ -44,7 +44,7 @@ function RegularCard({ ...props }) {
         title={cardTitle}
         subheader={cardSubtitle}
       />
-      <CardContent>{content}</CardContent>  
+      <CardContent>{content}</CardContent>
     </Card>
   );
 }

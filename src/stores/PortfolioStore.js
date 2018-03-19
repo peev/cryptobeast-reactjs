@@ -9,6 +9,7 @@ class PortfolioStore {
   portfolios = {};
 
   constructor() {
+    // eslint-disable-next-line no-unused-expressions
     this.getPortfolios;
   }
 
@@ -38,12 +39,14 @@ class PortfolioStore {
   createPortfolio(portfolioName) {
     requester.Portfolio.create(portfolioName)
       .then(() => {
+        // eslint-disable-next-line no-unused-expressions
         this.getPortfolios;
       })
       .catch(this.onError);
   }
 
   @action.bound
+  // eslint-disable-next-line class-methods-use-this
   onError(err) {
     console.log(err);
   }

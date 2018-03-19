@@ -1,24 +1,25 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { TextField } from 'material-ui';
-import { Icon } from 'material-ui-icons';
 import { withStyles } from 'material-ui/styles';
 import Modal from 'material-ui/Modal';
-import axios from 'axios';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
-//import DatePicker from 'material-ui/DatePicker';
+import { inject, observer } from 'mobx-react';
+
 import SelectCurrency from '../../Selectors/SelectCurrency';
 import Button from '../../CustomButtons/Button';
 
-import { inject, observer } from 'mobx-react';
+// import { Icon } from 'material-ui-icons';
+// import PropTypes from 'prop-types';
+// import DatePicker from 'material-ui/DatePicker';
+
 
 const getModalStyle = () => {
   const top = 20;
   const left = 28;
   return {
     top: `${top}%`,
-    left: `${left}%`
+    left: `${left}%`,
   };
 };
 
@@ -37,19 +38,11 @@ const styles = theme => ({
 class AddInvestor extends React.Component {
   state = {
     open: false,
-
-    // founder: false,
-
-    // fullName: '',
-    // telephone: '',
-    // depAmount: 0,
-    // depUSDEquiv: 0,
-    // sharePriceAtEntry: 0,
-
-    // email: ' ',
-    // managementFee: 0,
-    // purchasedShares: 0
   };
+
+  componentWillUnmount() {
+    this.props.InvestorStore.reset();
+  }
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -86,9 +79,6 @@ class AddInvestor extends React.Component {
     this.props.InvestorStore.createNewInvestor();
   }
 
-  componentWillUnmount() {
-    this.props.InvestorStore.reset();
-  }
 
   render() {
     const { classes } = this.props;

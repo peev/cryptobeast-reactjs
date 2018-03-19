@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
-import { Menu } from 'material-ui-icons';
+// import { Menu } from 'material-ui-icons';
 import cx from 'classnames';
 import {
   withStyles,
@@ -12,7 +12,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  IconButton,
+  // IconButton,
 } from 'material-ui';
 
 import { HeaderLinks } from 'components';
@@ -25,8 +25,9 @@ const Sidebar = ({ ...props }) => {
     return props.location.pathname.indexOf(routeName) > -1;
   }
   const {
- classes, color, logo, image, logoText, routes 
-} = props;
+    classes, color, image, routes,
+    // logo, logoText,
+  } = props;
   const links = (
     <List className={classes.list}>
       {routes.map((prop, key) => {
@@ -59,17 +60,17 @@ const Sidebar = ({ ...props }) => {
       })}
     </List>
   );
-  const brand = (
-    <div className={classes.logo}>
-      <a href="#" className={classes.logoLink}>
-        {/* <a href="https://www.creative-tim.com" className={classes.logoLink}> */}
-        <div className={classes.logoImage}>
-          <img src={logo} alt="logo" className={classes.img} />
-        </div>
-        {logoText}
-      </a>
-    </div>
-  );
+  // const brand = (
+  //   <div className={classes.logo}>
+  //     <a href="#" className={classes.logoLink}>
+  //       {/* <a href="https://www.creative-tim.com" className={classes.logoLink}> */}
+  //       <div className={classes.logoImage}>
+  //         <img src={logo} alt="logo" className={classes.img} />
+  //       </div>
+  //       {logoText}
+  //     </a>
+  //   </div>
+  // );
   return (
     <div>
       <Hidden mdUp>

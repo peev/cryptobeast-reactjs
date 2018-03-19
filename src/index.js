@@ -15,7 +15,7 @@ import InvestorStore from './stores/InvestorStore';
 const stores = {
   PortfolioStore,
   AssetStore,
-  InvestorStore
+  InvestorStore,
 };
 
 // For easier debugging

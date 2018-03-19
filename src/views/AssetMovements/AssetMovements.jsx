@@ -1,15 +1,15 @@
-import React from "react";
-import { Grid, TextField } from "material-ui";
-import Paper from "material-ui/Paper";
-import classes from "./AssetMovements.css";
-import RegularButton from "../../components/CustomButtons/Button";
-import SelectCurrency from "../../components/Selectors/SelectCurrency";
-import SelectExchange from "../../components/Selectors/SelectExchange";
-import Textarea from "material-ui/Input/Textarea";
+import React from 'react';
+import { Grid } from 'material-ui';
+import Paper from 'material-ui/Paper';
+import Textarea from 'material-ui/Input/Textarea';
+import RegularButton from '../../components/CustomButtons/Button';
+import SelectCurrency from '../../components/Selectors/SelectCurrency';
+import SelectExchange from '../../components/Selectors/SelectExchange';
+// import classes from './AssetMovements.css';
 
 class AssetMovements extends React.Component {
   state = {
-    direction: "row"
+    direction: 'row',
   };
   render() {
     return (

@@ -13,6 +13,7 @@ const init = (db) => {
     account: accountData.init(db),
     market: marketData.init(db),
     investor: investorData.init(db),
+    // marketHistoryPrice: marketHistoryPriceData.init(db),
   };
 };
 

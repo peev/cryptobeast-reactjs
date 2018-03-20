@@ -22,24 +22,37 @@ const styles = theme => ({
 @observer
 class SelectCurrency extends React.Component {
   state = {
-    age: '',
     open: false,
-  };
-
-  handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
-
-  handleClose = () => {
-    this.setState({ open: false });
+    baseCurrencyId: '',
   };
 
   handleOpen = () => {
     this.setState({ open: true });
   };
 
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  handleChange = (event) => {
+    const index = event.target.value;
+    this.props.InvestorStore.selectBaseCurrency(index);
+
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
   render() {
-    const { classes } = this.props;
+    const { classes, InvestorStore } = this.props;
+    const baseCurrencies = InvestorStore.baseCurrencies.map((currency, i) => {
+      return (
+        <MenuItem
+          key={i}
+          value={i}
+        >
+          <em>{InvestorStore.baseCurrencies[i].MarketName}</em>
+        </MenuItem>
+      );
+    });
 
     return (
       <form autoComplete="off">
@@ -47,20 +60,19 @@ class SelectCurrency extends React.Component {
           <InputLabel htmlFor="controlled-open-select">
             Select Currency
           </InputLabel>
+
           <Select
             open={this.state.open}
-            value={this.state.age}
-            onClose={this.handleClose}
+            value={this.state.baseCurrencyId}
             onOpen={this.handleOpen}
+            onClose={this.handleClose}
             onChange={this.handleChange}
             inputProps={{
-              name: 'age',
+              name: 'baseCurrencyId',
               id: 'controlled-open-select',
             }}
           >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
+            {baseCurrencies}
           </Select>
         </FormControl>
       </form>

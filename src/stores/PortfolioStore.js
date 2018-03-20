@@ -8,9 +8,15 @@ class PortfolioStore {
   @observable
   portfolios = {};
 
+  @observable
+  selectedPortfolioId = null;
+
+  @observable
+  selectedPortfolio = null;
+
   constructor() {
     // eslint-disable-next-line no-unused-expressions
-    this.getPortfolios;
+    this.getPortfolios; // gets portfolios at app init
   }
 
   @computed
@@ -21,6 +27,20 @@ class PortfolioStore {
   @computed get
   currentPortfolios() {
     return this.portfolios;
+  }
+
+  @action.bound
+  selectPortfolio(id, index) {
+    this.selectedPortfolioId = id;
+
+    // eslint-disable-next-line array-callback-return
+    Object.keys(this.portfolios).map((key) => {
+      // Returns only selected element
+      if (this.portfolios[key].id === id) {
+        this.selectedPortfolio = { ...this.portfolios[key] };
+      }
+    });
+    console.log(this.selectedPortfolio);
   }
 
   @computed get
@@ -40,7 +60,7 @@ class PortfolioStore {
     requester.Portfolio.create(portfolioName)
       .then(() => {
         // eslint-disable-next-line no-unused-expressions
-        this.getPortfolios;
+        this.getPortfolios; // gets new portfolios
       })
       .catch(this.onError);
   }

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Grid } from 'material-ui';
 import Paper from 'material-ui/Paper';
 
@@ -9,6 +8,7 @@ import SelectInvestor from '../../components/Selectors/SelectInvestor';
 import GenericTable from '../../components/GenericTable/GenericTable';
 import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
 
+// import PropTypes from 'prop-types';
 // test db
 // const { ipcRenderer } = window.require('electron');
 import './Investors.css';

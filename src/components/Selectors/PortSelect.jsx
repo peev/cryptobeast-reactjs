@@ -43,18 +43,23 @@ class ControlledOpenSelect extends React.Component {
   };
 
   handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value }); // 'selectedPortfolioId: event.target.value' does same as above
+    const { value, index } = event.target;
+    // const index = event.target.index;
+    this.props.PortfolioStore.selectPortfolio(value, index);
+
+    this.setState({ [event.target.name]: value }); // 'selectedPortfolioId: event.target.value' does same as above
   };
 
   render() {
     const { classes, PortfolioStore } = this.props;
 
     const portfoliosToShow = Object.keys(PortfolioStore.portfolios)
-      .map((port) => {
+      .map((port, i) => {
         return (
           <MenuItem
             key={PortfolioStore.portfolios[port].id}
             value={PortfolioStore.portfolios[port].id}
+            index={i}
           >
             <em>{PortfolioStore.portfolios[port].name}</em>
           </MenuItem>
@@ -67,7 +72,7 @@ class ControlledOpenSelect extends React.Component {
       <form autoComplete="off">
 
         <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="controlled-open-select" stlye={{color:'#FFF'}}>Select Portfolio</InputLabel>
+          <InputLabel htmlFor="controlled-open-select" stlye={{ color: '#FFF' }}>Select Portfolio</InputLabel>
 
           <Select
             open={this.state.open}

@@ -53,7 +53,7 @@ const defaultFont = {
   lineHeight: '1.5em',
 };
 // OUR STYLES FROM CRYPTOBEAST!
-const navBackgroundColor = '#303F9F';
+const navBackgroundColor = '#22252f';
 const textPrimary = '#212121';
 const textSecondary = '#757575';
 const whiteBackground = '#FFF';

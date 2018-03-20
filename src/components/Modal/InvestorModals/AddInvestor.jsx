@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField } from 'material-ui';
+import { Input } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
@@ -8,6 +8,7 @@ import { inject, observer } from 'mobx-react';
 
 import SelectCurrency from '../../Selectors/SelectCurrency';
 import Button from '../../CustomButtons/Button';
+import modalStyle from '../../../variables/styles/modalStyle';
 
 // import { Icon } from 'material-ui-icons';
 // import PropTypes from 'prop-types';
@@ -31,8 +32,13 @@ const styles = theme => ({
     padding: theme.spacing.unit * 4,
   }
 });
+// const stylesMain = {
+//   display: 'flex',
+//   // justify: 'flex-end',
+//   // alignItems: 'center',
+// };
 
-@inject('InvestorStore')
+@inject('InvestorStore', 'PortfolioStore')
 @observer
 class AddInvestor extends React.Component {
   state = {
@@ -48,48 +54,48 @@ class AddInvestor extends React.Component {
   };
 
   handleClose = () => {
+    this.props.InvestorStore.reset();
+
     this.setState({ open: false });
   };
 
   handleRequests = propertyType => (event) => {
     event.preventDefault();
-    this.props.InvestorStore.setInvestorValues(propertyType, event.target.value);
+    const { InvestorStore } = this.props;
+
+    InvestorStore.handleEmptyFields;
+
+    const inputValue = event.target.value;
+    InvestorStore.setInvestorValues(propertyType, inputValue);
   }
 
   handleFounder = name => (event) => {
     this.setState({ [name]: event.target.checked });
-    this.props.InvestorStore.setFounder();
+    this.props.InvestorStore.setIsFounder();
   };
-
-  // handleFullName = ev => this.props.InvestorStore.setFullName(ev.target.value);
-  // handleEmail = ev => this.props.InvestorStore.setEmail(ev.target.value);
-  // handleTelephone = ev => this.props.InvestorStore.setTelephone(ev.target.value);
-  handleDateOfEntry = ev => this.props.InvestorStore.setDateOfEntry(ev.target.value);
-  handleDepositedCurrency = (ev) => {
-    this.props.InvestorStore.setDepositedCurrency(ev.target.value);
-    // handleDepositUsdEquiv = ev => this.props.InvestorStore.setDepositUsdEquiv(ev.target.value);
-    // handleManagementFee = ev => this.props.InvestorStore.setManagementFee(ev.target.value);
-    // handleSharePriceAtEntryDate = ev => this.props.InvestorStore.setSharePriceAtEntryDate(ev.target.value);
-  };
-  handleDepositedAmount = ev => this.props.InvestorStore.setDepositedAmount(ev.target.value);
-  handlePurchasedShares = ev => this.props.InvestorStore.setPurchasedShares(ev.target.value);
 
   handleSave = () => {
-    this.props.InvestorStore.createNewInvestor();
+    const { PortfolioStore, InvestorStore } = this.props;
+    // InvestorStore.handleEmptyFields;
+
+    if (InvestorStore.areFieldsEmpty === false) {
+      InvestorStore.createNewInvestor(PortfolioStore.selectedPortfolioId);
+      this.handleClose();
+    }
   }
 
 
   render() {
-    const { classes } = this.props;
+    const { classes, InvestorStore } = this.props;
 
     return (
       <div>
         <div>
           <Button onClick={this.handleOpen} color="primary">
-            {' '}
             Add new investor
           </Button>
         </div>
+
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
@@ -100,87 +106,116 @@ class AddInvestor extends React.Component {
             className={classes.paper}
             onSubmit={() => this.handleSave}
           >
-            <Typography
-              variant="title"
-              id="modal-title"
-              style={{ fontSize: '18px', fontWeight: '400' }}
+            <div
+            // stystylesMain
+            // className={modalStyle.investorContainer}
+            // FIXME: needs classes
             >
-              Add a new investor
+              <Typography
+                variant="title"
+                id="modal-title"
+                style={{ fontSize: '18px', fontWeight: '400' }}
+              >
+                Add a new investor
+              </Typography>
+
+              <div>
+                Founder
               <Checkbox
-                checked={this.state.founder}
-                onChange={this.handleFounder('founder')}
-                color="primary"
-              />
-            </Typography>
-            <div className={classes.flex}>
-              <div style={{ display: 'inline-block', marginRight: '10px' }}>
-                <TextField
-                  placeholder="Full name"
-                  onChange={this.handleRequests('fullName')}
-                />
-                <br />
-                <TextField
-                  placeholder="Telephone"
-                  onChange={this.handleRequests('telephone')}
-                />
-                <br />
-                <TextField
-                  placeholder="Depositet Amount"
-                  onChange={this.handleRequests('depositedAmount')}
-                />
-                <br />
-                <TextField
-                  placeholder="Deposited USD Equiv."
-                // TODO
-                />
-                <br />
-                <TextField placeholder="Share price at entry Date" />
-              </div>
-              <div style={{ display: 'inline-block' }}>
-                <TextField
-                  placeholder="Email Adress"
-                  onChange={this.handleRequests('email')}
-                />
-                <br />
-                <TextField
-                  placeholder="Date of Entry"
-                // TODO
-                />
-
-                <br />
-
-                <SelectCurrency />
-
-                <TextField
-                  placeholder="Management Fee %"
-                // TODO
-                />
-                <br />
-                <TextField
-                  placeholder="Purchased Shares"
-                // TODO
+                  onChange={this.handleFounder('founder')}
+                  color="primary"
                 />
               </div>
             </div>
 
-            <br />
+            <div className={classes.flex}>
+              <div>
+                <Input
+                  placeholder="Full name"
+                  onChange={this.handleRequests('fullName')}
+                  className={classes.input}
+                />
 
-            <Button
-              style={{ display: 'inline-flex' }}
-              onClick={this.handleClose}
-              color="primary"
-            >
-              Cancel
-            </Button>
-            <Button
-              style={{ display: 'inline-flex' }}
-              onClick={this.handleSave}
-              color="primary"
-              type="submit"
-            >
-              {' '}
-              Save
-            </Button>
+                <Input
+                  type="number"
+                  placeholder="Telephone"
+                  onChange={this.handleRequests('telephone')}
+                  className={classes.input}
+                />
+
+                <Input
+                  type="number"
+                  placeholder="Deposited Amount"
+                  onChange={this.handleRequests('depositedAmount')}
+                  className={classes.input}
+                />
+
+                <Input
+                  placeholder="Deposited USD Equiv."
+                  className={classes.input}
+                  value={InvestorStore.depositUsdEquiv}
+                />
+
+                <Input
+                  placeholder="Share price at entry Date"
+                  value={InvestorStore.sharePriceAtEntryDate}
+                  className={classes.input}
+                />
+              </div>
+
+              <div style={{ display: 'inline-block' }}>
+                <Input
+                  type="email"
+                  placeholder="Email Address"
+                  onChange={this.handleRequests('email')}
+                  className={classes.input}
+                />
+
+                <Input
+                  type="date"
+                  placeholder="Date of Entry"
+                  onChange={this.handleRequests('dateOfEntry')}
+                  className={classes.input}
+                />
+
+                <SelectCurrency />
+
+                <Input
+                  type="number"
+                  placeholder="Management Fee %"
+                  value={InvestorStore.values.managementFee}
+                  onChange={this.handleRequests('managementFee')}
+                  className={classes.input}
+                />
+
+                <Input
+                  type="number"
+                  value={InvestorStore.purchasedShares}
+                  placeholder="Purchased Shares"
+                  className={classes.input}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Button
+                style={{ display: 'inline-flex' }}
+                onClick={this.handleClose}
+                color="primary"
+              >
+                Cancel
+              </Button>
+
+              <Button
+                style={{ display: 'inline-flex' }}
+                onClick={this.handleSave}
+                color="primary"
+                type="submit"
+                // disabled={InvestorStore.disabledSaveButton}
+              >
+                Save
+              </Button>
+            </div>
           </div>
         </Modal>
       </div>
@@ -192,6 +227,6 @@ class AddInvestor extends React.Component {
 //   classes: PropTypes.object,
 // };
 
-const AddInvestorWrapped = withStyles(styles)(AddInvestor);
+const AddInvestorWrapped = withStyles(styles, modalStyle)(AddInvestor);
 
 export default AddInvestorWrapped;

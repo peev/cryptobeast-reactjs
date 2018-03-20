@@ -1,23 +1,35 @@
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
 class InvestorStore {
   @observable
   values = {
-    founder: false,
+    isFounder: false,
     fullName: '',
     email: '',
     telephone: '',
     dateOfEntry: '',
-    depositedAmount: 0,
-    depositUsdEquiv: 0,
-    managementFee: 0,
-    sharePriceAtEntryDate: 0,
-    purchasedShares: 0,
+    depositedAmount: '',
+    depositUsdEquiv: '',
+    managementFee: '',
+    sharePriceAtEntryDate: '',
+    purchasedShares: '',
   }
 
   @observable
-  depositedCurrency = [];
+  depositedCurrency = {};
+
+  @observable
+  baseCurrencies = [];
+
+  @observable
+  selectedBaseCurrency = null;
+
+  @observable
+  disabledSaveButton = true;
+
+  @observable
+  areFieldsEmpty = true;
 
   constructor() {
     requester.Market.getCurrencies()
@@ -25,81 +37,122 @@ class InvestorStore {
       .catch(this.onError);
   }
 
-  @action
-  setFounder() {
-    this.values.founder = !this.values.founder;
+  @computed
+  get depositUsdEquiv() {
+    if (this.selectedBaseCurrency) {
+      const calculatedDepositUsdEquiv = this.values.depositedAmount * this.selectedBaseCurrency.Last;
+      this.values.depositUsdEquiv = calculatedDepositUsdEquiv;
+      return calculatedDepositUsdEquiv;
+    }
   }
 
-  @action.bound
-  setInvestorValues(propertyType, newValue) {
-    switch (this.values[propertyType]) {
-      case 'depositedAmount':
-        this.values[propertyType] = parseInt(newValue, 10);
-        break;
-      case 'depositUsdEquiv':
-        this.values[propertyType] = parseInt(newValue, 10);
-        break;
-      case 'managementFee':
-        this.values[propertyType] = parseInt(newValue, 10);
-        break;
-      case 'sharePriceAtEntryDate':
-        this.values[propertyType] = parseInt(newValue, 10);
-        break;
-      case 'purchasedShares':
-        this.values[propertyType] = parseInt(newValue, 10);
-        break;
-      default:
-        // this.values[propertyType] = newValue;
-        break;
+  @computed
+  get sharePriceAtEntryDate() {
+    if (this.selectedBaseCurrency) {
+      const calculatedSharePriceAtEntryDate = this.selectedBaseCurrency.BaseVolume;
+      this.values.sharePriceAtEntryDate = calculatedSharePriceAtEntryDate;
+      return calculatedSharePriceAtEntryDate;
     }
+  }
+
+  @computed
+  get purchasedShares() {
+    // console.log((this.depositedAmount > 0))
+    if (this.selectedBaseCurrency) {
+      const calculatedPurchasedShares = this.selectedBaseCurrency.BaseVolume / this.values.depositedAmount;
+      this.values.purchasedShares = calculatedPurchasedShares;
+      return calculatedPurchasedShares;
+    }
+  }
+
+  @action
+  setIsFounder() {
+    this.values.isFounder = !this.values.isFounder;
+  }
+
+  @action
+  selectBaseCurrency(index) {
+    this.selectedBaseCurrency = this.baseCurrencies[index];
+    console.log(this.selectedBaseCurrency);
+  }
+
+  @action
+  setInvestorValues(propertyType, newValue) {
+    if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
+      console.log('handleRequests --- managementFee');
+      return;
+    }
+    // all properties are send as string !!!
     this.values[propertyType] = newValue;
 
-    console.log('store----', this.values[propertyType], newValue);
-    console.log('store----', this.values);
+    console.log('store >>> setInvestorValues', this.values[propertyType], newValue);
+    console.log('store >>> setInvestorValues', this.values);
   }
 
-  @action.bound
-  onGetBaseCurrencies(result) {
-    this.depositedCurrency = [...result.data];
-  }
-
-  @action.bound
-  createNewInvestor() {
-    const currentDate = Date.now();
-
+  @action
+  createNewInvestor(id) {
     const newInvestor = {
-      isFounder: this.values.founder,
+      portfolioId: id,
+      isFounder: this.values.isFounder,
       fullName: this.values.fullName,
       email: this.values.email,
       telephone: this.values.telephone,
-      // dateOfEntry: this.values.dateOfEntry,
-      dateOfEntry: currentDate, // FIXME: for testing
+      dateOfEntry: this.values.dateOfEntry,
       managementFee: this.values.managementFee,
       purchasedShares: this.values.purchasedShares,
     };
 
-    requester.Investor.create(newInvestor)
+    requester.Investor.add(newInvestor)
       .then((result) => {
+        // TODO: Something with result
         console.log(result);
       })
       .catch(this.onError);
   }
 
+  @computed
+  get handleEmptyFields() {
+    const currentInvestor = this.values;
+    const arrayOfValues = Object.values(currentInvestor);
+    const filteredArray = arrayOfValues.filter(value => value === '');
+
+    if (filteredArray.length === 0) {
+      this.areFieldsEmpty = false;
+      this.disabledSaveButton = false;
+    }
+  }
+
+  // @computed
+  //  checkFields(obj) {
+
+  // }
+
   @action.bound
   reset() {
-    this.values.founder = false;
+    console.log(this.values);
+    this.values.isFounder = false;
     this.values.fullName = '';
     this.values.email = '';
     this.values.telephone = '';
     this.values.dateOfEntry = '';
-    this.values.depositedAmount = 0;
-    this.values.depositUsdEquiv = 0;
-    this.values.managementFee = 0;
-    this.values.sharePriceAtEntryDate = 0;
-    this.values.purchasedShares = 0;
+    this.values.depositedAmount = '';
+    this.values.depositUsdEquiv = '';
+    this.values.managementFee = '';
+    this.values.sharePriceAtEntryDate = '';
+    this.values.purchasedShares = '';
+
+    this.selectedBaseCurrency = null;
+    this.areFieldsEmpty = true;
+    this.disabledSaveButton = true;
   }
 
   @action.bound
+  onGetBaseCurrencies(result) {
+    this.baseCurrencies = result.data;
+  }
+
+  @action.bound
+  // eslint-disable-next-line class-methods-use-this
   onError(err) {
     console.log(err);
   }

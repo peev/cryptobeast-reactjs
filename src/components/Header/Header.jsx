@@ -36,8 +36,7 @@ class Header extends Component {
         className={classes.container}
         style={{
           borderBottom: '2px solid #00BCD4',
-          backgroundColor: '#303F9F',
-          color: 'white',
+         
         }}
       >
         <div className={classes.flex}>

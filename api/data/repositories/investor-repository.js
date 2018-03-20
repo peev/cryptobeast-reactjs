@@ -5,7 +5,7 @@ const init = (db) => {
       email: request.email,
       telephone: request.telephone,
       dateOfEntry: request.dateOfEntry,
-      isFounder: request.telephone,
+      isFounder: request.isFounder,
       managementFee: request.managementFee,
       purchasedShares: request.purchasedShares,
     };

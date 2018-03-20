@@ -55,7 +55,7 @@ class SelectCurrency extends React.Component {
     });
 
     return (
-      <form autoComplete="off">
+      <div autoComplete="off">
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
           <InputLabel htmlFor="controlled-open-select">
             Select Currency
@@ -75,7 +75,7 @@ class SelectCurrency extends React.Component {
             {baseCurrencies}
           </Select>
         </FormControl>
-      </form>
+      </div>
     );
   }
 }

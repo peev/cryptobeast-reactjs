@@ -4,16 +4,16 @@ import requester from '../services/requester';
 class InvestorStore {
   @observable
   values = {
-    founder: false,
+    isFounder: false,
     fullName: '',
     email: '',
     telephone: '',
     dateOfEntry: '',
-    depositedAmount: 0,
-    depositUsdEquiv: 0,
-    managementFee: 0,
-    sharePriceAtEntryDate: 0,
-    purchasedShares: 0,
+    depositedAmount: '',
+    depositUsdEquiv: '',
+    managementFee: '',
+    sharePriceAtEntryDate: '',
+    purchasedShares: '',
   }
 
   @observable
@@ -25,6 +25,12 @@ class InvestorStore {
   @observable
   selectedBaseCurrency = null;
 
+  @observable
+  disabledSaveButton = true;
+
+  @observable
+  areFieldsEmpty = true;
+
   constructor() {
     requester.Market.getCurrencies()
       .then(this.onGetBaseCurrencies)
@@ -34,14 +40,18 @@ class InvestorStore {
   @computed
   get depositUsdEquiv() {
     if (this.selectedBaseCurrency) {
-      return this.values.depositedAmount * this.selectedBaseCurrency.Last;
+      const calculatedDepositUsdEquiv = this.values.depositedAmount * this.selectedBaseCurrency.Last;
+      this.values.depositUsdEquiv = calculatedDepositUsdEquiv;
+      return calculatedDepositUsdEquiv;
     }
   }
 
   @computed
   get sharePriceAtEntryDate() {
     if (this.selectedBaseCurrency) {
-      return this.selectedBaseCurrency.BaseVolume;
+      const calculatedSharePriceAtEntryDate = this.selectedBaseCurrency.BaseVolume;
+      this.values.sharePriceAtEntryDate = calculatedSharePriceAtEntryDate;
+      return calculatedSharePriceAtEntryDate;
     }
   }
 
@@ -49,13 +59,15 @@ class InvestorStore {
   get purchasedShares() {
     // console.log((this.depositedAmount > 0))
     if (this.selectedBaseCurrency) {
-      return this.selectedBaseCurrency.BaseVolume - this.values.depositedAmount;
+      const calculatedPurchasedShares = this.selectedBaseCurrency.BaseVolume / this.values.depositedAmount;
+      this.values.purchasedShares = calculatedPurchasedShares;
+      return calculatedPurchasedShares;
     }
   }
 
   @action
-  setFounder() {
-    this.values.founder = !this.values.founder;
+  setIsFounder() {
+    this.values.isFounder = !this.values.isFounder;
   }
 
   @action
@@ -66,6 +78,10 @@ class InvestorStore {
 
   @action
   setInvestorValues(propertyType, newValue) {
+    if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
+      console.log('handleRequests --- managementFee');
+      return;
+    }
     // all properties are send as string !!!
     this.values[propertyType] = newValue;
 
@@ -77,7 +93,7 @@ class InvestorStore {
   createNewInvestor(id) {
     const newInvestor = {
       portfolioId: id,
-      isFounder: this.values.founder,
+      isFounder: this.values.isFounder,
       fullName: this.values.fullName,
       email: this.values.email,
       telephone: this.values.telephone,
@@ -94,21 +110,40 @@ class InvestorStore {
       .catch(this.onError);
   }
 
+  @computed
+  get handleEmptyFields() {
+    const currentInvestor = this.values;
+    const arrayOfValues = Object.values(currentInvestor);
+    const filteredArray = arrayOfValues.filter(value => value === '');
+
+    if (filteredArray.length === 0) {
+      this.areFieldsEmpty = false;
+      this.disabledSaveButton = false;
+    }
+  }
+
+  // @computed
+  //  checkFields(obj) {
+
+  // }
+
   @action.bound
   reset() {
     console.log(this.values);
-    this.values.founder = false;
+    this.values.isFounder = false;
     this.values.fullName = '';
     this.values.email = '';
     this.values.telephone = '';
     this.values.dateOfEntry = '';
-    this.values.depositedAmount = 0;
-    this.values.depositUsdEquiv = 0;
-    this.values.managementFee = 0;
-    this.values.sharePriceAtEntryDate = 0;
-    this.values.purchasedShares = 0;
+    this.values.depositedAmount = '';
+    this.values.depositUsdEquiv = '';
+    this.values.managementFee = '';
+    this.values.sharePriceAtEntryDate = '';
+    this.values.purchasedShares = '';
 
     this.selectedBaseCurrency = null;
+    this.areFieldsEmpty = true;
+    this.disabledSaveButton = true;
   }
 
   @action.bound

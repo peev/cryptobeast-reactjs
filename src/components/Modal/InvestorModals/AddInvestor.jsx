@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, Input } from 'material-ui';
+import { Input } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
@@ -43,7 +43,6 @@ const styles = theme => ({
 class AddInvestor extends React.Component {
   state = {
     open: false,
-    managementFeeValue: '',
   };
 
   componentWillUnmount() {
@@ -62,31 +61,31 @@ class AddInvestor extends React.Component {
 
   handleRequests = propertyType => (event) => {
     event.preventDefault();
+    const { InvestorStore } = this.props;
+
+    InvestorStore.handleEmptyFields;
+
     const inputValue = event.target.value;
-
-    if (propertyType === 'managementFee' && (inputValue < 0 || inputValue > 100)) {
-      console.log('handleRequests --- managementFee');
-      return this.setState({ managementFeeValue: '' });
-    }
-
-    this.props.InvestorStore.setInvestorValues(propertyType, inputValue);
+    InvestorStore.setInvestorValues(propertyType, inputValue);
   }
 
   handleFounder = name => (event) => {
     this.setState({ [name]: event.target.checked });
-    this.props.InvestorStore.setFounder();
+    this.props.InvestorStore.setIsFounder();
   };
 
   handleSave = () => {
-    const { selectedPortfolioId } = this.props.PortfolioStore;
-    this.props.InvestorStore.createNewInvestor(selectedPortfolioId);
+    const { PortfolioStore, InvestorStore } = this.props;
+    // InvestorStore.handleEmptyFields;
 
-    this.handleClose();
+    if (InvestorStore.areFieldsEmpty === false) {
+      InvestorStore.createNewInvestor(PortfolioStore.selectedPortfolioId);
+      this.handleClose();
+    }
   }
 
 
   render() {
-    const { managementFeeValue } = this.state;
     const { classes, InvestorStore } = this.props;
 
     return (
@@ -181,15 +180,19 @@ class AddInvestor extends React.Component {
 
                 <SelectCurrency />
 
-                <TextField
+                <Input
+                  type="number"
                   placeholder="Management Fee %"
-                  // value={managementFeeValue}
+                  value={InvestorStore.values.managementFee}
                   onChange={this.handleRequests('managementFee')}
+                  className={classes.input}
                 />
 
-                <TextField
+                <Input
+                  type="number"
                   value={InvestorStore.purchasedShares}
                   placeholder="Purchased Shares"
+                  className={classes.input}
                 />
               </div>
             </div>
@@ -208,6 +211,7 @@ class AddInvestor extends React.Component {
                 onClick={this.handleSave}
                 color="primary"
                 type="submit"
+                // disabled={InvestorStore.disabledSaveButton}
               >
                 Save
               </Button>

@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     available: {
       type: DataTypes.DOUBLE,
+      allowNull: true,
     },
     pending: {
       type: DataTypes.DOUBLE,
@@ -30,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     origin: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   });
 };

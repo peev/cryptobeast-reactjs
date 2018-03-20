@@ -5,11 +5,14 @@ const attachTo = (app, data) => {
   const investorController = require('./investor-controller')(data);
 
   router
-    .get('/all', (req, res) => {
-      return investorController.getAllInvestor(req, res);
+    .post('/add', (req, res) => {
+      return investorController.addInvestorToPortfolio(req, res);
     })
-    .post('/create', (req, res) => {
-      return investorController.createInvestor(req, res);
+    .put('/update', (req, res) => {
+      return investorController.updateInvestor(req, res);
+    })
+    .delete('/delete', (req, res) => {
+      return investorController.removeInvestorFromPortfolio(req, res);
     });
 
   app.use('/investor', router);

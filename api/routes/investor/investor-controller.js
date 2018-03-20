@@ -1,18 +1,21 @@
 const investorController = (repository) => {
-  const getAllInvestor = (req, res) => {
-    repository.investor.getAll()
-      .then((response) => {
-        res.status(200).send(response);
+  const addInvestorToPortfolio = (req, res) => {
+    const investorData = req.body;
+    repository.investor.addInvestor(investorData)
+      .then(() => {
+        console.log('\naddNewInvestor response: ', investorData);
+        res.status(200).send(investorData);
       })
       .catch((error) => {
-        res.json(error);
+        return res.json(error);
       });
   };
 
-  const createInvestor = (req, res) => {
+  const updateInvestor = (req, res) => {
+    // const id = req.params.id;
     const investorData = req.body;
 
-    repository.investor.create(investorData)
+    repository.investor.update(investorData)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -21,9 +24,19 @@ const investorController = (repository) => {
       });
   };
 
+  const removeInvestorFromPortfolio = (req, res) => {
+    const requestData = req.body;
+    repository.investor.removeInvestor(requestData)
+      .then(result => responseHandler(res, result))
+      .catch((error) => {
+        return res.json(error);
+      });
+  };
+
   return {
-    getAllInvestor,
-    createInvestor,
+    addInvestorToPortfolio,
+    updateInvestor,
+    removeInvestorFromPortfolio,
   };
 };
 

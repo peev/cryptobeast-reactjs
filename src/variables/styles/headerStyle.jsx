@@ -40,7 +40,7 @@ const headerStyle = theme => ({
     flex: '0',
     display: 'inline-flex',
     padding: '10px',
-    marginTop: '1%',
+    color: 'white',
   },
   title: {
     ...defaultFont,

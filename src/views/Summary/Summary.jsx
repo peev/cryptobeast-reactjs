@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles, Grid } from 'material-ui';
-import summaryStyle from 'variables/styles/summaryStyle';
+import React from "react";
+import PropTypes from "prop-types";
+import { withStyles, Grid } from "material-ui";
+import summaryStyle from "variables/styles/summaryStyle";
 
-import { inject, observer } from 'mobx-react';
+import { inject, observer } from "mobx-react";
 
-import CreatePortfolio from '../../components/Modal/CreatePortfolio';
-import './Summary.css';
-
+import CreatePortfolio from "../../components/Modal/CreatePortfolio";
+import "./Summary.css";
+import InvestorCard from "../../components/CustomElements/InvestorCard";
 // react plugin for creating charts
 // import ChartistGraph from 'react-chartist';
 // import {
@@ -28,20 +28,19 @@ import './Summary.css';
 // } from 'variables/charts';
 // import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
 
-
-@inject('PortfolioStore')
+@inject("PortfolioStore")
 @observer
 class Summary extends React.Component {
   state = {
     value: 0,
-    inputName: '',
+    inputName: ""
   };
 
   handleChange = (event, value) => {
     this.setState({ value });
   };
 
-  handleChangeIndex = (index) => {
+  handleChangeIndex = index => {
     this.setState({ value: index });
   };
 
@@ -50,20 +49,23 @@ class Summary extends React.Component {
     let createPortfolio;
     let other;
 
-    if (!PortfolioStore.portfolios.hasOwnProperty('0')) {
+    if (!PortfolioStore.portfolios.hasOwnProperty("0")) {
       createPortfolio = (
         <div className="createPortfolio">
-          <p>You currently have no portfolio to display. Please create a portfolio to start</p>
+          <p>
+            You currently have no portfolio to display. Please create a
+            portfolio to start
+          </p>
           <CreatePortfolio />
         </div>
-      )
+      );
     } else {
       other = <p>Summary is working</p>;
     }
 
     return (
       <div className="Summary">
-        <Grid >
+        <Grid>
           {createPortfolio}
           {other}
           {/* <AddInvestorWrapped /> */}
@@ -74,7 +76,7 @@ class Summary extends React.Component {
 }
 
 Summary.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(summaryStyle)(Summary);

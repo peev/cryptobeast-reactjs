@@ -2,13 +2,14 @@
 // // // Modal Style
 // #############################
 
-const modalStyle = {
+const addInvestorModalStyle = {
   investorContainer: {
     display: 'flex',
+    backgroundColor: 'green',
   },
   investorFields: {
     margin: '0 -20px 0',
   }
 };
 
-export default modalStyle;
+export default addInvestorModalStyle;

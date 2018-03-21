@@ -8,7 +8,7 @@ import { inject, observer } from 'mobx-react';
 
 import SelectCurrency from '../../Selectors/SelectCurrency';
 import Button from '../../CustomButtons/Button';
-import modalStyle from '../../../variables/styles/modalStyle';
+import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
 
 // import { Icon } from 'material-ui-icons';
 // import PropTypes from 'prop-types';
@@ -26,17 +26,36 @@ const getModalStyle = () => {
 const styles = theme => ({
   paper: {
     position: 'absolute',
+    display: 'flex',
+    flexDirection: 'column',
     minWidth: '100px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
     padding: theme.spacing.unit * 4,
+  },
+  container: {
+    display: 'flex',
+    marginBottom: '25px',
+    // flexDirection: 'column',
+    // backgroundColor: 'green',
+  },
+  nestedElementLeft: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginRight: '20px',
+  },
+  nestedElementRight: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  headerContainer: {
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    marginBottom: '20px',
   }
 });
-// const stylesMain = {
-//   display: 'flex',
-//   // justify: 'flex-end',
-//   // alignItems: 'center',
-// };
+
 
 @inject('InvestorStore', 'PortfolioStore')
 @observer
@@ -107,7 +126,8 @@ class AddInvestor extends React.Component {
             onSubmit={() => this.handleSave}
           >
             <div
-            // stystylesMain
+              className={classes.headerContainer}
+            // stylesMain
             // className={modalStyle.investorContainer}
             // FIXME: needs classes
             >
@@ -128,8 +148,8 @@ class AddInvestor extends React.Component {
               </div>
             </div>
 
-            <div className={classes.flex}>
-              <div>
+            <div className={classes.container}>
+              <div className={classes.nestedElementLeft}>
                 <Input
                   placeholder="Full name"
                   onChange={this.handleRequests('fullName')}
@@ -163,7 +183,7 @@ class AddInvestor extends React.Component {
                 />
               </div>
 
-              <div style={{ display: 'inline-block' }}>
+              <div className={classes.nestedElementRight}>
                 <Input
                   type="email"
                   placeholder="Email Address"
@@ -211,7 +231,7 @@ class AddInvestor extends React.Component {
                 onClick={this.handleSave}
                 color="primary"
                 type="submit"
-                // disabled={InvestorStore.disabledSaveButton}
+              // disabled={InvestorStore.disabledSaveButton}
               >
                 Save
               </Button>
@@ -227,6 +247,6 @@ class AddInvestor extends React.Component {
 //   classes: PropTypes.object,
 // };
 
-const AddInvestorWrapped = withStyles(styles, modalStyle)(AddInvestor);
+const AddInvestorWrapped = withStyles(styles, addInvestorModalStyle)(AddInvestor);
 
 export default AddInvestorWrapped;

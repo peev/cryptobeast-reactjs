@@ -16,6 +16,7 @@ const init = () => {
   db.Account = sequelize.import(path.join(__dirname, '/models/account.js'));
   db.Asset = sequelize.import(path.join(__dirname, '/models/asset.js'));
   db.Investor = sequelize.import(path.join(__dirname, '/models/investor.js'));
+  db.MarketSummary = sequelize.import(path.join(__dirname, '/models/marketSummary.js'));
 
   // TODO: Configure model connections here (one-to-one/one-to-many etc.)
   db.Portfolio.hasMany(db.Account);

@@ -87,7 +87,10 @@ class Investors extends React.Component {
                 "Transaction date",
                 "Amount (USD)",
                 "Share price",
-                "New/Liquidated Shares"
+                "New/Liquidated Shares",
+                "tatata",
+                "tatatatata",
+                "tatatata,"
               ]}
               tableData={[
                 [
@@ -97,7 +100,9 @@ class Investors extends React.Component {
                   "Transaction Dates",
                   "1$",
                   "1$",
-                  "Test"
+                  "Test",
+                  "test",
+                  ""
                 ]
               ]}
             />

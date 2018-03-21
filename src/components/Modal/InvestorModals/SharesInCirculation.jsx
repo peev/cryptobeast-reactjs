@@ -9,8 +9,6 @@ import Typography from "material-ui/Typography";
 import InvestorCard from "../../CustomElements/InvestorCard";
 import Button from "../../CustomButtons/Button";
 
-
-
 const getModalStyle = () => {
   const top = 50;
   const left = 50;

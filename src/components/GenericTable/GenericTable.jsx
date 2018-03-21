@@ -10,6 +10,9 @@ import {
 
 import PropTypes from "prop-types";
 
+import { ModeEdit } from "material-ui-icons";
+import  IconButton  from '../CustomButtons/IconButton';
+
 import tableStyle from "../../variables/styles/tableStyle";
 
 function GenericTable({ ...props }) {
@@ -38,6 +41,16 @@ function GenericTable({ ...props }) {
             return (
               <TableRow key={key}>
                 {prop.map((prop, key) => {
+                  if (8 <= key) {
+                    return (
+                      <TableCell className={classes.tableCell} key={key}>
+                        {prop}
+                        <IconButton color="primary">
+                          <ModeEdit style={{ color: "#FFF" }} />
+                        </IconButton>
+                      </TableCell>
+                    );
+                  }
                   return (
                     <TableCell className={classes.tableCell} key={key}>
                       {prop}

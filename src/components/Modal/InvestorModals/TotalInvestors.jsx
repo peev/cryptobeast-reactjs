@@ -8,8 +8,7 @@ import Modal from "material-ui/Modal";
 import Typography from "material-ui/Typography";
 import InvestorCard from "../../CustomElements/InvestorCard";
 import Button from "../../CustomButtons/Button";
-
-
+import GenericTable from "../../GenericTable/GenericTable";
 
 const getModalStyle = () => {
   const top = 50;
@@ -52,7 +51,7 @@ class TotalInvestors extends React.Component {
     return (
       <div>
         <div>
-          <Button onClick={this.handleOpen} style={{ padding: '0' }}  >
+          <Button onClick={this.handleOpen} style={{ padding: "0" }}>
             <InvestorCard headerText="10" labelText="Total Investors" />
           </Button>
         </div>
@@ -61,7 +60,7 @@ class TotalInvestors extends React.Component {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <form
+          <div
             style={getModalStyle()}
             className={classes.paper}
             onSubmit={() => this.handleSave}
@@ -73,38 +72,37 @@ class TotalInvestors extends React.Component {
             >
               Investor Deposit
             </Typography>
-            <div className={classes.flex}>
-              <div style={{ display: "inline-block", marginRight: "10px" }}>
-                <TextField
-                  placeholder="Amount"
-                  // inputRef={el =>this.name = el}
-                />
-                <br />
-                <TextField
-                  placeholder="Share Price at Entry Date"
-                  // inputRef={el =>this.name = el}
-                />
-              </div>
-              <div style={{ display: "inline-block" }}>
-                <TextField
-                  placeholder="Transaction Date "
-                  // inputRef={el =>this.name = el}
-                />
-                <br />
-                <TextField placeholder="Purchased Shares" />
-              </div>
-            </div>
+
+            <GenericTable
+              tableHead={[
+                "ID",
+                "Name",
+                "Shares",
+                "VALUE(USD)",
+                "WEIGH.Entry Price",
+                "Fee Potential",
+                "Profit",
+                "Edit"
+              ]}
+              tableData={[
+                "1",
+                "TestingName",
+                "Today",
+                "135",
+                "1455.25",
+                "$ 2.65",
+                "523.48",
+                "180%",
+                " "
+              ]}
+            />
 
             <br />
 
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleSave} color="primary" type="submit">
-              {" "}
-              Save
-            </Button>
-          </form>
+          </div>
         </Modal>
       </div>
     );

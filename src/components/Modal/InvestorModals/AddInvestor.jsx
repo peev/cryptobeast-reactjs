@@ -36,8 +36,6 @@ const styles = theme => ({
   container: {
     display: 'flex',
     marginBottom: '25px',
-    // flexDirection: 'column',
-    // backgroundColor: 'green',
   },
   nestedElementLeft: {
     display: 'flex',
@@ -53,7 +51,7 @@ const styles = theme => ({
     alignItems: 'baseline',
     justifyContent: 'space-between',
     marginBottom: '20px',
-  }
+  },
 });
 
 
@@ -63,10 +61,6 @@ class AddInvestor extends React.Component {
   state = {
     open: false,
   };
-
-  componentWillUnmount() {
-    this.props.InvestorStore.reset();
-  }
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -154,6 +148,7 @@ class AddInvestor extends React.Component {
                   placeholder="Full name"
                   onChange={this.handleRequests('fullName')}
                   className={classes.input}
+                  autoFocus
                 />
 
                 <Input

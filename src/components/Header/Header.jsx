@@ -11,7 +11,7 @@ import {
 } from 'material-ui';
 
 // import cx from 'classnames';
-import ControlledOpenSelect from '../Selectors/PortSelect';
+import PortfolioSelect from '../Selectors/PortSelect';
 import buttonStyle from '../../variables/styles/buttonStyle';
 import headerStyle from '../../variables/styles/headerStyle.jsx';
 
@@ -36,7 +36,7 @@ class Header extends Component {
         className={classes.container}
         style={{
           borderBottom: '2px solid #00BCD4',
-         
+
         }}
       >
         <div className={classes.flex}>
@@ -44,7 +44,7 @@ class Header extends Component {
           <Hidden mdUp>
             <IconButton
               className={classes.appResponsive}
-              style={{color: '#FFF'}}
+              style={{ color: '#FFF' }}
               aria-label="open drawer"
               onClick={this.props.handleDrawerToggle}
             >
@@ -54,7 +54,7 @@ class Header extends Component {
         </div>
 
         <div className={classes.flex}>
-          <ControlledOpenSelect />
+          <PortfolioSelect />
 
           {/* <CreatePortfolio /> */}
           {/* <UpdatePortfolioModal />

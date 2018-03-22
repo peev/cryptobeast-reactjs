@@ -3,30 +3,44 @@ import requester from '../services/requester';
 
 class PortfolioStore {
   @observable
-  selectedPortfolio = null;
+  selectedPortfolio;
 
   @observable
-  portfolios = {};
+  portfolios;
 
   @observable
-  selectedPortfolioId = null;
+  selectedPortfolioId;
 
   @observable
-  selectedPortfolio = null;
+  selectedPortfolio;
+
+  @observable
+  currentPortfolioAssets;
 
   constructor() {
+    this.selectedPortfolio = null;
+    this.portfolios = {};
+    this.selectedPortfolioId = null;
+    this.selectedPortfolio = null;
+    this.currentPortfolioAssets = null;
+
     // eslint-disable-next-line no-unused-expressions
-    this.getPortfolios; // gets portfolios at app init
+    this.getPortfolios(); // gets portfolios at app init
   }
 
   @computed
-  getLength() {
+  get getLength() {
     return Object.keys(this.portfolios).length;
   }
 
-  @computed get
-  currentPortfolios() {
+  @computed
+  get getAllPortfolios() {
     return this.portfolios;
+  }
+
+  @action
+  currentPortfolio() {
+    return Promise.resolve(this.selectedPortfolio);
   }
 
   @action.bound
@@ -40,10 +54,9 @@ class PortfolioStore {
         this.selectedPortfolio = { ...this.portfolios[key] };
       }
     });
-    console.log(this.selectedPortfolio);
   }
 
-  @computed get
+  @action
   getPortfolios() {
     return requester.Portfolio.getAll()
       .then(this.onPortfoliosLoaded)
@@ -60,7 +73,7 @@ class PortfolioStore {
     requester.Portfolio.create(portfolioName)
       .then(() => {
         // eslint-disable-next-line no-unused-expressions
-        this.getPortfolios; // gets new portfolios
+        this.getPortfolios(); // gets new portfolios
       })
       .catch(this.onError);
   }

@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextField } from 'material-ui';
+import { Input } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
+import { inject, observer } from 'mobx-react';
+
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 // import { Icon } from 'material-ui-icons';
@@ -28,38 +30,77 @@ const styles = theme => ({
   button: {
     float: 'right',
     display: 'inline-flex',
+  },
+  container: {
+    display: 'flex',
+    marginBottom: '25px',
+  },
+  selectorWrapper: {
+    width: '47.5%',
+  },
+  nestedElementLeft: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginRight: '20px',
+  },
+  nestedElementRight: {
+    display: 'flex',
+    flexDirection: 'column',
+    // marginTop: '55px',
+  },
+  headerContainer: {
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    marginBottom: '20px',
   }
 });
 
+@inject('InvestorStore', 'PortfolioStore')
+@observer
 class EditInvestor extends React.Component {
   state = {
     open: false,
-
-    fullName: '',
-    telephone: '',
-
-    email: ' ',
-    managementFee: 0,
   };
 
   handleOpen = () => {
     this.setState({ open: true });
   };
+
   handleClose = () => {
+    this.props.InvestorStore.resetEdit();
     this.setState({ open: false });
   };
+
   handleChange = name => (event) => {
+    console.log(this.props.InvestorStore.selectedInvestor);
     this.setState({ [name]: event.target.checked });
   };
 
+  handleEditRequests = propertyType => (event) => {
+    event.preventDefault();
+    const { InvestorStore } = this.props;
+
+    const inputValue = event.target.value;
+    InvestorStore.editInvestorValues(propertyType, inputValue);
+  }
+
+  handleSave = () => {
+    const { InvestorStore, PortfolioStore } = this.props;
+    // InvestorStore.handleEmptyFields;
+
+    InvestorStore.updateCurrentInvestor(InvestorStore.selectedInvestor.id);
+    PortfolioStore.getPortfolios();
+    this.handleClose();
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, InvestorStore } = this.props;
 
     return (
       <div>
         <div>
           <Button onClick={this.handleOpen} color="primary">
-            {' '}
             Edit Investor
           </Button>
         </div>
@@ -80,48 +121,66 @@ class EditInvestor extends React.Component {
             >
               Edit Investor
             </Typography>
-            <div className={classes.flex}>
-              <div style={{ display: 'inline-block', marginRight: '10px' }}>
-                <SelectInvestor />
-                <TextField
+
+            <div className={classes.selectorWrapper}>
+              <SelectInvestor />
+            </div>
+            <div className={classes.container}>
+
+              <div className={classes.nestedElementLeft}>
+
+                <Input
+                  type="text"
                   placeholder="Full name"
-                // inputRef={el =>this.name = el}
+                  value={InvestorStore.editedValues.fullName}
+                  onChange={this.handleEditRequests('fullName')}
+                  className={classes.input}
+                  autoFocus
                 />
-                <br />
-                <TextField
+
+                <Input
+                  type="number"
                   placeholder="Telephone"
-                // inputRef={el =>this.name = el}
+                  value={InvestorStore.editedValues.telephone}
+                  onChange={this.handleEditRequests('telephone')}
+                  className={classes.input}
                 />
               </div>
-              <div style={{ display: 'inline-block' }}>
-                <TextField
-                  placeholder="Email Adress "
-                // inputRef={el =>this.name = el}
+
+              <div className={classes.nestedElementRight}>
+                <Input
+                  type="email"
+                  placeholder="Email Address"
+                  value={InvestorStore.editedValues.email}
+                  onChange={this.handleEditRequests('email')}
+                  className={classes.input}
                 />
-                <br />
-                <TextField
+
+                <Input
+                  type="number"
                   placeholder="Management Fee %"
-                // inputRef={el =>this.name = el}
+                  value={InvestorStore.editedValues.managementFee}
+                  onChange={this.handleEditRequests('managementFee')}
+                  className={classes.input}
                 />
               </div>
             </div>
+            <div>
+              <Button
+                onClick={this.handleClose}
+                color="primary"
+              >
+                Cancel
+              </Button>
 
-            <br />
-
-            <Button
-              onClick={this.handleClose}
-              color="primary"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={this.handleSave}
-              color="primary"
-              type="submit"
-            >
-              {' '}
-              Save
-            </Button>
+              <Button
+                onClick={this.handleSave}
+                color="primary"
+                type="submit"
+              >
+                Save
+              </Button>
+            </div>
           </form>
         </Modal>
       </div>

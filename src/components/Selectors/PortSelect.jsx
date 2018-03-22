@@ -52,16 +52,17 @@ class ControlledOpenSelect extends React.Component {
 
   render() {
     const { classes, PortfolioStore } = this.props;
+    const currentPortfolios = PortfolioStore.getAllPortfolios;
 
-    const portfoliosToShow = Object.keys(PortfolioStore.portfolios)
+    const portfoliosToShow = Object.keys(currentPortfolios)
       .map((port, i) => {
         return (
           <MenuItem
-            key={PortfolioStore.portfolios[port].id}
-            value={PortfolioStore.portfolios[port].id}
+            key={currentPortfolios[port].id}
+            value={currentPortfolios[port].id}
             index={i}
           >
-            <em>{PortfolioStore.portfolios[port].name}</em>
+            <em>{currentPortfolios[port].name}</em>
           </MenuItem>
         );
       });
@@ -86,7 +87,6 @@ class ControlledOpenSelect extends React.Component {
             }}
           >
             {portfoliosToShow.length > 0 ? portfoliosToShow : <MenuItem value={1}><em>None</em></MenuItem>}
-            {/* {portfoliosToShow} */}
           </Select>
         </FormControl>
       </form>

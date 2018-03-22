@@ -27,17 +27,9 @@ const init = (db) => {
     return ret;
   };
 
-  const updateInvestor = (request) => {
-    return db.Investor.update({
-      fullName: request.fullName,
-      email: request.email,
-      telephone: request.telephone,
-      dateOfEntry: request.dateOfEntry,
-      isFounder: request.telephone,
-      managementFee: request.managementFee,
-      purchasedShares: request.purchasedShares,
-    }, {
-      where: { id: request.investorId },
+  const update = (id, data) => {
+    return db.Investor.update(data, {
+      where: { id: id },
     });
   };
 
@@ -66,7 +58,7 @@ const init = (db) => {
 
   return {
     addInvestor,
-    updateInvestor,
+    update,
     removeInvestor,
   };
 };

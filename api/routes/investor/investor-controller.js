@@ -12,10 +12,10 @@ const investorController = (repository) => {
   };
 
   const updateInvestor = (req, res) => {
-    // const id = req.params.id;
+    const id = req.params.id;
     const investorData = req.body;
 
-    repository.investor.update(investorData)
+    repository.investor.update(id, investorData)
       .then((response) => {
         res.status(200).send(response);
       })

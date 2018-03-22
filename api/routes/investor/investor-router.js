@@ -8,7 +8,7 @@ const attachTo = (app, data) => {
     .post('/add', (req, res) => {
       return investorController.addInvestorToPortfolio(req, res);
     })
-    .put('/update', (req, res) => {
+    .put('/update/:id', (req, res) => {
       return investorController.updateInvestor(req, res);
     })
     .delete('/delete', (req, res) => {

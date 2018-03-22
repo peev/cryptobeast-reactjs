@@ -1,13 +1,13 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles, Grid } from "material-ui";
-import summaryStyle from "variables/styles/summaryStyle";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles, Grid } from 'material-ui';
+import summaryStyle from 'variables/styles/summaryStyle';
 
-import { inject, observer } from "mobx-react";
+import { inject, observer } from 'mobx-react';
 
-import CreatePortfolio from "../../components/Modal/CreatePortfolio";
-import "./Summary.css";
-import InvestorCard from "../../components/CustomElements/InvestorCard";
+import CreatePortfolio from '../../components/Modal/CreatePortfolio';
+import './Summary.css';
+// import InvestorCard from '../../components/CustomElements/InvestorCard';
 // react plugin for creating charts
 // import ChartistGraph from 'react-chartist';
 // import {
@@ -28,28 +28,28 @@ import InvestorCard from "../../components/CustomElements/InvestorCard";
 // } from 'variables/charts';
 // import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
 
-@inject("PortfolioStore")
+@inject('PortfolioStore')
 @observer
 class Summary extends React.Component {
   state = {
     value: 0,
-    inputName: ""
+    inputName: '',
   };
 
   handleChange = (event, value) => {
     this.setState({ value });
   };
 
-  handleChangeIndex = index => {
+  handleChangeIndex = (index) => {
     this.setState({ value: index });
   };
 
   render() {
     const { PortfolioStore } = this.props;
     let createPortfolio;
-    let other;
+    let summaryContent;
 
-    if (!PortfolioStore.portfolios.hasOwnProperty("0")) {
+    if (!PortfolioStore.portfolios.hasOwnProperty('0')) {
       createPortfolio = (
         <div className="createPortfolio">
           <p>
@@ -60,14 +60,14 @@ class Summary extends React.Component {
         </div>
       );
     } else {
-      other = <p>Summary is working</p>;
+      summaryContent = <p>Summary is working</p>;
     }
 
     return (
       <div className="Summary">
         <Grid>
           {createPortfolio}
-          {other}
+          {summaryContent}
           {/* <AddInvestorWrapped /> */}
         </Grid>
       </div>

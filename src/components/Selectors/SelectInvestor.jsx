@@ -6,6 +6,8 @@ import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 
+import { inject, observer } from 'mobx-react';
+
 const styles = theme => ({
   button: {
     display: 'block',
@@ -17,14 +19,23 @@ const styles = theme => ({
   },
 });
 
+@inject('InvestorStore')
+@observer
 class SelectCurrency extends React.Component {
   state = {
-    age: '',
+    selectedInvestorId: '',
     open: false,
   };
 
+  componentDidMount() {
+    this.props.InvestorStore.getPortfolio();
+  }
+
   handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+    const { value, index } = event.target;
+
+    this.props.InvestorStore.selectInvestor(value, index);
+    this.setState({ [event.target.name]: value });
   };
 
   handleClose = () => {
@@ -36,31 +47,48 @@ class SelectCurrency extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, InvestorStore } = this.props;
+    let investorsToShow = [];
+
+    if (InvestorStore.selectedInvestors) {
+      const investors = InvestorStore.selectedInvestors;
+
+      investors.forEach((element, i) => {
+        investorsToShow.push((
+          <MenuItem
+            key={element.id}
+            value={element.id}
+            index={i}
+          >
+            <em>{element.fullName}</em>
+          </MenuItem>
+        ));
+      });
+    }
 
     return (
-      <form autoComplete="off">
+      <div autoComplete="off" >
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
           <InputLabel htmlFor="controlled-open-select">
             Investor
           </InputLabel>
           <Select
             open={this.state.open}
-            value={this.state.age}
+            value={this.state.selectedInvestorId}
             onClose={this.handleClose}
             onOpen={this.handleOpen}
             onChange={this.handleChange}
             inputProps={{
-              name: 'age',
+              name: 'selectedInvestorId',
               id: 'controlled-open-select',
             }}
           >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
+
+            {investorsToShow.length > 0 ? investorsToShow : <MenuItem value={1}><em>None</em></MenuItem>}
+
           </Select>
         </FormControl>
-      </form>
+      </div>
     );
   }
 }

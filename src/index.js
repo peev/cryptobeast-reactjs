@@ -7,20 +7,25 @@ import 'assets/css/material-dashboard-react.css';
 
 import indexRoutes from 'routes/index.jsx';
 
+import { configure } from 'mobx';
 import { Provider } from 'mobx-react';
 import PortfolioStore from './stores/PortfolioStore';
 import AssetStore from './stores/AssetStore';
 import InvestorStore from './stores/InvestorStore';
+import MarketStore from './stores/MarketStore';
 
 const stores = {
   PortfolioStore,
   AssetStore,
   InvestorStore,
+  MarketStore,
 };
 
 // For easier debugging
 // eslint-disable-next-line no-underscore-dangle
 window._____APP_STATE_____ = stores;
+
+configure({ enforceActions: true });
 
 const hist = createBrowserHistory();
 

@@ -25,7 +25,7 @@ const init = () => {
   db.Portfolio.hasMany(db.Asset);
   db.Asset.belongsTo(db.Portfolio);
 
-  db.Portfolio.hasMany(db.Investor, { as: 'investors' });
+  db.Portfolio.hasMany(db.Investor);
   // db.todo.belongsTo(db.user);
   // db.user.hasMany(db.todo);
 

@@ -17,6 +17,7 @@ const init = () => {
   db.Asset = sequelize.import(path.join(__dirname, '/models/asset.js'));
   db.Investor = sequelize.import(path.join(__dirname, '/models/investor.js'));
   db.MarketSummary = sequelize.import(path.join(__dirname, '/models/marketSummary.js'));
+  db.Ticker = sequelize.import(path.join(__dirname, '/models/ticker.js'));
 
   // TODO: Configure model connections here (one-to-one/one-to-many etc.)
   db.Portfolio.hasMany(db.Account);
@@ -25,7 +26,7 @@ const init = () => {
   db.Portfolio.hasMany(db.Asset);
   db.Asset.belongsTo(db.Portfolio);
 
-  db.Portfolio.hasMany(db.Investor, { as: 'investors' });
+  db.Portfolio.hasMany(db.Investor);
   // db.todo.belongsTo(db.user);
   // db.user.hasMany(db.todo);
 

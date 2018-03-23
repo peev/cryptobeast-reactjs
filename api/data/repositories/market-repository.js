@@ -38,8 +38,6 @@ const init = (db) => {
     return db.MarketSummary.findAll({
       where: { MarketName: ['USDT-ETH', 'USDT-BTC'] },
     });
-
-    return Promise.resolve(dummyBaseCurrencies);
   };
 
   return {

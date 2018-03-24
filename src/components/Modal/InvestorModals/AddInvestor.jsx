@@ -79,7 +79,7 @@ class AddInvestor extends React.Component {
     InvestorStore.handleEmptyFields;
 
     const inputValue = event.target.value;
-    InvestorStore.setInvestorValues(propertyType, inputValue);
+    InvestorStore.setNewInvestorValues(propertyType, inputValue);
   }
 
   handleFounder = name => (event) => {
@@ -119,12 +119,7 @@ class AddInvestor extends React.Component {
             className={classes.paper}
             onSubmit={() => this.handleSave}
           >
-            <div
-              className={classes.headerContainer}
-            // stylesMain
-            // className={modalStyle.investorContainer}
-            // FIXME: needs classes
-            >
+            <div className={classes.headerContainer}>
               <Typography
                 variant="title"
                 id="modal-title"

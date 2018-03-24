@@ -1,3 +1,5 @@
+const { responseHandler } = require('../utilities/response-handler');
+
 const investorController = (repository) => {
   const addInvestorToPortfolio = (req, res) => {
     const investorData = req.body;
@@ -24,6 +26,19 @@ const investorController = (repository) => {
       });
   };
 
+  const depositInvestor = (req, res) => {
+    const id = req.params.id;
+    const investorData = req.body;
+
+    repository.investor.deposit(id, investorData)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        return res.json(error);
+      });
+  };
+
   const removeInvestorFromPortfolio = (req, res) => {
     const requestData = req.body;
     repository.investor.removeInvestor(requestData)
@@ -36,6 +51,7 @@ const investorController = (repository) => {
   return {
     addInvestorToPortfolio,
     updateInvestor,
+    depositInvestor,
     removeInvestorFromPortfolio,
   };
 };

@@ -11,8 +11,8 @@ import SelectInvestor from '../../Selectors/SelectInvestor';
 // import { Icon } from 'material-ui-icons';
 
 const getModalStyle = () => {
-  const top = 50;
-  const left = 50;
+  const top = 20;
+  const left = 28;
   return {
     top: `${top}%`,
     left: `${left}%`,
@@ -73,23 +73,21 @@ class EditInvestor extends React.Component {
   };
 
   handleChange = name => (event) => {
-    console.log(this.props.InvestorStore.selectedInvestor);
     this.setState({ [name]: event.target.checked });
   };
 
   handleEditRequests = propertyType => (event) => {
     event.preventDefault();
-    const { InvestorStore } = this.props;
 
     const inputValue = event.target.value;
-    InvestorStore.editInvestorValues(propertyType, inputValue);
+    this.props.InvestorStore.setInvestorEditingValues(propertyType, inputValue);
   }
 
   handleSave = () => {
     const { InvestorStore, PortfolioStore } = this.props;
     // InvestorStore.handleEmptyFields;
 
-    InvestorStore.updateCurrentInvestor(InvestorStore.selectedInvestor.id);
+    InvestorStore.createNewDepositInvestor(InvestorStore.selectedInvestor.id);
     PortfolioStore.getPortfolios();
     this.handleClose();
   }
@@ -165,6 +163,7 @@ class EditInvestor extends React.Component {
                 />
               </div>
             </div>
+
             <div>
               <Button
                 onClick={this.handleClose}

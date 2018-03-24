@@ -33,6 +33,22 @@ const init = (db) => {
     });
   };
 
+  const deposit = (id, data) => {
+    const amountToAdd = data.amount;
+    // return new Promise((resolve, reject) => {
+    //   db.Investor.findById(id)
+    //     .then((investor) => {
+    //       resolve(investor.increment('purchasedShares', { by: amountToAdd }));
+    //     });
+    // })
+    console.log(id, amountToAdd)
+    const foundInvestor = db.Investor.findById(id);
+
+    return foundInvestor.then((investor) => {
+      investor.increment('purchasedShares', { by: amountToAdd });
+    });
+  };
+
   const removeInvestor = (request) => {
     const portfolio = db.Portfolio.findById(request.portfolioId);
     const investor = db.Investor.findById(request.investorId);
@@ -59,6 +75,7 @@ const init = (db) => {
   return {
     addInvestor,
     update,
+    deposit,
     removeInvestor,
   };
 };

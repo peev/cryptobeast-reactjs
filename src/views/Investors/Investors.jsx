@@ -1,7 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 import { ItemGrid } from 'components';
-import { Grid, Button, Snackbar } from 'material-ui';
+import { Grid, Snackbar } from 'material-ui';
 import Paper from 'material-ui/Paper';
 
 import RegularButton from '../../components/CustomButtons/Button';
@@ -120,14 +120,6 @@ class Investors extends React.Component {
         </Grid>
         <Grid>
           <ItemGrid xs={12} sm={12} md={4}>
-            <Button
-              fullWidth
-              color="primary"
-              onClick={() => this.showNotification('br')}
-            >
-              Bottom Right
-            </Button>
-
             <Snackbar
               place="br"
               color="info"
@@ -137,8 +129,6 @@ class Investors extends React.Component {
               close
             />
           </ItemGrid>
-          <ItemGrid xs={12} sm={4} md={4}>center</ItemGrid>
-          <ItemGrid xs={12} sm={4} md={4}>right</ItemGrid>
         </Grid>
       </div>
     );

@@ -26,6 +26,14 @@ class InvestorStore {
   }
 
   @observable
+  newDepositValues = {
+    amount: '',
+    transactionDate: '',
+    sharePriceAtEntryDate: '',
+    purchasedShares: '',
+  }
+
+  @observable
   depositedCurrency;
 
   @observable
@@ -63,7 +71,7 @@ class InvestorStore {
       .then(this.onGetBaseCurrencies)
       .catch(this.onError);
 
-    // on reload makes calls !!!
+    // on component mount, this makes calls !!!
     // requester.Market.getSummaries()
     //   .then(this.onGetSummaries)
     //   .catch(this.onError);
@@ -71,7 +79,7 @@ class InvestorStore {
 
   @computed
   get depositUsdEquiv() {
-    if (this.selectedBaseCurrency) {
+    if (this.selectedBaseCurrency && this.values.depositedAmount) {
       const calculatedDepositUsdEquiv = this.values.depositedAmount * this.selectedBaseCurrency.Last;
       this.values.depositUsdEquiv = calculatedDepositUsdEquiv;
       return calculatedDepositUsdEquiv;
@@ -80,7 +88,7 @@ class InvestorStore {
 
   @computed
   get sharePriceAtEntryDate() {
-    if (this.selectedBaseCurrency) {
+    if (this.selectedBaseCurrency && this.values.depositedAmount) {
       const calculatedSharePriceAtEntryDate = this.selectedBaseCurrency.BaseVolume;
       this.values.sharePriceAtEntryDate = calculatedSharePriceAtEntryDate;
       return calculatedSharePriceAtEntryDate;
@@ -89,10 +97,48 @@ class InvestorStore {
 
   @computed
   get purchasedShares() {
-    if (this.selectedBaseCurrency) {
+    if (this.selectedBaseCurrency && this.values.depositedAmount) {
       const calculatedPurchasedShares = this.selectedBaseCurrency.BaseVolume / this.values.depositedAmount;
       this.values.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
+    }
+  }
+
+  @computed
+  get depositSharePriceAtEntryDate() {
+    if (this.selectedBaseCurrency && this.newDepositValues.amount) {
+      const calculatedPurchasedShares = this.selectedBaseCurrency.Last / this.newDepositValues.amount;
+      this.newDepositValues.sharePriceAtEntryDate = calculatedPurchasedShares;
+      return calculatedPurchasedShares;
+    }
+  }
+
+  @computed
+  get depositPurchasedShares() {
+    if (this.selectedBaseCurrency && this.newDepositValues.amount) {
+      const calculatedPurchasedShares = this.selectedBaseCurrency.BaseVolume / this.newDepositValues.amount;
+      this.newDepositValues.purchasedShares = calculatedPurchasedShares;
+      return calculatedPurchasedShares;
+    }
+  }
+
+  @computed
+  get handleEmptyFields() {
+    const currentInvestor = this.values;
+    const arrayOfValues = Object.values(currentInvestor);
+    const arrayOfKeys = Object.keys(currentInvestor);
+
+    console.log(currentInvestor);
+    console.log(arrayOfValues);
+    console.log(arrayOfKeys);
+
+    // filters all the input values and returns only empty once,
+    // skips only telephone (i !== 3), it is not required
+    const filteredArray = arrayOfValues.filter((value, i) => value === '' && i !== 3);
+
+    if (filteredArray.length === 0) {
+      this.areFieldsEmpty = false;
+      this.disabledSaveButton = false;
     }
   }
 
@@ -107,9 +153,13 @@ class InvestorStore {
   }
 
   @action
-  setInvestorValues(propertyType, newValue) {
+  getCurrentInvestor() {
+    return this.selectedInvestor;
+  }
+
+  @action
+  setNewInvestorValues(propertyType, newValue) {
     if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
-      console.log('handleRequests --- managementFee');
       return;
     }
     // all properties are send as string !!!
@@ -117,14 +167,19 @@ class InvestorStore {
   }
 
   @action
-  getCurrentInvestor() {
-    return this.selectedInvestor;
+  setInvestorEditingValues(propertyType, newValue) {
+    if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
+      return;
+    }
+    // all properties are send as string !!!
+    this.editedValues[propertyType] = newValue;
   }
 
   @action
-  editInvestorValues(propertyType, newValue) {
+  setNewDepositInvestorValues(propertyType, newValue) {
     // all properties are send as string !!!
-    this.editedValues[propertyType] = newValue;
+    this.newDepositValues[propertyType] = newValue;
+    console.log(this.newDepositValues)
   }
 
   @action
@@ -169,6 +224,20 @@ class InvestorStore {
   }
 
   @action
+  createNewDepositInvestor(id) {
+    const newDepositInvestor = {
+      amount: this.newDepositValues.amount,
+    };
+
+    requester.Investor.addDeposit(id, newDepositInvestor)
+      .then((result) => {
+        // TODO: Something with result
+        console.log(result);
+      })
+      .catch(this.onError);
+  }
+
+  @action
   updateCurrentInvestor(investorId) {
     const updatedValues = this.editedValues;
     const finalResult = {};
@@ -193,26 +262,6 @@ class InvestorStore {
         console.log(this.selectedInvestor);
       })
       .catch(this.onError);
-  }
-
-  @computed
-  get handleEmptyFields() {
-    const currentInvestor = this.values;
-    const arrayOfValues = Object.values(currentInvestor);
-    const arrayOfKeys = Object.keys(currentInvestor);
-
-    console.log(currentInvestor);
-    console.log(arrayOfValues);
-    console.log(arrayOfKeys);
-
-    // filters all the input values and returns only empty once,
-    // skips only telephone (i !== 3), it is not required
-    const filteredArray = arrayOfValues.filter((value, i) => value === '' && i !== 3);
-
-    if (filteredArray.length === 0) {
-      this.areFieldsEmpty = false;
-      this.disabledSaveButton = false;
-    }
   }
 
   @action
@@ -247,11 +296,20 @@ class InvestorStore {
 
   @action.bound
   resetEdit() {
-    console.log(this.values);
+    console.log(this.editedValues);
     this.editedValues.fullName = '';
     this.editedValues.email = '';
     this.editedValues.telephone = '';
     this.editedValues.managementFee = '';
+  }
+
+  @action.bound
+  resetDeposit() {
+    console.log(this.newDepositValues);
+    this.newDepositValues.amount = '';
+    this.newDepositValues.transactionDate = '';
+    this.newDepositValues.sharePriceAtEntryDate = '';
+    this.newDepositValues.purchasedShares = '';
   }
 
   @action.bound

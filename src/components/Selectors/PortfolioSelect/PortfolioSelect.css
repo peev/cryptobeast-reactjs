@@ -1,0 +1,38 @@
+/* ul:has(> li.headerListSelect) {
+  background-color: green;
+} */
+
+ul[class^="MuiList-root"] {
+  /* background-color: #22252f; */
+  padding: 0;
+}
+
+.headerListSelect {
+  margin-bottom: 16px;
+}
+
+.headerListSelect>div {
+  border-right: 1px solid #F6F6F6;
+}
+
+div div.headerListSelect>div:before {
+  /* no underline on hover */
+  content: none;
+}
+
+div.headerListSelect>div:after {
+  /* no underline on hover */
+  content: none;
+}
+
+.headerListSelect>div>div {
+  width: 200px;
+  height: 45px;
+  padding-left: 32px;
+  /* background-color: #22252f; */
+}
+
+.headerListSelect>div>svg {
+  padding-right: 10px;
+  fill: #F6F6F6;
+}

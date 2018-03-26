@@ -65,7 +65,7 @@ class App extends React.Component {
           <Header
             routes={appRoutes}
             handleDrawerToggle={this.handleDrawerToggle}
-            
+
             {...rest}
           />
 

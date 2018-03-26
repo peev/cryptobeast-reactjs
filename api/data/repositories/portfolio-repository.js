@@ -11,7 +11,8 @@ const init = (db) => {
 
   // With Eager loading of assets, accounts and investors
   const getAll = () => {
-    return db.Portfolio.findAll({ include: [db.Account] });
+    // return db.Portfolio.findAll();
+    return db.Portfolio.findAll({ include: [db.Account, db.Asset, db.Investor] });
   };
 
   const update = (request) => {

@@ -34,10 +34,8 @@ const styles = theme => ({
     padding: theme.spacing.unit * 4
   },
   container: {
-    display: "flex",
-    marginBottom: "25px"
-    // flexDirection: 'column',
-    // backgroundColor: 'green',
+    display: 'flex',
+    marginBottom: '25px',
   },
   nestedElementLeft: {
     display: "flex",
@@ -49,11 +47,11 @@ const styles = theme => ({
     flexDirection: "column"
   },
   headerContainer: {
-    display: "flex",
-    alignItems: "baseline",
-    justifyContent: "space-between",
-    marginBottom: "20px"
-  }
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    marginBottom: '20px',
+  },
 });
 
 @inject("InvestorStore", "PortfolioStore")
@@ -62,10 +60,6 @@ class AddInvestor extends React.Component {
   state = {
     open: false
   };
-
-  componentWillUnmount() {
-    this.props.InvestorStore.reset();
-  }
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -84,8 +78,8 @@ class AddInvestor extends React.Component {
     InvestorStore.handleEmptyFields;
 
     const inputValue = event.target.value;
-    InvestorStore.setInvestorValues(propertyType, inputValue);
-  };
+    InvestorStore.setNewInvestorValues(propertyType, inputValue);
+  }
 
   handleFounder = name => event => {
     this.setState({ [name]: event.target.checked });
@@ -123,12 +117,7 @@ class AddInvestor extends React.Component {
             className={classes.paper}
             onSubmit={() => this.handleSave}
           >
-            <div
-              className={classes.headerContainer}
-              // stylesMain
-              // className={modalStyle.investorContainer}
-              // FIXME: needs classes
-            >
+            <div className={classes.headerContainer}>
               <Typography
                 variant="title"
                 id="modal-title"
@@ -152,6 +141,7 @@ class AddInvestor extends React.Component {
                   placeholder="Full name"
                   onChange={this.handleRequests("fullName")}
                   className={classes.input}
+                  autoFocus
                 />
 
                 <Input

@@ -1,5 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
+import PortfolioStore from './PortfolioStore';
 
 class InvestorStore {
   @observable
@@ -17,29 +18,68 @@ class InvestorStore {
   }
 
   @observable
-  depositedCurrency = {};
+  editedValues = {
+    fullName: '',
+    email: '',
+    telephone: '',
+    managementFee: '',
+  }
 
   @observable
-  baseCurrencies = [];
+  newDepositValues = {
+    amount: '',
+    transactionDate: '',
+    sharePriceAtEntryDate: '',
+    purchasedShares: '',
+  }
 
   @observable
-  selectedBaseCurrency = null;
+  depositedCurrency;
 
   @observable
-  disabledSaveButton = true;
+  baseCurrencies;
 
   @observable
-  areFieldsEmpty = true;
+  selectedBaseCurrency;
+
+  @observable
+  disabledSaveButton;
+
+  @observable
+  areFieldsEmpty;
+
+  @observable
+  selectedInvestor;
+
+  @observable
+  selectedInvestors;
+
+  @observable
+  selectedInvestorId;
 
   constructor() {
+    this.depositedCurrency = {};
+    this.baseCurrencies = [];
+    this.selectedBaseCurrency = null;
+    this.disabledSaveButton = true;
+    this.areFieldsEmpty = true;
+    this.selectedInvestor = null;
+    this.selectedInvestors = [];
+
+
     requester.Market.getCurrencies()
       .then(this.onGetBaseCurrencies)
       .catch(this.onError);
+
+    // on component mount, this makes calls !!!
+    // requester.Market.getSummaries()
+    //   .then(this.onGetSummaries)
+    //   .catch(this.onError);
   }
 
   @computed
   get depositUsdEquiv() {
-    if (this.selectedBaseCurrency) {
+    if (this.selectedBaseCurrency && this.values.depositedAmount) {
       const calculatedDepositUsdEquiv = this.values.depositedAmount * this.selectedBaseCurrency.Last;
       this.values.depositUsdEquiv = calculatedDepositUsdEquiv;
       return calculatedDepositUsdEquiv;
@@ -48,7 +88,7 @@ class InvestorStore {
 
   @computed
   get sharePriceAtEntryDate() {
-    if (this.selectedBaseCurrency) {
+    if (this.selectedBaseCurrency && this.values.depositedAmount) {
       const calculatedSharePriceAtEntryDate = this.selectedBaseCurrency.BaseVolume;
       this.values.sharePriceAtEntryDate = calculatedSharePriceAtEntryDate;
       return calculatedSharePriceAtEntryDate;
@@ -57,11 +97,48 @@ class InvestorStore {
 
   @computed
   get purchasedShares() {
-    // console.log((this.depositedAmount > 0))
-    if (this.selectedBaseCurrency) {
+    if (this.selectedBaseCurrency && this.values.depositedAmount) {
       const calculatedPurchasedShares = this.selectedBaseCurrency.BaseVolume / this.values.depositedAmount;
       this.values.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
+    }
+  }
+
+  @computed
+  get depositSharePriceAtEntryDate() {
+    if (this.selectedBaseCurrency && this.newDepositValues.amount) {
+      const calculatedPurchasedShares = this.selectedBaseCurrency.Last / this.newDepositValues.amount;
+      this.newDepositValues.sharePriceAtEntryDate = calculatedPurchasedShares;
+      return calculatedPurchasedShares;
+    }
+  }
+
+  @computed
+  get depositPurchasedShares() {
+    if (this.selectedBaseCurrency && this.newDepositValues.amount) {
+      const calculatedPurchasedShares = this.selectedBaseCurrency.BaseVolume / this.newDepositValues.amount;
+      this.newDepositValues.purchasedShares = calculatedPurchasedShares;
+      return calculatedPurchasedShares;
+    }
+  }
+
+  @computed
+  get handleEmptyFields() {
+    const currentInvestor = this.values;
+    const arrayOfValues = Object.values(currentInvestor);
+    const arrayOfKeys = Object.keys(currentInvestor);
+
+    console.log(currentInvestor);
+    console.log(arrayOfValues);
+    console.log(arrayOfKeys);
+
+    // filters all the input values and returns only empty once,
+    // skips only telephone (i !== 3), it is not required
+    const filteredArray = arrayOfValues.filter((value, i) => value === '' && i !== 3);
+
+    if (filteredArray.length === 0) {
+      this.areFieldsEmpty = false;
+      this.disabledSaveButton = false;
     }
   }
 
@@ -73,20 +150,56 @@ class InvestorStore {
   @action
   selectBaseCurrency(index) {
     this.selectedBaseCurrency = this.baseCurrencies[index];
-    console.log(this.selectedBaseCurrency);
   }
 
   @action
-  setInvestorValues(propertyType, newValue) {
+  getCurrentInvestor() {
+    return this.selectedInvestor;
+  }
+
+  @action
+  setNewInvestorValues(propertyType, newValue) {
     if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
-      console.log('handleRequests --- managementFee');
       return;
     }
     // all properties are send as string !!!
     this.values[propertyType] = newValue;
+  }
 
-    console.log('store >>> setInvestorValues', this.values[propertyType], newValue);
-    console.log('store >>> setInvestorValues', this.values);
+  @action
+  setInvestorEditingValues(propertyType, newValue) {
+    if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
+      return;
+    }
+    // all properties are send as string !!!
+    this.editedValues[propertyType] = newValue;
+  }
+
+  @action
+  setNewDepositInvestorValues(propertyType, newValue) {
+    // all properties are send as string !!!
+    this.newDepositValues[propertyType] = newValue;
+    console.log(this.newDepositValues)
+  }
+
+  @action
+  selectInvestor(id, index) {
+    this.selectedInvestorId = id;
+
+    // selects the marked investor
+    this.selectedInvestors.find((element) => {
+      if (element.id === id) {
+        this.selectedInvestor = { ...element };
+      }
+    });
+
+    if (this.selectedInvestor) {
+      // sets the editing values for the current investor
+      this.editedValues.fullName = this.selectedInvestor.fullName;
+      this.editedValues.email = this.selectedInvestor.email;
+      this.editedValues.telephone = this.selectedInvestor.telephone;
+      this.editedValues.managementFee = this.selectedInvestor.managementFee;
+    }
   }
 
   @action
@@ -110,22 +223,57 @@ class InvestorStore {
       .catch(this.onError);
   }
 
-  @computed
-  get handleEmptyFields() {
-    const currentInvestor = this.values;
-    const arrayOfValues = Object.values(currentInvestor);
-    const filteredArray = arrayOfValues.filter(value => value === '');
+  @action
+  createNewDepositInvestor(id) {
+    const newDepositInvestor = {
+      amount: this.newDepositValues.amount,
+    };
 
-    if (filteredArray.length === 0) {
-      this.areFieldsEmpty = false;
-      this.disabledSaveButton = false;
-    }
+    requester.Investor.addDeposit(id, newDepositInvestor)
+      .then((result) => {
+        // TODO: Something with result
+        console.log(result);
+      })
+      .catch(this.onError);
   }
 
-  // @computed
-  //  checkFields(obj) {
+  @action
+  updateCurrentInvestor(investorId) {
+    const updatedValues = this.editedValues;
+    const finalResult = {};
 
-  // }
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key in updatedValues) {
+      if (updatedValues.hasOwnProperty(key) && (updatedValues[key] !== '')) {
+        finalResult[key] = updatedValues[key];
+      }
+    }
+
+    console.log(finalResult);
+    requester.Investor.update(investorId, finalResult)
+      .then((result) => {
+        // TODO: Something with result
+        console.log(result);
+        this.selectedInvestor.fullName = this.editedValues.fullName;
+        this.selectedInvestor.email = this.editedValues.email;
+        this.selectedInvestor.telephone = this.editedValues.telephone;
+        this.selectedInvestor.managementFee = this.editedValues.managementFee;
+        console.log(this.selectedInvestor);
+      })
+      .catch(this.onError);
+  }
+
+  @action
+  getPortfolio() {
+    PortfolioStore.currentPortfolio()
+      .then(action((portfolio) => {
+        if (portfolio) {
+          this.selectedPortfolioId = portfolio.id;
+          this.selectedInvestors = portfolio.investors;
+        }
+      }))
+  }
 
   @action.bound
   reset() {
@@ -147,9 +295,31 @@ class InvestorStore {
   }
 
   @action.bound
+  resetEdit() {
+    console.log(this.editedValues);
+    this.editedValues.fullName = '';
+    this.editedValues.email = '';
+    this.editedValues.telephone = '';
+    this.editedValues.managementFee = '';
+  }
+
+  @action.bound
+  resetDeposit() {
+    console.log(this.newDepositValues);
+    this.newDepositValues.amount = '';
+    this.newDepositValues.transactionDate = '';
+    this.newDepositValues.sharePriceAtEntryDate = '';
+    this.newDepositValues.purchasedShares = '';
+  }
+
+  @action.bound
   onGetBaseCurrencies(result) {
     this.baseCurrencies = result.data;
   }
+
+  @action.bound
+  // eslint-disable-next-line class-methods-use-this
+  onGetSummaries() { }
 
   @action.bound
   // eslint-disable-next-line class-methods-use-this

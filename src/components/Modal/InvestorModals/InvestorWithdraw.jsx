@@ -1,36 +1,36 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { TextField } from "material-ui";
-import { withStyles } from "material-ui/styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { TextField } from 'material-ui';
+import { withStyles } from 'material-ui/styles';
 
 // import { Icon } from 'material-ui-icons';
-import Modal from "material-ui/Modal";
-import Typography from "material-ui/Typography";
-import Button from "../../CustomButtons/Button";
-import SelectInvestor from "../../Selectors/SelectInvestor";
+// import Select from 'material-ui';
+import Modal from 'material-ui/Modal';
+import Typography from 'material-ui/Typography';
+import Button from '../../CustomButtons/Button';
+import SelectInvestor from '../../Selectors/SelectInvestor';
 // import SelectCurrency from "../../Selectors/SelectCurrency";
 
-
 const getModalStyle = () => {
-  const top = 50;
-  const left = 50;
+  const top = 20;
+  const left = 28;
   return {
     top: `${top}%`,
-    left: `${left}%`
+    left: `${left}%`,
   };
 };
 
 const styles = theme => ({
   paper: {
-    position: "absolute",
-    minWidth: "100px",
+    position: 'absolute',
+    minWidth: '100px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing.unit * 4,
   },
   button: {
-    float: "right",
-    display: "inline-flex"
+    float: 'right',
+    display: 'inline-flex',
   }
 });
 
@@ -45,7 +45,7 @@ class InvestorWithdraw extends React.Component {
   handleClose = () => {
     this.setState({ open: false });
   };
-  handleChange = name => event => {
+  handleChange = name => (event) => {
     this.setState({ [name]: event.target.checked });
   };
 
@@ -56,7 +56,7 @@ class InvestorWithdraw extends React.Component {
       <div>
         <div>
           <Button onClick={this.handleOpen} color="primary">
-           
+
             Investor Withdrawal
           </Button>
         </div>
@@ -73,28 +73,28 @@ class InvestorWithdraw extends React.Component {
             <Typography
               variant="title"
               id="modal-title"
-              style={{ fontSize: "18px", fontWeight: "400" }}
+              style={{ fontSize: '18px', fontWeight: '400' }}
             >
-              Investor Deposit
+              Investor Withdrawal
             </Typography>
             <div className={classes.flex}>
-              <div style={{ display: "inline-block", marginRight: "10px" }}>
+              <div style={{ display: 'inline-block', marginRight: '10px' }}>
                 <SelectInvestor />
                 <br />
                 <TextField
                   placeholder="Amount"
-                  // inputRef={el =>this.name = el}
+                // inputRef={el =>this.name = el}
                 />
                 <br />
                 <TextField
                   placeholder="Share Price at Entry Date"
-                  // inputRef={el =>this.name = el}
+                // inputRef={el =>this.name = el}
                 />
               </div>
-              <div style={{ display: "inline-block" }}>
+              <div style={{ display: 'inline-block' }}>
                 <TextField
                   placeholder="Transaction Date "
-                  // inputRef={el =>this.name = el}
+                // inputRef={el =>this.name = el}
                 />
                 <br />
                 <TextField placeholder="USD" />
@@ -111,7 +111,7 @@ class InvestorWithdraw extends React.Component {
               Cancel
             </Button>
             <Button onClick={this.handleSave} color="primary" type="submit">
-              {" "}
+              {' '}
               Save
             </Button>
           </form>

@@ -27,17 +27,25 @@ const init = (db) => {
     return ret;
   };
 
-  const updateInvestor = (request) => {
-    return db.Investor.update({
-      fullName: request.fullName,
-      email: request.email,
-      telephone: request.telephone,
-      dateOfEntry: request.dateOfEntry,
-      isFounder: request.telephone,
-      managementFee: request.managementFee,
-      purchasedShares: request.purchasedShares,
-    }, {
-      where: { id: request.investorId },
+  const update = (id, data) => {
+    return db.Investor.update(data, {
+      where: { id: id },
+    });
+  };
+
+  const deposit = (id, data) => {
+    const amountToAdd = data.amount;
+    // return new Promise((resolve, reject) => {
+    //   db.Investor.findById(id)
+    //     .then((investor) => {
+    //       resolve(investor.increment('purchasedShares', { by: amountToAdd }));
+    //     });
+    // })
+    console.log(id, amountToAdd)
+    const foundInvestor = db.Investor.findById(id);
+
+    return foundInvestor.then((investor) => {
+      investor.increment('purchasedShares', { by: amountToAdd });
     });
   };
 
@@ -66,7 +74,8 @@ const init = (db) => {
 
   return {
     addInvestor,
-    updateInvestor,
+    update,
+    deposit,
     removeInvestor,
   };
 };

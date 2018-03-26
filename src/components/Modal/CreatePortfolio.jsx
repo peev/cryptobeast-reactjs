@@ -50,8 +50,7 @@ class CreatePortfolio extends React.Component {
   handleSave = () => {
     const inputName = { name: this.name.value };
 
-    const { PortfolioStore } = this.props;
-    PortfolioStore.createPortfolio(inputName);
+    this.props.PortfolioStore.createPortfolio(inputName);
 
     this.setState({ open: false });
   };
@@ -62,8 +61,8 @@ class CreatePortfolio extends React.Component {
     return (
       <div>
         <Button onClick={this.handleOpen} color="primary">Create</Button>
-        <Modal
 
+        <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}

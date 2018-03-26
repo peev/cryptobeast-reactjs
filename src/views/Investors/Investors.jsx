@@ -1,5 +1,7 @@
 import React from 'react';
-import { Grid } from 'material-ui';
+// import PropTypes from 'prop-types';
+import { ItemGrid } from 'components';
+import { Grid, Snackbar } from 'material-ui';
 import Paper from 'material-ui/Paper';
 
 import RegularButton from '../../components/CustomButtons/Button';
@@ -16,15 +18,29 @@ import CurrentSharePriceWrapped from '../../components/Modal/InvestorModals/Curr
 import TotalUSDEquivWrapped from '../../components/Modal/InvestorModals/TotalUSDEquiv';
 
 const dropStyle = {
-  width: '100%'
+  width: '100%',
 };
 
 class Investors extends React.Component {
   state = {
-    // direction: 'row'
+    direction: 'row',
+    br: false,
     // justify: 'flex-end',
     // alignItems: 'center',
   };
+
+  showNotification(place) {
+    let x = [];
+    x[place] = true;
+    this.setState(x);
+    setTimeout(
+      () => {
+        x[place] = false;
+        this.setState(x);
+      },
+      6000,
+    );
+  }
 
   render() {
     // const { alignItems, direction, justify } = this.state;
@@ -60,14 +76,14 @@ class Investors extends React.Component {
                 <p>Current Share Price:</p>
               </Grid>
               <Grid item xs={3}>
-                <p>Shares Held:</p>
-                <p>Weighted entry price:</p>
-                <p>Current Share Price:</p>
+                <p>USD Equivalent:</p>
+                <p>BTC Equivalent:</p>
+                <p>ETH Equivalent:</p>
               </Grid>
               <Grid item xs={3}>
-                <p>Shares Held:</p>
-                <p>Weighted entry price:</p>
-                <p>Current Share Price:</p>
+                <p>Investment Period:</p>
+                <p>Profit:</p>
+                <p>Fee Potential:</p>
               </Grid>
             </Grid>
             <RegularButton color="primary">Export</RegularButton>
@@ -103,6 +119,18 @@ class Investors extends React.Component {
               ]}
             />
           </Paper>
+        </Grid>
+        <Grid>
+          <ItemGrid xs={12} sm={12} md={4}>
+            <Snackbar
+              place="br"
+              color="info"
+              message="This is a warning Message"
+              open={this.state.br}
+              closeNotification={() => this.setState({ br: false })}
+              close
+            />
+          </ItemGrid>
         </Grid>
       </div>
     );

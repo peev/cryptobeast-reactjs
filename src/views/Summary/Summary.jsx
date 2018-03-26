@@ -5,7 +5,7 @@ import summaryStyle from 'variables/styles/summaryStyle';
 
 import { inject, observer } from "mobx-react";
 import CreatePortfolio from "../../components/Modal/CreatePortfolio";
-import "./Summary.css";
+import "./Summary.css"
 // react plugin for creating charts
 // import ChartistGraph from 'react-chartist';
 // import {

@@ -7,7 +7,7 @@ import Modal from "material-ui/Modal";
 import Typography from "material-ui/Typography";
 import InvestorCard from "../../CustomElements/InvestorCard";
 import InvestorCardButton from "../../CustomButtons/InvestorCardButton";
-import Button from '../../CustomButtons/Button';
+import Button from "../../CustomButtons/Button";
 
 import GenericTable from "../../GenericTable/GenericTable";
 import buttonStyle from "../../../variables/styles/buttonStyle";
@@ -34,8 +34,7 @@ const styles = theme => ({
     display: "inline-flex"
   },
   card: {
-    width: "180px",
-
+    width: "180px"
   }
 });
 
@@ -57,9 +56,7 @@ class TotalInvestors extends React.Component {
     return (
       <div>
         <div>
-          <InvestorCardButton
-            onClick={this.handleOpen}
-          >
+          <InvestorCardButton onClick={this.handleOpen}>
             <InvestorCard headerText="10" labelText="Total Investors" />
           </InvestorCardButton>
         </div>
@@ -78,7 +75,7 @@ class TotalInvestors extends React.Component {
               id="modal-title"
               style={{ fontSize: "18px", fontWeight: "400" }}
             >
-              Investor Deposit
+              Total Investors
             </Typography>
 
             <GenericTable

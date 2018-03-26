@@ -34,9 +34,13 @@ const styles = theme => ({
 @inject('PortfolioStore')
 @observer
 class CreatePortfolio extends React.Component {
+  constructor() {
+    super();
+    this.name = null;
+  }
+
   state = {
     open: false,
-    name: '',
   };
 
   handleOpen = () => {

@@ -21,6 +21,7 @@ const styles = theme => ({
     float: 'left',
   },
   inputLabel: {
+    top: '17px',
     left: 'calc(100% - 189px)',
     color: '#F6F6F6',
     zIndex: '1',

@@ -9,6 +9,9 @@ import Typography from "material-ui/Typography";
 import InvestorCard from "../../CustomElements/InvestorCard";
 import Button from "../../CustomButtons/Button";
 
+import InvestorCardButton from "../../CustomButtons/InvestorCardButton";
+
+
 const getModalStyle = () => {
   const top = 50;
   const left = 50;
@@ -45,17 +48,17 @@ class TotalUSDEquiv extends React.Component {
   };
 
   render() {
-    const { classes, headerText, labelText } = this.props;
+    const { classes } = this.props;
 
     return (
       <div>
         <div>
-          <Button onClick={this.handleOpen} style={{ padding: "0" }}>
+          <InvestorCardButton onClick={this.handleOpen} >
             <InvestorCard
               headerText="$3.1k"
               labelText="Total USD Equivalent"
             />
-          </Button>
+          </InvestorCardButton>
         </div>
         <Modal
           aria-labelledby="simple-modal-title"

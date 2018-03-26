@@ -9,7 +9,7 @@ import Typography from "material-ui/Typography";
 import Button from "../../CustomButtons/Button";
 import SelectInvestor from "../../Selectors/SelectInvestor";
 import SelectCurrency from "../../Selectors/SelectCurrency";
-import Select from "material-ui";
+
 
 const getModalStyle = () => {
   const top = 50;

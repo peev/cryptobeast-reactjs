@@ -26,19 +26,17 @@ const Portfolio = {
     requests.get('/portfolio/all'),
   create: portfolioName =>
     requests.post('/portfolio/create', portfolioName),
-  update: (requestParams) =>
+  update: requestParams =>
     requests.put('/portfolio/update', requestParams), // id + newName
   delete: id =>
-    requests.delete('/portfolio/delete', id)
+    requests.delete('/portfolio/delete', id),
   // unfollow: username =>
   //   requests.del(`/portfolio/${username}/follow`)
 };
 
 const Investor = {
-  getAll: () =>
-    requests.get('/investor/all'),
-  create: investorData =>
-    requests.post('/investor/create', investorData),
+  add: investorData =>
+    requests.post('/investor/add', investorData),
 };
 
 const Market = {

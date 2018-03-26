@@ -19,11 +19,13 @@ const stores = {
 };
 
 // For easier debugging
+// eslint-disable-next-line no-underscore-dangle
 window._____APP_STATE_____ = stores;
 
 const hist = createBrowserHistory();
 
 ReactDOM.render(
+  // eslint-disable-next-line react/jsx-filename-extension
   <Provider {...stores}>
     <Router history={hist}>
       <Switch>

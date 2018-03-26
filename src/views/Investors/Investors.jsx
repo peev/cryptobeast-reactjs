@@ -1,36 +1,32 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Grid } from "material-ui";
-import Paper from "material-ui/Paper";
+import React from 'react';
+import { Grid } from 'material-ui';
+import Paper from 'material-ui/Paper';
 
-import RegularButton from "../../components/CustomButtons/Button";
-import AddInvestorWrapped from "../../components/Modal/InvestorModals/AddInvestor";
-import InvestorDepositWrapped from "../../components/Modal/InvestorModals/InvestorDeposit";
-import SelectInvestor from "../../components/Selectors/SelectInvestor";
-import GenericTable from "../../components/GenericTable/GenericTable";
-import EditInvestorWrapped from "../../components/Modal/InvestorModals/EditInvestor";
-import InvestorWithdrawWrapped from "../../components/Modal/InvestorModals/InvestorWithdraw";
-// test db
-// const { ipcRenderer } = window.require('electron');
-import "./Investors.css";
-import TotalInvestorsWrapped from "../../components/Modal/InvestorModals/TotalInvestors";
-import SharesInCirculationWrapped from "../../components/Modal/InvestorModals/SharesInCirculation";
-import CurrentSharePriceWrapped from "../../components/Modal/InvestorModals/CurrentSharePrice";
-import TotalUSDEquivWrapped from "../../components/Modal/InvestorModals/TotalUSDEquiv";
+import RegularButton from '../../components/CustomButtons/Button';
+import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
+import InvestorDepositWrapped from '../../components/Modal/InvestorModals/InvestorDeposit';
+import SelectInvestor from '../../components/Selectors/SelectInvestor';
+import GenericTable from '../../components/GenericTable/GenericTable';
+import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
+import InvestorWithdrawWrapped from '../../components/Modal/InvestorModals/InvestorWithdraw';
+import './Investors.css';
+import TotalInvestorsWrapped from '../../components/Modal/InvestorModals/TotalInvestors';
+import SharesInCirculationWrapped from '../../components/Modal/InvestorModals/SharesInCirculation';
+import CurrentSharePriceWrapped from '../../components/Modal/InvestorModals/CurrentSharePrice';
+import TotalUSDEquivWrapped from '../../components/Modal/InvestorModals/TotalUSDEquiv';
 
 const dropStyle = {
-  width: "100%"
+  width: '100%'
 };
 
 class Investors extends React.Component {
   state = {
-    direction: "row"
+    // direction: 'row'
     // justify: 'flex-end',
     // alignItems: 'center',
   };
 
   render() {
-    const { direction } = this.state;
     // const { alignItems, direction, justify } = this.state;
 
     return (
@@ -50,7 +46,7 @@ class Investors extends React.Component {
         </Grid>
         <Grid container className="InvGrid">
           <Paper container className="InvPaper">
-            <Grid direction={direction}>
+            <Grid >
               <h5>INDIVIDUAL SUMMARY</h5>
             </Grid>
 

@@ -10,9 +10,9 @@
 /build
 
 # database
-/DB/CryptoBeast.db
-/DB/*.db
-/DB/*.*
+CryptoBeast.db
+*.db
+
 
 # misc
 .DS_Store

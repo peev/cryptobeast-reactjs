@@ -27,7 +27,7 @@ class AssetMovements extends React.Component {
                 <TextField placeholder="QUANTITY..." />
               </Grid>
               <Grid item xs={3}>
-                <SelectExchange />
+                <SelectExchange floatingLabelText="Frequency" />
               </Grid>
             </Grid>
             <br />

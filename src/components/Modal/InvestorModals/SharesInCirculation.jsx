@@ -8,10 +8,13 @@ import Modal from "material-ui/Modal";
 import Typography from "material-ui/Typography";
 import InvestorCard from "../../CustomElements/InvestorCard";
 import Button from "../../CustomButtons/Button";
+import InvestorCardButton from "../../CustomButtons/InvestorCardButton";
+import buttonStyle from "../../../variables/styles/buttonStyle";
+import InvestorPieChart from "../../HighCharts/InvestorPie";
 
 const getModalStyle = () => {
-  const top = 50;
-  const left = 50;
+  const top = 35;
+  const left = 35;
   return {
     top: `${top}%`,
     left: `${left}%`
@@ -27,8 +30,7 @@ const styles = theme => ({
     padding: theme.spacing.unit * 4
   },
   button: {
-    float: "right",
-    display: "inline-flex"
+    float: "right"
   }
 });
 
@@ -45,21 +47,21 @@ class SharesInCirculation extends React.Component {
   };
 
   render() {
-    const { classes, headerText, labelText } = this.props;
+    const { classes } = this.props;
 
     return (
       <div>
         <div>
-          <Button onClick={this.handleOpen} style={{ padding: '0' }} >
+          <InvestorCardButton onClick={this.handleOpen}>
             <InvestorCard headerText="1180" labelText="Shares in Circulation" />
-          </Button>
+          </InvestorCardButton>
         </div>
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <form
+          <div
             style={getModalStyle()}
             className={classes.paper}
             onSubmit={() => this.handleSave}
@@ -69,40 +71,22 @@ class SharesInCirculation extends React.Component {
               id="modal-title"
               style={{ fontSize: "18px", fontWeight: "400" }}
             >
-              Investor Deposit
+              Shareholders Breakdown
             </Typography>
             <div className={classes.flex}>
               <div style={{ display: "inline-block", marginRight: "10px" }}>
-                <TextField
-                  placeholder="Amount"
-                  // inputRef={el =>this.name = el}
-                />
-                <br />
-                <TextField
-                  placeholder="Share Price at Entry Date"
-                  // inputRef={el =>this.name = el}
-                />
-              </div>
-              <div style={{ display: "inline-block" }}>
-                <TextField
-                  placeholder="Transaction Date "
-                  // inputRef={el =>this.name = el}
-                />
-                <br />
-                <TextField placeholder="Purchased Shares" />
+                <InvestorPieChart />
               </div>
             </div>
 
-            <br />
-
-            <Button onClick={this.handleClose} color="primary">
-              Cancel
+            <Button
+              style={{ float: "right" }}
+              onClick={this.handleClose}
+              color="primary"
+            >
+              Close
             </Button>
-            <Button onClick={this.handleSave} color="primary" type="submit">
-              {" "}
-              Save
-            </Button>
-          </form>
+          </div>
         </Modal>
       </div>
     );
@@ -113,6 +97,8 @@ SharesInCirculation.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-const SharesInCirculationWrapped = withStyles(styles)(SharesInCirculation);
+const SharesInCirculationWrapped = withStyles(styles, buttonStyle)(
+  SharesInCirculation
+);
 
 export default SharesInCirculationWrapped;

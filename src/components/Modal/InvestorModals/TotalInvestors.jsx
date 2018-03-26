@@ -1,14 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { TextField } from "material-ui";
 import { withStyles } from "material-ui/styles";
 
 // import { Icon } from 'material-ui-icons';
 import Modal from "material-ui/Modal";
 import Typography from "material-ui/Typography";
 import InvestorCard from "../../CustomElements/InvestorCard";
-import Button from "../../CustomButtons/Button";
+import InvestorCardButton from "../../CustomButtons/InvestorCardButton";
+import Button from '../../CustomButtons/Button';
+
 import GenericTable from "../../GenericTable/GenericTable";
+import buttonStyle from "../../../variables/styles/buttonStyle";
 
 const getModalStyle = () => {
   const top = 50;
@@ -30,6 +32,10 @@ const styles = theme => ({
   button: {
     float: "right",
     display: "inline-flex"
+  },
+  card: {
+    width: "180px",
+
   }
 });
 
@@ -46,14 +52,16 @@ class TotalInvestors extends React.Component {
   };
 
   render() {
-    const { classes, headerText, labelText } = this.props;
+    const { classes } = this.props;
 
     return (
       <div>
         <div>
-          <Button onClick={this.handleOpen} style={{ padding: "0" }}>
+          <InvestorCardButton
+            onClick={this.handleOpen}
+          >
             <InvestorCard headerText="10" labelText="Total Investors" />
-          </Button>
+          </InvestorCardButton>
         </div>
         <Modal
           aria-labelledby="simple-modal-title"
@@ -113,6 +121,6 @@ TotalInvestors.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-const TotalInvestorsWrapped = withStyles(styles)(TotalInvestors);
+const TotalInvestorsWrapped = withStyles(styles, buttonStyle)(TotalInvestors);
 
 export default TotalInvestorsWrapped;

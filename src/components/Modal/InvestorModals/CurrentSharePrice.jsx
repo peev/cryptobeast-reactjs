@@ -8,8 +8,7 @@ import Modal from "material-ui/Modal";
 import Typography from "material-ui/Typography";
 import InvestorCard from "../../CustomElements/InvestorCard";
 import Button from "../../CustomButtons/Button";
-
-
+import InvestorCardButton from "../../CustomButtons/InvestorCardButton";
 
 const getModalStyle = () => {
   const top = 50;
@@ -47,14 +46,16 @@ class CurrentSharePrice extends React.Component {
   };
 
   render() {
-    const { classes, headerText, labelText } = this.props;
+    const { classes } = this.props;
 
     return (
       <div>
         <div>
-          <Button onClick={this.handleOpen} style={{ padding: '0' }} >
+          <InvestorCardButton
+            onClick={this.handleOpen}
+          >
             <InvestorCard headerText="$2.65" labelText="Current Share Price" />
-          </Button>
+          </InvestorCardButton>
         </div>
         <Modal
           aria-labelledby="simple-modal-title"

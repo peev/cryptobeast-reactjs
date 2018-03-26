@@ -4,10 +4,9 @@ import { withStyles, Grid } from "material-ui";
 import summaryStyle from "variables/styles/summaryStyle";
 
 import { inject, observer } from "mobx-react";
-
+import InvestorPieChart from "../../components/HighCharts/InvestorPie";
 import CreatePortfolio from "../../components/Modal/CreatePortfolio";
 import "./Summary.css";
-import InvestorCard from "../../components/CustomElements/InvestorCard";
 // react plugin for creating charts
 // import ChartistGraph from 'react-chartist';
 // import {

@@ -5,6 +5,9 @@ const attachTo = (app, data) => {
   const marketController = require('./market-controller')(data);
 
   router
+    .get('/update', (req, res) => {
+      return marketController.getSummaries(req, res);
+    })
     .get('/baseCurrencies', (req, res) => {
       return marketController.getBaseCurrencies(req, res);
     });

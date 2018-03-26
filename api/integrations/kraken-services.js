@@ -42,16 +42,15 @@ const krakenServices = (key, secret) => {
 
 module.exports = { krakenServices };
 
+// Testing
 // const testCurrencies = krakenServices().getCurrencies();
 // testCurrencies.then(result => console.log(result));
-
 
 // const testTickers = krakenServices().getTickers('XXBTZUSD,DASHEUR');
 // testTickers.then(result => console.log(result));
 
 // const getAllTickersTest = krakenServices().getAllTickers();
 // getAllTickersTest.then(result => console.log(result));
-
 
 // (async () => {
 //   // Display user's balance

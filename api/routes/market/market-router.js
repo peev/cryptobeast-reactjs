@@ -10,6 +10,12 @@ const attachTo = (app, data) => {
     })
     .get('/baseCurrencies', (req, res) => {
       return marketController.getBaseCurrencies(req, res);
+    })
+    .get('/allTickers', (req, res) => {
+      return marketController.getAllTickers(req, res);
+    })
+    .get('/syncTickers', (req, res) => {
+      return marketController.syncTickersFromApi(req, res);
     });
 
   app.use('/market', router);

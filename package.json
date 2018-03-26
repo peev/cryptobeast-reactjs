@@ -58,8 +58,7 @@
     "react-swipeable-views": "^0.12.12",
     "sequelize": "^4.33.4",
     "sqlite": "^2.9.1",
-    "sqlite3": "^3.1.13",
-    "util": "^0.10.3"
+    "sqlite3": "^3.1.13"
   },
   "devDependencies": {
     "@types/cors": "^2.8.3",

@@ -8,7 +8,7 @@ import RegularButton from '../../components/CustomButtons/Button';
 import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
 import InvestorDepositWrapped from '../../components/Modal/InvestorModals/InvestorDeposit';
 import SelectInvestor from '../../components/Selectors/SelectInvestor';
-import GenericTable from '../../components/GenericTable/GenericTable';
+import GenericTable from '../../components/CustomTables/GenericTable';
 import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
 import InvestorWithdrawWrapped from '../../components/Modal/InvestorModals/InvestorWithdraw';
 import './Investors.css';

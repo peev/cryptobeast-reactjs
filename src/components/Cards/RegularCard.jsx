@@ -19,6 +19,7 @@ function RegularCard({ ...props }) {
     cardTitle,
     cardSubtitle,
     content,
+    button,
   } = props;
 
   const plainCardClasses = cx({
@@ -44,13 +45,13 @@ function RegularCard({ ...props }) {
         title={cardTitle}
         subheader={cardSubtitle}
       />
-      <CardContent>{content}</CardContent>
+      <CardContent>{button}{content}</CardContent>
     </Card>
   );
 }
 
 RegularCard.defaultProps = {
-  headerColor: 'purple',
+  headerColor: 'green',
 };
 
 RegularCard.propTypes = {
@@ -60,6 +61,7 @@ RegularCard.propTypes = {
   cardTitle: PropTypes.node,
   cardSubtitle: PropTypes.node,
   content: PropTypes.node,
+  button: PropTypes.node,
 
 };
 

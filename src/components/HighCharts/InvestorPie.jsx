@@ -35,7 +35,7 @@ class InvestorPieChart extends Component {
     return (
       <HighchartsChart>
         <Legend layout="vertical" align="right" verticalAlign="middle" />
-        <Tooltip animation />
+        <Tooltip animation pointFormat={pieData.y} />
         <YAxis id="number">
           <PieSeries
             type="Pie"

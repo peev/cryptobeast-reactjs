@@ -9,12 +9,12 @@ import InvestorCard from "../../CustomElements/InvestorCard";
 import InvestorCardButton from "../../CustomButtons/InvestorCardButton";
 import Button from "../../CustomButtons/Button";
 
-import GenericTable from "../../GenericTable/GenericTable";
+import InvestorsTable from "../../CustomTables/InvestorsTable";
 import buttonStyle from "../../../variables/styles/buttonStyle";
 
 const getModalStyle = () => {
-  const top = 50;
-  const left = 50;
+  const top = 22;
+  const left = 28;
   return {
     top: `${top}%`,
     left: `${left}%`
@@ -78,27 +78,68 @@ class TotalInvestors extends React.Component {
               Total Investors
             </Typography>
 
-            <GenericTable
+            <InvestorsTable
               tableHead={[
-                "ID",
-                "Name",
-                "Shares",
-                "VALUE(USD)",
-                "WEIGH.Entry Price",
-                "Fee Potential",
-                "Profit",
-                "Edit"
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name"
               ]}
               tableData={[
-                "1",
-                "TestingName",
-                "Today",
-                "135",
-                "1455.25",
-                "$ 2.65",
-                "523.48",
-                "180%",
-                " "
+                [
+                  "Name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  ""
+                ],
+
+                [
+                  "Name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  ""
+                ],
+
+                [
+                  "Name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  ""
+                ],
+
+                [
+                  "Name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  ""
+                ]
               ]}
             />
 

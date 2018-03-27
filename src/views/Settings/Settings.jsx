@@ -6,6 +6,8 @@ import { inject, observer } from "mobx-react";
 import UpdatePortfolioModal from "../../components/Modal/UpdatePortfolio";
 import RegularButton from "../../components/CustomButtons/Button";
 import CreatePortfolio from "../../components/Modal/CreatePortfolio";
+import PortfoliosTable from "../../components/CustomTables/PortfoliosTable";
+import IntegrationsTable from "../../components/CustomTables/IntegrationsTable";
 
 // import IconButton from '../../components/CustomButtons/IconButton';
 // import CreatePortfolio from '../../components/Modal/CreatePortfolio';
@@ -38,9 +40,8 @@ class Settings extends Component {
           <RegularCard
             cardTitle="API Integrations"
             content={
-              <Table
-                tableHeaderColor="primary"
-                tableHead={["Exchange", "Status", "Edit", "Delete"]}
+              <IntegrationsTable
+                tableHead={["Exchange", "Status", "EDIT", "DELETE"]}
                 tableData={[["Poloniex", "Inactive", "", ""]]}
               />
             }
@@ -49,32 +50,28 @@ class Settings extends Component {
         <ItemGrid xs={12} sm={12} md={12}>
           <RegularCard
             cardTitle="Portfolios"
+            button={<CreatePortfolio />}
             content={
-              <Table
-                tableHeaderColor="primary"
+              <PortfoliosTable
                 tableHead={[
                   "Name",
                   "Number of Shares",
                   "Current share price",
                   "Total Amount",
-                  "Edit",
-                  "Delete"
+                  ""
                 ]}
-                tableData={[["Poloniex", "Inactive", "test", "", ""]]}
+                tableData={[
+                  ["Poloniex", "Inactive", "test", "test", ""],
+                  ["Poloniex", "Inactive", "test", "test", ""],
+                  ["Poloniex", "Inactive", "test", "test", ""],
+                  ["Poloniex", "Inactive", "test", "test", ""]
+                ]}
               />
             }
           />
         </ItemGrid>
 
         <Grid container>
-          <ItemGrid xs={12} sm={3} md={3}>
-            <UpdatePortfolioModal />
-          </ItemGrid>
-
-          <ItemGrid xs={12} sm={3} md={3}>
-            <RegularButton color="primary">Delete</RegularButton>
-          </ItemGrid>
-
           <ItemGrid xs={12} sm={3} md={3}>
             <RegularButton color="primary" onClick={this.getMarketSummaries}>
               Get Markets
@@ -98,7 +95,6 @@ class Settings extends Component {
               closeNotification={() => this.setState({ br: false })}
               close
             />
-            <CreatePortfolio />
           </ItemGrid>
         </Grid>
       </Grid>

@@ -1,42 +1,50 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { TextField } from 'material-ui';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
-import Modal from 'material-ui/Modal';
+import React from "react";
+import PropTypes from "prop-types";
+import { TextField } from "material-ui";
+import { withStyles } from "material-ui/styles";
+import Typography from "material-ui/Typography";
+import Modal from "material-ui/Modal";
+import IconButton from "../CustomButtons/IconButton";
+import { Add } from "material-ui-icons";
+import { inject, observer } from "mobx-react";
 
-import { inject, observer } from 'mobx-react';
-
-import Button from '../CustomButtons/Button';
-
+import Button from "../CustomButtons/Button";
 
 function getModalStyle() {
-  const top = 50;
-  const left = 50;
+  const top = 45;
+  const left = 41;
   return {
     top: `${top}%`,
-    left: `${left}%`,
-
+    left: `${left}%`
   };
 }
 
 const styles = theme => ({
   paper: {
-    position: 'absolute',
-    minWidth: '100px',
+    position: "absolute",
+    minWidth: "300px",
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4,
-
+    padding: theme.spacing.unit * 4
+  },
+  headerButtonContainer: {
+    float: "right",
+    marginTop: "-35px",
+    marginRight: "40px"
+  },
+  modalTitle: {
+    fontSize: "18px",
+    fontWeight: "400",
+    textAlign: "center"
   },
 });
 
-@inject('PortfolioStore')
+@inject("PortfolioStore")
 @observer
 class CreatePortfolio extends React.Component {
   state = {
     open: false,
-    name: '',
+    name: ""
   };
 
   handleOpen = () => {
@@ -59,49 +67,61 @@ class CreatePortfolio extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div>
-        <Button onClick={this.handleOpen} color="primary">Create</Button>
-
+      <div className={classes.headerButtonContainer}>
+        <IconButton
+          className={classes.headerButton}
+          onClick={this.handleOpen}
+          color="primary"
+        >
+          <Add />
+        </IconButton>
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <form style={getModalStyle()} className={classes.paper} onSubmit={() => this.handleSave}>
+          <form
+            style={getModalStyle()}
+            className={classes.paper}
+            onSubmit={() => this.handleSave}
+          >
             <Typography
               variant="title"
               id="modal-title"
-              style={{ fontSize: '18px', fontWeight: '400' }}
+              className={classes.modalTitle}
             >
               Create new Portfolio
             </Typography>
 
             <TextField
               placeholder="Portfolio name"
+              style={{ width: "100%" }}
               // onChange={this.handleInputValue}
-              inputRef={el => this.name = el}
+              inputRef={el => (this.name = el)}
             />
 
             <br />
 
             {/* Cancel BUTTON */}
             <Button
-              style={{ display: 'inline-flex' }}
+              style={{ display: "inline-flex", marginRight: '50px', float:'left' }}
               onClick={this.handleClose}
               color="primary"
-
-            > Cancel
+            >
+              {" "}
+              Cancel
             </Button>
 
             {/* SAVE BUTTON */}
             <Button
-              style={{ display: 'inline-flex' }}
+              style={{ display: "inline-flex", float:'right' }}
               onClick={this.handleSave}
               color="primary"
               type="submit"
-            > Save
+            >
+              {" "}
+              Save
             </Button>
-
           </form>
         </Modal>
       </div>
@@ -110,7 +130,7 @@ class CreatePortfolio extends React.Component {
 }
 
 CreatePortfolio.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 // We need an intermediary variable for handling the recursive nesting.

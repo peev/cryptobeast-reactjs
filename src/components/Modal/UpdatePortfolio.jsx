@@ -1,35 +1,40 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { TextField } from 'material-ui';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
-import Modal from 'material-ui/Modal';
-import Button from '../CustomButtons/Button';
+import React from "react";
+import PropTypes from "prop-types";
+import { TextField } from "material-ui";
+import { withStyles } from "material-ui/styles";
+import Typography from "material-ui/Typography";
+import Modal from "material-ui/Modal";
+import Button from "../CustomButtons/Button";
+import IconButton from "../CustomButtons/IconButton";
+import { Edit } from "material-ui-icons";
 
 function getModalStyle() {
-  const top = 50;
-  const left = 50;
+  const top = 45;
+  const left = 41;
   return {
     top: `${top}%`,
-    left: `${left}%`,
-
+    left: `${left}%`
   };
 }
 
 const styles = theme => ({
   paper: {
-    position: 'absolute',
-    minWidth: '100px',
+    position: "absolute",
+    minWidth: "300px",
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
-    padding: theme.spacing.unit * 4,
-
+    padding: theme.spacing.unit * 4
   },
+  modalTitle: {
+    fontSize: "18px",
+    fontWeight: "400",
+    textAlign: "center"
+  }
 });
 
 class UpdatePortfolioModal extends React.Component {
   state = {
-    open: false,
+    open: false
   };
   handleOpen = () => {
     this.setState({ open: true });
@@ -46,24 +51,30 @@ class UpdatePortfolioModal extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div>
-        <Button onClick={this.handleOpen} color="primary">Edit</Button>
-
+      <div style={{ display: "inline-block" }}>
+        <IconButton
+          customClass="edit"
+          onClick={this.handleOpen}
+          color="primary"
+        >
+          <Edit style={{ width: ".8em", height: ".8em" }} />
+        </IconButton>
         <Modal
-          style={{ minWidth: '0' }}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
           <div style={getModalStyle()} className={classes.paper}>
             <Typography
+              className={classes.modalTitle}
               variant="title"
               id="modal-title"
-              style={{ fontSize: '18px', fontWeight: '400' }}
-            >Edit current portfolio
+            >
+              Edit current portfolio
             </Typography>
 
             <TextField
+              style={{ width: "100%", marginBottom: "10px", marginTop: "10px" }}
               placeholder="Portfolio name"
               value=""
             />
@@ -72,30 +83,36 @@ class UpdatePortfolioModal extends React.Component {
 
             {/* Cancel BUTTON */}
             <Button
-              style={{ display: 'inline-flex' }}
+              style={{
+                display: "inline-flex",
+                float: "left",
+                marginRight: "50px"
+              }}
               onClick={this.handleClose}
               color="primary"
-            > Cancel
+            >
+              {" "}
+              Cancel
             </Button>
 
             {/* SAVE BUTTON */}
             <Button
-              style={{ display: 'inline-flex' }}
+              style={{ display: "inline-flex", float: "right" }}
               onClick={this.handleClose}
               color="primary"
-            > Update
+            >
+              {" "}
+              Update
             </Button>
           </div>
-
         </Modal>
-
       </div>
     );
   }
 }
 
 UpdatePortfolioModal.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 // We need an intermediary variable for handling the recursive nesting.

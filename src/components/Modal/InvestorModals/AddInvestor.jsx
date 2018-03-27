@@ -1,14 +1,14 @@
-import React from "react";
-import { Input } from "material-ui";
-import { withStyles } from "material-ui/styles";
-import Modal from "material-ui/Modal";
-import Typography from "material-ui/Typography";
-import Checkbox from "material-ui/Checkbox";
-import { inject, observer } from "mobx-react";
+import React from 'react';
+// import { Input } from 'material-ui';
+import { withStyles, Input } from 'material-ui';
+import Modal from 'material-ui/Modal';
+import Typography from 'material-ui/Typography';
+import Checkbox from 'material-ui/Checkbox';
+import { inject, observer } from 'mobx-react';
 
-import SelectCurrency from "../../Selectors/SelectCurrency";
-import Button from "../../CustomButtons/Button";
-import addInvestorModalStyle from "../../../variables/styles/addInvestorModalStyle";
+import SelectCurrency from '../../Selectors/SelectCurrency';
+import Button from '../../CustomButtons/Button';
+import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
 
 // import { Icon } from 'material-ui-icons';
 // import PropTypes from 'prop-types';
@@ -19,32 +19,32 @@ const getModalStyle = () => {
   const left = 28;
   return {
     top: `${top}%`,
-    left: `${left}%`
+    left: `${left}%`,
   };
 };
 
 const styles = theme => ({
   paper: {
-    position: "absolute",
-    display: "flex",
-    flexDirection: "column",
-    minWidth: "100px",
+    position: 'absolute',
+    display: 'flex',
+    flexDirection: 'column',
+    minWidth: '100px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing.unit * 4,
   },
   container: {
     display: 'flex',
     marginBottom: '25px',
   },
   nestedElementLeft: {
-    display: "flex",
-    flexDirection: "column",
-    marginRight: "20px"
+    display: 'flex',
+    flexDirection: 'column',
+    marginRight: '20px',
   },
   nestedElementRight: {
-    display: "flex",
-    flexDirection: "column"
+    display: 'flex',
+    flexDirection: 'column',
   },
   headerContainer: {
     display: 'flex',
@@ -54,7 +54,7 @@ const styles = theme => ({
   },
 });
 
-@inject("InvestorStore", "PortfolioStore")
+@inject('InvestorStore', 'PortfolioStore')
 @observer
 class AddInvestor extends React.Component {
   state = {
@@ -71,7 +71,7 @@ class AddInvestor extends React.Component {
     this.setState({ open: false });
   };
 
-  handleRequests = propertyType => event => {
+  handleRequests = propertyType => (event) => {
     event.preventDefault();
     const { InvestorStore } = this.props;
 
@@ -81,7 +81,7 @@ class AddInvestor extends React.Component {
     InvestorStore.setNewInvestorValues(propertyType, inputValue);
   }
 
-  handleFounder = name => event => {
+  handleFounder = name => (event) => {
     this.setState({ [name]: event.target.checked });
     this.props.InvestorStore.setIsFounder();
   };
@@ -121,7 +121,7 @@ class AddInvestor extends React.Component {
               <Typography
                 variant="title"
                 id="modal-title"
-                style={{ fontSize: "18px", fontWeight: "400" }}
+                style={{ fontSize: '18px', fontWeight: '400' }}
               >
                 Add a new investor
               </Typography>
@@ -129,7 +129,7 @@ class AddInvestor extends React.Component {
               <div>
                 Founder
                 <Checkbox
-                  onChange={this.handleFounder("founder")}
+                  onChange={this.handleFounder('founder')}
                   color="primary"
                 />
               </div>
@@ -139,7 +139,7 @@ class AddInvestor extends React.Component {
               <div className={classes.nestedElementLeft}>
                 <Input
                   placeholder="Full name"
-                  onChange={this.handleRequests("fullName")}
+                  onChange={this.handleRequests('fullName')}
                   className={classes.input}
                   autoFocus
                 />
@@ -147,14 +147,14 @@ class AddInvestor extends React.Component {
                 <Input
                   type="number"
                   placeholder="Telephone"
-                  onChange={this.handleRequests("telephone")}
+                  onChange={this.handleRequests('telephone')}
                   className={classes.input}
                 />
 
                 <Input
                   type="number"
                   placeholder="Deposited Amount"
-                  onChange={this.handleRequests("depositedAmount")}
+                  onChange={this.handleRequests('depositedAmount')}
                   className={classes.input}
                 />
 
@@ -175,14 +175,14 @@ class AddInvestor extends React.Component {
                 <Input
                   type="email"
                   placeholder="Email Address"
-                  onChange={this.handleRequests("email")}
+                  onChange={this.handleRequests('email')}
                   className={classes.input}
                 />
 
                 <Input
                   type="date"
                   placeholder="Date of Entry"
-                  onChange={this.handleRequests("dateOfEntry")}
+                  onChange={this.handleRequests('dateOfEntry')}
                   className={classes.input}
                 />
 
@@ -192,7 +192,7 @@ class AddInvestor extends React.Component {
                   type="number"
                   placeholder="Management Fee %"
                   value={InvestorStore.values.managementFee}
-                  onChange={this.handleRequests("managementFee")}
+                  onChange={this.handleRequests('managementFee')}
                   className={classes.input}
                 />
 
@@ -207,7 +207,7 @@ class AddInvestor extends React.Component {
 
             <div>
               <Button
-                style={{ display: "inline-flex" }}
+                style={{ display: 'inline-flex' }}
                 onClick={this.handleClose}
                 color="primary"
               >
@@ -215,11 +215,11 @@ class AddInvestor extends React.Component {
               </Button>
 
               <Button
-                style={{ display: "inline-flex" }}
+                style={{ display: 'inline-flex' }}
                 onClick={this.handleSave}
                 color="primary"
                 type="submit"
-                // disabled={InvestorStore.disabledSaveButton}
+              // disabled={InvestorStore.disabledSaveButton}
               >
                 Save
               </Button>

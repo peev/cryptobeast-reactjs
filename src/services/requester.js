@@ -37,6 +37,8 @@ const Investor = {
     requests.post('/investor/add', investorData),
   addDeposit: (id, requestParams) =>
     requests.put(`/investor/deposit/${id}`, requestParams),
+  withdrawal: (id, requestParams) =>
+    requests.put(`/investor/withdrawal/${id}`, requestParams),
   update: (id, requestParams) =>
     requests.put(`/investor/update/${id}`, requestParams),
 };

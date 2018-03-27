@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Input } from 'material-ui';
-import { withStyles } from 'material-ui/styles';
+// import { Input } from 'material-ui';
+import { withStyles, Input } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
@@ -104,7 +104,7 @@ class InvestorDeposit extends React.Component {
           <form
             style={getModalStyle()}
             className={classes.paper}
-            // onSubmit={() => this.handleDepositSave}
+          // onSubmit={() => this.handleDepositSave}
           >
             <Typography
               variant="title"

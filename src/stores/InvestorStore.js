@@ -34,6 +34,15 @@ class InvestorStore {
   }
 
   @observable
+  withdrawalValues = {
+    amount: '',
+    transactionDate: '',
+    sharePriceAtEntryDate: '',
+    inUSD: '',
+    purchasedShares: 0,
+    managementFee: '',
+  }
+  @observable
   depositedCurrency;
 
   @observable
@@ -89,7 +98,7 @@ class InvestorStore {
   @computed
   get sharePriceAtEntryDate() {
     if (this.selectedBaseCurrency && this.values.depositedAmount) {
-      const calculatedSharePriceAtEntryDate = this.selectedBaseCurrency.BaseVolume;
+      const calculatedSharePriceAtEntryDate = 1 / this.selectedBaseCurrency.Last;
       this.values.sharePriceAtEntryDate = calculatedSharePriceAtEntryDate;
       return calculatedSharePriceAtEntryDate;
     }
@@ -98,7 +107,7 @@ class InvestorStore {
   @computed
   get purchasedShares() {
     if (this.selectedBaseCurrency && this.values.depositedAmount) {
-      const calculatedPurchasedShares = this.selectedBaseCurrency.BaseVolume / this.values.depositedAmount;
+      const calculatedPurchasedShares = (this.values.depositedAmount * this.selectedBaseCurrency.Last).toFixed(0, 10);
       this.values.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -119,6 +128,43 @@ class InvestorStore {
       const calculatedPurchasedShares = this.selectedBaseCurrency.BaseVolume / this.newDepositValues.amount;
       this.newDepositValues.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
+    }
+  }
+
+  @computed
+  get withdrawInUSD() {
+    console.log(this.selectedInvestor, this.selectedBaseCurrency);
+    if (this.selectedInvestor && this.withdrawalValues.amount) {
+      const calculatedWithdrawInUSD = this.selectedInvestor.managementFee;
+      this.withdrawalValues.inUSD = calculatedWithdrawInUSD;
+      return calculatedWithdrawInUSD;
+    }
+  }
+
+  @computed
+  get withdrawSharePriceAtEntryDate() {
+    if (this.selectedInvestor && this.withdrawalValues.amount) {
+      const calculatedWithdrawSharePriceAtEntryDate = 1;
+      this.withdrawalValues.sharePriceAtEntryDate = calculatedWithdrawSharePriceAtEntryDate;
+      return calculatedWithdrawSharePriceAtEntryDate;
+    }
+  }
+
+  @computed
+  get withdrawPurchasedShares() {
+    if (this.selectedInvestor && this.withdrawalValues.amount) {
+      const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / 1.75).toFixed(0, 10);
+      this.withdrawalValues.purchasedShares = calculatedWithdrawPurchasedShares;
+      return calculatedWithdrawPurchasedShares;
+    }
+  }
+
+  @computed
+  get depositManagementFee() {
+    if (this.selectedInvestor && this.withdrawalValues.amount) {
+      const calculatedDepositManagementFee = this.selectedInvestor.managementFee;
+      this.withdrawalValues.managementFee = calculatedDepositManagementFee;
+      return calculatedDepositManagementFee;
     }
   }
 
@@ -159,27 +205,49 @@ class InvestorStore {
 
   @action
   setNewInvestorValues(propertyType, newValue) {
+    if (propertyType === 'depositedAmount' && (newValue < 0)) {
+      return;
+    }
     if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
       return;
     }
+
     // all properties are send as string !!!
     this.values[propertyType] = newValue;
   }
 
   @action
   setInvestorEditingValues(propertyType, newValue) {
+    if (propertyType === 'depositedAmount' && (newValue < 0)) {
+      return;
+    }
     if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
       return;
     }
+
     // all properties are send as string !!!
     this.editedValues[propertyType] = newValue;
   }
 
   @action
   setNewDepositInvestorValues(propertyType, newValue) {
+    if (propertyType === 'amount' && (newValue < 0)) {
+      return;
+    }
+
     // all properties are send as string !!!
     this.newDepositValues[propertyType] = newValue;
-    console.log(this.newDepositValues)
+  }
+
+  @action
+  setWithdrawInvestorValues(propertyType, newValue) {
+    if (propertyType === 'amount' && (newValue < 0)) {
+      return;
+    }
+
+    // all properties are send as string !!!
+    this.withdrawalValues[propertyType] = newValue;
+    console.log(this.withdrawalValues);
   }
 
   @action
@@ -265,6 +333,20 @@ class InvestorStore {
   }
 
   @action
+  withdrawalInvestor(investorId) {
+    const withdrawalValue = {
+      amount: this.withdrawalValues.amount,
+    };
+
+    requester.Investor.withdrawal(investorId, withdrawalValue)
+      .then((result) => {
+        // TODO: Something with result
+        console.log(result);
+      })
+      .catch(this.onError);
+  }
+
+  @action
   getPortfolio() {
     PortfolioStore.currentPortfolio()
       .then(action((portfolio) => {
@@ -310,6 +392,17 @@ class InvestorStore {
     this.newDepositValues.transactionDate = '';
     this.newDepositValues.sharePriceAtEntryDate = '';
     this.newDepositValues.purchasedShares = '';
+  }
+
+  @action.bound
+  resetWithdrawal() {
+    console.log(this.withdrawalValues);
+    this.withdrawalValues.amount = '';
+    this.withdrawalValues.transactionDate = '';
+    this.withdrawalValues.sharePriceAtEntryDate = '';
+    this.withdrawalValues.inUSD = '';
+    this.withdrawalValues.purchasedShares = 0;
+    this.withdrawalValues.managementFee = '';
   }
 
   @action.bound

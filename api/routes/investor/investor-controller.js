@@ -39,6 +39,19 @@ const investorController = (repository) => {
       });
   };
 
+  const withdrawalInvestor = (req, res) => {
+    const id = req.params.id;
+    const investorData = req.body;
+
+    repository.investor.withdrawal(id, investorData)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        return res.json(error);
+      });
+  };
+
   const removeInvestorFromPortfolio = (req, res) => {
     const requestData = req.body;
     repository.investor.removeInvestor(requestData)
@@ -52,6 +65,7 @@ const investorController = (repository) => {
     addInvestorToPortfolio,
     updateInvestor,
     depositInvestor,
+    withdrawalInvestor,
     removeInvestorFromPortfolio,
   };
 };

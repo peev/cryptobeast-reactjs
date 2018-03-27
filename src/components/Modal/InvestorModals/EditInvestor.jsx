@@ -87,7 +87,7 @@ class EditInvestor extends React.Component {
     const { InvestorStore, PortfolioStore } = this.props;
     // InvestorStore.handleEmptyFields;
 
-    InvestorStore.createNewDepositInvestor(InvestorStore.selectedInvestor.id);
+    InvestorStore.updateCurrentInvestor(InvestorStore.selectedInvestor.id);
     PortfolioStore.getPortfolios();
     this.handleClose();
   }

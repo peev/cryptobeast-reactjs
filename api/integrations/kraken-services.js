@@ -26,7 +26,7 @@ const krakenServices = (key, secret) => {
               mappedTickers.push({ pair: key2, last: tickers[key2].c[0] });
             });
             // console.log(mappedTickers);
-            
+
             return mappedTickers;
           });
       });
@@ -59,3 +59,7 @@ module.exports = { krakenServices };
 //   // Get Ticker Info
 //   console.log(await kraken.api('Ticker', { pair: 'XXBTZUSD' }));
 // })();
+
+const kraken = new KrakenClient('ejPP9CfIr3dYWlbUoJNMGdnwtKfkLTllb96TwezXrJYx2NzZZjqPtjJX', '0bmPxUH5ISdssYjcu1NVslWUpuz21gv5jH9MlEhP3TkKYJ9d6Ji0n18Bj2jv7op07WlCepFyA/vc6q5ZB92Hnw==');
+// console.log(await kraken.api('Balance'));
+kraken.api('Balance').then(b => console.log(b));

@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     pending: {
       type: DataTypes.DOUBLE,
+      allowNull: true,
     },
     cryptoAddress: {
       type: DataTypes.STRING,

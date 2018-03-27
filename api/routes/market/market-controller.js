@@ -2,8 +2,21 @@
 const { bittrexServices } = require('../../integrations/bittrex-services');
 
 const marketController = (repository) => {
+  const syncSummaries = (req, res) => {
+    bittrexServices().getSummaries()
+      .then((summaries) => {
+        return repository.market.updateSummary(summaries);
+      })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   const getSummaries = (req, res) => {
-    repository.market.updateSummary()
+    repository.market.getAll()
       .then((response) => {
         res.status(200).send(response);
       })
@@ -24,7 +37,7 @@ const marketController = (repository) => {
 
   // Ticker services ======================================================
   const syncTickersFromApi = (req, res) => {
-    bittrexServices().getAllTickers(repository)
+    bittrexServices().getAllTickers()
       .then((tickers) => {
         return repository.ticker.syncTickers(tickers);
       })
@@ -57,11 +70,37 @@ const marketController = (repository) => {
       });
   };
 
+  const syncCurrenciesFromApi = (req, res) => {
+    bittrexServices().getCurrencies()
+      .then((currencies) => {
+        return repository.currency.syncCurrencies(currencies);
+      })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const getAllCurrencies = (req, res) => {
+    repository.currency.getAll()
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   return {
+    syncSummaries,
     getSummaries,
     getBaseCurrencies,
-    getAllTickers,
     syncTickersFromApi,
+    getAllTickers,
+    syncCurrenciesFromApi,
+    getAllCurrencies,
   };
 };
 

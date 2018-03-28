@@ -25,24 +25,49 @@ const krakenServices = (key, secret) => {
             Object.keys(tickers).forEach((key2) => {
               mappedTickers.push({ pair: key2, last: tickers[key2].c[0] });
             });
-            // console.log(mappedTickers);
 
             return mappedTickers;
           });
       });
   };
 
+  const getBalance = (account) => {
+    kraken.config.key = account.apiKey;
+    kraken.config.secret = account.apiSecret;
+    return new Promise((resolve, reject) => {
+      kraken.api('Balance', null, (err, data) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(Object.keys(data.result).map((k) => {
+          let convertedCurrency = k;
+          if (k.length === 4 && (k[0] === 'X' || k[0] === 'Z')) {
+            convertedCurrency = k.substring(1);
+            if (convertedCurrency === 'XBT') {
+              convertedCurrency = 'BTC';
+            }
+          }
+          return {
+            currency: convertedCurrency,
+            balance: data.result[k],
+            origin: 'Kraken',
+          };
+        }));
+      });
+    });
+  };
 
   return {
     getCurrencies,
     getTickers,
     getAllTickers,
+    getBalance,
   };
 };
 
 module.exports = { krakenServices };
 
-// Testing
+// Tests
 // const testCurrencies = krakenServices().getCurrencies();
 // testCurrencies.then(result => console.log(result));
 
@@ -60,6 +85,11 @@ module.exports = { krakenServices };
 //   console.log(await kraken.api('Ticker', { pair: 'XXBTZUSD' }));
 // })();
 
-const kraken = new KrakenClient('ejPP9CfIr3dYWlbUoJNMGdnwtKfkLTllb96TwezXrJYx2NzZZjqPtjJX', '0bmPxUH5ISdssYjcu1NVslWUpuz21gv5jH9MlEhP3TkKYJ9d6Ji0n18Bj2jv7op07WlCepFyA/vc6q5ZB92Hnw==');
-// console.log(await kraken.api('Balance'));
-kraken.api('Balance').then(b => console.log(b));
+// const testAccount = {
+//   apiServiceName: 'Kraken',
+//   apiKey: 'ejPP9CfIr3dYWlbUoJNMGdnwtKfkLTllb96TwezXrJYx2NzZZjqPtjJX',
+//   apiSecret: '0bmPxUH5ISdssYjcu1NVslWUpuz21gv5jH9MlEhP3TkKYJ9d6Ji0n18Bj2jv7op07WlCepFyA/vc6q5ZB92Hnw==',
+// };
+
+// const getBalanceTest = krakenServices().getBalance(testAccount);
+// getBalanceTest.then(result => console.log('>>> result from getBalanceTest:', result));

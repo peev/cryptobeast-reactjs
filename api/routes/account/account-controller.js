@@ -1,4 +1,5 @@
 const { bittrexServices } = require('../../integrations/bittrex-services');
+const { krakenServices } = require('../../integrations/kraken-services');
 
 const accountController = (repository) => {
   const addAccountToPortfolio = (req, res) => {
@@ -40,8 +41,21 @@ const accountController = (repository) => {
     // req is account object with apiKey, apiSecret and foreign key portfolioId
     // TODO: switch between apis
     const account = req.body;
-    // bittrexServices(req.body.apiKey, req.body.apiSecret).getBalance()
-    bittrexServices().getBalance(account)
+    let services = '';
+
+    switch (account.apiServiceName) {
+      case 'Bittrex':
+        services = bittrexServices;
+        break;
+      case 'Kraken':
+        services = krakenServices;
+        break;
+      default:
+        console.log('There is no such api');
+        break;
+    }
+
+    services().getBalance(account)
       .then((assets) => {
         return repository.asset.addAssetsFromApi(assets, account);
       })

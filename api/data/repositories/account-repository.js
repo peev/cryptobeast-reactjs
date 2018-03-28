@@ -5,7 +5,7 @@ const init = (db) => {
       apiKey: request.apiKey,
       apiSecret: request.apiSecret,
     };
-    const portfolio = db.Portfolio.findById(request.id);
+    const portfolio = db.Portfolio.findById(request.portfolioId);
     const createdAccount = db.Account.create(newAccount)
       .then(result => result);
 

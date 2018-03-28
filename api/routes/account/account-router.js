@@ -13,6 +13,9 @@ const attachTo = (app, data) => {
     })
     .delete('/delete', (req, res) => {
       return accountController.removeAccountFromPortfolio(req, res);
+    })
+    .post('/getBalance', (req, res) => {
+      return accountController.getAccountBalance(req, res);
     });
 
   app.use('/account', router);

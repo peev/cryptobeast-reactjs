@@ -10,9 +10,12 @@ import {
 
 import PropTypes from "prop-types";
 
+import { ModeEdit } from "material-ui-icons";
+import  IconButton  from '../CustomButtons/IconButton';
+
 import tableStyle from "../../variables/styles/tableStyle";
 
-function GenericTable({ ...props }) {
+function InvestorsTable({ ...props }) {
   const { classes, tableHead, tableData, tableHeaderColor } = props;
   return (
     <div className={classes.tableResponsive}>
@@ -38,6 +41,16 @@ function GenericTable({ ...props }) {
             return (
               <TableRow key={key}>
                 {prop.map((prop, key) => {
+                  if (8 <= key) {
+                    return (
+                      <TableCell className={classes.tableCell} key={key}>
+                        {prop}
+                        <IconButton color="primary">
+                          <ModeEdit style={{ color: "#FFF" }} />
+                        </IconButton>
+                      </TableCell>
+                    );
+                  }
                   return (
                     <TableCell className={classes.tableCell} key={key}>
                       {prop}
@@ -53,11 +66,11 @@ function GenericTable({ ...props }) {
   );
 }
 
-GenericTable.defaultProps = {
+InvestorsTable.defaultProps = {
   tableHeaderColor: "gray"
 };
 
-GenericTable.propTypes = {
+InvestorsTable.propTypes = {
   classes: PropTypes.object.isRequired,
   tableHeaderColor: PropTypes.oneOf([
     "warning",
@@ -72,4 +85,4 @@ GenericTable.propTypes = {
   tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
 };
 
-export default withStyles(tableStyle)(GenericTable);
+export default withStyles(tableStyle)(InvestorsTable);

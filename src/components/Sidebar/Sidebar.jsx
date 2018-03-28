@@ -32,12 +32,15 @@ const Sidebar = ({ ...props }) => {
     <List className={classes.list}>
       {routes.map((prop, key) => {
         if (prop.redirect) return null;
+
         const listItemClasses = cx({
           [' ' + classes[color]]: activeRoute(prop.path),
         });
+
         const whiteFontClasses = cx({
           [' ' + classes.whiteFont]: activeRoute(prop.path),
         });
+
         return (
           <NavLink
             to={prop.path}

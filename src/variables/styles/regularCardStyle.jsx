@@ -11,6 +11,7 @@ import {
   redCardHeader,
   blueCardHeader,
   purpleCardHeader
+  
 } from "variables/styles";
 
 const regularCardStyle = {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Input } from 'material-ui';
-import { withStyles } from 'material-ui/styles';
+// import { Input } from 'material-ui';
+import { withStyles, Input } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
@@ -8,7 +8,7 @@ import { inject, observer } from 'mobx-react';
 
 import SelectCurrency from '../../Selectors/SelectCurrency';
 import Button from '../../CustomButtons/Button';
-import modalStyle from '../../../variables/styles/modalStyle';
+import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
 
 // import { Icon } from 'material-ui-icons';
 // import PropTypes from 'prop-types';
@@ -26,28 +26,40 @@ const getModalStyle = () => {
 const styles = theme => ({
   paper: {
     position: 'absolute',
+    display: 'flex',
+    flexDirection: 'column',
     minWidth: '100px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
     padding: theme.spacing.unit * 4,
-  }
+  },
+  container: {
+    display: 'flex',
+    marginBottom: '25px',
+  },
+  nestedElementLeft: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginRight: '20px',
+  },
+  nestedElementRight: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  headerContainer: {
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    marginBottom: '20px',
+  },
 });
-// const stylesMain = {
-//   display: 'flex',
-//   // justify: 'flex-end',
-//   // alignItems: 'center',
-// };
 
 @inject('InvestorStore', 'PortfolioStore')
 @observer
 class AddInvestor extends React.Component {
   state = {
-    open: false,
+    open: false
   };
-
-  componentWillUnmount() {
-    this.props.InvestorStore.reset();
-  }
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -66,7 +78,7 @@ class AddInvestor extends React.Component {
     InvestorStore.handleEmptyFields;
 
     const inputValue = event.target.value;
-    InvestorStore.setInvestorValues(propertyType, inputValue);
+    InvestorStore.setNewInvestorValues(propertyType, inputValue);
   }
 
   handleFounder = name => (event) => {
@@ -82,8 +94,7 @@ class AddInvestor extends React.Component {
       InvestorStore.createNewInvestor(PortfolioStore.selectedPortfolioId);
       this.handleClose();
     }
-  }
-
+  };
 
   render() {
     const { classes, InvestorStore } = this.props;
@@ -106,11 +117,7 @@ class AddInvestor extends React.Component {
             className={classes.paper}
             onSubmit={() => this.handleSave}
           >
-            <div
-            // stystylesMain
-            // className={modalStyle.investorContainer}
-            // FIXME: needs classes
-            >
+            <div className={classes.headerContainer}>
               <Typography
                 variant="title"
                 id="modal-title"
@@ -121,19 +128,20 @@ class AddInvestor extends React.Component {
 
               <div>
                 Founder
-              <Checkbox
+                <Checkbox
                   onChange={this.handleFounder('founder')}
                   color="primary"
                 />
               </div>
             </div>
 
-            <div className={classes.flex}>
-              <div>
+            <div className={classes.container}>
+              <div className={classes.nestedElementLeft}>
                 <Input
                   placeholder="Full name"
                   onChange={this.handleRequests('fullName')}
                   className={classes.input}
+                  autoFocus
                 />
 
                 <Input
@@ -163,7 +171,7 @@ class AddInvestor extends React.Component {
                 />
               </div>
 
-              <div style={{ display: 'inline-block' }}>
+              <div className={classes.nestedElementRight}>
                 <Input
                   type="email"
                   placeholder="Email Address"
@@ -211,7 +219,7 @@ class AddInvestor extends React.Component {
                 onClick={this.handleSave}
                 color="primary"
                 type="submit"
-                // disabled={InvestorStore.disabledSaveButton}
+              // disabled={InvestorStore.disabledSaveButton}
               >
                 Save
               </Button>
@@ -227,6 +235,8 @@ class AddInvestor extends React.Component {
 //   classes: PropTypes.object,
 // };
 
-const AddInvestorWrapped = withStyles(styles, modalStyle)(AddInvestor);
+const AddInvestorWrapped = withStyles(styles, addInvestorModalStyle)(
+  AddInvestor
+);
 
 export default AddInvestorWrapped;

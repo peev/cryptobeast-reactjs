@@ -1,15 +1,16 @@
-import React from 'react';
-import { Grid } from 'material-ui';
-import Paper from 'material-ui/Paper';
-import Textarea from 'material-ui/Input/Textarea';
-import RegularButton from '../../components/CustomButtons/Button';
-import SelectCurrency from '../../components/Selectors/SelectCurrency';
-import SelectExchange from '../../components/Selectors/SelectExchange';
+import React from "react";
+import { Grid } from "material-ui";
+import Paper from "material-ui/Paper";
+import { TextField } from "material-ui";
+import RegularButton from "../../components/CustomButtons/Button";
+import SelectCurrency from "../../components/Selectors/SelectCurrency";
+import SelectExchange from "../../components/Selectors/SelectExchange";
 // import classes from './AssetMovements.css';
+import "./AssetMovements.css";
 
 class AssetMovements extends React.Component {
   state = {
-    direction: 'row',
+    direction: "row"
   };
   render() {
     return (
@@ -17,28 +18,50 @@ class AssetMovements extends React.Component {
         <Grid container className="AMGrid">
           <Paper className="AMPaper">
             <Grid container>
-              <h4>Record Manual Transaction</h4>
+              <h4>BASIC ASSET INPUT</h4>
             </Grid>
 
             <Grid container>
               <Grid item xs={3}>
-                <SelectExchange />
-                <SelectExchange />
+                <SelectCurrency />
+                <TextField placeholder="QUANTITY..." />
               </Grid>
               <Grid item xs={3}>
-                <SelectCurrency />
-                <Textarea placeholder="QUANTITY..." />
-              </Grid>
-              <Grid item xs={3}>
-                <SelectCurrency />
-                <Textarea placeholder="QUANTITY..." />
-              </Grid>
-              <Grid item xs={3}>
-                <SelectCurrency />
-                <Textarea placeholder="QUANTITY..." />
+                <SelectExchange floatingLabelText="Frequency" />
               </Grid>
             </Grid>
-            <RegularButton color="primary">Export</RegularButton>
+            <br />
+            <RegularButton color="primary">ADD</RegularButton>
+          </Paper>
+        </Grid>
+        <br />
+        <Grid container className="AMGrid">
+          <Paper className="AMPaper">
+            <Grid container>
+              <h4>ASSET ALLOCATION</h4>
+            </Grid>
+
+            <Grid container>
+              <Grid item xs={3}>
+                <SelectCurrency />
+                <TextField placeholder="QUANTITY..." />
+              </Grid>
+              <Grid item xs={3}>
+                <SelectExchange />
+
+                <TextField placeholder="QUANTITY..." />
+              </Grid>
+              <Grid item xs={3}>
+                <SelectCurrency />
+                <TextField placeholder="QUANTITY..." />
+              </Grid>
+              <Grid item xs={3}>
+                <SelectExchange />
+                <TextField placeholder="QUANTITY..." />
+              </Grid>
+            </Grid>
+            <br />
+            <RegularButton color="primary">RECORD</RegularButton>
           </Paper>
         </Grid>
       </div>

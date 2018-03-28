@@ -26,20 +26,26 @@ const Portfolio = {
     requests.get('/portfolio/all'),
   create: portfolioName =>
     requests.post('/portfolio/create', portfolioName),
-  update: (requestParams) =>
+  update: requestParams =>
     requests.put('/portfolio/update', requestParams), // id + newName
   delete: id =>
     requests.delete('/portfolio/delete', id),
-  // unfollow: username =>
-  //   requests.del(`/portfolio/${username}/follow`)
 };
 
 const Investor = {
   add: investorData =>
     requests.post('/investor/add', investorData),
+  addDeposit: (id, requestParams) =>
+    requests.put(`/investor/deposit/${id}`, requestParams),
+  withdrawal: (id, requestParams) =>
+    requests.put(`/investor/withdrawal/${id}`, requestParams),
+  update: (id, requestParams) =>
+    requests.put(`/investor/update/${id}`, requestParams),
 };
 
 const Market = {
+  getSummaries: () =>
+    requests.get('/market/summaries'),
   getCurrencies: () =>
     requests.get('/market/baseCurrencies'),
 };

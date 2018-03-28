@@ -1,62 +1,98 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { TextField } from "material-ui";
-import { withStyles } from "material-ui/styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+// import { Input } from 'material-ui';
+import { withStyles, Input } from 'material-ui';
+import Modal from 'material-ui/Modal';
+import Typography from 'material-ui/Typography';
+import { inject, observer } from 'mobx-react';
 
-// import { Icon } from 'material-ui-icons';
-import Modal from "material-ui/Modal";
-import Typography from "material-ui/Typography";
-import Button from "../../CustomButtons/Button";
-import SelectInvestor from "../../Selectors/SelectInvestor";
-import SelectCurrency from "../../Selectors/SelectCurrency";
-import Select from "material-ui";
+import Button from '../../CustomButtons/Button';
+import SelectInvestor from '../../Selectors/SelectInvestor';
+import SelectCurrency from '../../Selectors/SelectCurrency';
 
 const getModalStyle = () => {
-  const top = 50;
-  const left = 50;
+  const top = 20;
+  const left = 28;
   return {
     top: `${top}%`,
-    left: `${left}%`
+    left: `${left}%`,
   };
 };
 
 const styles = theme => ({
   paper: {
-    position: "absolute",
-    minWidth: "100px",
+    position: 'absolute',
+    minWidth: '100px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing.unit * 4,
   },
   button: {
-    float: "right",
-    display: "inline-flex"
-  }
+    float: 'right',
+    display: 'inline-flex',
+  },
+  container: {
+    display: 'flex',
+    marginTop: '15px',
+    marginBottom: '25px',
+  },
+  nestedElementLeft: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginRight: '20px',
+  },
+  nestedElementRight: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
 });
 
+@inject('InvestorStore')
+@observer
 class InvestorDeposit extends React.Component {
   state = {
-    open: false
+    open: false,
   };
 
   handleOpen = () => {
     this.setState({ open: true });
   };
+
   handleClose = () => {
+    this.props.InvestorStore.resetDeposit();
     this.setState({ open: false });
   };
-  handleChange = name => event => {
+
+  handleChange = name => (event) => {
     this.setState({ [name]: event.target.checked });
   };
 
+  handleDepositRequests = propertyType => (event) => {
+    event.preventDefault();
+
+    const inputValue = event.target.value;
+    this.props.InvestorStore.setNewDepositInvestorValues(propertyType, inputValue);
+  }
+
+  handleDepositSave = () => {
+    const { InvestorStore, PortfolioStore } = this.props;
+    // InvestorStore.handleEmptyFields;
+
+    InvestorStore.createNewDepositInvestor(InvestorStore.selectedInvestor.id);
+    // PortfolioStore.getPortfolios();
+    this.handleClose();
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, InvestorStore } = this.props;
 
     return (
       <div>
         <div>
-          <Button onClick={this.handleOpen} color="primary">
-            {" "}
+          <Button
+            onClick={this.handleOpen}
+            color="primary"
+          >
             Investor Deposit
           </Button>
         </div>
@@ -68,49 +104,68 @@ class InvestorDeposit extends React.Component {
           <form
             style={getModalStyle()}
             className={classes.paper}
-            onSubmit={() => this.handleSave}
+          // onSubmit={() => this.handleDepositSave}
           >
             <Typography
               variant="title"
               id="modal-title"
-              style={{ fontSize: "18px", fontWeight: "400" }}
+              style={{ fontSize: '18px', fontWeight: '400' }}
             >
               Investor Deposit
             </Typography>
-            <div className={classes.flex}>
-              <div style={{ display: "inline-block", marginRight: "10px" }}>
+
+            <div className={classes.container}>
+              <div className={classes.nestedElementLeft}>
                 <SelectInvestor />
-                <TextField
+
+                <Input
+                  type="number"
                   placeholder="Amount"
-                  // inputRef={el =>this.name = el}
+                  onChange={this.handleDepositRequests('amount')}
+                  className={classes.input}
                 />
-                <br />
-                <TextField
+
+                <Input
                   placeholder="Share Price at Entry Date"
-                  // inputRef={el =>this.name = el}
+                  className={classes.input}
+                  value={InvestorStore.depositSharePriceAtEntryDate}
                 />
               </div>
-              <div style={{ display: "inline-block" }}>
-                <TextField
-                  placeholder="Transaction Date "
-                  // inputRef={el =>this.name = el}
+
+              <div className={classes.nestedElementRight}>
+                <Input
+                  type="date"
+                  placeholder="Transaction Date"
+                  onChange={this.handleDepositRequests('transactionDate')}
+                  className={classes.input}
                 />
-                <br />
+
                 <SelectCurrency />
-                <br />
-                <TextField placeholder="Purchased Shares" />
+
+                <Input
+                  placeholder="Purchased Shares"
+                  className={classes.input}
+                  value={InvestorStore.depositPurchasedShares}
+                />
               </div>
             </div>
 
-            <br />
+            <div>
+              <Button
+                onClick={this.handleClose}
+                color="primary"
+              >
+                Cancel
+              </Button>
 
-            <Button onClick={this.handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.handleSave} color="primary" type="submit">
-              {" "}
-              Save
-            </Button>
+              <Button
+                onClick={this.handleDepositSave}
+                color="primary"
+                type="submit"
+              >
+                Save
+              </Button>
+            </div>
           </form>
         </Modal>
       </div>
@@ -119,7 +174,7 @@ class InvestorDeposit extends React.Component {
 }
 
 InvestorDeposit.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 const InvestorDepositWrapped = withStyles(styles)(InvestorDeposit);

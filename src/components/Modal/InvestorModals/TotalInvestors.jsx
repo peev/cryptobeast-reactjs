@@ -1,19 +1,20 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { TextField } from "material-ui";
 import { withStyles } from "material-ui/styles";
 
 // import { Icon } from 'material-ui-icons';
 import Modal from "material-ui/Modal";
 import Typography from "material-ui/Typography";
 import InvestorCard from "../../CustomElements/InvestorCard";
+import InvestorCardButton from "../../CustomButtons/InvestorCardButton";
 import Button from "../../CustomButtons/Button";
 
-
+import InvestorsTable from "../../CustomTables/InvestorsTable";
+import buttonStyle from "../../../variables/styles/buttonStyle";
 
 const getModalStyle = () => {
-  const top = 50;
-  const left = 50;
+  const top = 22;
+  const left = 28;
   return {
     top: `${top}%`,
     left: `${left}%`
@@ -31,6 +32,9 @@ const styles = theme => ({
   button: {
     float: "right",
     display: "inline-flex"
+  },
+  card: {
+    width: "180px"
   }
 });
 
@@ -47,21 +51,21 @@ class TotalInvestors extends React.Component {
   };
 
   render() {
-    const { classes, headerText, labelText } = this.props;
+    const { classes } = this.props;
 
     return (
       <div>
         <div>
-          <Button onClick={this.handleOpen} style={{ padding: '0' }}  >
+          <InvestorCardButton onClick={this.handleOpen}>
             <InvestorCard headerText="10" labelText="Total Investors" />
-          </Button>
+          </InvestorCardButton>
         </div>
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <form
+          <div
             style={getModalStyle()}
             className={classes.paper}
             onSubmit={() => this.handleSave}
@@ -71,40 +75,80 @@ class TotalInvestors extends React.Component {
               id="modal-title"
               style={{ fontSize: "18px", fontWeight: "400" }}
             >
-              Investor Deposit
+              Total Investors
             </Typography>
-            <div className={classes.flex}>
-              <div style={{ display: "inline-block", marginRight: "10px" }}>
-                <TextField
-                  placeholder="Amount"
-                  // inputRef={el =>this.name = el}
-                />
-                <br />
-                <TextField
-                  placeholder="Share Price at Entry Date"
-                  // inputRef={el =>this.name = el}
-                />
-              </div>
-              <div style={{ display: "inline-block" }}>
-                <TextField
-                  placeholder="Transaction Date "
-                  // inputRef={el =>this.name = el}
-                />
-                <br />
-                <TextField placeholder="Purchased Shares" />
-              </div>
-            </div>
+
+            <InvestorsTable
+              tableHead={[
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name",
+                "name"
+              ]}
+              tableData={[
+                [
+                  "Name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  ""
+                ],
+
+                [
+                  "Name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  ""
+                ],
+
+                [
+                  "Name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  ""
+                ],
+
+                [
+                  "Name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  "name",
+                  ""
+                ]
+              ]}
+            />
 
             <br />
 
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleSave} color="primary" type="submit">
-              {" "}
-              Save
-            </Button>
-          </form>
+          </div>
         </Modal>
       </div>
     );
@@ -115,6 +159,6 @@ TotalInvestors.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-const TotalInvestorsWrapped = withStyles(styles)(TotalInvestors);
+const TotalInvestorsWrapped = withStyles(styles, buttonStyle)(TotalInvestors);
 
 export default TotalInvestorsWrapped;

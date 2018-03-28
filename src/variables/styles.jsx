@@ -57,12 +57,12 @@ const navBackgroundColor = '#22252f';
 const textPrimary = '#212121';
 const textSecondary = '#757575';
 const whiteBackground = '#FFF';
-const primaryColor = '#EEEEEE'; //9c27b0 was original
+const primaryColor = '#EEEEEE'; // 9c27b0 was original
 const lightPrimaryColor = '#B2EBF2';
 const accentColor = '#607D8B'; // For some buttons
-const tableDivider = '#BDBDBD';
-const redLetters = '#B94A48'; // For sale, withdrawal
-const greenLetters = '#70A800'; // for buy,deposit
+const tableDivider = '#5d6778';
+const redLetters = '#eb4562'; // For sale, withdrawal
+const greenLetters = '#3ab693'; // for buy,deposit
 
 const warningColor = '#ff9800';
 const dangerColor = '#f44336';
@@ -97,7 +97,7 @@ const orangeCardHeader = {
   ...warningBoxShadow,
 };
 const greenCardHeader = {
-  background: 'linear-gradient(60deg, #66bb6a, #43a047)',
+  background: 'linear-gradient(60deg, #5d6778, #5d6778)',
   ...successBoxShadow,
 };
 const redCardHeader = {

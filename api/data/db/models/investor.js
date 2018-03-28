@@ -16,9 +16,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     telephone: {
       type: DataTypes.STRING,
-      validate: {
-        len: [3, 20],
-      },
     },
     dateOfEntry: {
       type: DataTypes.DATEONLY,

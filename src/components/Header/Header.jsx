@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Menu } from 'material-ui-icons';
+// import { Menu } from 'material-ui-icons';
 import {
   withStyles,
   Toolbar,
-  IconButton,
-  Hidden,
+  // IconButton,
+  // Hidden,
   // AppBar,
   // Button,
 } from 'material-ui';
 
 // import cx from 'classnames';
-import ControlledOpenSelect from '../Selectors/PortSelect';
+import PortfolioSelect from '../Selectors/PortfolioSelect/PortfolioSelect';
 import buttonStyle from '../../variables/styles/buttonStyle';
 import headerStyle from '../../variables/styles/headerStyle.jsx';
 
@@ -19,6 +19,16 @@ import headerStyle from '../../variables/styles/headerStyle.jsx';
 // import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
 // import RegularButton from '../CustomButtons/Button';
 // import HeaderLinks from './HeaderLinks';
+
+const styles = () => ({
+  headerContainer: {
+    position: 'fixed',
+    width: '100%',
+    paddingLeft: '0px',
+    backgroundColor: '#22252f',
+    zIndex: '1',
+  },
+});
 
 class Header extends Component {
   constructor(props) {
@@ -33,28 +43,25 @@ class Header extends Component {
     // });
     return (
       <Toolbar
-        className={classes.container}
-        style={{
-          borderBottom: '2px solid #00BCD4',
-         
-        }}
+        // className={classes.container}
+        className={classes.headerContainer}
       >
-        <div className={classes.flex}>
-          {/* Here we create navbar brand, based on route name */}
+        {/* Here we create navbar brand, based on route name */}
+        {/* <div className={classes.flex}>
           <Hidden mdUp>
             <IconButton
               className={classes.appResponsive}
-              style={{color: '#FFF'}}
+              style={{ color: '#FFF' }}
               aria-label="open drawer"
               onClick={this.props.handleDrawerToggle}
             >
               <Menu />
             </IconButton>
           </Hidden>
-        </div>
+        </div> */}
 
-        <div className={classes.flex}>
-          <ControlledOpenSelect />
+        <div >
+          <PortfolioSelect />
 
           {/* <CreatePortfolio /> */}
           {/* <UpdatePortfolioModal />
@@ -79,4 +86,4 @@ Header.propTypes = {
   // handleDrawerToggle: PropTypes.func,
 };
 
-export default withStyles(headerStyle, buttonStyle)(Header);
+export default withStyles(styles, headerStyle, buttonStyle)(Header);

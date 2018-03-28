@@ -1,62 +1,99 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { TextField } from "material-ui";
-import { withStyles } from "material-ui/styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles, TextField, Input } from 'material-ui';
+import Modal from 'material-ui/Modal';
+import Typography from 'material-ui/Typography';
+import { inject, observer } from 'mobx-react';
 
+import Button from '../../CustomButtons/Button';
+import SelectInvestor from '../../Selectors/SelectInvestor';
+// import { TextField } from 'material-ui';
 // import { Icon } from 'material-ui-icons';
-import Modal from "material-ui/Modal";
-import Typography from "material-ui/Typography";
-import Button from "../../CustomButtons/Button";
-import SelectInvestor from "../../Selectors/SelectInvestor";
+// import Select from 'material-ui';
 // import SelectCurrency from "../../Selectors/SelectCurrency";
-import Select from "material-ui";
 
 const getModalStyle = () => {
-  const top = 50;
-  const left = 50;
+  const top = 20;
+  const left = 28;
   return {
     top: `${top}%`,
-    left: `${left}%`
+    left: `${left}%`,
   };
 };
 
 const styles = theme => ({
   paper: {
-    position: "absolute",
-    minWidth: "100px",
+    position: 'absolute',
+    minWidth: '100px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing.unit * 4,
   },
   button: {
-    float: "right",
-    display: "inline-flex"
-  }
+    float: 'right',
+    display: 'inline-flex',
+  },
+  container: {
+    display: 'flex',
+    marginTop: '15px',
+    marginBottom: '25px',
+  },
+  nestedElementLeft: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginRight: '20px',
+  },
+  nestedElementRight: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: '16px',
+  },
 });
 
+@inject('InvestorStore')
+@observer
 class InvestorWithdraw extends React.Component {
   state = {
-    open: false
+    open: false,
   };
 
   handleOpen = () => {
     this.setState({ open: true });
   };
+
   handleClose = () => {
+    this.props.InvestorStore.resetWithdrawal();
     this.setState({ open: false });
   };
-  handleChange = name => event => {
+
+  handleChange = name => (event) => {
     this.setState({ [name]: event.target.checked });
   };
 
+  handleWithdrawRequests = propertyType => (event) => {
+    event.preventDefault();
+
+    const inputValue = event.target.value;
+    this.props.InvestorStore.setWithdrawInvestorValues(propertyType, inputValue);
+  }
+
+  handleWithdrawalInvestor = () => {
+    const { InvestorStore, PortfolioStore } = this.props;
+    // InvestorStore.handleEmptyFields;
+
+    InvestorStore.withdrawalInvestor(InvestorStore.selectedInvestor.id);
+    PortfolioStore.getPortfolios();
+    this.handleClose();
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, InvestorStore } = this.props;
 
     return (
       <div>
         <div>
           <Button onClick={this.handleOpen} color="primary">
-           
+
             Investor Withdrawal
           </Button>
         </div>
@@ -68,52 +105,73 @@ class InvestorWithdraw extends React.Component {
           <form
             style={getModalStyle()}
             className={classes.paper}
-            onSubmit={() => this.handleSave}
+            // onSubmit={() => this.handleWithdrawalInvestor}
           >
             <Typography
               variant="title"
               id="modal-title"
-              style={{ fontSize: "18px", fontWeight: "400" }}
+              style={{ fontSize: '18px', fontWeight: '400' }}
             >
-              Investor Deposit
+              Investor Withdrawal
             </Typography>
-            <div className={classes.flex}>
-              <div style={{ display: "inline-block", marginRight: "10px" }}>
+            <div className={classes.container}>
+              <div className={classes.nestedElementLeft}>
                 <SelectInvestor />
-                <br />
-                <TextField
+
+                <Input
+                  type="number"
                   placeholder="Amount"
-                  // inputRef={el =>this.name = el}
+                  onChange={this.handleWithdrawRequests('amount')}
+                  className={classes.input}
                 />
-                <br />
-                <TextField
+
+                <Input
+                  type="number"
                   placeholder="Share Price at Entry Date"
-                  // inputRef={el =>this.name = el}
+                  value={InvestorStore.withdrawSharePriceAtEntryDate}
+                  className={classes.input}
                 />
               </div>
-              <div style={{ display: "inline-block" }}>
-                <TextField
-                  placeholder="Transaction Date "
-                  // inputRef={el =>this.name = el}
+
+              <div className={classes.nestedElementRight}>
+                <Input
+                  type="date"
+                  placeholder="Transaction Date"
+                  onChange={this.handleWithdrawRequests('transactionDate')}
+                  className={classes.input}
                 />
-                <br />
-                <TextField placeholder="USD" />
-                <br />
-                <TextField placeholder="Purchased Shares" />
-                <br />
-                <TextField placeholder="Management Fee" />
+
+                <Input
+                  type="number"
+                  placeholder="USD"
+                  className={classes.input}
+                />
+
+                <Input
+                  type="number"
+                  placeholder="Purchased Shares"
+                  value={InvestorStore.withdrawPurchasedShares}
+                  className={classes.input}
+                />
+
+                <Input
+                  type="number"
+                  placeholder="Management Fee"
+                  value={InvestorStore.depositManagementFee}
+                  className={classes.input}
+                />
               </div>
             </div>
 
-            <br />
+            <div>
+              <Button onClick={this.handleClose} color="primary">
+                Cancel
+              </Button>
 
-            <Button onClick={this.handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.handleSave} color="primary" type="submit">
-              {" "}
-              Save
-            </Button>
+              <Button onClick={this.handleWithdrawalInvestor} color="primary" type="submit">
+                Save
+              </Button>
+            </div>
           </form>
         </Modal>
       </div>

@@ -10,7 +10,8 @@ import {
   infoColor,
   roseColor,
   grayColor,
-  defaultFont
+  defaultFont,
+  
 } from "variables/styles";
 
 const tableStyle = theme => ({

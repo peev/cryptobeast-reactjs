@@ -4,10 +4,8 @@ import { withStyles, Grid } from "material-ui";
 import summaryStyle from "variables/styles/summaryStyle";
 
 import { inject, observer } from "mobx-react";
-
 import CreatePortfolio from "../../components/Modal/CreatePortfolio";
 import "./Summary.css";
-import InvestorCard from "../../components/CustomElements/InvestorCard";
 // react plugin for creating charts
 // import ChartistGraph from 'react-chartist';
 // import {
@@ -47,7 +45,7 @@ class Summary extends React.Component {
   render() {
     const { PortfolioStore } = this.props;
     let createPortfolio;
-    let other;
+    let summaryContent;
 
     if (!PortfolioStore.portfolios.hasOwnProperty("0")) {
       createPortfolio = (
@@ -60,14 +58,15 @@ class Summary extends React.Component {
         </div>
       );
     } else {
-      other = <p>Summary is working</p>;
+      summaryContent = <p>Summary is working</p>;
     }
 
     return (
       <div className="Summary">
         <Grid>
+          <CreatePortfolio />
           {createPortfolio}
-          {other}
+          {summaryContent}
           {/* <AddInvestorWrapped /> */}
         </Grid>
       </div>

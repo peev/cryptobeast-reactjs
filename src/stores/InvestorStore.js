@@ -76,7 +76,7 @@ class InvestorStore {
     this.selectedInvestors = [];
 
 
-    requester.Market.getCurrencies()
+    requester.Market.getBaseCurrencies()
       .then(this.onGetBaseCurrencies)
       .catch(this.onError);
 
@@ -407,6 +407,7 @@ class InvestorStore {
 
   @action.bound
   onGetBaseCurrencies(result) {
+    console.log(this.baseCurrencies);
     this.baseCurrencies = result.data;
   }
 

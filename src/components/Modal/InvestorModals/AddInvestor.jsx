@@ -111,11 +111,10 @@ class AddInvestor extends React.Component {
     const { PortfolioStore, InvestorStore } = this.props;
 
     // FIXME: dont spam Save Button
+    const profileChecked = InvestorStore.handleNotSelectedPortfolio();
     InvestorStore.handleEmptyFields;
     InvestorStore.handleAddInvestorErrors();
-
-    const fieldsChecked = InvestorStore.emailFieldValidation();
-    console.log(fieldsChecked);
+    const emailChecked = InvestorStore.emailFieldValidation();
 
     // Warnings popup
     if (InvestorStore.getAddInvestorErrors.length > 0) {
@@ -126,7 +125,7 @@ class AddInvestor extends React.Component {
       }, 6000);
     }
 
-    if (InvestorStore.areFieldsEmpty === false && fieldsChecked) {
+    if (InvestorStore.areFieldsEmpty === false && emailChecked && profileChecked) {
       InvestorStore.createNewInvestor(PortfolioStore.selectedPortfolioId);
 
       this.handleClose();

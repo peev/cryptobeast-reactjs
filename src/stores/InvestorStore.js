@@ -394,7 +394,9 @@ class InvestorStore {
   handleNotSelectedPortfolio() {
     if (!this.selectedPortfolioId) {
       this.investorError.push('Please select portfolio first');
+      return false;
     }
+    return true;
   }
 
   @action

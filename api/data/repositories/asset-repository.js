@@ -3,6 +3,7 @@ const init = (db) => {
     const newAsset = {
       currency: request.currency,
       balance: request.balance,
+      origin: request.origin,
     };
     const portfolio = db.Portfolio.findById(request.portfolioId);
     const createdAsset = db.Asset.create(newAsset)
@@ -24,11 +25,31 @@ const init = (db) => {
 
   const update = (request) => {
     return db.Asset.update({
-      currency: request.currency,
       balance: request.balance,
     }, {
-      where: { id: request.assetId },
+        where: { id: request.assetId },
+      });
+  };
+
+  const addAssetsFromApi = (assets, account) => {
+    const portfolio = db.Portfolio.findById(account.portfolioId);
+    const addedAssets = db.Asset.bulkCreate(assets).then(result => result);
+
+    return new Promise((resolve, reject) => {
+      Promise.all([
+        portfolio,
+        addedAssets,
+      ]).then((values) => {
+        values[1].forEach((asset) => {
+          values[0].addAsset(asset);
+        });
+      })
+        .then(() => resolve(addedAssets))
+        .catch((err) => {
+          reject(err);
+        });
     });
+    // return db.Asset.bulkCreate(assets);
   };
 
   const removeAsset = (request) => {
@@ -57,6 +78,7 @@ const init = (db) => {
   return {
     addNewAsset,
     update,
+    addAssetsFromApi,
     removeAsset,
   };
 };

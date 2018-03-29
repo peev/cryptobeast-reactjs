@@ -4,6 +4,7 @@ const init = (db) => {
       apiServiceName: request.apiServiceName,
       apiKey: request.apiKey,
       apiSecret: request.apiSecret,
+      isActive: request.isActive,
     };
     const portfolio = db.Portfolio.findById(request.portfolioId);
     const createdAccount = db.Account.create(newAccount)
@@ -28,6 +29,7 @@ const init = (db) => {
       apiServiceName: request.apiServiceName,
       apiKey: request.apiKey,
       apiSecret: request.apiSecret,
+      isActive: request.isActive,
     }, {
         where: { id: request.id },
       });

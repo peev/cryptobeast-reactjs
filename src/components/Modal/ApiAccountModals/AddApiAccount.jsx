@@ -1,14 +1,17 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { TextField } from "material-ui";
-import { withStyles } from "material-ui/styles";
-import Typography from "material-ui/Typography";
-import Modal from "material-ui/Modal";
-import IconButton from "../CustomButtons/IconButton";
-import { Add } from "material-ui-icons";
-import { inject, observer } from "mobx-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { TextField } from 'material-ui';
+import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
+import Checkbox from 'material-ui/Checkbox';
+import Modal from 'material-ui/Modal';
+import { Add } from 'material-ui-icons';
+import { inject, observer } from 'mobx-react';
+import Button from '../../CustomButtons/Button';
+import IconButton from '../../CustomButtons/IconButton';
 
-import Button from "../CustomButtons/Button";
+import SelectApi from '../../Selectors/SelectApi';
+
 
 function getModalStyle() {
   const top = 45;
@@ -21,31 +24,35 @@ function getModalStyle() {
 
 const styles = theme => ({
   paper: {
-    position: "absolute",
-    minWidth: "200px",
+    position: 'absolute',
+    minWidth: '200px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
     padding: theme.spacing.unit * 4
   },
   headerButtonContainer: {
-    float: "right",
-    marginTop: "-35px",
-    marginRight: "40px"
+    float: 'right',
+    marginTop: '-35px',
+    marginRight: '40px'
   },
   modalTitle: {
-    fontSize: "18px",
-    fontWeight: "400",
-    textAlign: "center"
+    fontSize: '18px',
+    fontWeight: '400',
+    textAlign: 'center'
   },
   inputWrapper: {
-    width: "200px"
+    width: '200px'
   },
   container: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: "30px",
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  isActiveCheckbox: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   }
 });
 
@@ -73,6 +80,10 @@ class AddApiAccount extends React.Component {
     event.preventDefault();
     const newValue = event.target.value;
     this.props.ApiAccountStore.setNewApiAccountValues(propertyType, newValue);
+  }
+
+  handleActive = () => {
+    this.props.ApiAccountStore.setIsActive();
   }
 
   handleSave = () => {
@@ -107,21 +118,33 @@ class AddApiAccount extends React.Component {
             className={classes.paper}
             onSubmit={() => this.handleSave}
           >
-            <Typography
-              variant="title"
-              id="modal-title"
-              className={classes.modalTitle}
-            >
-              IMPORT FROM API
-            </Typography>
+            <div>
+              <Typography
+                variant="title"
+                id="modal-title"
+                className={classes.modalTitle}
+              >
+                Import from API
+              </Typography>
 
+              <div className={classes.isActiveCheckbox}>
+                Active
+                <Checkbox
+                  onChange={() => this.handleActive('isActive')}
+                  color="primary"
+                  checked={this.props.ApiAccountStore.values.isActive}
+                />
+              </div>
+            </div>
             <div className={classes.container}>
-              <TextField
+              {/* <TextField
                 placeholder="Api Service Name"
                 className={classes.inputWrapper}
                 onChange={(e) => this.handleInputValue('apiServiceName', e)}
               // inputRef={el => (this.apiServiceName = el)}
-              />
+              /> */}
+
+              <SelectApi />
 
               <TextField
                 placeholder="Api Key"
@@ -141,14 +164,24 @@ class AddApiAccount extends React.Component {
             </div>
             <br />
 
+            {/* Cancel BUTTON */}
+            <Button
+              style={{ display: 'inline-flex', marginRight: '50px', float: 'left' }}
+              onClick={this.handleClose}
+              color="primary"
+            >
+              {' '}
+              Cancel
+            </Button>
+
             {/* SAVE BUTTON */}
             <Button
-              style={{ display: "inline-flex", float: 'right' }}
+              style={{ display: 'inline-flex', float: 'right' }}
               onClick={this.handleSave}
               color="primary"
               type="submit"
             >
-              {" "}
+              {' '}
               Save
             </Button>
           </form>

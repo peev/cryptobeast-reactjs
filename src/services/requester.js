@@ -51,9 +51,9 @@ const Market = {
 };
 
 const ApiAccount = {
-  addAccount: (data) =>
+  addAccount: data =>
     requests.post('/account/add', data),
-  update: (requestParams) =>
+  update: requestParams =>
     requests.put('/account/update', requestParams),
   delete: id =>
     requests.delete(`/account/delete${id}`, id),

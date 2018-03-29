@@ -17,25 +17,27 @@ import tableStyle from "../../variables/styles/tableStyle";
 
 function IntegrationsTable({ ...props }) {
   const { classes, tableHead, tableData, tableHeaderColor } = props;
+  const tableHeader = (
+    <TableHead className={classes[tableHeaderColor + "TableHeader"]}>
+      <TableRow>
+        {tableHead.map((prop, key) => {
+          return (
+            <TableCell
+              className={classes.tableCell + " " + classes.tableHeadCell}
+              key={key}
+            >
+              {prop}
+            </TableCell>
+          );
+        })}
+      </TableRow>
+    </TableHead>
+  );
+
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
-        {tableHead !== undefined ? (
-          <TableHead className={classes[tableHeaderColor + "TableHeader"]}>
-            <TableRow>
-              {tableHead.map((prop, key) => {
-                return (
-                  <TableCell
-                    className={classes.tableCell + " " + classes.tableHeadCell}
-                    key={key}
-                  >
-                    {prop}
-                  </TableCell>
-                );
-              })}
-            </TableRow>
-          </TableHead>
-        ) : null}
+        {tableHead !== undefined ? tableHeader : null}
         <TableBody>
           {tableData.map((prop, key) => {
             return (
@@ -45,6 +47,22 @@ function IntegrationsTable({ ...props }) {
                     return (
                       <TableCell className={classes.tableCell} key={key}>
                         {prop}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        {/* TODO: Replace modal with update api modal */}
                         <UpdatePortfolioModal />
                       </TableCell>
                     );

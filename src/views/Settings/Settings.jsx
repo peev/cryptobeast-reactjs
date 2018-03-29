@@ -6,7 +6,7 @@ import { inject, observer } from "mobx-react";
 import UpdatePortfolioModal from "../../components/Modal/UpdatePortfolio";
 import RegularButton from "../../components/CustomButtons/Button";
 import CreatePortfolio from "../../components/Modal/CreatePortfolio";
-import AddApiAccount from "../../components/Modal/AddApiAccount";
+import AddApiAccount from "../../components/Modal/ApiAccountModals/AddApiAccount";
 
 import PortfoliosTable from "../../components/CustomTables/PortfoliosTable";
 import IntegrationsTable from "../../components/CustomTables/IntegrationsTable";

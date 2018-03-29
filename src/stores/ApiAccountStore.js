@@ -8,6 +8,7 @@ class ApiAccountStore {
     apiServiceName: '',
     apiKey: '',
     apiSecret: '',
+    isActive: true,
   }
 
   @observable
@@ -15,111 +16,17 @@ class ApiAccountStore {
     apiServiceName: '',
     apiKey: '',
     apiSecret: '',
+    isActive: true,
   }
 
   @observable
   selectedApiService = '';
 
   constructor() {
-    // this.depositedCurrency = {};
-    // this.baseCurrencies = [];
-    // this.selectedBaseCurrency = null;
-    // this.disabledSaveButton = true;
-    // this.areFieldsEmpty = true;
-    // this.selectedInvestor = null;
-    // this.selectedInvestors = [];
-
-
-    requester.Market.getCurrencies()
-      .then(this.onGetBaseCurrencies)
-      .catch(this.onError);
-
-    // on component mount, this makes calls !!!
-    // requester.Market.getSummaries()
-    //   .then(this.onGetSummaries)
-    //   .catch(this.onError);
-  }
-
-  @computed
-  get depositUsdEquiv() {
-    if (this.selectedBaseCurrency && this.values.depositedAmount) {
-      const calculatedDepositUsdEquiv = this.values.depositedAmount * this.selectedBaseCurrency.Last;
-      this.values.depositUsdEquiv = calculatedDepositUsdEquiv;
-      return calculatedDepositUsdEquiv;
-    }
-  }
-
-  @computed
-  get sharePriceAtEntryDate() {
-    if (this.selectedBaseCurrency && this.values.depositedAmount) {
-      const calculatedSharePriceAtEntryDate = 1 / this.selectedBaseCurrency.Last;
-      this.values.sharePriceAtEntryDate = calculatedSharePriceAtEntryDate;
-      return calculatedSharePriceAtEntryDate;
-    }
-  }
-
-  @computed
-  get purchasedShares() {
-    if (this.selectedBaseCurrency && this.values.depositedAmount) {
-      const calculatedPurchasedShares = (this.values.depositedAmount * this.selectedBaseCurrency.Last).toFixed(0, 10);
-      this.values.purchasedShares = calculatedPurchasedShares;
-      return calculatedPurchasedShares;
-    }
-  }
-
-  @computed
-  get depositSharePriceAtEntryDate() {
-    if (this.selectedBaseCurrency && this.newDepositValues.amount) {
-      const calculatedPurchasedShares = this.selectedBaseCurrency.Last / this.newDepositValues.amount;
-      this.newDepositValues.sharePriceAtEntryDate = calculatedPurchasedShares;
-      return calculatedPurchasedShares;
-    }
-  }
-
-  @computed
-  get depositPurchasedShares() {
-    if (this.selectedBaseCurrency && this.newDepositValues.amount) {
-      const calculatedPurchasedShares = this.selectedBaseCurrency.BaseVolume / this.newDepositValues.amount;
-      this.newDepositValues.purchasedShares = calculatedPurchasedShares;
-      return calculatedPurchasedShares;
-    }
-  }
-
-  @computed
-  get withdrawInUSD() {
-    console.log(this.selectedInvestor, this.selectedBaseCurrency);
-    if (this.selectedInvestor && this.withdrawalValues.amount) {
-      const calculatedWithdrawInUSD = this.selectedInvestor.managementFee;
-      this.withdrawalValues.inUSD = calculatedWithdrawInUSD;
-      return calculatedWithdrawInUSD;
-    }
-  }
-
-  @computed
-  get withdrawSharePriceAtEntryDate() {
-    if (this.selectedInvestor && this.withdrawalValues.amount) {
-      const calculatedWithdrawSharePriceAtEntryDate = 1;
-      this.withdrawalValues.sharePriceAtEntryDate = calculatedWithdrawSharePriceAtEntryDate;
-      return calculatedWithdrawSharePriceAtEntryDate;
-    }
-  }
-
-  @computed
-  get withdrawPurchasedShares() {
-    if (this.selectedInvestor && this.withdrawalValues.amount) {
-      const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / 1.75).toFixed(0, 10);
-      this.withdrawalValues.purchasedShares = calculatedWithdrawPurchasedShares;
-      return calculatedWithdrawPurchasedShares;
-    }
-  }
-
-  @computed
-  get depositManagementFee() {
-    if (this.selectedInvestor && this.withdrawalValues.amount) {
-      const calculatedDepositManagementFee = this.selectedInvestor.managementFee;
-      this.withdrawalValues.managementFee = calculatedDepositManagementFee;
-      return calculatedDepositManagementFee;
-    }
+    this.apiServiceName = '';
+    this.apiKey = '';
+    this.apiSecret = '';
+    this.isActive = true;
   }
 
   @computed
@@ -143,13 +50,13 @@ class ApiAccountStore {
   }
 
   @action
-  setIsFounder() {
-    this.values.isFounder = !this.values.isFounder;
+  setIsActive() {
+    this.values.isActive = !this.values.isActive;
   }
 
   @action
-  selectBaseCurrency(index) {
-    this.selectedBaseCurrency = this.baseCurrencies[index];
+  selectApiName(value) {
+    this.values.apiServiceName = value;
   }
 
   @action
@@ -157,21 +64,11 @@ class ApiAccountStore {
     return this.selectedInvestor;
   }
 
-
-
-  
   @action
   setNewApiAccountValues(propertyType, newValue) {
-    // if (propertyType === 'depositedAmount' && (newValue < 0)) {
-    //   return;
-    // }
-    // if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
-    //   return;
-    // }
-
     // all properties are send as string !!!
     this.values[propertyType] = newValue;
-    console.log('>>>>>>>>>>>>>> values in api account store', this.values);
+    console.log('>>> values in api account store', this.values);
   }
 
   @action
@@ -198,49 +95,20 @@ class ApiAccountStore {
   }
 
   @action
-  setWithdrawInvestorValues(propertyType, newValue) {
-    if (propertyType === 'amount' && (newValue < 0)) {
-      return;
-    }
-
-    // all properties are send as string !!!
-    this.withdrawalValues[propertyType] = newValue;
-    console.log(this.withdrawalValues);
-  }
-
-  @action
-  selectInvestor(id, index) {
-    this.selectedInvestorId = id;
-
-    // selects the marked investor
-    this.selectedInvestors.find((element) => {
-      if (element.id === id) {
-        this.selectedInvestor = { ...element };
-      }
-    });
-
-    if (this.selectedInvestor) {
-      // sets the editing values for the current investor
-      this.editedValues.fullName = this.selectedInvestor.fullName;
-      this.editedValues.email = this.selectedInvestor.email;
-      this.editedValues.telephone = this.selectedInvestor.telephone;
-      this.editedValues.managementFee = this.selectedInvestor.managementFee;
-    }
-  }
-
-  @action
   createNewAccount(id) {
     const newAccount = {
       portfolioId: id,
       apiServiceName: this.values.apiServiceName,
       apiKey: this.values.apiKey,
       apiSecret: this.values.apiSecret,
+      isActive: this.values.isActive,
     };
+    // console.log('>>>> requester.ApiAccount: ', newAccount);
 
     requester.ApiAccount.addAccount(newAccount)
       .then((result) => {
         // TODO: Something with result
-        console.log(result.data);
+        console.log('>>>> requester.ApiAccount.addAccount result: ', result);
       })
       .catch(this.onError);
   }
@@ -314,7 +182,7 @@ class ApiAccountStore {
   @action.bound
   reset() {
     console.log(this.values);
-    this.values.isFounder = false;
+    this.values.isActive = false;
     this.values.fullName = '';
     this.values.email = '';
     this.values.telephone = '';

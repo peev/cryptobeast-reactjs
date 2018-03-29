@@ -1,4 +1,4 @@
-// const { krakenServices } = require('../../integrations/kraken-services');
+const { krakenServices } = require('../../integrations/kraken-services');
 const { bittrexServices } = require('../../integrations/bittrex-services');
 
 const marketController = (repository) => {
@@ -27,6 +27,29 @@ const marketController = (repository) => {
 
   const getBaseCurrencies = (req, res) => {
     repository.market.getBase()
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+
+    // Bittrex variant
+    // repository.market.getBase()
+    //   .then((response) => {
+    //     res.status(200).send(response);
+    //   })
+    //   .catch((error) => {
+    //     res.json(error);
+    //   });
+  };
+
+  const syncTickersFromKraken = (req, res) => {
+    krakenServices().getTickers(req.params)
+      .then((tickers) => {
+        console.log(tickers);
+        return repository.ticker.syncTickers(tickers);
+      })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -101,7 +124,11 @@ const marketController = (repository) => {
     getAllTickers,
     syncCurrenciesFromApi,
     getAllCurrencies,
+    syncTickersFromKraken,
   };
 };
 
 module.exports = marketController;
+
+
+marketController().syncTickersFromKraken().then(() => { });

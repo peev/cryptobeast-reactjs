@@ -6,6 +6,8 @@ import { inject, observer } from "mobx-react";
 import UpdatePortfolioModal from "../../components/Modal/UpdatePortfolio";
 import RegularButton from "../../components/CustomButtons/Button";
 import CreatePortfolio from "../../components/Modal/CreatePortfolio";
+import AddApiAccount from "../../components/Modal/ApiAccountModals/AddApiAccount";
+
 import PortfoliosTable from "../../components/CustomTables/PortfoliosTable";
 import IntegrationsTable from "../../components/CustomTables/IntegrationsTable";
 
@@ -40,6 +42,8 @@ class Settings extends Component {
         <ItemGrid xs={12} sm={12} md={12}>
           <RegularCard
             cardTitle="API Integrations"
+            button={<AddApiAccount />}
+            
             content={
               <IntegrationsTable
                 tableHead={["Exchange", "Status", "EDIT", "DELETE"]}

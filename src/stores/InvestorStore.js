@@ -43,14 +43,12 @@ class InvestorStore {
     purchasedShares: 0,
     managementFee: '',
   }
+
   @observable
   depositedCurrency;
 
   @observable
   selectedBaseCurrency;
-
-  @observable
-  disabledSaveButton;
 
   @observable
   areFieldsEmpty;
@@ -64,13 +62,30 @@ class InvestorStore {
   @observable
   selectedInvestorId;
 
+  @observable
+  investorError;
+
+  @observable
+  investorErrorDisplayed;
+
   constructor() {
     this.depositedCurrency = {};
     this.selectedBaseCurrency = null;
-    this.disabledSaveButton = true;
     this.areFieldsEmpty = true;
     this.selectedInvestor = null;
     this.selectedInvestors = [];
+    this.selectedInvestorId = null;
+    this.investorError = [];
+    this.investorErrorDisplayed = false;
+
+    // requester.Market.getCurrencies()
+    //   .then(this.onGetBaseCurrencies)
+    //   .catch(this.onError);
+
+    // // on component mount, this makes calls !!!
+    // // requester.Market.getSummaries()
+    // //   .then(this.onGetSummaries)
+    // //   .catch(this.onError);
   }
 
   @computed
@@ -184,11 +199,6 @@ class InvestorStore {
   get handleEmptyFields() {
     const currentInvestor = this.values;
     const arrayOfValues = Object.values(currentInvestor);
-    const arrayOfKeys = Object.keys(currentInvestor);
-
-    console.log(currentInvestor);
-    console.log(arrayOfValues);
-    console.log(arrayOfKeys);
 
     // filters all the input values and returns only empty once,
     // skips only telephone (i !== 3), it is not required
@@ -196,7 +206,6 @@ class InvestorStore {
 
     if (filteredArray.length === 0) {
       this.areFieldsEmpty = false;
-      this.disabledSaveButton = false;
     }
   }
 
@@ -210,51 +219,49 @@ class InvestorStore {
     return this.selectedInvestor;
   }
 
+  @computed
+  get getAllCurrentInvestors() {
+    return this.selectedInvestors;
+  }
+
   @action
   setNewInvestorValues(propertyType, newValue) {
-    if (propertyType === 'depositedAmount' && (newValue < 0)) {
-      return;
-    }
-    if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
-      return;
-    }
+    const fieldsChecked = this.fieldValidations(propertyType, newValue);
 
-    // all properties are send as string !!!
-    this.values[propertyType] = newValue;
+    if (fieldsChecked) {
+      // all properties are send as string !!!
+      this.values[propertyType] = newValue;
+    }
   }
 
   @action
   setInvestorEditingValues(propertyType, newValue) {
-    if (propertyType === 'depositedAmount' && (newValue < 0)) {
-      return;
-    }
-    if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
-      return;
-    }
+    const fieldsChecked = this.fieldValidations(propertyType, newValue);
 
-    // all properties are send as string !!!
-    this.editedValues[propertyType] = newValue;
+    if (fieldsChecked) {
+      // all properties are send as string !!!
+      this.editedValues[propertyType] = newValue;
+    }
   }
 
   @action
   setNewDepositInvestorValues(propertyType, newValue) {
-    if (propertyType === 'amount' && (newValue < 0)) {
-      return;
-    }
+    const fieldsChecked = this.fieldValidations(propertyType, newValue);
 
-    // all properties are send as string !!!
-    this.newDepositValues[propertyType] = newValue;
+    if (fieldsChecked) {
+      // all properties are send as string !!!
+      this.newDepositValues[propertyType] = newValue;
+    }
   }
 
   @action
   setWithdrawInvestorValues(propertyType, newValue) {
-    if (propertyType === 'amount' && (newValue < 0)) {
-      return;
-    }
+    const fieldsChecked = this.fieldValidations(propertyType, newValue);
 
-    // all properties are send as string !!!
-    this.withdrawalValues[propertyType] = newValue;
-    console.log(this.withdrawalValues);
+    if (fieldsChecked) {
+      // all properties are send as string !!!
+      this.withdrawalValues[propertyType] = newValue;
+    }
   }
 
   @action
@@ -262,7 +269,7 @@ class InvestorStore {
     this.selectedInvestorId = id;
 
     // selects the marked investor
-    this.selectedInvestors.find((element) => {
+    this.getAllCurrentInvestors.find((element) => {
       if (element.id === id) {
         this.selectedInvestor = { ...element };
       }
@@ -325,16 +332,13 @@ class InvestorStore {
       }
     }
 
-    console.log(finalResult);
     requester.Investor.update(investorId, finalResult)
       .then((result) => {
         // TODO: Something with result
-        console.log(result);
         this.selectedInvestor.fullName = this.editedValues.fullName;
         this.selectedInvestor.email = this.editedValues.email;
         this.selectedInvestor.telephone = this.editedValues.telephone;
         this.selectedInvestor.managementFee = this.editedValues.managementFee;
-        console.log(this.selectedInvestor);
       })
       .catch(this.onError);
   }
@@ -355,18 +359,101 @@ class InvestorStore {
 
   @action
   getPortfolio() {
-    PortfolioStore.currentPortfolio()
-      .then(action((portfolio) => {
-        if (portfolio) {
-          this.selectedPortfolioId = portfolio.id;
-          this.selectedInvestors = portfolio.investors;
-        }
-      }))
+    const currentSelectedPortfolio = PortfolioStore.getCurrentPortfolio();
+
+    if (currentSelectedPortfolio) {
+      this.selectedPortfolioId = currentSelectedPortfolio.id;
+      this.selectedInvestors = currentSelectedPortfolio.investors;
+    }
   }
 
+  // VALIDATIONS
   @action.bound
+  // eslint-disable-next-line class-methods-use-this
+  fieldValidations(propertyType, newValue) {
+    if (propertyType === 'depositedAmount' && (newValue < 0)) {
+      return false;
+    }
+    if (propertyType === 'managementFee' && (newValue < 0 || newValue > 100)) {
+      return false;
+    }
+    if (propertyType === 'amount' && (newValue < 0)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @action
+  // eslint-disable-next-line class-methods-use-this
+  emailFieldValidation() {
+    const currentEmail = this.values.email;
+    const currentInvestors = this.getAllCurrentInvestors;
+    let result = [];
+
+    if (currentInvestors) {
+      result = currentInvestors.filter(x => x.email === currentEmail);
+
+      if (result.length > 0) {
+        this.investorError.push('Email already exists');
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  @computed
+  get getAddInvestorErrors() {
+    return this.investorError;
+  }
+
+  @action
+  handleNotSelectedPortfolio() {
+    if (!this.selectedPortfolioId) {
+      this.investorError.push('Please select portfolio first');
+      return false;
+    }
+    return true;
+  }
+
+  @action
+  handleAddInvestorErrors() {
+    const currentInvestor = this.values;
+
+    if (!this.selectedBaseCurrency) {
+      this.investorError.push('Please select currency');
+    }
+
+    // Checks the currently entered values. If value is empty and it is required,
+    // than adds a error massage to the array of errors
+    Object.keys(currentInvestor).forEach((prop) => {
+      if (currentInvestor[prop] === '' && prop === 'dateOfEntry') {
+        this.investorError.push('Entry date is required.');
+      }
+      if (currentInvestor[prop] === '' && prop === 'depositedAmount') {
+        this.investorError.push('Deposited amount is required.');
+      }
+      if (currentInvestor[prop] === '' && prop === 'email') {
+        this.investorError.push('Email is required.');
+      }
+      if (currentInvestor[prop] === '' && prop === 'fullName') {
+        this.investorError.push('Full name is required.');
+      }
+      if (currentInvestor[prop] === '' && prop === 'managementFee') {
+        this.investorError.push('Management Fee is required.');
+      }
+    });
+  }
+
+  // RESETS
+  @action
+  resetErrors() {
+    this.investorError = [];
+  }
+
+  @action
   reset() {
-    console.log(this.values);
     this.values.isFounder = false;
     this.values.fullName = '';
     this.values.email = '';
@@ -380,36 +467,36 @@ class InvestorStore {
 
     this.selectedBaseCurrency = null;
     this.areFieldsEmpty = true;
-    this.disabledSaveButton = true;
+    console.log(this.values);
   }
 
-  @action.bound
+  @action
   resetEdit() {
-    console.log(this.editedValues);
     this.editedValues.fullName = '';
     this.editedValues.email = '';
     this.editedValues.telephone = '';
     this.editedValues.managementFee = '';
+    console.log(this.editedValues);
   }
 
   @action.bound
   resetDeposit() {
-    console.log(this.newDepositValues);
     this.newDepositValues.amount = '';
     this.newDepositValues.transactionDate = '';
     this.newDepositValues.sharePriceAtEntryDate = '';
     this.newDepositValues.purchasedShares = '';
+    console.log(this.newDepositValues);
   }
 
   @action.bound
   resetWithdrawal() {
-    console.log(this.withdrawalValues);
     this.withdrawalValues.amount = '';
     this.withdrawalValues.transactionDate = '';
     this.withdrawalValues.sharePriceAtEntryDate = '';
     this.withdrawalValues.inUSD = '';
     this.withdrawalValues.purchasedShares = 0;
     this.withdrawalValues.managementFee = '';
+    console.log(this.withdrawalValues);
   }
 
   @action.bound
@@ -421,7 +508,6 @@ class InvestorStore {
   onError(err) {
     console.log(err);
   }
-  // to be implemented later on
 }
 
 export default new InvestorStore();

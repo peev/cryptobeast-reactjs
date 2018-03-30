@@ -13,12 +13,14 @@ import PortfolioStore from './stores/PortfolioStore';
 import AssetStore from './stores/AssetStore';
 import InvestorStore from './stores/InvestorStore';
 import MarketStore from './stores/MarketStore';
+import ApiAccountStore from './stores/ApiAccountStore';
 
 const stores = {
   PortfolioStore,
   AssetStore,
   InvestorStore,
   MarketStore,
+  ApiAccountStore,
 };
 
 // For easier debugging

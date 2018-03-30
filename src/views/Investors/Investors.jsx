@@ -11,11 +11,11 @@ import SelectInvestor from '../../components/Selectors/SelectInvestor';
 import GenericTable from '../../components/CustomTables/GenericTable';
 import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
 import InvestorWithdrawWrapped from '../../components/Modal/InvestorModals/InvestorWithdraw';
-import './Investors.css';
 import TotalInvestorsWrapped from '../../components/Modal/InvestorModals/TotalInvestors';
 import SharesInCirculationWrapped from '../../components/Modal/InvestorModals/SharesInCirculation';
 import CurrentSharePriceWrapped from '../../components/Modal/InvestorModals/CurrentSharePrice';
 import TotalUSDEquivWrapped from '../../components/Modal/InvestorModals/TotalUSDEquiv';
+import './Investors.css';
 
 const dropStyle = {
   width: '100%',
@@ -24,27 +24,12 @@ const dropStyle = {
 class Investors extends React.Component {
   state = {
     direction: 'row',
-    br: false,
+    open: false,
     // justify: 'flex-end',
     // alignItems: 'center',
   };
 
-  showNotification(place) {
-    let x = [];
-    x[place] = true;
-    this.setState(x);
-    setTimeout(
-      () => {
-        x[place] = false;
-        this.setState(x);
-      },
-      6000,
-    );
-  }
-
   render() {
-    // const { alignItems, direction, justify } = this.state;
-
     return (
       <div>
         <Grid container className="InvCardsGroup">
@@ -119,18 +104,6 @@ class Investors extends React.Component {
               ]}
             />
           </Paper>
-        </Grid>
-        <Grid>
-          <ItemGrid xs={12} sm={12} md={4}>
-            <Snackbar
-              place="br"
-              color="info"
-              message="This is a warning Message"
-              open={this.state.br}
-              closeNotification={() => this.setState({ br: false })}
-              close
-            />
-          </ItemGrid>
         </Grid>
       </div>
     );

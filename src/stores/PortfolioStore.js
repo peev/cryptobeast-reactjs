@@ -33,12 +33,17 @@ class PortfolioStore {
     return this.portfolios;
   }
 
-  @action
-  currentPortfolio() {
-    return Promise.resolve(this.selectedPortfolio);
+  @computed
+  get currentPortfolio() {
+    return this.selectedPortfolio;
   }
 
-  @action.bound
+  @action
+  getCurrentPortfolio() {
+    return this.selectedPortfolio;
+  }
+
+  @action
   selectPortfolio(id, index) {
     this.selectedPortfolioId = id;
 

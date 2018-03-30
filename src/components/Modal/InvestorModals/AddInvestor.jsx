@@ -1,6 +1,5 @@
 import React from 'react';
-// import { Input } from 'material-ui';
-import { withStyles, Input } from 'material-ui';
+import { withStyles, Input, Snackbar } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
@@ -58,8 +57,30 @@ const styles = theme => ({
 @observer
 class AddInvestor extends React.Component {
   state = {
-    open: false
+    open: false,
+    openNotification: false,
+    disabledBtn: false,
   };
+
+  componentWillMount() {
+    const { InvestorStore } = this.props;
+
+    InvestorStore.handleNotSelectedPortfolio();
+
+    if (InvestorStore.getAddInvestorErrors.length > 0) {
+      this.setState({ openNotification: true, disabledBtn: true });
+      setTimeout(() => {
+        this.setState({ openNotification: false, disabledBtn: false });
+        InvestorStore.resetErrors();
+      }, 6000);
+    }
+  }
+
+  componentWillUpdate() {
+    if (!this.props.InvestorStore.selectedPortfolioId) {
+      this.props.InvestorStore.getPortfolio();
+    }
+  }
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -67,15 +88,15 @@ class AddInvestor extends React.Component {
 
   handleClose = () => {
     this.props.InvestorStore.reset();
+    this.props.InvestorStore.resetErrors();
 
+    // this.props.InvestorStore.resetErrors();
     this.setState({ open: false });
   };
 
   handleRequests = propertyType => (event) => {
     event.preventDefault();
     const { InvestorStore } = this.props;
-
-    InvestorStore.handleEmptyFields;
 
     const inputValue = event.target.value;
     InvestorStore.setNewInvestorValues(propertyType, inputValue);
@@ -88,16 +109,47 @@ class AddInvestor extends React.Component {
 
   handleSave = () => {
     const { PortfolioStore, InvestorStore } = this.props;
-    // InvestorStore.handleEmptyFields;
 
-    if (InvestorStore.areFieldsEmpty === false) {
+    // FIXME: dont spam Save Button
+    const profileChecked = InvestorStore.handleNotSelectedPortfolio();
+    InvestorStore.handleEmptyFields;
+    InvestorStore.handleAddInvestorErrors();
+    const emailChecked = InvestorStore.emailFieldValidation();
+
+    // Warnings popup
+    if (InvestorStore.getAddInvestorErrors.length > 0) {
+      this.setState({ openNotification: true, disabledBtn: true });
+      setTimeout(() => {
+        InvestorStore.resetErrors();
+        this.setState({ openNotification: false, disabledBtn: false });
+      }, 6000);
+    }
+
+    if (InvestorStore.areFieldsEmpty === false && emailChecked && profileChecked) {
       InvestorStore.createNewInvestor(PortfolioStore.selectedPortfolioId);
+
       this.handleClose();
     }
   };
 
   render() {
     const { classes, InvestorStore } = this.props;
+    const investorErrors = InvestorStore.getAddInvestorErrors;
+    let errorMessagesArray;
+
+    console.log(InvestorStore.investorError)
+    if (investorErrors.length > 0) {
+      // this.setState({ numberOfErrors: investorErrors.length });
+
+      let message = '';
+      investorErrors.forEach(errorMsg => message += `${errorMsg} \n`);
+
+      errorMessagesArray = (<Snackbar
+        message={message}
+        open={this.state.openNotification}
+        style={{ height: 'auto', lineHeight: '28px', padding: '24', whiteSpace: 'pre-line' }}
+      />);
+    }
 
     return (
       <div>
@@ -219,13 +271,14 @@ class AddInvestor extends React.Component {
                 onClick={this.handleSave}
                 color="primary"
                 type="submit"
-              // disabled={InvestorStore.disabledSaveButton}
+                disabled={this.state.disabledBtn}
               >
                 Save
               </Button>
             </div>
           </div>
         </Modal>
+        {errorMessagesArray}
       </div>
     );
   }
@@ -235,8 +288,6 @@ class AddInvestor extends React.Component {
 //   classes: PropTypes.object,
 // };
 
-const AddInvestorWrapped = withStyles(styles, addInvestorModalStyle)(
-  AddInvestor
-);
+const AddInvestorWrapped = withStyles(styles, addInvestorModalStyle)(AddInvestor);
 
 export default AddInvestorWrapped;

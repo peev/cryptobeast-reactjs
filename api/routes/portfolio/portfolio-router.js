@@ -14,7 +14,7 @@ const attachTo = (app, data) => {
     .put('/update', (req, res) => {
       return portfolioController.updatePortfolio(req, res);
     })
-    .delete('/delete', (req, res) => {
+    .delete('/delete/:id', (req, res) => {
       return portfolioController.removePortfolio(req, res);
     });
 

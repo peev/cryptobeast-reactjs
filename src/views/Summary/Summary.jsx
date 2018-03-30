@@ -6,25 +6,6 @@ import summaryStyle from "variables/styles/summaryStyle";
 import { inject, observer } from "mobx-react";
 import CreatePortfolio from "../../components/Modal/CreatePortfolio";
 import "./Summary.css";
-// react plugin for creating charts
-// import ChartistGraph from 'react-chartist';
-// import {
-//   ContentCopy, Store, InfoOutline, Warning, DateRange, LocalOffer, Update, ArrowUpward, AccessTime, Accessibility,
-// } from 'material-ui-icons';
-// import {
-//   StatsCard,
-//   ChartCard,
-//   TasksCard,
-//   RegularCard,
-//   Table,
-//   ItemGrid,
-// } from 'components';
-// import {
-//   dailySalesChart,
-//   emailsSubscriptionChart,
-//   completedTasksChart,
-// } from 'variables/charts';
-// import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
 
 @inject("PortfolioStore")
 @observer
@@ -64,7 +45,6 @@ class Summary extends React.Component {
     return (
       <div className="Summary">
         <Grid>
-          <CreatePortfolio />
           {createPortfolio}
           {summaryContent}
           {/* <AddInvestorWrapped /> */}

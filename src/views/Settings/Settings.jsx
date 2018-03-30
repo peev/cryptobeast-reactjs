@@ -1,22 +1,22 @@
-import React, { Component } from "react";
-import { Grid, Button, Snackbar } from "material-ui";
-import { RegularCard, ItemGrid, Table } from "components";
-import { inject, observer } from "mobx-react";
+import React, { Component } from 'react';
+import { Grid, Button, Snackbar } from 'material-ui';
+import { RegularCard, ItemGrid, Table } from 'components';
+import { inject, observer } from 'mobx-react';
 
-import UpdatePortfolioModal from "../../components/Modal/UpdatePortfolio";
-import RegularButton from "../../components/CustomButtons/Button";
-import CreatePortfolio from "../../components/Modal/CreatePortfolio";
-import PortfoliosTable from "../../components/CustomTables/PortfoliosTable";
-import IntegrationsTable from "../../components/CustomTables/IntegrationsTable";
+import UpdatePortfolioModal from '../../components/Modal/UpdatePortfolio';
+import RegularButton from '../../components/CustomButtons/Button';
+import CreatePortfolio from '../../components/Modal/CreatePortfolio';
+import PortfoliosTable from '../../components/CustomTables/PortfoliosTable';
+import IntegrationsTable from '../../components/CustomTables/IntegrationsTable';
 
 // import IconButton from '../../components/CustomButtons/IconButton';
 // import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 
-@inject("MarketStore")
+@inject('MarketStore')
 @observer
 class Settings extends Component {
   state = {
-    br: false
+    br: false,
   };
 
   getMarketSummaries = () => {
@@ -24,7 +24,7 @@ class Settings extends Component {
   };
 
   showNotification(place) {
-    let x = [];
+    const x = [];
     x[place] = true;
     this.setState(x);
     setTimeout(() => {
@@ -41,8 +41,8 @@ class Settings extends Component {
             cardTitle="API Integrations"
             content={
               <IntegrationsTable
-                tableHead={["Exchange", "Status", "EDIT", "DELETE"]}
-                tableData={[["Poloniex", "Inactive", "", ""]]}
+                tableHead={['Exchange', 'Status', 'EDIT', 'DELETE']}
+                tableData={[['Poloniex', 'Inactive', '', '']]}
               />
             }
           />
@@ -54,18 +54,18 @@ class Settings extends Component {
             content={
               <PortfoliosTable
                 tableHead={[
-                  "Name",
-                  "Number of Shares",
-                  "Current share price",
-                  "Total Amount",
-                  ""
+                  'Name',
+                  'Number of Shares',
+                  'Current share price',
+                  'Total Amount',
+                  '',
                 ]}
-                tableData={[
-                  ["Poloniex", "Inactive", "test", "test", ""],
-                  ["Poloniex", "Inactive", "test", "test", ""],
-                  ["Poloniex", "Inactive", "test", "test", ""],
-                  ["Poloniex", "Inactive", "test", "test", ""]
-                ]}
+                // tableData={[
+                //   ["Poloniex", "Inactive", "test", "test", ""],
+                //   ["Poloniex", "Inactive", "test", "test", ""],
+                //   ["Poloniex", "Inactive", "test", "test", ""],
+                //   ["Poloniex", "Inactive", "test", "test", ""]
+                // ]}
               />
             }
           />
@@ -82,7 +82,7 @@ class Settings extends Component {
             <Button
               fullWidth
               color="primary"
-              onClick={() => this.showNotification("br")}
+              onClick={() => this.showNotification('br')}
             >
               Bottom Right Notification
             </Button>

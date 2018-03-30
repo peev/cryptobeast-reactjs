@@ -21,6 +21,7 @@ class Settings extends Component {
 
   getMarketSummaries = () => {
     this.props.MarketStore.getMarketSummaries();
+    this.props.MarketStore.getBaseCurrencies();
   };
 
   showNotification(place) {

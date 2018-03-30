@@ -45,9 +45,11 @@ const Investor = {
 
 const Market = {
   getSummaries: () =>
-    requests.get('/market/summaries'),
+    requests.get('/market/syncSummaries'),
   getBaseCurrencies: () =>
     requests.get('/market/baseCurrencies'),
+  getBaseTickers: (searchedCurrencies) =>
+    requests.post('/market/syncBaseTickers', searchedCurrencies),
 };
 
 export default {

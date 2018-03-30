@@ -10,7 +10,7 @@ const init = (db) => {
 
   const getBase = () => {
     return db.Ticker.findAll({
-      where: { pair: ['XXBTZUSD', 'XXBTZEUR', 'XXBTZJPY', 'XETHXXBT'] },
+      where: { pair: ['USD', 'EUR', 'JPY', 'ETH'] },
     });
   };
 

@@ -45,10 +45,25 @@ const marketController = (repository) => {
   };
 
   const syncTickersFromKraken = (req, res) => {
-    krakenServices().getTickers(req.params)
+    const currenciesToGet = req.body.currencies;
+    krakenServices().getTickers(currenciesToGet)
       .then((tickers) => {
-        console.log(tickers);
-        return repository.ticker.syncTickers(tickers);
+        const currencyDictionary = {
+          XETHXXBT: 'ETH',
+          XXBTZEUR: 'EUR',
+          XXBTZJPY: 'JPY',
+          XXBTZUSD: 'USD',
+        };
+        const currentTickerPairs = [];
+
+        Object.keys(tickers).map((currency) => {
+          currentTickerPairs.push({
+            pair: currencyDictionary[currency],
+            last: tickers[currency].c[0],
+          });
+        });
+
+        return repository.ticker.saveManyTickers(currentTickerPairs).then(result => result);
       })
       .then((response) => {
         res.status(200).send(response);
@@ -129,6 +144,3 @@ const marketController = (repository) => {
 };
 
 module.exports = marketController;
-
-
-marketController().syncTickersFromKraken().then(() => { });

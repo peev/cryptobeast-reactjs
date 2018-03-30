@@ -16,6 +16,9 @@ const attachTo = (app, data) => {
     })
     .delete('/delete', (req, res) => {
       return portfolioController.removePortfolio(req, res);
+    })
+    .post('/updateAssetCost', (req, res) => {
+      return portfolioController.updateAssetBTCEquivalent(req, res);
     });
 
   app.use('/portfolio', router);

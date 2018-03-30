@@ -34,5 +34,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    lastBTCEquivalent: {
+      type: DataTypes.DOUBLE,
+    },
   });
 };

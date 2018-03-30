@@ -36,6 +36,19 @@ const portfolioController = (repository) => {
       });
   };
 
+
+  const updateAssetBTCEquivalent = (req, res) => {
+    repository.portfolio.updateAssetBTCEquivalent(req)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+
+
   const removePortfolio = (req, res) => {
     const portfolioData = req.body;
 
@@ -51,6 +64,7 @@ const portfolioController = (repository) => {
     createPortfolio,
     updatePortfolio,
     removePortfolio,
+    updateAssetBTCEquivalent,
   };
 };
 

@@ -32,11 +32,57 @@ const init = (db) => {
     });
   };
 
+  const updateAssetBTCEquivalent = (request) => {
+    let assetPair;
+    switch (request.currency) {
+      case 'BTC':
+        // TODO: 
+        break;
+      default:
+        assetPair = `BTC_${request.currency}`;
+        break;
+    }
+
+    db.Ticker.findById(assetPair)
+      .then((ticker) => {
+        const price = ticker.last;
+        db.Asset.findById(request.body.id)
+          .then(r => r.update({ lastBTCEquivalent: price }).then(() => { }));
+      })
+
+    // db.Asset.find({ where: { id: request.body.id } })
+    //   .on('success', (asset) => {
+    //     if (asset) {
+    //       let assetPair;
+    //       switch (asset.currency) {
+    //         case 'BTC':
+    //           // TODO: 
+    //           break;
+    //         default:
+    //           assetPair = `BTC-${asset.currency}`;
+    //           break;
+    //       }
+    //       db.Ticker.find({ where: { pair: assetPair } })
+    //         .on('success', (ticker) => {
+    //           if (ticker) {
+    //             const assetBtcEquivalent = asset.balance * ticker.last;
+    //             asset.updateAttributes({
+    //               lastBTCEquivalent: assetBtcEquivalent,
+    //             })
+    //               .success((() => { }));
+    //           }
+    //         });
+    //     }
+    //   });
+  };
+
+
   return {
     getAll,
     create,
     update,
     remove,
+    updateAssetBTCEquivalent,
   };
 };
 

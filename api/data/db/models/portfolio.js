@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     cost: {
       type: DataTypes.DOUBLE,
-      min: 0.000001,
+      // min: 0.000001,
     },
     baseCurrency: {
       type: DataTypes.STRING,

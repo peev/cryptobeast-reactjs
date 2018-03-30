@@ -50,8 +50,18 @@ const Market = {
     requests.get('/market/baseCurrencies'),
 };
 
+const ApiAccount = {
+  addAccount: data =>
+    requests.post('/account/add', data),
+  update: requestParams =>
+    requests.put('/account/update', requestParams),
+  delete: id =>
+    requests.delete(`/account/delete${id}`, id),
+};
+
 export default {
   Portfolio,
   Investor,
   Market,
+  ApiAccount,
 };

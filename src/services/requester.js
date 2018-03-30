@@ -45,7 +45,7 @@ const Investor = {
 
 const Market = {
   getSummaries: () =>
-    requests.get('/market/summaries'),
+    requests.get('/market/syncSummaries'),
   getCurrencies: () =>
     requests.get('/market/baseCurrencies'),
 };

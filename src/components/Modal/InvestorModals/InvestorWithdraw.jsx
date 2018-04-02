@@ -10,7 +10,6 @@ import SelectInvestor from '../../Selectors/SelectInvestor';
 // import { TextField } from 'material-ui';
 // import { Icon } from 'material-ui-icons';
 // import Select from 'material-ui';
-// import SelectCurrency from "../../Selectors/SelectCurrency";
 
 const getModalStyle = () => {
   const top = 20;

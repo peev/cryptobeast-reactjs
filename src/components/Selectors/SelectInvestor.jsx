@@ -21,7 +21,7 @@ const styles = theme => ({
 
 @inject('InvestorStore')
 @observer
-class SelectCurrency extends React.Component {
+class SelectInvestor extends React.Component {
   state = {
     selectedInvestorId: '',
     open: false,
@@ -93,8 +93,8 @@ class SelectCurrency extends React.Component {
   }
 }
 
-SelectCurrency.propTypes = {
+SelectInvestor.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SelectCurrency);
+export default withStyles(styles)(SelectInvestor);

@@ -10,7 +10,8 @@ import {
   greenCardHeader,
   redCardHeader,
   blueCardHeader,
-  purpleCardHeader
+  purpleCardHeader,
+  defaultCardHeader,
   
 } from "variables/styles";
 
@@ -28,6 +29,7 @@ const regularCardStyle = {
     marginLeft: 0,
     marginRight: 0
   },
+  defaultCardHeader,
   orangeCardHeader,
   greenCardHeader,
   redCardHeader,

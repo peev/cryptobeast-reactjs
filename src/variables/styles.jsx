@@ -92,6 +92,12 @@ const dangerBoxShadow = {
     '0 12px 20px -10px rgba(244, 67, 54, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(244, 67, 54, 0.2)'
 };
 
+const defaultCardHeader = {
+  background: 'linear-gradient(60deg, #222430, #222430)',
+  ...primaryBoxShadow,
+};
+
+
 const orangeCardHeader = {
   background: 'linear-gradient(60deg, #ffa726, #fb8c00)',
   ...warningBoxShadow,
@@ -156,6 +162,7 @@ export {
   successBoxShadow,
   warningBoxShadow,
   dangerBoxShadow,
+  defaultCardHeader,
   orangeCardHeader,
   greenCardHeader,
   redCardHeader,

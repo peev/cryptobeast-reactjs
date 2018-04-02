@@ -2,20 +2,15 @@ import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
 class PortfolioStore {
-  @observable
-  selectedPortfolio;
+  @observable selectedPortfolio;
 
-  @observable
-  portfolios;
+  @observable portfolios;
 
-  @observable
-  selectedPortfolioId;
+  @observable selectedPortfolioId;
 
-  @observable
-  selectedPortfolio;
+  @observable selectedPortfolio;
 
-  @observable
-  currentPortfolioAssets;
+  @observable currentPortfolioAssets;
 
   constructor() {
     this.selectedPortfolio = null;
@@ -82,6 +77,30 @@ class PortfolioStore {
       })
       .catch(this.onError);
   }
+ 
+  @action
+  updatePortfolio(portfolioName, id) {
+    requester.Portfolio.update(portfolioName, id)
+      .then(() => {
+        this.getPortfolios();
+      })
+      .catch(this.onError);
+  }
+
+  @action
+  removePortfolio(id) {
+    console.log(id);
+    requester.Portfolio.delete(id)
+      .then(() => {
+        this.getPortfolios();
+      })
+      .catch(this.onError);
+  }
+  // @action.bound
+  // removePortfolio(selectedPortfolio) {
+  //   this.portfolios = this.portfolios.filter(i => i !== selectedPortfolio);
+  //   this.portfolios.remove(selectedPortfolio);
+  // }
 
   @action.bound
   // eslint-disable-next-line class-methods-use-this

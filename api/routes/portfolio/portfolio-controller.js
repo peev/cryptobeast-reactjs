@@ -3,7 +3,7 @@ const { responseHandler } = require('../utilities/response-handler');
 const portfolioController = (repository) => {
   const createPortfolio = (req, res) => {
     const portfolioData = req.body;
-
+    console.log(req.body)
     repository.portfolio.create(portfolioData)
       .then((response) => {
         res.status(200).send(response);
@@ -82,9 +82,10 @@ const portfolioController = (repository) => {
   };
 
   const removePortfolio = (req, res) => {
-    const portfolioData = req.body;
 
-    repository.portfolio.remove(portfolioData)
+    const id = req.params.id
+
+    repository.portfolio.remove({id})
       .then(result => responseHandler(res, result))
       .catch((error) => {
         return res.json(error);

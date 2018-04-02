@@ -1,4 +1,4 @@
-// const { krakenServices } = require('../../integrations/kraken-services');
+const { krakenServices } = require('../../integrations/kraken-services');
 const { bittrexServices } = require('../../integrations/bittrex-services');
 
 const marketController = (repository) => {
@@ -27,6 +27,44 @@ const marketController = (repository) => {
 
   const getBaseCurrencies = (req, res) => {
     repository.market.getBase()
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+
+    // Bittrex variant
+    // repository.market.getBase()
+    //   .then((response) => {
+    //     res.status(200).send(response);
+    //   })
+    //   .catch((error) => {
+    //     res.json(error);
+    //   });
+  };
+
+  const syncTickersFromKraken = (req, res) => {
+    const currenciesToGet = req.body.currencies;
+    krakenServices().getTickers(currenciesToGet)
+      .then((tickers) => {
+        const currencyDictionary = {
+          XETHXXBT: 'ETH',
+          XXBTZEUR: 'EUR',
+          XXBTZJPY: 'JPY',
+          XXBTZUSD: 'USD',
+        };
+        const currentTickerPairs = [];
+
+        Object.keys(tickers).map((currency) => {
+          currentTickerPairs.push({
+            pair: currencyDictionary[currency],
+            last: tickers[currency].c[0],
+          });
+        });
+
+        return repository.ticker.saveManyTickers(currentTickerPairs).then(result => result);
+      })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -101,6 +139,7 @@ const marketController = (repository) => {
     getAllTickers,
     syncCurrenciesFromApi,
     getAllCurrencies,
+    syncTickersFromKraken,
   };
 };
 

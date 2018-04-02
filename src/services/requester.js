@@ -47,8 +47,10 @@ const Investor = {
 const Market = {
   getSummaries: () =>
     requests.get('/market/syncSummaries'),
-  getCurrencies: () =>
+  getBaseCurrencies: () =>
     requests.get('/market/baseCurrencies'),
+  getBaseTickers: searchedCurrencies =>
+    requests.post('/market/syncBaseTickers', searchedCurrencies),
 };
 
 const ApiAccount = {

@@ -6,6 +6,7 @@ import summaryStyle from "variables/styles/summaryStyle";
 import { inject, observer } from "mobx-react";
 import CreatePortfolio from "../../components/Modal/CreatePortfolio";
 import "./Summary.css";
+<<<<<<< HEAD
 import AnalyticsTabs from '../../components/Tabs/AnalyticsTabs';
 // react plugin for creating charts
 // import ChartistGraph from 'react-chartist';
@@ -26,6 +27,8 @@ import AnalyticsTabs from '../../components/Tabs/AnalyticsTabs';
 //   completedTasksChart,
 // } from 'variables/charts';
 // import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
+=======
+>>>>>>> c2f27caffcc185f2440e65f7f2b56cab5af86faf
 
 @inject("PortfolioStore")
 @observer
@@ -65,8 +68,11 @@ class Summary extends React.Component {
     return (
       <div className="Summary">
         <Grid>
+<<<<<<< HEAD
           <CreatePortfolio />
           <AnalyticsTabs />
+=======
+>>>>>>> c2f27caffcc185f2440e65f7f2b56cab5af86faf
           {createPortfolio}
           {summaryContent}
           {/* <AddInvestorWrapped /> */}

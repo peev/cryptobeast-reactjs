@@ -4,10 +4,11 @@ import { TextField } from "material-ui";
 import { withStyles } from "material-ui/styles";
 import Typography from "material-ui/Typography";
 import Modal from "material-ui/Modal";
-import Button from "../CustomButtons/Button";
 import IconButton from "../CustomButtons/IconButton";
-import { Edit } from "material-ui-icons";
+import { Close } from "material-ui-icons";
 import { inject, observer } from "mobx-react";
+
+import Button from "../CustomButtons/Button";
 
 function getModalStyle() {
   const top = 45;
@@ -23,8 +24,13 @@ const styles = theme => ({
     position: "absolute",
     minWidth: "300px",
     backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[5],
+    boxShadow: theme.shadows[3],
     padding: theme.spacing.unit * 4
+  },
+  headerButtonContainer: {
+    float: "right",
+    marginTop: "-35px",
+    marginRight: "40px"
   },
   modalTitle: {
     fontSize: "18px",
@@ -32,59 +38,60 @@ const styles = theme => ({
     textAlign: "center"
   }
 });
+
 @inject("PortfolioStore")
 @observer
-class UpdatePortfolioModal extends React.Component {
-  constructor() {
-    super();
-    this.name = null
-  }
-
+class RemovePortfolio extends React.Component {
   state = {
-    open: false
+    open: false,
+    name: null,
+    id : '',
   };
-  handleOpen = () => {
-    this.setState({ open: true });
-  };
+
   handleClose = () => {
     this.setState({ open: false });
   };
 
-  handleSave = () => {
+  handleOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleRemove = () => {
+    const {PortfolioStore} = this.props;
+    this.props.PortfolioStore.removePortfolio(this.props.id);
     this.setState({ open: false });
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, PortfolioStore } = this.props;
+    const portfolios = PortfolioStore.portfolios;
 
     return (
       <div style={{ display: "inline-block" }}>
         <IconButton
-          customClass="edit"
+          customClass="remove"
           onClick={this.handleOpen}
           color="primary"
         >
-          <Edit style={{ width: ".8em", height: ".8em" }} />
+          <Close style={{ width: ".8em", height: ".8em" }} />
         </IconButton>
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <div style={getModalStyle()} className={classes.paper}>
+          <div
+            style={getModalStyle()}
+            className={classes.paper}
+            onSubmit={() => this.handleRemove}
+          >
             <Typography
               className={classes.modalTitle}
               variant="title"
               id="modal-title"
             >
-              Edit current portfolio
+              Are you sure you want to delete this portfolio? {this.props.id}
             </Typography>
-
-            <TextField
-              style={{ width: "100%", marginBottom: "10px", marginTop: "10px" }}
-              placeholder="Portfolio name"
-              inputRef={el => (this.name = el)}
-            />
 
             <br />
 
@@ -105,11 +112,13 @@ class UpdatePortfolioModal extends React.Component {
             {/* SAVE BUTTON */}
             <Button
               style={{ display: "inline-flex", float: "right" }}
-              onClick={this.handleClose}
+              type="submit"
               color="primary"
+              onClick={() => this.handleRemove(portfolios.id)}
+              
             >
               {" "}
-              Update
+              DELETE
             </Button>
           </div>
         </Modal>
@@ -118,11 +127,11 @@ class UpdatePortfolioModal extends React.Component {
   }
 }
 
-UpdatePortfolioModal.propTypes = {
+RemovePortfolio.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
 // We need an intermediary variable for handling the recursive nesting.
-const UpdatePortfolioModalWrapped = withStyles(styles)(UpdatePortfolioModal);
+const RemovePortfolioWrapped = withStyles(styles)(RemovePortfolio);
 
-export default UpdatePortfolioModalWrapped;
+export default RemovePortfolioWrapped;

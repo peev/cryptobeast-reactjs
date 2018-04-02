@@ -46,7 +46,7 @@ class SelectExchange extends React.Component {
             Select Exchange
           </InputLabel>
           <Select
-            floatingLabelText="Frequency"
+            floatinglabeltext="Frequency"
             open={this.state.open}
             value={this.state.age}
             onClose={this.handleClose}

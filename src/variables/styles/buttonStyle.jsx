@@ -193,9 +193,6 @@ const buttonStyle = {
     opacity: '0.65',
     pointerEvents: 'none'
   },
-  portfolioButton: {
-    display: 'flex'
-  }
 };
 
 export default buttonStyle;

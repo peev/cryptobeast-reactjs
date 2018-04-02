@@ -50,8 +50,7 @@ const iconButtonStyle = {
       color: "white",
       boxShadow:
         "0 14px 26px -12px rgba(153, 153, 153, 0.42), 0 4px 23px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(153, 153, 153, 0.2)"
-     
-      }
+    }
   },
   primary: {
     backgroundColor: "#727f98",
@@ -126,16 +125,32 @@ const iconButtonStyle = {
     boxShadow: "none"
   },
   remove: {
+    display: "inline-block",
     background: "transparent",
     boxShadow: "none",
     borderRadius: "0px",
-    color: redLetters
+    color: redLetters,
+    width: ".8em",
+    height: ".8em",
+    "&:hover": {
+      backgroundColor: "transparent",
+      color: textSecondary,
+      boxShadow: "none"
+    }
   },
   edit: {
+    width: ".8em",
+    height: ".8em",
+    display: "inline-block",
     background: "transparent",
     boxShadow: "none",
     borderRadius: "0px",
-    color: textSecondary
+    color: textSecondary,
+    "&:hover": {
+      backgroundColor: "transparent",
+      color: textSecondary,
+      boxShadow: "none"
+    }
   }
 };
 

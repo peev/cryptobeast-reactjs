@@ -143,7 +143,8 @@ class InvestorStore {
   get depositSharePriceAtEntryDate() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
     if (baseCurrency && this.newDepositValues.amount) {
-      const calculatedPurchasedShares = baseCurrency.last / this.newDepositValues.amount;
+      // TODO: To add Assets value below
+      const calculatedPurchasedShares = baseCurrency.last * this.newDepositValues.amount;
       this.newDepositValues.sharePriceAtEntryDate = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -153,7 +154,8 @@ class InvestorStore {
   get depositPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
     if (baseCurrency && this.newDepositValues.amount) {
-      const calculatedPurchasedShares = baseCurrency.BaseVolume / this.newDepositValues.amount;
+      // TODO: To add Assets value below
+      const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
       this.newDepositValues.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -207,6 +209,37 @@ class InvestorStore {
     if (filteredArray.length === 0) {
       this.areFieldsEmpty = false;
     }
+  }
+
+  @action
+  handleDepositEmptyFields() {
+    const currentDeposit = this.newDepositValues;
+
+    // const arrayOfValues = Object.values(currentDeposit);
+    // console.log(arrayOfValues)
+    // const filteredArray = arrayOfValues.filter((value, i) => value === '' && (i !== 2 || i !== 3));
+    // console.log(filteredArray)
+
+    // if (filteredArray.length === 0) {
+    //   this.areFieldsEmpty = false;
+    // }
+    // const currentInvestor = this.values;
+
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    if (baseCurrency === null) {
+      this.investorError.push('Please select currency');
+    }
+
+    // Checks the currently entered values. If value is empty and it is required,
+    // than adds a error massage to the array of errors
+    Object.keys(currentDeposit).forEach((prop) => {
+      if (currentDeposit[prop] === '' && prop === 'transactionDate') {
+        this.investorError.push('Entry date is required.');
+      }
+      if (currentDeposit[prop] === '' && prop === 'amount') {
+        this.investorError.push('Amount is required.');
+      }
+    });
   }
 
   @action
@@ -421,7 +454,8 @@ class InvestorStore {
   handleAddInvestorErrors() {
     const currentInvestor = this.values;
 
-    if (!this.selectedBaseCurrency) {
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    if (baseCurrency === null) {
       this.investorError.push('Please select currency');
     }
 

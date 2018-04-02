@@ -53,7 +53,7 @@ const styles = theme => ({
   },
 });
 
-@inject('InvestorStore', 'PortfolioStore')
+@inject('InvestorStore', 'PortfolioStore', 'MarketStore')
 @observer
 class AddInvestor extends React.Component {
   state = {
@@ -89,8 +89,8 @@ class AddInvestor extends React.Component {
   handleClose = () => {
     this.props.InvestorStore.reset();
     this.props.InvestorStore.resetErrors();
+    this.props.MarketStore.resetMarket();
 
-    // this.props.InvestorStore.resetErrors();
     this.setState({ open: false });
   };
 
@@ -121,6 +121,7 @@ class AddInvestor extends React.Component {
       this.setState({ openNotification: true, disabledBtn: true });
       setTimeout(() => {
         InvestorStore.resetErrors();
+
         this.setState({ openNotification: false, disabledBtn: false });
       }, 6000);
     }

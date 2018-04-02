@@ -46,7 +46,7 @@ const styles = theme => ({
   },
 });
 
-@inject('InvestorStore')
+@inject('InvestorStore', 'MarketStore')
 @observer
 class InvestorDeposit extends React.Component {
   state = {
@@ -55,26 +55,14 @@ class InvestorDeposit extends React.Component {
     disabledBtn: false,
   };
 
-  componentWillMount() {
-    const { InvestorStore } = this.props;
-
-    InvestorStore.handleNotSelectedPortfolio();
-
-    if (InvestorStore.getAddInvestorErrors.length > 0) {
-      this.setState({ openNotification: true, disabledBtn: true });
-      setTimeout(() => {
-        this.setState({ openNotification: false, disabledBtn: false });
-        InvestorStore.resetErrors();
-      }, 6000);
-    }
-  }
-
   handleOpen = () => {
     this.setState({ open: true });
   };
 
   handleClose = () => {
     this.props.InvestorStore.resetDeposit();
+    this.props.MarketStore.resetMarket();
+
     this.setState({ open: false });
   };
 
@@ -91,8 +79,8 @@ class InvestorDeposit extends React.Component {
 
   handleDepositSave = () => {
     const { InvestorStore } = this.props;
-    // InvestorStore.handleEmptyFields;
     const profileChecked = InvestorStore.handleNotSelectedPortfolio();
+    InvestorStore.handleDepositEmptyFields();
 
     // Warnings popup
     if (InvestorStore.getAddInvestorErrors.length > 0) {
@@ -141,7 +129,7 @@ class InvestorDeposit extends React.Component {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <form
+          <div
             style={getModalStyle()}
             className={classes.paper}
           // onSubmit={() => this.handleDepositSave}
@@ -207,7 +195,7 @@ class InvestorDeposit extends React.Component {
                 Save
               </Button>
             </div>
-          </form>
+          </div>
         </Modal>
         {errorMessagesArray}
       </div>

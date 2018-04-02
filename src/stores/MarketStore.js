@@ -45,6 +45,7 @@ class MarketStore {
     requester.Market.getBaseCurrencies()
       .then((response) => {
         this.baseCurrencies = response.data;
+        console.log(response.data)
 
         // takes USD as separate currency
         this.baseCurrencies.forEach((currency) => {
@@ -62,6 +63,11 @@ class MarketStore {
   selectBaseCurrency(index) {
     this.selectedBaseCurrency = this.baseCurrencies[index];
     console.log(this.selectedBaseCurrency);
+  }
+
+  @action.bound
+  resetMarket() {
+    this.selectedBaseCurrency = null;
   }
 
   @action.bound

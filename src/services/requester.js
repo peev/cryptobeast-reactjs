@@ -28,8 +28,9 @@ const Portfolio = {
     requests.post('/portfolio/create', portfolioName),
   update: requestParams =>
     requests.put('/portfolio/update', requestParams), // id + newName
-  delete: id =>
-    requests.delete('/portfolio/delete', id),
+  delete: id => {
+    return requests.delete('/portfolio/delete/' + id)
+  }
 };
 
 const Investor = {

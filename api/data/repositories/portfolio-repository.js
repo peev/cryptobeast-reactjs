@@ -34,48 +34,93 @@ const init = (db) => {
 
   const updateAssetBTCEquivalent = (request) => {
     let assetPair;
+    let updatedAssetResult;
     switch (request.currency) {
       case 'BTC':
-        // TODO: 
+        updatedAssetResult = new Promise((resolve, reject) => {
+          db.Asset
+            .findById(request.id)
+            .then((a) => {
+              const price = a.balance;
+              return a.update({ lastBTCEquivalent: price })
+                .then(updatedAsset => resolve(updatedAsset));
+            });
+        });
+        break;
+      case 'USDT':
+        assetPair = `${request.currency}-BTC`;
+        updatedAssetResult = new Promise((resolve, reject) => {
+          return db.Ticker
+            .findById(assetPair)
+            .then((ticker) => {
+              db.Asset
+                .findById(request.id)
+                .then((a) => {
+                  const price = a.balance / ticker.last;
+                  return a.update({ lastBTCEquivalent: price })
+                    .then(updatedAsset => resolve(updatedAsset));
+                });
+            });
+        });
         break;
       default:
-        assetPair = `BTC_${request.currency}`;
+        assetPair = `BTC-${request.currency}`;
+        updatedAssetResult = new Promise((resolve, reject) => {
+          return db.Ticker
+            .findById(assetPair)
+            .then((ticker) => {
+              db.Asset
+                .findById(request.id)
+                .then((a) => {
+                  const price = a.balance * ticker.last;
+                  return a.update({ lastBTCEquivalent: price })
+                    .then(updatedAsset => resolve(updatedAsset));
+                });
+            });
+        });
         break;
     }
 
-    db.Ticker.findById(assetPair)
-      .then((ticker) => {
-        const price = ticker.last;
-        db.Asset.findById(request.body.id)
-          .then(r => r.update({ lastBTCEquivalent: price }).then(() => { }));
-      })
-
-    // db.Asset.find({ where: { id: request.body.id } })
-    //   .on('success', (asset) => {
-    //     if (asset) {
-    //       let assetPair;
-    //       switch (asset.currency) {
-    //         case 'BTC':
-    //           // TODO: 
-    //           break;
-    //         default:
-    //           assetPair = `BTC-${asset.currency}`;
-    //           break;
-    //       }
-    //       db.Ticker.find({ where: { pair: assetPair } })
-    //         .on('success', (ticker) => {
-    //           if (ticker) {
-    //             const assetBtcEquivalent = asset.balance * ticker.last;
-    //             asset.updateAttributes({
-    //               lastBTCEquivalent: assetBtcEquivalent,
-    //             })
-    //               .success((() => { }));
-    //           }
-    //         });
-    //     }
-    //   });
+    return updatedAssetResult;
   };
 
+  const updatePortfolioBTCEquivalent = (request) => {
+    return new Promise((resolve, reject) => {
+      db.Portfolio.find({
+        where: { id: request.id },
+        include: [db.Asset],
+      })
+        .then((pf) => {
+          pf.cost = 0;
+          return Promise.all(pf.assets.map((asset) => {
+            return updateAssetBTCEquivalent(asset).then((updatedAsset) => {
+              const newPfCost = +pf.cost + updatedAsset.lastBTCEquivalent;
+              return pf.update({ cost: newPfCost });
+            });
+          }));
+        }).then((result) => {
+          db.Portfolio.find({
+            where: { id: result[0].id },
+            include: [db.Asset],
+          }).then(finalResult => resolve(finalResult)); // Get updated pf with updated assets
+        });
+    });
+  };
+
+  const getSharePrice = (request) => {
+    return new Promise((resolve, reject) => {
+      db.Portfolio.findById(request.id)
+        .then((pf) => {
+          db.Ticker.findById('USDT-BTC')
+            .then((ticker) => {
+              const sharePrice = pf.cost * ticker.last / pf.shares;
+              resolve({ sharePrice: sharePrice });
+            });
+        }).catch((error) => {
+          console.log(error);
+        });
+    });
+  };
 
   return {
     getAll,
@@ -83,6 +128,8 @@ const init = (db) => {
     update,
     remove,
     updateAssetBTCEquivalent,
+    updatePortfolioBTCEquivalent,
+    getSharePrice,
   };
 };
 

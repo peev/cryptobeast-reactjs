@@ -48,20 +48,6 @@ function IntegrationsTable({ ...props }) {
                       <TableCell className={classes.tableCell} key={key}>
                         {prop}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                         {/* TODO: Replace modal with update api modal */}
                         <UpdatePortfolioModal />
                       </TableCell>

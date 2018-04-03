@@ -5,7 +5,7 @@ import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
 import { inject, observer } from 'mobx-react';
 
-import SelectCurrency from '../../Selectors/SelectCurrency';
+import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import Button from '../../CustomButtons/Button';
 import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
 
@@ -138,7 +138,6 @@ class AddInvestor extends React.Component {
     const investorErrors = InvestorStore.getAddInvestorErrors;
     let errorMessagesArray;
 
-    console.log(InvestorStore.investorError)
     if (investorErrors.length > 0) {
       // this.setState({ numberOfErrors: investorErrors.length });
 
@@ -239,7 +238,7 @@ class AddInvestor extends React.Component {
                   className={classes.input}
                 />
 
-                <SelectCurrency />
+                <SelectBaseCurrency />
 
                 <Input
                   type="number"

@@ -7,7 +7,7 @@ import { inject, observer } from 'mobx-react';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
-import SelectCurrency from '../../Selectors/SelectCurrency';
+import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 
 const getModalStyle = () => {
   const top = 20;
@@ -168,7 +168,7 @@ class InvestorDeposit extends React.Component {
                   className={classes.input}
                 />
 
-                <SelectCurrency />
+                <SelectBaseCurrency />
 
                 <Input
                   placeholder="Purchased Shares"

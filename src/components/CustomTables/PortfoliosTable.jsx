@@ -81,10 +81,10 @@ class PortfoliosTable extends React.Component {
 
       <TableRow key={key}>
         {prop.map((item, ind) => {
-          console.log(portfolios[key].id);
           // if () {
           //   return;
           // }
+          console.log(portfolios[key]);
           if (ind === 4) {
             return (
               <TableCell className={classes.tableCell} key={ind}>

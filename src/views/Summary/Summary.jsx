@@ -6,6 +6,7 @@ import summaryStyle from "variables/styles/summaryStyle";
 import { inject, observer } from "mobx-react";
 import CreatePortfolio from "../../components/Modal/CreatePortfolio";
 import "./Summary.css";
+import AnalyticsTabs from '../../components/Tabs/AnalyticsTabs';
 
 @inject("PortfolioStore")
 @observer
@@ -45,6 +46,8 @@ class Summary extends React.Component {
     return (
       <div className="Summary">
         <Grid>
+          <CreatePortfolio />
+          <AnalyticsTabs />
           {createPortfolio}
           {summaryContent}
           {/* <AddInvestorWrapped /> */}

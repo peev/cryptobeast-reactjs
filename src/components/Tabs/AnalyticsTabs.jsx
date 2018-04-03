@@ -10,6 +10,7 @@ import {
   Grid,
 } from "material-ui";
 import Volatility from './TabItems/Volatility';
+import Performance from './TabItems/Performance';
 
 class AnalyticsTabs extends React.Component {
   state = {
@@ -39,9 +40,7 @@ class AnalyticsTabs extends React.Component {
           onChange={this.handleChange}
         >
           
-          <div>
-            <h2>Here's one more!</h2>
-          </div>
+          <Performance />
           <Volatility />
           <div>
             <h2>Here's another one!</h2>

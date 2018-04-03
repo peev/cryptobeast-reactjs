@@ -3,10 +3,11 @@ import Paper from "material-ui/Paper";
 import { Grid } from "material-ui";
 
 import RegularButton from "../../CustomButtons/Button";
-import SelectPeriod from "../../Selectors/SelectPeriod";
+import SelectBenchmark from "../../Selectors/SelectBenchmark";
 // import InvestorPieChart from "../../HighCharts/InvestorPie";
-
-import "./TabStyles/Volatility.css";
+import PerformanceTable from "../../CustomTables/PerformanceTable";
+import "./TabStyles/Performance.css";
+// import PerformanceChart from '../../HighCharts/PerformanceChart';
 
 class Performance extends React.Component {
   state = {
@@ -15,11 +16,11 @@ class Performance extends React.Component {
 
   render() {
     return (
-      <div className="hideOverflowV">
-        <Grid container className="VolatilityGrid">
+      <div className="hideOverflow">
+        <Grid container className="PerformanceGrid">
           <Grid container>
             <Grid item xs={3}>
-              <SelectPeriod />
+              <SelectBenchmark />
             </Grid>
 
             <Grid item xs={3}>
@@ -27,19 +28,20 @@ class Performance extends React.Component {
             </Grid>
           </Grid>
         </Grid>
+
         <br />
         <Grid container className="VolatilityGrid">
-          <Grid item xs={8}>
-            <VolatilityTable style={{ width: "100%" }} />
-          </Grid>
-          <Grid item xs={4}>
-            <Paper className="VolatilityPaper">
-              <div> </div>
+          <Grid item xs={12}>
+            <Paper className="PerformancePaper">
+              {/* <PerformanceChart /> */}
             </Paper>
           </Grid>
         </Grid>
+        <Grid item xs={12}>
+          <PerformanceTable />
+        </Grid>
+
         <br />
-        
       </div>
     );
   }

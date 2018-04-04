@@ -93,8 +93,8 @@ const dangerBoxShadow = {
 };
 
 const defaultCardHeader = {
-  background: 'linear-gradient(60deg, #222430, #222430)',
-  ...primaryBoxShadow,
+  background: 'linear-gradient(60deg, #262b3e, #262b3e)',
+  boxShadow: '0px 0px 0px 0px'
 };
 
 

@@ -2,14 +2,9 @@ import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
 class PortfolioStore {
-  @observable selectedPortfolio;
-
   @observable portfolios;
-
-  @observable selectedPortfolioId;
-
   @observable selectedPortfolio;
-
+  @observable selectedPortfolioId;
   @observable currentPortfolioAssets;
 
   constructor() {

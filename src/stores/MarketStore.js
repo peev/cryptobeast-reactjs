@@ -1,39 +1,27 @@
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
 
 class MarketStore {
-  @observable
-  marketSummaries;
-
-  @observable
-  baseCurrencies;
-
-  @observable
-  allCurrencies;
-
-  @observable
-  baseCurrencyInUSD;
-
-  @observable
-  selectedBaseCurrency;
-
-  @observable
-  selectedАllCurrency;
-
-  @observable
-  selectedExchange;
-
-  @observable
-  assetInputValue;
+  @observable marketSummaries;
+  @observable baseCurrencies;
+  @observable allCurrencies;
+  @observable baseCurrencyInUSD;
+  @observable selectedBaseCurrency;
+  @observable selectedАllCurrency;
+  @observable selectedExchange;
+  @observable assetInputValue;
 
   constructor() {
     this.marketSummaries = [];
     this.baseCurrencies = [];
     this.allCurrencies = [];
     this.selectedBaseCurrency = null;
+    this.selectedExchange = '';
+    this.selectedCurrency = '';
+    this.assetInputValue = '';
 
-    // Setups the database. This request gives the backend what
+    // Setups the database. This request gives the back-end what
     // currencies to get from internet, writes them to database.
     // After that, fetches information from  database.
     if (this.baseCurrencies.length === 0) {
@@ -75,14 +63,19 @@ class MarketStore {
         this.baseCurrencies.push({ pair: 'BTC', last: 1 });
       }))
       .catch(this.onError);
-    console.log(this.baseCurrencies);
   }
 
   @action.bound
   getAllCurrencies() {
     requester.Market.getAllCurrencies()
       .then(action((response) => {
-        this.allCurrencies = response.data;
+        this.allCurrencies = response.data.map((el) => {
+          return {
+            value: el.currency,
+            label: `${el.currencyLong} [${el.currency}]`,
+            // label: el.currency,
+          };
+        });
       }))
       .catch(this.onError);
   }
@@ -93,8 +86,8 @@ class MarketStore {
   }
 
   @action
-  selectCurrencyFromAllCurrencies(index) {
-    this.selectedCurrency = this.allCurrencies[index];
+  selectCurrencyFromAllCurrencies(value) {
+    this.selectedCurrency = value;
   }
 
   @action
@@ -120,33 +113,48 @@ class MarketStore {
   createBasicAsset(id) {
     let newBasicAsset;
 
+    if (this.selectedCurrency === null || this.selectedCurrency === '') {
+      return;
+    }
+
+    const parsedAssetInputValue = parseInt(this.assetInputValue, 10)
+    if (!Number.isInteger(parsedAssetInputValue) || isNaN(parsedAssetInputValue)) {
+      return;
+    }
+
     // if there is no Exchange selected, it's labeled as manually
     if (this.selectedExchange) {
       newBasicAsset = {
-        currency: this.selectedCurrency.currency,
-        balance: this.assetInputValue,
+        // currency: this.selectedCurrency.value, // react-select simple
+        currency: this.selectedCurrency,
+        balance: parsedAssetInputValue,
         origin: this.selectedExchange,
         portfolioId: id,
       };
     } else {
       newBasicAsset = {
-        currency: this.selectedCurrency.currency,
-        balance: this.assetInputValue,
+        // currency: this.selectedCurrency.value, // react-select simple
+        currency: this.selectedCurrency,
+        balance: parsedAssetInputValue,
         origin: 'Manually Added',
         portfolioId: id,
       };
     }
 
     console.log(newBasicAsset);
-    requester.Asset.add(newBasicAsset)
-      .then((result) => {
-        console.log(result);
 
-        // reset values after save
-        this.selectedCurrency = null;
-        this.assetInputValue = null;
-        this.selectedExchange = null;
-      });
+    requester.Asset.add(newBasicAsset)
+      .then(action((result) => {
+        // console.log(result);
+        this.resetAsset();
+      }));
+  }
+
+  @action.bound
+  resetAsset() {
+    // this.selectedCurrency = ''; // TODO: doesn't reset value properly
+    this.assetInputValue = '';
+    this.selectedExchange = '';
   }
 
   @action.bound

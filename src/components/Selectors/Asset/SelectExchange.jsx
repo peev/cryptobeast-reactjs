@@ -20,7 +20,6 @@ const styles = theme => ({
 @observer
 class SelectExchange extends React.Component {
   state = {
-    exchangeId: '',
     open: false,
   };
 
@@ -35,12 +34,11 @@ class SelectExchange extends React.Component {
   handleChange = (event) => {
     const { value } = event.target;
     this.props.MarketStore.selectExchange(value);
-
-    this.setState({ [event.target.name]: value });
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, MarketStore } = this.props;
+
     const allExchanges = constants.services.map((name, i) => {
       return (
         <MenuItem
@@ -62,7 +60,7 @@ class SelectExchange extends React.Component {
 
           <Select
             open={this.state.open}
-            value={this.state.exchangeId}
+            value={MarketStore.selectedExchange}
             onClose={this.handleClose}
             onOpen={this.handleOpen}
             onChange={this.handleChange}

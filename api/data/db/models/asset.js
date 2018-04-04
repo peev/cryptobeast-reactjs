@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     pending: {
       type: DataTypes.DOUBLE,
+      allowNull: true,
     },
     cryptoAddress: {
       type: DataTypes.STRING,
@@ -32,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
     origin: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    lastBTCEquivalent: {
+      type: DataTypes.DOUBLE,
     },
   });
 };

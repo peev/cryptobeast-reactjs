@@ -21,5 +21,8 @@ module.exports = (sequelize, DataTypes) => {
         len: [1, 32],
       },
     },
+    isActive: {
+      type: DataTypes.BOOLEAN
+    },
   });
 };

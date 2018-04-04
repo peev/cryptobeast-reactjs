@@ -17,9 +17,9 @@ const attachTo = (app, data) => {
     .get('/syncTickers', (req, res) => {
       return marketController.syncTickersFromApi(req, res);
     })
-    .post('/syncBaseTickers', (req, res) => {
-      return marketController.syncTickersFromKraken(req, res); // Kraken
-    })
+    // .post('/syncBaseTickers', (req, res) => {
+    //   return marketController.syncTickersFromKraken(req, res); // Kraken
+    // })
     .get('/allTickers', (req, res) => {
       return marketController.getAllTickers(req, res);
     })

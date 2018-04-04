@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const path = require('path');
+
+const rootPath = path.normalize(path.join(__dirname, '/../../'));
 
 const init = (data) => {
   const app = express();
@@ -24,6 +27,8 @@ const init = (data) => {
     res.header('Access-Control-Allow-Headers', 'Access-Control-*, Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
+
+  app.use(express.static(path.join(rootPath, 'public')));
 
   // TODO: Here you can add new middleware
   // require('./passport').applyTo(app, data);

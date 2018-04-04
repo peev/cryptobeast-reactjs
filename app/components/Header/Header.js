@@ -1,0 +1,89 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+// import { Menu } from 'material-ui-icons';
+import {
+  withStyles,
+  Toolbar,
+  // IconButton,
+  // Hidden,
+  // AppBar,
+  // Button,
+} from 'material-ui';
+
+// import cx from 'classnames';
+import PortfolioSelect from '../Selectors/PortfolioSelect/PortfolioSelect';
+import buttonStyle from '../../variables/styles/buttonStyle';
+import headerStyle from '../../variables/styles/headerStyle';
+
+// import CreatePortfolio from '../Modal/CreatePortfolio';
+// import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
+// import RegularButton from '../CustomButtons/Button';
+// import HeaderLinks from './HeaderLinks';
+
+const styles = () => ({
+  headerContainer: {
+    position: 'fixed',
+    width: '100%',
+    paddingLeft: '0px',
+    backgroundColor: '#22252f',
+    zIndex: '1',
+  },
+});
+
+class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  render() {
+    const { classes } = this.props;
+    // const appBarClasses = cx({
+    //   [` ${classes[color]}`]: color,
+    // });
+    return (
+      <Toolbar
+        // className={classes.container}
+        className={classes.headerContainer}
+      >
+        {/* Here we create navbar brand, based on route name */}
+        {/* <div className={classes.flex}>
+          <Hidden mdUp>
+            <IconButton
+              className={classes.appResponsive}
+              style={{ color: '#FFF' }}
+              aria-label="open drawer"
+              onClick={this.props.handleDrawerToggle}
+            >
+              <Menu />
+            </IconButton>
+          </Hidden>
+        </div> */}
+
+        <div >
+          <PortfolioSelect />
+
+          {/* <CreatePortfolio /> */}
+          {/* <UpdatePortfolioModal />
+            <div>
+              <RegularButton color="primary" >
+                Delete
+              </RegularButton>
+            </div> */}
+        </div>
+        {/* <Hidden smDown implementation="css">
+          <HeaderLinks />
+        </Hidden> */}
+      </Toolbar>
+
+    );
+  }
+}
+
+Header.propTypes = {
+  classes: PropTypes.object.isRequired,
+  color: PropTypes.oneOf(['primary', 'info', 'success', 'warning', 'danger']),
+  // handleDrawerToggle: PropTypes.func,
+};
+
+export default withStyles(styles, headerStyle, buttonStyle)(Header);

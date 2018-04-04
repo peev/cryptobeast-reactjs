@@ -1,5 +1,5 @@
 const { bittrexServices } = require('../../integrations/bittrex-services');
-const { krakenServices } = require('../../integrations/kraken-services');
+// const { krakenServices } = require('../../integrations/kraken-services');
 
 const accountController = (repository) => {
   const addAccountToPortfolio = (req, res) => {
@@ -47,9 +47,9 @@ const accountController = (repository) => {
       case 'Bittrex':
         services = bittrexServices;
         break;
-      case 'Kraken':
-        services = krakenServices;
-        break;
+      // case 'Kraken':
+      //   services = krakenServices;
+      //   break;
       default:
         console.log('There is no such api');
         break;

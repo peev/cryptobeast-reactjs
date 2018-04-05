@@ -47,8 +47,14 @@ const Investor = {
 const Market = {
   getSummaries: () =>
     requests.get('/market/syncSummaries'),
-  getCurrencies: () =>
+  getBaseCurrencies: () =>
     requests.get('/market/baseCurrencies'),
+  syncCurrencies: () =>
+    requests.get('/market/syncCurrencies'),
+  getAllCurrencies: () =>
+    requests.get('/market/allCurrencies'),
+  getBaseTickers: searchedCurrencies =>
+    requests.post('/market/syncBaseTickers', searchedCurrencies),
 };
 
 const ApiAccount = {
@@ -60,9 +66,19 @@ const ApiAccount = {
     requests.delete(`/account/delete${id}`, id),
 };
 
+const Asset = {
+  add: data =>
+    requests.post('/asset/add', data),
+  update: requestParams =>
+    requests.put('/asset/update', requestParams),
+  delete: id =>
+    requests.delete(`/asset/delete${id}`, id),
+};
+
 export default {
   Portfolio,
   Investor,
   Market,
   ApiAccount,
+  Asset,
 };

@@ -1,29 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
+import { withStyles, InputLabel, MenuItem, FormControl } from 'material-ui';
 import Select from 'material-ui/Select';
 import { inject, observer } from 'mobx-react';
+import constants from '../../../variables/constants.json';
 
 const styles = theme => ({
   button: {
     display: 'block',
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 2
   },
   formControl: {
     margin: theme.spacing.unit,
-    minWidth: '100%',
-  },
+    minWidth: '100%'
+  }
 });
 
-@inject('InvestorStore')
+@inject('MarketStore')
 @observer
-class SelectCurrency extends React.Component {
+class SelectExchange extends React.Component {
   state = {
+    exchangeId: '',
     open: false,
-    baseCurrencyId: '',
   };
 
   handleOpen = () => {
@@ -35,53 +33,54 @@ class SelectCurrency extends React.Component {
   };
 
   handleChange = (event) => {
-    const index = event.target.value;
-    this.props.InvestorStore.selectBaseCurrency(index);
+    const { value } = event.target;
+    this.props.MarketStore.selectExchange(value);
 
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({ [event.target.name]: value });
   };
 
   render() {
-    const { classes, InvestorStore } = this.props;
-    const baseCurrencies = InvestorStore.baseCurrencies.map((currency, i) => {
+    const { classes } = this.props;
+    const allExchanges = constants.services.map((name, i) => {
       return (
         <MenuItem
           key={i}
-          value={i}
+          value={name}
         >
-          <em>{InvestorStore.baseCurrencies[i].MarketName}</em>
+          <em>{name}</em>
         </MenuItem>
       );
     });
 
     return (
-      <div autoComplete="off">
+      <form autoComplete="off">
+
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
           <InputLabel htmlFor="controlled-open-select">
-            Select Currency
+            Select Exchange
           </InputLabel>
 
           <Select
             open={this.state.open}
-            value={this.state.baseCurrencyId}
-            onOpen={this.handleOpen}
+            value={this.state.exchangeId}
             onClose={this.handleClose}
+            onOpen={this.handleOpen}
             onChange={this.handleChange}
             inputProps={{
-              name: 'baseCurrencyId',
+              name: 'exchangeId',
               id: 'controlled-open-select',
             }}
           >
-            {baseCurrencies}
+            {allExchanges}
           </Select>
         </FormControl>
-      </div>
+      </form>
     );
   }
 }
 
-SelectCurrency.propTypes = {
+SelectExchange.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SelectCurrency);
+export default withStyles(styles)(SelectExchange);

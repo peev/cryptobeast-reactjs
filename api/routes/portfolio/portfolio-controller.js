@@ -36,6 +36,51 @@ const portfolioController = (repository) => {
       });
   };
 
+
+  const updateAssetBTCEquivalent = (req, res) => {
+    repository.portfolio.updateAssetBTCEquivalent(req.body)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const updatePortfolioBTCEquivalent = (req, res) => {
+    repository.portfolio.updatePortfolioBTCEquivalent(req.body)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const getPortfolioSharePrice = (req, res) => {
+    repository.portfolio.getSharePrice(req.body)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const getUpdatedPortfolioSharePrice = (req, res) => {
+    repository.portfolio.updatePortfolioBTCEquivalent(req.body)
+      .then((updatedPortfolio) => {
+        repository.portfolio.getSharePrice(updatedPortfolio)
+          .then((response) => {
+            console.log('>>> share price: ', response);
+            res.status(200).send(response);
+          })
+          .catch((error) => {
+            res.json(error);
+          });
+      });
+  };
+
   const removePortfolio = (req, res) => {
 
     const id = req.params.id
@@ -52,6 +97,10 @@ const portfolioController = (repository) => {
     createPortfolio,
     updatePortfolio,
     removePortfolio,
+    updateAssetBTCEquivalent,
+    updatePortfolioBTCEquivalent,
+    getPortfolioSharePrice,
+    getUpdatedPortfolioSharePrice,
   };
 };
 

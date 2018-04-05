@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
+import MarketStore from './MarketStore';
 
 class InvestorStore {
   @observable
@@ -47,9 +48,6 @@ class InvestorStore {
   depositedCurrency;
 
   @observable
-  baseCurrencies;
-
-  @observable
   selectedBaseCurrency;
 
   @observable
@@ -72,7 +70,6 @@ class InvestorStore {
 
   constructor() {
     this.depositedCurrency = {};
-    this.baseCurrencies = [];
     this.selectedBaseCurrency = null;
     this.areFieldsEmpty = true;
     this.selectedInvestor = null;
@@ -81,20 +78,40 @@ class InvestorStore {
     this.investorError = [];
     this.investorErrorDisplayed = false;
 
-    requester.Market.getCurrencies()
-      .then(this.onGetBaseCurrencies)
-      .catch(this.onError);
-
-    // on component mount, this makes calls !!!
-    // requester.Market.getSummaries()
-    //   .then(this.onGetSummaries)
+    // requester.Market.getCurrencies()
+    //   .then(this.onGetBaseCurrencies)
     //   .catch(this.onError);
+
+    // // on component mount, this makes calls !!!
+    // // requester.Market.getSummaries()
+    // //   .then(this.onGetSummaries)
+    // //   .catch(this.onError);
   }
 
   @computed
   get depositUsdEquiv() {
-    if (this.selectedBaseCurrency && this.values.depositedAmount) {
-      const calculatedDepositUsdEquiv = this.values.depositedAmount * this.selectedBaseCurrency.Last;
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    const currentAmount = this.values.depositedAmount;
+
+    if (baseCurrency && currentAmount) {
+      let calculatedDepositUsdEquiv;
+      switch (baseCurrency.pair) {
+        case 'JPY':
+        case 'EUR':
+        case 'USD':
+          calculatedDepositUsdEquiv = (currentAmount / baseCurrency.last) * MarketStore.baseCurrencyInUSD.last;
+          break;
+        case 'ETH':
+          calculatedDepositUsdEquiv = currentAmount * baseCurrency.last * MarketStore.baseCurrencyInUSD.last;
+          break;
+        case 'BTC':
+          calculatedDepositUsdEquiv = currentAmount * MarketStore.baseCurrencyInUSD.last;
+          break;
+        default:
+          console.log('The is no such currency');
+          break;
+      }
+
       this.values.depositUsdEquiv = calculatedDepositUsdEquiv;
       return calculatedDepositUsdEquiv;
     }
@@ -102,8 +119,10 @@ class InvestorStore {
 
   @computed
   get sharePriceAtEntryDate() {
-    if (this.selectedBaseCurrency && this.values.depositedAmount) {
-      const calculatedSharePriceAtEntryDate = 1 / this.selectedBaseCurrency.Last;
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    if (baseCurrency && this.values.depositedAmount) {
+      // TODO: To add Assets value below
+      const calculatedSharePriceAtEntryDate = this.values.depositedAmount * (1 / baseCurrency.last);
       this.values.sharePriceAtEntryDate = calculatedSharePriceAtEntryDate;
       return calculatedSharePriceAtEntryDate;
     }
@@ -111,8 +130,10 @@ class InvestorStore {
 
   @computed
   get purchasedShares() {
-    if (this.selectedBaseCurrency && this.values.depositedAmount) {
-      const calculatedPurchasedShares = (this.values.depositedAmount * this.selectedBaseCurrency.Last).toFixed(0, 10);
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    if (baseCurrency && this.values.depositedAmount) {
+      // TODO: To add Assets value below
+      const calculatedPurchasedShares = (this.values.depositedAmount * baseCurrency.last).toFixed(0, 10);
       this.values.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -120,8 +141,10 @@ class InvestorStore {
 
   @computed
   get depositSharePriceAtEntryDate() {
-    if (this.selectedBaseCurrency && this.newDepositValues.amount) {
-      const calculatedPurchasedShares = this.selectedBaseCurrency.Last / this.newDepositValues.amount;
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    if (baseCurrency && this.newDepositValues.amount) {
+      // TODO: To add Assets value below
+      const calculatedPurchasedShares = baseCurrency.last * this.newDepositValues.amount;
       this.newDepositValues.sharePriceAtEntryDate = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -129,8 +152,10 @@ class InvestorStore {
 
   @computed
   get depositPurchasedShares() {
-    if (this.selectedBaseCurrency && this.newDepositValues.amount) {
-      const calculatedPurchasedShares = this.selectedBaseCurrency.BaseVolume / this.newDepositValues.amount;
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    if (baseCurrency && this.newDepositValues.amount) {
+      // TODO: To add Assets value below
+      const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
       this.newDepositValues.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -187,13 +212,39 @@ class InvestorStore {
   }
 
   @action
-  setIsFounder() {
-    this.values.isFounder = !this.values.isFounder;
+  handleDepositEmptyFields() {
+    const currentDeposit = this.newDepositValues;
+
+    // const arrayOfValues = Object.values(currentDeposit);
+    // console.log(arrayOfValues)
+    // const filteredArray = arrayOfValues.filter((value, i) => value === '' && (i !== 2 || i !== 3));
+    // console.log(filteredArray)
+
+    // if (filteredArray.length === 0) {
+    //   this.areFieldsEmpty = false;
+    // }
+    // const currentInvestor = this.values;
+
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    if (baseCurrency === null) {
+      this.investorError.push('Please select currency');
+    }
+
+    // Checks the currently entered values. If value is empty and it is required,
+    // than adds a error massage to the array of errors
+    Object.keys(currentDeposit).forEach((prop) => {
+      if (currentDeposit[prop] === '' && prop === 'transactionDate') {
+        this.investorError.push('Entry date is required.');
+      }
+      if (currentDeposit[prop] === '' && prop === 'amount') {
+        this.investorError.push('Amount is required.');
+      }
+    });
   }
 
   @action
-  selectBaseCurrency(index) {
-    this.selectedBaseCurrency = this.baseCurrencies[index];
+  setIsFounder() {
+    this.values.isFounder = !this.values.isFounder;
   }
 
   @action
@@ -403,7 +454,8 @@ class InvestorStore {
   handleAddInvestorErrors() {
     const currentInvestor = this.values;
 
-    if (!this.selectedBaseCurrency) {
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    if (baseCurrency === null) {
       this.investorError.push('Please select currency');
     }
 
@@ -479,11 +531,6 @@ class InvestorStore {
     this.withdrawalValues.purchasedShares = 0;
     this.withdrawalValues.managementFee = '';
     console.log(this.withdrawalValues);
-  }
-
-  @action.bound
-  onGetBaseCurrencies(result) {
-    this.baseCurrencies = result.data;
   }
 
   @action.bound

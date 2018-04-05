@@ -77,7 +77,7 @@ class PortfolioStore {
       })
       .catch(this.onError);
   }
- 
+
   @action
   updatePortfolio(portfolioName, id) {
     requester.Portfolio.update(portfolioName, id)

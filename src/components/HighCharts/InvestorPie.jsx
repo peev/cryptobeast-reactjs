@@ -7,6 +7,7 @@ import {
   Legend,
   Tooltip,
   PieSeries
+
 } from "react-jsx-highcharts";
 
 class InvestorPieChart extends Component {

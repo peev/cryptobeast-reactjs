@@ -15,7 +15,7 @@ import IconButton from '../CustomButtons/IconButton';
 
 import tableStyle from '../../variables/styles/tableStyle';
 
-function GenericTable({ ...props }) {
+function CurrentInvestor({ ...props }) {
   const { classes, tableHead, tableData, tableHeaderColor } = props;
   return (
     <div className={classes.tableResponsive}>
@@ -66,11 +66,11 @@ function GenericTable({ ...props }) {
   );
 }
 
-GenericTable.defaultProps = {
+CurrentInvestor.defaultProps = {
   tableHeaderColor: 'gray'
 };
 
-GenericTable.propTypes = {
+CurrentInvestor.propTypes = {
   classes: PropTypes.object.isRequired,
   tableHeaderColor: PropTypes.oneOf([
     'warning',
@@ -85,4 +85,4 @@ GenericTable.propTypes = {
   tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
 };
 
-export default withStyles(tableStyle)(GenericTable);
+export default withStyles(tableStyle)(CurrentInvestor);

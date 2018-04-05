@@ -1,18 +1,39 @@
 import React, { Component } from 'react';
-import { withStyles, Grid, Input } from 'material-ui';
-import Paper from 'material-ui/Paper';
+import { withStyles, Grid } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 import SelectInvestor from '../../Selectors/SelectInvestor';
-import RegularButton from '../../CustomButtons/Button';
-
 
 const styles = () => ({
   container: {
     width: '100%',
-    margin: '40px 40px 0',
-    padding: '20px 25px',
+    marginTop: '20px',
+    padding: '0 20px',
+  },
+  containerItems: {
+    paddingTop: '20px',
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    borderBottom: '1px solid black',
+    '&>p': {
+      textTransform: 'uppercase',
+      fontSize: '14px',
+      margin: '0',
+      padding: '0',
+    },
+    '&>span': {
+      fontSize: '14px',
+      fontWeight: '600',
+    },
+  },
+  overrideGrid: {
+    padding: '12px',
+  },
+  profitStyle: {
+    color: '#60bb9b',
   },
 });
+
 @inject('InvestorStore')
 @observer
 class IndividualSummary extends Component {
@@ -24,45 +45,65 @@ class IndividualSummary extends Component {
     const { classes, InvestorStore } = this.props;
 
     return (
-      <Paper container className="InvPaper">
-        <Grid >
-          <h5>INDIVIDUAL SUMMARY</h5>
-        </Grid>
-
+      <div>
         <Grid container>
-          <Grid container>
+          <Grid container className={classes.container}>
             <Grid item xs={3}>
-              <SelectInvestor style={classes.container} />
+              <SelectInvestor />
             </Grid>
           </Grid>
 
-          <Grid container>
+          <Grid container className={classes.container}>
             <Grid item xs={3}>
-              <p>Shares Held: {InvestorStore.individualSharesHeld}</p>
-              <p>Weighted entry price: ${InvestorStore.individualWeightedEntryPrice}</p>
-            </Grid>
-
-            <Grid item xs={3}>
-              <p>USD Equivalent: {InvestorStore.individualUSDEquivalent}</p>
-              <p>BTC Equivalent: {InvestorStore.individualBTCEquivalent}</p>
-            </Grid>
-
-            <Grid item xs={3}>
-              <div>
-                <p>Investment Period:</p>
-                <span>{InvestorStore.individualInvestmentPeriod} days</span>
+              <div className={classes.containerItems}>
+                <p>Shares Held:</p>
+                <span>{InvestorStore.individualSharesHeld}</span>
               </div>
-              <p>Profit:{InvestorStore.individualProfit}</p>
+
+              <div className={classes.containerItems}>
+                <p>Weighted entry price:</p>
+                <span>{InvestorStore.individualWeightedEntryPrice ? `$ ${InvestorStore.individualWeightedEntryPrice}` : ''}</span>
+              </div>
             </Grid>
 
             <Grid item xs={3}>
-              <p>ETH Equivalent: {InvestorStore.individualETHEquivalent}</p>
-              <p>Fee Potential: ${InvestorStore.individualFeePotential}</p>
+              <div className={classes.containerItems}>
+                <p>USD Equivalent:</p>
+                <span>{InvestorStore.individualUSDEquivalent}</span>
+              </div>
+
+              <div className={classes.containerItems}>
+                <p>BTC Equivalent:</p>
+                <span>{InvestorStore.individualBTCEquivalent}</span>
+              </div>
+            </Grid>
+
+            <Grid item xs={3}>
+              <div className={classes.containerItems}>
+                <p>Investment Period:</p>
+                <span>{InvestorStore.individualInvestmentPeriod ? `${InvestorStore.individualInvestmentPeriod} DAYS` : ''}</span>
+              </div>
+
+              <div className={classes.containerItems}>
+                <p>Profit:</p>
+                <span className={classes.profitStyle}>{InvestorStore.individualProfit ? `${InvestorStore.individualProfit} %` : ''}</span>
+              </div>
+            </Grid>
+
+            <Grid item xs={3}>
+              <div className={classes.containerItems}>
+                <p>ETH Equivalent:</p>
+                <span>{InvestorStore.individualETHEquivalent}</span>
+              </div>
+
+              <div className={classes.containerItems}>
+                <p>Fee Potential:</p>
+                <span>{InvestorStore.individualFeePotential ? `$ ${InvestorStore.individualFeePotential}` : ''}</span>
+              </div>
             </Grid>
           </Grid>
         </Grid>
-        <RegularButton color="primary">Export</RegularButton>
-      </Paper>
+      </div>
     );
   }
 }

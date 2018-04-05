@@ -230,9 +230,7 @@ class InvestorStore {
   // #region Investor Individual Summary
   @computed
   get individualSharesHeld() {
-    ///////////////////////////
     if (this.selectedInvestor) {
-      console.log(this.selectedInvestor);
       const calculatedIndividualSharesHeld = this.selectedInvestor.purchasedShares;
       this.individualSummaryValues.sharesHeld = calculatedIndividualSharesHeld;
 
@@ -266,18 +264,20 @@ class InvestorStore {
   get individualBTCEquivalent() {
     if (this.selectedInvestor) {
       //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualBTCEquivalent = this.selectedInvestor.purchasedShares * 1;
+      const calculatedIndividualBTCEquivalent = (this.selectedInvestor.purchasedShares / MarketStore.baseCurrencies[4].last).toFixed(2);
       this.individualSummaryValues.btcEquivalent = calculatedIndividualBTCEquivalent;
 
       return calculatedIndividualBTCEquivalent;
     }
+
+    return null;
   }
 
   @computed
   get individualETHEquivalent() {
-    if (this.selectedInvestor) {
+    if (this.selectedInvestor && MarketStore.baseCurrencies) {
       //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualETHEquivalent = this.selectedInvestor.purchasedShares * 1;
+      const calculatedIndividualETHEquivalent = (this.selectedInvestor.purchasedShares / MarketStore.baseCurrencies[3].last).toFixed(2);
       this.individualSummaryValues.ethEquivalent = calculatedIndividualETHEquivalent;
 
       return calculatedIndividualETHEquivalent;

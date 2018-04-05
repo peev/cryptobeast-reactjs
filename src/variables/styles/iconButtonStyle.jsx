@@ -151,6 +151,21 @@ const iconButtonStyle = {
       color: textSecondary,
       boxShadow: "none"
     }
+  },
+  makePDF: {
+    width: ".8em",
+    height: ".8em",
+    display: "inline-block",
+    float: 'right',
+    background: "transparent",
+    boxShadow: "none",
+    borderRadius: "0px",
+    color: textSecondary,
+    "&:hover": {
+      backgroundColor: "transparent",
+      color: textSecondary,
+      boxShadow: "none"
+    }
   }
 };
 

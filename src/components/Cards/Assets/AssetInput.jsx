@@ -1,9 +1,8 @@
 import React from 'react';
 import { withStyles, Grid, Input } from 'material-ui';
 import Paper from 'material-ui/Paper';
-import RegularButton from '../../CustomButtons/Button';
 import { inject, observer } from 'mobx-react';
-// import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
+import RegularButton from '../../CustomButtons/Button';
 import SelectAllCurrency from '../../Selectors/Asset/SelectAllCurrency';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
 
@@ -56,7 +55,7 @@ class AssetInput extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, MarketStore } = this.props;
 
     return (
       <Grid container >
@@ -69,7 +68,8 @@ class AssetInput extends React.Component {
 
               <Input
                 type="number"
-                placeholder="QUANTITY..."
+                placeholder="Quantity..."
+                value={MarketStore.assetInputValue}
                 onChange={e => this.handleRequest(e)}
                 className={classes.input}
               />

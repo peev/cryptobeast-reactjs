@@ -56,6 +56,7 @@
     "react-jsx-highstock": "^2.2.1",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
+    "react-select": "^1.2.1",
     "react-swipeable-views": "^0.12.12",
     "sequelize": "^4.33.4",
     "sqlite": "^2.9.1",

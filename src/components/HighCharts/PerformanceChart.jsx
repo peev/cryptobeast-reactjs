@@ -1,67 +1,79 @@
-import React, { Component } from 'react';
-import Highcharts from 'highcharts/highstock';
+import React, { Component } from "react";
+import Highcharts from "highcharts/highstock";
 import {
+  HighchartsStockChart,
   Chart,
   withHighcharts,
   XAxis,
   YAxis,
   Title,
   Legend,
-  AreaSplineSeries,
-  SplineSeries,
   LineSeries,
-  Subtitle,
-  Tooltip,
-} from 'react-jsx-highcharts';
-import {
-  HighchartsStockChart,
   Navigator,
   RangeSelector,
-} from 'react-jsx-highstock';
+  SplineSeries,
+  Tooltip
+} from "react-jsx-highstock";
+// import { createRandomData } from "../utils/data-helpers";
 
-import { createRandomData } from './datahelper';
+// ../utils/data-helpers
+const createDataPoint = (time = Date.now(), magnitude = 100, offset = 0) => {
+  return [time + offset * magnitude, Math.round(Math.random() * 20 * 2) / 2];
+};
+
+const createRandomData = (time, magnitude) => {
+  
+  const data = [];
+
+  for (let i = -99; i <= 0; i++) {
+    data.push(createDataPoint(time, magnitude, i));
+  }
+  return data;
+};
 
 class PerformanceChart extends Component {
   constructor(props) {
     super(props);
 
-    const now = Date.now();
-    this.state = {
-   
-    };
+    this.state = {};
   }
 
   render() {
-    const data1 = [1,2,3,4,5,6,];
+    const now = Date.now();
+    
+    const data = createRandomData(now, 1e8);
+
+    const data2 = createRandomData(now, 1e8);
     return (
-
-      <HighchartsStockChart className="custom-component-chart">
-        <Chart zoomType="x" />
-
-        <Title>Custom Components</Title>
-
-        <Subtitle>react-day-picker Date Pickers</Subtitle>
-
-        <Legend>
-          <Legend.Title>Key</Legend.Title>
-        </Legend>
-
-        <XAxis type="datetime">
-          <XAxis.Title>Time</XAxis.Title>
-        </XAxis>
-
-        <YAxis id="price">
-          <YAxis.Title>Price</YAxis.Title>
-          <LineSeries id="profit" name="Profit" data={data1} />
-        </YAxis>
-
-        {/* <DateRangePickers axisId="xAxis" /> */}
-
-        <Navigator>
-          <Navigator.Series seriesId="profit" />
-        </Navigator>
-      </HighchartsStockChart>
-
+      <div>
+        <HighchartsStockChart>
+          <Chart zoomType="x" />
+          
+          <RangeSelector>
+            <RangeSelector.Button count={7} type="day">
+              7d
+            </RangeSelector.Button>
+            <RangeSelector.Button count={1} type="month">
+              1m
+            </RangeSelector.Button>
+            <RangeSelector.Button type="all">All</RangeSelector.Button>
+         
+          </RangeSelector>
+          
+          <Tooltip  valueSuffix= '%'  shared/>
+          <XAxis />
+         
+          <YAxis id="price" opposite >
+            <YAxis.Title>%</YAxis.Title>
+            <SplineSeries id="portfolio" name="Basic Portfolio" data={data} />
+            <SplineSeries id="BTC" name="BTC" data={data2} />
+          </YAxis>
+          <Navigator>
+            <Navigator.Series seriesId="portfolio" />           
+            <Navigator.Series seriesId="BTC" />
+          </Navigator>
+        </HighchartsStockChart>
+      </div>
     );
   }
 }

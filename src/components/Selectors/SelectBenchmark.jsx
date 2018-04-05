@@ -10,10 +10,9 @@ import { inject, observer } from "mobx-react";
 const styles = theme => ({
   button: {
     display: "block",
-    marginTop: theme.spacing.unit * 2
   },
   formControl: {
-    margin: theme.spacing.unit,
+    margin: '0',
     minWidth: "100%"
   }
 });
@@ -39,7 +38,7 @@ class SelectBenchmark extends React.Component {
 
     return (
       <div autoComplete="off">
-        <FormControl className={classes.formControl} style={{ margin: 0 }}>
+        <FormControl className={classes.formControl}>
           <InputLabel htmlFor="controlled-open-select">
             Select Benchmark
           </InputLabel>

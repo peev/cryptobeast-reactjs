@@ -5,15 +5,47 @@
     flex-grow: 1;
     margin: 0;
     padding:10px;
-    margin-top:10px;
+}
+.PerformanceGrid button{
+    color: #FFF;
+    background-color: #5e6778;
+    float:right;
+
+}
+.PerformanceGrid .align{
+    margin-left:20px;
 }
 
 .PerformancePaper{
     width: 100%;
+    height:100%;
     padding:10px;
     margin-top:10px;
+    background-color: #FFF;
 }
 
 .PerformancePaper button{
     float: right;
+    margin-right: 20px;
+    color: #FFF;
+    background-color: #5e6778;
+}
+
+.PerformancePaper table{
+    background-color: transparent;
+    box-shadow: none;
+    padding: 10px;
+
+    min-width: 100%;
+
+}
+
+.PerformancePaper table td{
+    padding: 1px;
+    text-align: center;
+}
+.PerformancePaper table th{
+    padding: 1px;
+    
+    text-align: center;
 }

@@ -1,17 +1,18 @@
-import React from "react";
-import Paper from "material-ui/Paper";
-import { Grid } from "material-ui";
+import React from 'react';
+import Paper from 'material-ui/Paper';
+import { Grid } from 'material-ui';
 
-import RegularButton from "../../CustomButtons/Button";
-import SelectBenchmark from "../../Selectors/SelectBenchmark";
+import RegularButton from '../../CustomButtons/Button';
+import SelectBenchmark from '../../Selectors/SelectBenchmark';
 // import InvestorPieChart from "../../HighCharts/InvestorPie";
-import PerformanceTable from "../../CustomTables/PerformanceTable";
-import "./TabStyles/Performance.css";
-// import PerformanceChart from '../../HighCharts/PerformanceChart';
+import PerformanceTable from '../../CustomTables/PerformanceTable';
+import './TabStyles/Performance.css';
+import PerformanceChart from '../../HighCharts/PerformanceChart';
+
 
 class Performance extends React.Component {
   state = {
-    open: false
+    open: false,
   };
 
   render() {
@@ -19,7 +20,7 @@ class Performance extends React.Component {
       <div className="hideOverflow">
         <Grid container className="PerformanceGrid">
           <Grid container>
-            <Grid item xs={3}>
+            <Grid item xs={3} className="align" >
               <SelectBenchmark />
             </Grid>
 
@@ -30,18 +31,26 @@ class Performance extends React.Component {
         </Grid>
 
         <br />
-        <Grid container className="VolatilityGrid">
+        <Grid container className="PerformanceGrid">
           <Grid item xs={12}>
             <Paper className="PerformancePaper">
-              {/* <PerformanceChart /> */}
+              <PerformanceChart className="PerformancePaperChart" />
             </Paper>
           </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <PerformanceTable />
+        <Grid container className="PerformanceGrid">
+          <Grid item xs={12}>
+            <Paper className="PerformancePaper">
+              <PerformanceTable />
+              
+              <RegularButton>Export</RegularButton>
+              <br />
+
+            </Paper>
+          </Grid>
         </Grid>
 
-        <br />
+       
       </div>
     );
   }

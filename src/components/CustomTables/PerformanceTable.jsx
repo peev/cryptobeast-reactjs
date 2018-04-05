@@ -10,11 +10,7 @@ import Table, {
 import Paper from "material-ui/Paper";
 
 const styles = theme => ({
-  root: {
-    width: "100%",
-    marginTop: theme.spacing.unit * 3,
-    overflowX: "auto"
-  },
+ 
   table: {
     minWidth: 700
   }
@@ -53,35 +49,32 @@ function PerformanceTable(props) {
   const { classes } = props;
 
   return (
-    <Paper className={classes.root}>
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell>DAY</TableCell>
-            <TableCell numeric>DATE</TableCell>
-            <TableCell numeric>PORTFOLIO</TableCell>
-            <TableCell numeric>PORTFOLIO RETURN (*)</TableCell>
-            <TableCell numeric>BENCHMARK</TableCell>
-            <TableCell numeric>BENCHMARK RETURN(*)</TableCell>
-            <TableCell numeric>EXESS RETURN</TableCell>
-            
+    <Table className={classes.table}>
+      <TableHead>
+        <TableRow>
+          <TableCell>DAY</TableCell>
+          <TableCell numeric>DATE</TableCell>
+          <TableCell numeric>PORTFOLIO</TableCell>
+          <TableCell numeric>PORTFOLIO RETURN (*)</TableCell>
+          <TableCell numeric>BENCHMARK</TableCell>
+          <TableCell numeric>BENCHMARK RETURN(*)</TableCell>
+          <TableCell numeric>EXESS RETURN</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {data.map(n => (
+          <TableRow key={n.id}>
+            <TableCell>{n.day}</TableCell>
+            <TableCell numeric>{n.date}</TableCell>
+            <TableCell numeric>{n.portfolio}</TableCell>
+            <TableCell numeric>{n.portfolioReturn}</TableCell>
+            <TableCell numeric>{n.benchmark}</TableCell>
+            <TableCell numeric>{n.benchmarkReturn}</TableCell>
+            <TableCell numeric>{n.exessReturn}</TableCell>
           </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map(n => (
-            <TableRow key={n.id}>
-              <TableCell>{n.day}</TableCell>
-              <TableCell numeric>{n.date}</TableCell>
-              <TableCell numeric>{n.portfolio}</TableCell>
-              <TableCell numeric>{n.portfolioReturn}</TableCell>
-              <TableCell numeric>{n.benchmark}</TableCell>
-              <TableCell numeric>{n.benchmarkReturn}</TableCell>
-              <TableCell numeric>{n.exessReturn}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Paper>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 

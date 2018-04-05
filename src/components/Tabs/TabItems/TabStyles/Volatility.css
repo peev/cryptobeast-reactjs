@@ -6,7 +6,9 @@
     flex-grow: 1;
     margin: 0;
 }
-
+.VolatilityGrid p{
+    margin-left: 10px;
+}
 .VolatilityPaper{
     width: 100%;
     padding:10px;
@@ -15,4 +17,19 @@
 
 .VolatilityPaper button{
     float: right;
+    margin-right: 20px;
+    color: #FFF;
+    background-color:#5e6778;
+}
+.VolatilityPaper h5{
+    margin-left: 10px;
+}
+.chartAverages{
+    margin-left:10px;
+
+}
+.chartAverages p{
+    display: inline-flex;
+    margin-left: 30px;
+    align-items: center;
 }

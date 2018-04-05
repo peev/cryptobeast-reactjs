@@ -12,7 +12,8 @@ const init = (db) => {
   // With Eager loading of assets, accounts and investors
   const getAll = () => {
     // return db.Portfolio.findAll();
-    return db.Portfolio.findAll({ include: [db.Account, db.Asset, db.Investor] });
+    return db.Portfolio
+      .findAll({ include: [db.Account, db.Asset, db.Investor, db.Transaction] });
   };
 
   const update = (request) => {
@@ -122,6 +123,30 @@ const init = (db) => {
     });
   };
 
+  const updateShares = (request) => {
+    return new Promise((resolve, reject) => {
+      db.Portfolio.findById(request.portfolioId)
+        .then((portfolio) => {
+
+
+
+
+
+
+
+          
+        });
+
+      foundInvestor.then((investor) => {
+        const sharesToAdd = investor.purchasedShares + data.transaction.shares;
+        investor.update({
+          purchasedShares: sharesToAdd,
+        })
+          .then(r => resolve(r));
+      });
+    });
+  };
+
   return {
     getAll,
     create,
@@ -130,6 +155,7 @@ const init = (db) => {
     updateAssetBTCEquivalent,
     updatePortfolioBTCEquivalent,
     getSharePrice,
+    updateShares,
   };
 };
 

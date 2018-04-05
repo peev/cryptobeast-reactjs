@@ -26,6 +26,8 @@ const Portfolio = {
     requests.get('/portfolio/all'),
   create: portfolioName =>
     requests.post('/portfolio/create', portfolioName),
+  getSharePrice: id =>
+    requests.post('/portfolio/getPortfolioSharePrice', id),
   update: requestParams =>
     requests.put('/portfolio/update', requestParams), // id + newName
   delete: (id) => {
@@ -36,10 +38,12 @@ const Portfolio = {
 const Investor = {
   add: investorData =>
     requests.post('/investor/add', investorData),
-  addDeposit: (id, requestParams) =>
-    requests.put(`/investor/deposit/${id}`, requestParams),
-  withdrawal: (id, requestParams) =>
-    requests.put(`/investor/withdrawal/${id}`, requestParams),
+  addDeposit: requestParams =>
+    requests.put('/investor/deposit', requestParams),
+  // addDeposit: (id, requestParams) =>
+  //   requests.put(`/investor/deposit/${id}`, requestParams),
+  withdrawal: requestParams =>
+    requests.put('/investor/withdrawal', requestParams),
   update: (id, requestParams) =>
     requests.put(`/investor/update/${id}`, requestParams),
 };

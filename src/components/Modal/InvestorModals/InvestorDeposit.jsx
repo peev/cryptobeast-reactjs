@@ -46,7 +46,7 @@ const styles = theme => ({
   },
 });
 
-@inject('InvestorStore', 'MarketStore')
+@inject('InvestorStore', 'PortfolioStore', 'MarketStore')
 @observer
 class InvestorDeposit extends React.Component {
   state = {
@@ -72,9 +72,14 @@ class InvestorDeposit extends React.Component {
 
   handleDepositRequests = propertyType => (event) => {
     event.preventDefault();
-
+    const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     this.props.InvestorStore.setNewDepositInvestorValues(propertyType, inputValue);
+    
+    // To calculate purchased shares ===================
+    if (propertyType === 'amount') {
+      InvestorStore.depositUsdEquiv();
+    }
   }
 
   handleDepositSave = () => {
@@ -98,7 +103,7 @@ class InvestorDeposit extends React.Component {
   }
 
   render() {
-    const { classes, InvestorStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore } = this.props;
     const investorErrors = InvestorStore.getAddInvestorErrors;
     let errorMessagesArray;
 
@@ -156,7 +161,7 @@ class InvestorDeposit extends React.Component {
                 <Input
                   placeholder="Share Price at Entry Date"
                   className={classes.input}
-                  value={InvestorStore.depositSharePriceAtEntryDate}
+                  value={PortfolioStore.currentPortfolioSharePrice}
                 />
               </div>
 
@@ -174,6 +179,7 @@ class InvestorDeposit extends React.Component {
                   placeholder="Purchased Shares"
                   className={classes.input}
                   value={InvestorStore.depositPurchasedShares}
+                  // value={InvestorStore.purchasedShares}
                 />
               </div>
             </div>

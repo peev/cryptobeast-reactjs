@@ -50,7 +50,6 @@ class AnalyticsTabs extends React.Component {
           <Tab label="Correlation matrix" />
         </Tabs>
         <br />
-
         <SwipeableViews
           index={this.state.value}
           onChange={this.handleChange}

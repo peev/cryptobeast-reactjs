@@ -97,9 +97,12 @@ class AddInvestor extends React.Component {
   handleRequests = propertyType => (event) => {
     event.preventDefault();
     const { InvestorStore } = this.props;
-
     const inputValue = event.target.value;
     InvestorStore.setNewInvestorValues(propertyType, inputValue);
+    if (propertyType === 'depositedAmount') {
+      console.log('>>> from handleRequests: ', propertyType);
+      InvestorStore.depositUsdEquiv();
+    }
   }
 
   handleFounder = name => (event) => {
@@ -126,6 +129,7 @@ class AddInvestor extends React.Component {
       }, 6000);
     }
 
+    console.log('check fields: ', InvestorStore.areFieldsEmpty, emailChecked, profileChecked );
     if (InvestorStore.areFieldsEmpty === false && emailChecked && profileChecked) {
       InvestorStore.createNewInvestor(PortfolioStore.selectedPortfolioId);
 
@@ -134,7 +138,7 @@ class AddInvestor extends React.Component {
   };
 
   render() {
-    const { classes, InvestorStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore } = this.props;
     const investorErrors = InvestorStore.getAddInvestorErrors;
     let errorMessagesArray;
 
@@ -213,12 +217,12 @@ class AddInvestor extends React.Component {
                 <Input
                   placeholder="Deposited USD Equiv."
                   className={classes.input}
-                  value={InvestorStore.depositUsdEquiv}
+                  value={InvestorStore.values.depositUsdEquiv}
                 />
 
                 <Input
                   placeholder="Share price at entry Date"
-                  value={InvestorStore.sharePriceAtEntryDate}
+                  value={PortfolioStore.currentPortfolioSharePrice}
                   className={classes.input}
                 />
               </div>

@@ -12,12 +12,16 @@ class PortfolioStore {
 
   @observable currentPortfolioAssets;
 
+  @observable currentPortfolioSharePrice;
+
+
   constructor() {
     this.selectedPortfolio = null;
     this.portfolios = {};
     this.selectedPortfolioId = null;
     this.selectedPortfolio = null;
     this.currentPortfolioAssets = null;
+    this.currentPortfolioSharePrice = 0;
 
     // eslint-disable-next-line no-unused-expressions
     this.getPortfolios(); // gets portfolios at app init
@@ -54,6 +58,10 @@ class PortfolioStore {
         this.selectedPortfolio = { ...this.portfolios[key] };
       }
     });
+    requester.Portfolio.getSharePrice({ id })
+      .then(action((sharePrice) => {
+        this.currentPortfolioSharePrice = sharePrice.data.sharePrice;
+      }));
   }
 
   @action

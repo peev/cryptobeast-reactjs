@@ -49,7 +49,7 @@ const styles = theme => ({
   },
 });
 
-@inject('InvestorStore')
+@inject('InvestorStore', 'PortfolioStore')
 @observer
 class InvestorWithdraw extends React.Component {
   state = {
@@ -71,9 +71,14 @@ class InvestorWithdraw extends React.Component {
 
   handleWithdrawRequests = propertyType => (event) => {
     event.preventDefault();
-
+    const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     this.props.InvestorStore.setWithdrawInvestorValues(propertyType, inputValue);
+
+    // To calculate purchased shares ===================
+    if (propertyType === 'amount') {
+      InvestorStore.depositUsdEquiv();
+    }
   }
 
   handleWithdrawalInvestor = () => {
@@ -86,7 +91,7 @@ class InvestorWithdraw extends React.Component {
   }
 
   render() {
-    const { classes, InvestorStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore } = this.props;
 
     return (
       <div>
@@ -104,7 +109,7 @@ class InvestorWithdraw extends React.Component {
           <form
             style={getModalStyle()}
             className={classes.paper}
-            // onSubmit={() => this.handleWithdrawalInvestor}
+          // onSubmit={() => this.handleWithdrawalInvestor}
           >
             <Typography
               variant="title"
@@ -127,7 +132,8 @@ class InvestorWithdraw extends React.Component {
                 <Input
                   type="number"
                   placeholder="Share Price at Entry Date"
-                  value={InvestorStore.withdrawSharePriceAtEntryDate}
+                  // value={InvestorStore.withdrawSharePriceAtEntryDate}
+                  value={PortfolioStore.currentPortfolioSharePrice}
                   className={classes.input}
                 />
               </div>

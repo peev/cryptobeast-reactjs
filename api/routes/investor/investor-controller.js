@@ -5,7 +5,6 @@ const investorController = (repository) => {
     const investorData = req.body;
     repository.investor.addInvestor(investorData)
       .then(() => {
-        console.log('\naddNewInvestor response: ', investorData);
         res.status(200).send(investorData);
       })
       .catch((error) => {
@@ -27,12 +26,9 @@ const investorController = (repository) => {
   };
 
   const depositInvestor = (req, res) => {
-    const id = req.params.id;
-    const investorData = req.body;
-
-    repository.investor.deposit(id, investorData)
-      .then((response) => {
-        res.status(200).send(response);
+    repository.investor.moveShares(req.body, 'deposit')
+      .then((deposit) => {
+        res.status(200).send(deposit);
       })
       .catch((error) => {
         return res.json(error);
@@ -40,10 +36,7 @@ const investorController = (repository) => {
   };
 
   const withdrawalInvestor = (req, res) => {
-    const id = req.params.id;
-    const investorData = req.body;
-
-    repository.investor.withdrawal(id, investorData)
+    repository.investor.moveShares(req.body, 'withdrawal')
       .then((response) => {
         res.status(200).send(response);
       })

@@ -10,6 +10,7 @@ class MarketStore {
   @observable selectedBaseCurrency;
   @observable selectedАllCurrency;
   @observable selectedExchange;
+  @observable selectedCurrency;
   @observable assetInputValue;
 
   constructor() {
@@ -111,48 +112,39 @@ class MarketStore {
 
   @action
   createBasicAsset(id) {
-    let newBasicAsset;
-
     if (this.selectedCurrency === null || this.selectedCurrency === '') {
       return;
     }
 
-    const parsedAssetInputValue = parseInt(this.assetInputValue, 10)
+    const parsedAssetInputValue = parseInt(this.assetInputValue, 10);
     if (!Number.isInteger(parsedAssetInputValue) || isNaN(parsedAssetInputValue)) {
       return;
     }
 
-    // if there is no Exchange selected, it's labeled as manually
-    if (this.selectedExchange) {
-      newBasicAsset = {
-        // currency: this.selectedCurrency.value, // react-select simple
-        currency: this.selectedCurrency,
-        balance: parsedAssetInputValue,
-        origin: this.selectedExchange,
-        portfolioId: id,
-      };
+    let selectedExchangeOrigin;
+    if (this.selectedExchange === true) {
+      selectedExchangeOrigin = this.selectedExchange;
     } else {
-      newBasicAsset = {
-        // currency: this.selectedCurrency.value, // react-select simple
-        currency: this.selectedCurrency,
-        balance: parsedAssetInputValue,
-        origin: 'Manually Added',
-        portfolioId: id,
-      };
+      selectedExchangeOrigin = 'Manually Added';
     }
 
-    console.log(newBasicAsset);
+    const newBasicAsset = {
+      currency: this.selectedCurrency,
+      balance: parsedAssetInputValue,
+      origin: selectedExchangeOrigin,
+      portfolioId: id,
+    };
 
     requester.Asset.add(newBasicAsset)
       .then(action((result) => {
-        // console.log(result);
+        // TODO: Something with result
         this.resetAsset();
       }));
   }
 
   @action.bound
   resetAsset() {
-    // this.selectedCurrency = ''; // TODO: doesn't reset value properly
+    this.selectedCurrency = '';
     this.assetInputValue = '';
     this.selectedExchange = '';
   }

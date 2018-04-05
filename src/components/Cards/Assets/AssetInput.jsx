@@ -4,7 +4,6 @@ import Paper from 'material-ui/Paper';
 import { inject, observer } from 'mobx-react';
 import RegularButton from '../../CustomButtons/Button';
 import SelectAllCurrency from '../../Selectors/Asset/SelectAllCurrency';
-import SelectAllCurrencySimple from '../../Selectors/Asset/SelectAllCurrencySimple';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
 
 const styles = () => ({
@@ -38,7 +37,6 @@ const styles = () => ({
 class AssetInput extends React.Component {
   state = {
     direction: 'row',
-    isSaved: false
   };
 
   handleRequest = (event) => {
@@ -53,9 +51,6 @@ class AssetInput extends React.Component {
 
     if (portfolioId !== null) {
       this.props.MarketStore.createBasicAsset(portfolioId);
-      // this.props.MarketStore.resetAsset();
-      this.setState({ isSaved: true })
-      this.forceUpdate();
     }
   }
 
@@ -70,7 +65,6 @@ class AssetInput extends React.Component {
           <Grid container className={classes.containerItems}>
             <Grid item xs={4} sm={3} md={3}>
               <SelectAllCurrency />
-              {/* <SelectAllCurrencySimple /> */}
 
               <Input
                 type="number"

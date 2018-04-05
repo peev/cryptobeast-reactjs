@@ -1,27 +1,26 @@
-import React from 'react';
+import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
 import { ItemGrid } from 'components';
 import { Grid, Snackbar } from 'material-ui';
 import Paper from 'material-ui/Paper';
 
-import RegularButton from '../../components/CustomButtons/Button';
-import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
-import InvestorDepositWrapped from '../../components/Modal/InvestorModals/InvestorDeposit';
-import SelectInvestor from '../../components/Selectors/SelectInvestor';
-import GenericTable from '../../components/CustomTables/GenericTable';
-import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
-import InvestorWithdrawWrapped from '../../components/Modal/InvestorModals/InvestorWithdraw';
+// import RegularButton from '../../components/CustomButtons/Button';
+// import SelectInvestor from '../../components/Selectors/SelectInvestor';
 import TotalInvestorsWrapped from '../../components/Modal/InvestorModals/TotalInvestors';
 import SharesInCirculationWrapped from '../../components/Modal/InvestorModals/SharesInCirculation';
 import CurrentSharePriceWrapped from '../../components/Modal/InvestorModals/CurrentSharePrice';
 import TotalUSDEquivWrapped from '../../components/Modal/InvestorModals/TotalUSDEquiv';
+
+import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
+import InvestorDepositWrapped from '../../components/Modal/InvestorModals/InvestorDeposit';
+import InvestorWithdrawWrapped from '../../components/Modal/InvestorModals/InvestorWithdraw';
+import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
+
+import IndividualSummary from '../../components/Cards/Investors/IndividualSummary';
+import GenericTable from '../../components/CustomTables/GenericTable';
 import './Investors.css';
 
-const dropStyle = {
-  width: '100%',
-};
-
-class Investors extends React.Component {
+class Investors extends Component {
   state = {
     direction: 'row',
     open: false,
@@ -42,37 +41,10 @@ class Investors extends React.Component {
           <AddInvestorWrapped />
           <InvestorDepositWrapped />
           <InvestorWithdrawWrapped />
-
           <EditInvestorWrapped />
         </Grid>
         <Grid container className="InvGrid">
-          <Paper container className="InvPaper">
-            <Grid >
-              <h5>INDIVIDUAL SUMMARY</h5>
-            </Grid>
-
-            <Grid container>
-              <Grid item xs={3}>
-                <SelectInvestor style={dropStyle} />
-              </Grid>
-              <Grid item xs={3}>
-                <p>Shares Held:</p>
-                <p>Weighted entry price:</p>
-                <p>Current Share Price:</p>
-              </Grid>
-              <Grid item xs={3}>
-                <p>USD Equivalent:</p>
-                <p>BTC Equivalent:</p>
-                <p>ETH Equivalent:</p>
-              </Grid>
-              <Grid item xs={3}>
-                <p>Investment Period:</p>
-                <p>Profit:</p>
-                <p>Fee Potential:</p>
-              </Grid>
-            </Grid>
-            <RegularButton color="primary">Export</RegularButton>
-          </Paper>
+          <IndividualSummary />
         </Grid>
         <Grid container className="InvGrid">
           <Paper className="InvPaperTable">

@@ -45,6 +45,18 @@ class InvestorStore {
   }
 
   @observable
+  individualSummaryValues = {
+    sharesHeld: '',
+    weightedEntryPrice: '',
+    usdEquivalent: '',
+    btcEquivalent: '',
+    ethEquivalent: '',
+    investmentPeriod: '',
+    profit: '',
+    feePotential: '',
+  }
+
+  @observable
   depositedCurrency;
 
   @observable
@@ -117,6 +129,9 @@ class InvestorStore {
     }
   }
 
+  // #region Computed Values
+
+  // #region Add Investor
   @computed
   get sharePriceAtEntryDate() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
@@ -149,6 +164,7 @@ class InvestorStore {
       return calculatedPurchasedShares;
     }
   }
+  // #endregion
 
   @computed
   get depositPurchasedShares() {
@@ -210,6 +226,104 @@ class InvestorStore {
       this.areFieldsEmpty = false;
     }
   }
+
+  // #region Investor Individual Summary
+  @computed
+  get individualSharesHeld() {
+    ///////////////////////////
+    if (this.selectedInvestor) {
+      console.log(this.selectedInvestor);
+      const calculatedIndividualSharesHeld = this.selectedInvestor.purchasedShares;
+      this.individualSummaryValues.sharesHeld = calculatedIndividualSharesHeld;
+
+      return calculatedIndividualSharesHeld;
+    }
+  }
+
+  @computed
+  get individualWeightedEntryPrice() {
+    if (this.selectedInvestor) {
+      const calculatedIndividualWeightedEntryPrice = this.selectedInvestor.purchasedShares;
+      this.individualSummaryValues.weightedEntryPrice = calculatedIndividualWeightedEntryPrice;
+
+      return calculatedIndividualWeightedEntryPrice;
+    }
+  }
+
+  @computed
+  get individualUSDEquivalent() {
+    if (this.selectedInvestor) {
+      //  TODO: add real share price from PortfolioStore
+      const calculatedIndividualUSDEquivalent = this.selectedInvestor.purchasedShares * 1;
+      this.individualSummaryValues.usdEquivalent = calculatedIndividualUSDEquivalent;
+      // this.individualSummaryValues.feePotential = calculatedIndividualUSDEquivalent * this.selectedInvestor.managementFee;
+
+      return calculatedIndividualUSDEquivalent;
+    }
+  }
+
+  @computed
+  get individualBTCEquivalent() {
+    if (this.selectedInvestor) {
+      //  TODO: add real share price from PortfolioStore
+      const calculatedIndividualBTCEquivalent = this.selectedInvestor.purchasedShares * 1;
+      this.individualSummaryValues.btcEquivalent = calculatedIndividualBTCEquivalent;
+
+      return calculatedIndividualBTCEquivalent;
+    }
+  }
+
+  @computed
+  get individualETHEquivalent() {
+    if (this.selectedInvestor) {
+      //  TODO: add real share price from PortfolioStore
+      const calculatedIndividualETHEquivalent = this.selectedInvestor.purchasedShares * 1;
+      this.individualSummaryValues.ethEquivalent = calculatedIndividualETHEquivalent;
+
+      return calculatedIndividualETHEquivalent;
+    }
+  }
+
+  @computed
+  get individualInvestmentPeriod() {
+    if (this.selectedInvestor) {
+      // Get 1 day in milliseconds
+      const oneDay = 1000 * 60 * 60 * 24;
+      const currentDate = new Date();
+      const dateOfEntryConverted = new Date(this.selectedInvestor.dateOfEntry);
+
+      const calculatedIndividualInvestmentPeriod = Math.round((currentDate - dateOfEntryConverted) / oneDay);
+      this.individualSummaryValues.investmentPeriod = calculatedIndividualInvestmentPeriod;
+
+      return calculatedIndividualInvestmentPeriod;
+    }
+  }
+
+  @computed
+  get individualProfit() {
+    if (this.selectedInvestor) {
+      const calculatedIndividualProfit = 1;
+      // (current share price - weighted entry price) / weighted entry price*
+      this.individualSummaryValues.profit = calculatedIndividualProfit;
+
+      return calculatedIndividualProfit;
+    }
+  }
+
+  @computed
+  get individualFeePotential() {
+    if (this.selectedInvestor) {
+      // TODO: USD is hard coded
+      const calculatedIndividualFeePotential = ((MarketStore.baseCurrencies[3].last * this.selectedInvestor.managementFee) / 100).toFixed(2);
+      this.individualSummaryValues.feePotential = calculatedIndividualFeePotential;
+
+      return calculatedIndividualFeePotential;
+    }
+  }
+
+  // #endregion
+
+  // #endregion
 
   @action
   handleDepositEmptyFields() {

@@ -31,7 +31,7 @@ const Portfolio = {
   update: requestParams =>
     requests.put('/portfolio/update', requestParams), // id + newName
   delete: (id) => {
-    return requests.delete('/portfolio/delete/' + id);
+    return requests.delete('/portfolio/delete/' + id)
   }
 };
 

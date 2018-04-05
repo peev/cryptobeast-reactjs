@@ -427,9 +427,7 @@ class VolatilityAndRisk extends Component {
 
           <Title>Portfolio value daily change</Title>
 
-          <Legend>
-            <Legend.Title>Legend Title</Legend.Title>
-          </Legend>
+         
 
           <Tooltip shared />
 

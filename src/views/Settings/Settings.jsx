@@ -9,6 +9,8 @@ import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 import PortfoliosTable from '../../components/CustomTables/PortfoliosTable';
 import IntegrationsTable from '../../components/CustomTables/IntegrationsTable';
 
+import AddApiAccount from '../../components/Modal/ApiAccountModals/AddApiAccount';
+
 // import IconButton from '../../components/CustomButtons/IconButton';
 // import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 
@@ -40,6 +42,7 @@ class Settings extends Component {
         <ItemGrid xs={12} sm={12} md={12}>
           <RegularCard
             cardTitle="API Integrations"
+            button={<AddApiAccount />}
             content={
               <IntegrationsTable
                 tableHead={['Exchange', 'Status', 'EDIT', 'DELETE']}

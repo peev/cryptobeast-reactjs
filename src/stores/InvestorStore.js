@@ -56,32 +56,15 @@ class InvestorStore {
     feePotential: '',
   }
 
-  @observable
-  depositedCurrency;
-
-  @observable
-  selectedBaseCurrency;
-
-  @observable
-  areFieldsEmpty;
-
-  @observable
-  selectedInvestor;
-
-  @observable
-  selectedInvestors;
-
-  @observable
-  selectedInvestorId;
-
-  @observable
-  investorError;
-
-  @observable
-  investorErrorDisplayed;
+  @observable selectedBaseCurrency;
+  @observable areFieldsEmpty;
+  @observable selectedInvestor;
+  @observable selectedInvestors;
+  @observable selectedInvestorId;
+  @observable investorError;
+  @observable investorErrorDisplayed;
 
   constructor() {
-    this.depositedCurrency = {};
     this.selectedBaseCurrency = null;
     this.areFieldsEmpty = true;
     this.selectedInvestor = null;
@@ -89,22 +72,12 @@ class InvestorStore {
     this.selectedInvestorId = null;
     this.investorError = [];
     this.investorErrorDisplayed = false;
-
-    // requester.Market.getCurrencies()
-    //   .then(this.onGetBaseCurrencies)
-    //   .catch(this.onError);
-
-    // // on component mount, this makes calls !!!
-    // // requester.Market.getSummaries()
-    // //   .then(this.onGetSummaries)
-    // //   .catch(this.onError);
   }
 
-  @computed
-  get depositUsdEquiv() {
+  @action.bound
+  depositUsdEquiv() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const currentAmount = this.values.depositedAmount;
-
+    const currentAmount = this.values.depositedAmount || this.newDepositValues.amount;
     if (baseCurrency && currentAmount) {
       let calculatedDepositUsdEquiv;
       switch (baseCurrency.pair) {
@@ -123,35 +96,27 @@ class InvestorStore {
           console.log('The is no such currency');
           break;
       }
-
       this.values.depositUsdEquiv = calculatedDepositUsdEquiv;
       return calculatedDepositUsdEquiv;
     }
+
+    return null;
   }
 
   // #region Computed Values
-
   // #region Add Investor
-  @computed
-  get sharePriceAtEntryDate() {
-    const baseCurrency = MarketStore.selectedBaseCurrency;
-    if (baseCurrency && this.values.depositedAmount) {
-      // TODO: To add Assets value below
-      const calculatedSharePriceAtEntryDate = this.values.depositedAmount * (1 / baseCurrency.last);
-      this.values.sharePriceAtEntryDate = calculatedSharePriceAtEntryDate;
-      return calculatedSharePriceAtEntryDate;
-    }
-  }
-
   @computed
   get purchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    if (baseCurrency && this.values.depositedAmount) {
+    const { currentPortfolioSharePrice } = PortfolioStore;
+    if (baseCurrency && (this.values.depositedAmount || this.newDepositValues.amount)) {
       // TODO: To add Assets value below
-      const calculatedPurchasedShares = (this.values.depositedAmount * baseCurrency.last).toFixed(0, 10);
+      const calculatedPurchasedShares = (this.values.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
       this.values.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
+
+    return null;
   }
 
   @computed
@@ -163,18 +128,25 @@ class InvestorStore {
       this.newDepositValues.sharePriceAtEntryDate = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
+
+    return null;
   }
   // #endregion
 
   @computed
   get depositPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
+    const { currentPortfolioSharePrice } = PortfolioStore;
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
-      const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
+      // const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
+      const calculatedPurchasedShares = (this.values.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
       this.newDepositValues.purchasedShares = calculatedPurchasedShares;
+
       return calculatedPurchasedShares;
     }
+
+    return null;
   }
 
   @computed
@@ -184,24 +156,34 @@ class InvestorStore {
       this.withdrawalValues.inUSD = calculatedWithdrawInUSD;
       return calculatedWithdrawInUSD;
     }
+
+    return null;
   }
 
   @computed
   get withdrawSharePriceAtEntryDate() {
     if (this.selectedInvestor && this.withdrawalValues.amount) {
-      const calculatedWithdrawSharePriceAtEntryDate = 1;
+      const calculatedWithdrawSharePriceAtEntryDate = PortfolioStore.currentPortfolioSharePrice;
       this.withdrawalValues.sharePriceAtEntryDate = calculatedWithdrawSharePriceAtEntryDate;
       return calculatedWithdrawSharePriceAtEntryDate;
     }
+
+    return null;
   }
 
   @computed
   get withdrawPurchasedShares() {
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    const { currentPortfolioSharePrice } = PortfolioStore;
+
     if (this.selectedInvestor && this.withdrawalValues.amount) {
-      const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / 1.75).toFixed(0, 10);
+      // const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / 1.75).toFixed(2);
+      const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / currentPortfolioSharePrice).toFixed(2);
       this.withdrawalValues.purchasedShares = calculatedWithdrawPurchasedShares;
       return calculatedWithdrawPurchasedShares;
     }
+
+    return null;
   }
 
   @computed
@@ -211,20 +193,24 @@ class InvestorStore {
       this.withdrawalValues.managementFee = calculatedDepositManagementFee;
       return calculatedDepositManagementFee;
     }
+
+    return null;
   }
 
   @computed
   get handleEmptyFields() {
     const currentInvestor = this.values;
     const arrayOfValues = Object.values(currentInvestor);
-
     // filters all the input values and returns only empty once,
-    // skips only telephone (i !== 3), it is not required
-    const filteredArray = arrayOfValues.filter((value, i) => value === '' && i !== 3);
+    // skips telephone (i !== 3), it is not required
+    // skips sharePrice (i !== 8), it calculated by default
+    const filteredArray = arrayOfValues.filter((value, i) => value === '' && i !== 3 && i !== 8);
 
     if (filteredArray.length === 0) {
       this.areFieldsEmpty = false;
     }
+
+    return null;
   }
 
   // #region Investor Individual Summary
@@ -236,6 +222,8 @@ class InvestorStore {
 
       return calculatedIndividualSharesHeld;
     }
+
+    return null;
   }
 
   @computed
@@ -246,6 +234,8 @@ class InvestorStore {
 
       return calculatedIndividualWeightedEntryPrice;
     }
+
+    return null;
   }
 
   @computed
@@ -258,6 +248,8 @@ class InvestorStore {
 
       return calculatedIndividualUSDEquivalent;
     }
+
+    return null;
   }
 
   @computed
@@ -282,6 +274,8 @@ class InvestorStore {
 
       return calculatedIndividualETHEquivalent;
     }
+
+    return null;
   }
 
   @computed
@@ -297,6 +291,8 @@ class InvestorStore {
 
       return calculatedIndividualInvestmentPeriod;
     }
+
+    return null;
   }
 
   @computed
@@ -308,6 +304,8 @@ class InvestorStore {
 
       return calculatedIndividualProfit;
     }
+
+    return null;
   }
 
   @computed
@@ -319,6 +317,8 @@ class InvestorStore {
 
       return calculatedIndividualFeePotential;
     }
+
+    return null;
   }
 
   // #endregion
@@ -435,13 +435,23 @@ class InvestorStore {
   createNewInvestor(id) {
     const newInvestor = {
       portfolioId: id,
-      isFounder: this.values.isFounder,
-      fullName: this.values.fullName,
-      email: this.values.email,
-      telephone: this.values.telephone,
-      dateOfEntry: this.values.dateOfEntry,
-      managementFee: this.values.managementFee,
-      purchasedShares: this.values.purchasedShares,
+      investor: {
+        isFounder: this.values.isFounder,
+        fullName: this.values.fullName,
+        email: this.values.email,
+        telephone: this.values.telephone,
+        dateOfEntry: this.values.dateOfEntry,
+        managementFee: this.values.managementFee,
+        purchasedShares: this.values.purchasedShares,
+      },
+      transaction: {
+        investorName: this.values.fullName,
+        dateOfEntry: (new Date()).toLocaleString(),
+        transactionDate: this.values.dateOfEntry,
+        amountInUSD: this.values.depositUsdEquiv,
+        sharePrice: PortfolioStore.currentPortfolioSharePrice,
+        shares: parseFloat(this.values.purchasedShares),
+      },
     };
 
     requester.Investor.add(newInvestor)
@@ -454,11 +464,19 @@ class InvestorStore {
 
   @action
   createNewDepositInvestor(id) {
-    const newDepositInvestor = {
-      amount: this.newDepositValues.amount,
+    const deposit = {
+      investorId: id,
+      transaction: {
+        investorName: this.selectedInvestor.fullName,
+        dateOfEntry: (new Date()).toLocaleString(),
+        transactionDate: this.newDepositValues.transactionDate,
+        amountInUSD: this.values.depositUsdEquiv,
+        sharePrice: PortfolioStore.currentPortfolioSharePrice,
+        shares: parseFloat(this.newDepositValues.purchasedShares),
+      },
     };
 
-    requester.Investor.addDeposit(id, newDepositInvestor)
+    requester.Investor.addDeposit(deposit)
       .then((result) => {
         // TODO: Something with result
         console.log(result);
@@ -491,12 +509,19 @@ class InvestorStore {
   }
 
   @action
-  withdrawalInvestor(investorId) {
-    const withdrawalValue = {
-      amount: this.withdrawalValues.amount,
-    };
-
-    requester.Investor.withdrawal(investorId, withdrawalValue)
+  withdrawalInvestor(id) {
+    const withdrawal = {
+      investorId: id,
+      transaction: {
+        investorName: this.selectedInvestor.fullName,
+        dateOfEntry: (new Date()).toLocaleString(),
+        transactionDate: this.withdrawalValues.transactionDate,
+        amountInUSD: this.withdrawalValues.amount,
+        sharePrice: PortfolioStore.currentPortfolioSharePrice,
+        shares: parseFloat(this.withdrawalValues.purchasedShares) * (-1),
+      },
+    }
+    requester.Investor.withdrawal(withdrawal)
       .then((result) => {
         // TODO: Something with result
         console.log(result);

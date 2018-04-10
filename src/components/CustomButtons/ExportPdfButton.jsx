@@ -1,21 +1,20 @@
-import React from "react";
-import { withStyles, IconButton } from "material-ui";
-import PropTypes from "prop-types";
+import React from 'react';
+import { withStyles, IconButton } from 'material-ui';
+import PropTypes from 'prop-types';
+import { Edit } from 'material-ui-icons';
 
-import iconButtonStyle from "variables/styles/iconButtonStyle";
+import iconButtonStyle from 'variables/styles/iconButtonStyle';
+
 
 function ExportPdfButton({ ...props }) {
-  const { classes, color, children, customClass, ...rest } = props;
+  const { classes, children, ...rest } = props;
+
   return (
     <IconButton
       {...rest}
-      className={
-        classes.makePDF +
-        (color ? " " + classes[color] : "") +
-        (customClass ? " " + classes[customClass] : "")
-      }
+      className={`${classes.makePDF} ${classes.primary}`}
     >
-      {children}
+      <Edit />
     </IconButton>
   );
 }
@@ -23,14 +22,14 @@ function ExportPdfButton({ ...props }) {
 ExportPdfButton.propTypes = {
   classes: PropTypes.object.isRequired,
   color: PropTypes.oneOf([
-    "primary",
-    "info",
-    "success",
-    "warning",
-    "danger",
-    "rose",
-    "white",
-    "simple"
+    'primary',
+    'info',
+    'success',
+    'warning',
+    'danger',
+    'rose',
+    'white',
+    'simple'
   ]),
   customClass: PropTypes.string,
   disabled: PropTypes.bool

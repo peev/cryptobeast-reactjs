@@ -48,13 +48,13 @@ class IndividualSummary extends Component {
       <div>
         <Grid container>
           <Grid container className={classes.container}>
-            <Grid item xs={3}>
+            <Grid item xs={6} sm={6} md={3}>
               <SelectInvestor />
             </Grid>
           </Grid>
 
           <Grid container className={classes.container}>
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <div className={classes.containerItems}>
                 <p>Shares Held:</p>
                 <span>{InvestorStore.individualSharesHeld}</span>
@@ -66,7 +66,7 @@ class IndividualSummary extends Component {
               </div>
             </Grid>
 
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <div className={classes.containerItems}>
                 <p>USD Equivalent:</p>
                 <span>{InvestorStore.individualUSDEquivalent}</span>
@@ -78,7 +78,7 @@ class IndividualSummary extends Component {
               </div>
             </Grid>
 
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <div className={classes.containerItems}>
                 <p>Investment Period:</p>
                 <span>{InvestorStore.individualInvestmentPeriod ? `${InvestorStore.individualInvestmentPeriod} DAYS` : ''}</span>
@@ -90,7 +90,7 @@ class IndividualSummary extends Component {
               </div>
             </Grid>
 
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={6} md={3}>
               <div className={classes.containerItems}>
                 <p>ETH Equivalent:</p>
                 <span>{InvestorStore.individualETHEquivalent}</span>

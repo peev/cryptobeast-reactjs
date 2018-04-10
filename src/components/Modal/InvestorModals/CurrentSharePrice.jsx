@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import { TextField } from 'material-ui';
-import { withStyles, TextField } from 'material-ui';
-
-// import { Icon } from 'material-ui-icons';
-import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
+import { withStyles, TextField, Grid } from 'material-ui';
+
+import Modal from 'material-ui/Modal';
 import InvestorCard from '../../CustomElements/InvestorCard';
 import Button from '../../CustomButtons/Button';
 import InvestorCardButton from '../../CustomButtons/InvestorCardButton';
@@ -49,14 +47,13 @@ class CurrentSharePrice extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div>
-        <div>
-          <InvestorCardButton
-            onClick={this.handleOpen}
-          >
-            <InvestorCard headerText="$2.65" labelText="Current Share Price" />
-          </InvestorCardButton>
-        </div>
+      <Grid container>
+        <InvestorCardButton
+          onClick={this.handleOpen}
+        >
+          <InvestorCard headerText="$2.65" labelText="Current Share Price" />
+        </InvestorCardButton>
+
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
@@ -107,7 +104,7 @@ class CurrentSharePrice extends React.Component {
             </Button>
           </form>
         </Modal>
-      </div>
+      </Grid>
     );
   }
 }
@@ -116,6 +113,4 @@ CurrentSharePrice.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-const CurrentSharePriceWrapped = withStyles(styles)(CurrentSharePrice);
-
-export default CurrentSharePriceWrapped;
+export default withStyles(styles)(CurrentSharePrice);

@@ -11,11 +11,11 @@ import {
 import PropTypes from 'prop-types';
 
 import { Edit } from 'material-ui-icons';
-import IconButton from '../CustomButtons/IconButton';
+import IconButton from '../../CustomButtons/IconButton';
 
-import tableStyle from '../../variables/styles/tableStyle';
+import tableStyle from '../../../variables/styles/tableStyle';
 
-function CurrentInvestor({ ...props }) {
+function InvestorDetailsTable({ ...props }) {
   const { classes, tableHead, tableData, tableHeaderColor } = props;
   return (
     <div className={classes.tableResponsive}>
@@ -66,11 +66,11 @@ function CurrentInvestor({ ...props }) {
   );
 }
 
-CurrentInvestor.defaultProps = {
+InvestorDetailsTable.defaultProps = {
   tableHeaderColor: 'gray'
 };
 
-CurrentInvestor.propTypes = {
+InvestorDetailsTable.propTypes = {
   classes: PropTypes.object.isRequired,
   tableHeaderColor: PropTypes.oneOf([
     'warning',
@@ -85,4 +85,4 @@ CurrentInvestor.propTypes = {
   tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
 };
 
-export default withStyles(tableStyle)(CurrentInvestor);
+export default withStyles(tableStyle)(InvestorDetailsTable);

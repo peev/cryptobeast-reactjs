@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
-import { ItemGrid, RegularCard } from 'components';
 import { withStyles, Grid } from 'material-ui';
-import Paper from 'material-ui/Paper';
-import { Edit } from 'material-ui-icons';
 
-import ExportPdfButton from '../../components/CustomButtons/ExportPdfButton';
-// import SelectInvestor from '../../components/Selectors/SelectInvestor';
 import TotalInvestorsWrapped from '../../components/Modal/InvestorModals/TotalInvestors';
 import SharesInCirculationWrapped from '../../components/Modal/InvestorModals/SharesInCirculation';
 import CurrentSharePriceWrapped from '../../components/Modal/InvestorModals/CurrentSharePrice';
@@ -17,88 +11,85 @@ import InvestorDepositWrapped from '../../components/Modal/InvestorModals/Invest
 import InvestorWithdrawWrapped from '../../components/Modal/InvestorModals/InvestorWithdraw';
 import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
 
-import IndividualSummary from '../../components/Cards/Investors/IndividualSummary';
-import CurrentInvestor from '../../components/CustomTables/CurrentInvestor';
-import './Investors.css';
+import IndividualSummaryWrapper from '../../components/Cards/Investors/IndividualSummaryWrapper';
+
 
 const styles = () => ({
-  itemCardPosition: {
-    margin: '0 -20px',
-    marginTop: '40px',
+  herderTopButton: {
+    '& button': {
+      display: 'flex',
+      width: '200px',
+      margin: '10px auto',
+    },
   },
-  tablePosition: {
-    marginTop: '80px',
-  }
+  herderBottomButton: {
+    '& button': {
+      display: 'flex',
+      width: '200px',
+      margin: '10px auto',
+      color: '#fff',
+      backgroundColor: '#5e6779',
+      '&:hover': {
+        backgroundColor: '#666666',
+      },
+    },
+  },
+  headerPosition1: {
+    marginTop: '15px',
+  },
+  headerPosition2: {
+    marginTop: '0',
+  },
+  itemsCardPosition: {
+    marginTop: '30px',
+  },
 });
 
+
 class Investors extends Component {
-  state = {
-    direction: 'row',
-    open: false,
-  };
+  state = {};
 
   render() {
     const { classes } = this.props;
 
     return (
-      <div>
-        <Grid container className="InvCardsGroup">
-          <TotalInvestorsWrapped />
-          <SharesInCirculationWrapped />
-          <CurrentSharePriceWrapped />
-          <TotalUSDEquivWrapped />
+      <Grid container>
+        <Grid container spacing={40} className={classes.headerPosition1}>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderTopButton}>
+            <TotalInvestorsWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderTopButton}>
+            <SharesInCirculationWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderTopButton}>
+            <CurrentSharePriceWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderTopButton}>
+            <TotalUSDEquivWrapped />
+          </Grid>
         </Grid>
 
-        <Grid container className="InvButtonsGroup">
-          <AddInvestorWrapped />
-          <InvestorDepositWrapped />
-          <InvestorWithdrawWrapped />
-          <EditInvestorWrapped />
+        <Grid container spacing={40} className={classes.headerPosition2}>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+            <AddInvestorWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+            <InvestorDepositWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+            <InvestorWithdrawWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+            <EditInvestorWrapped />
+          </Grid>
         </Grid>
 
-        <div className={classes.itemCardPosition}>
-          <ItemGrid xs={12} sm={12} md={12}>
-            <RegularCard
-              cardTitle="INDIVIDUAL SUMMARY"
-              // button={
-              //   <ExportPdfButton customClass="editPDF">
-              //     <Edit style={{ color: '#FFF' }} />
-              //   </ExportPdfButton>
-              // }
-              content={
-                <div>
-                  <IndividualSummary />
-                  <div className={classes.tablePosition}>
-                    <CurrentInvestor
-                      tableHead={[
-                        'ID',
-                        'Name',
-                        'Date of Entry',
-                        'Transaction date',
-                        'Amount (USD)',
-                        'Share price',
-                        'Shares',
-                      ]}
-                      tableData={[
-                        [
-                          '1',
-                          'SomeINvestor',
-                          'A day',
-                          'Transaction Dates',
-                          '1$',
-                          '1$',
-                          'Test',
-                          'test',
-                        ],
-                      ]}
-                    />
-                  </div>
-                </div>
-              }
-            />
-          </ItemGrid>
-        </div>
-      </div>
+        <Grid container className={classes.itemsCardPosition}>
+          <Grid item xs={12} sm={12} md={12}>
+            <IndividualSummaryWrapper />
+          </Grid>
+        </Grid>
+      </Grid>
     );
   }
 }

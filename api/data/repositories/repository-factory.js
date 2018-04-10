@@ -6,6 +6,7 @@ const marketData = require('./market-repository');
 const investorData = require('./investor-repository');
 const tickerData = require('./ticker-repository');
 const currencyData = require('./currency-repository');
+const transactionData = require('./transaction-repository');
 
 const init = (db) => {
   return {
@@ -17,6 +18,7 @@ const init = (db) => {
     investor: investorData.init(db),
     ticker: tickerData.init(db),
     currency: currencyData.init(db),
+    transaction: transactionData.init(db),
   };
 };
 

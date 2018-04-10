@@ -122,7 +122,7 @@ class MarketStore {
     }
 
     let selectedExchangeOrigin;
-    if (this.selectedExchange === true) {
+    if (this.selectedExchange !== '') {
       selectedExchangeOrigin = this.selectedExchange;
     } else {
       selectedExchangeOrigin = 'Manually Added';

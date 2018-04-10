@@ -22,7 +22,6 @@ const createDataPoint = (time = Date.now(), magnitude = 100, offset = 0) => {
 };
 
 const createRandomData = (time, magnitude) => {
-
   const data = [];
 
   for (let i = -99; i <= 0; i++) {
@@ -40,7 +39,6 @@ class PerformanceChart extends Component {
 
   render() {
     const now = Date.now();
-
     const data = createRandomData(now, 1e8);
 
     const data2 = createRandomData(now, 1e8);
@@ -48,7 +46,6 @@ class PerformanceChart extends Component {
       <div>
         <HighchartsStockChart>
           <Chart zoomType="x" />
-
           <RangeSelector>
             <RangeSelector.Button count={7} type="day">
               7d

@@ -42,15 +42,12 @@ class Performance extends React.Component {
           <Grid item xs={12}>
             <Paper className="PerformancePaper">
               <PerformanceTable />
-
               <RegularButton>Export</RegularButton>
               <br />
 
             </Paper>
           </Grid>
         </Grid>
-
-
       </div>
     );
   }

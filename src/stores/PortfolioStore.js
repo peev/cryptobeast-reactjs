@@ -53,10 +53,8 @@ class PortfolioStore {
         this.selectedPortfolio = { ...this.portfolios[key] };
       }
     });
-
     requester.Portfolio.getSharePrice({ id })
       .then(action((sharePrice) => {
-        console.log(sharePrice)
         this.currentPortfolioSharePrice = sharePrice.data.sharePrice;
       }));
   }

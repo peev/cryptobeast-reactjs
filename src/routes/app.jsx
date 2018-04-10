@@ -6,15 +6,15 @@ import Ledgers from "views/Ledgers/Ledgers.jsx";
 import Investors from "views/Investors/Investors.jsx";
 import Analytics from "views/Analytics/Analytics.jsx";
 import Settings from "views/Settings/Settings.jsx";
+import InvestorsIcon  from '../components/CustomIcons/InvestorsIcon';
+import SummaryIcon from '../components/CustomIcons/SummaryIcon';
+import SettingsIcon  from '../components/CustomIcons/SettingsIcon';
+import SimulatorIcon from '../components/CustomIcons/SimulatorIcon';
+import AnalyticsIcon  from '../components/CustomIcons/AnalyticsIcon';
+import HistoryIcon from '../components/CustomIcons/HistoryIcon';
+import LedgersIcon  from '../components/CustomIcons/LedgersIcon';
+import MarketIcon from '../components/CustomIcons/MarketIcon';
 
-import AnalyticsIcon from '../assets/Icons/Analytics.svg';
-import History from '../assets/Icons/History.svg';
-import InvestorsIcon from '../assets/Icons/Investors.svg';
-import LedgersIcon from '../assets/Icons/Ledgers.svg';
-import Market from '../assets/Icons/Market.svg';
-import SimulatorIcon from '../assets/Icons/Simulator.svg';
-import SummaryIcon from '../assets/Icons/Summary.svg';
-import SettingsIcon from '../assets/Icons/Settings.svg';
 
 
 import {
@@ -34,56 +34,56 @@ const appRoutes = [
     path: "/summary",
     sidebarName: "Summary",
     navbarName: "Summary",
-    icon: Dashboard,
+    icon: SummaryIcon,
     component: SummaryPage
   },
   {
     path: "/assetMovements",
     sidebarName: "Asset Movements",
     navbarName: "Asset Movements",
-    icon: Person,
+    icon: MarketIcon,
     component: AssetMovements
-  },
-  {
-    path: "/Simulator",
-    sidebarName: "Simulator",
-    navbarName: "Simulator",
-    icon: ContentPaste,
-    component: Simulator
-  },
-  {
-    path: "/TransactionHistory",
-    sidebarName: "Transaction History",
-    navbarName: "Transaction History",
-    icon: LibraryBooks,
-    component: TransactionHistory
-  },
-  {
-    path: "/Ledgers",
-    sidebarName: "Ledgers",
-    navbarName: BubbleChart,
-    icon: LocationOn,
-    component: Ledgers
   },
   {
     path: "/Investors",
     sidebarName: "Investors",
     navbarName: "Investors",
-    icon: Notifications,
+    icon: InvestorsIcon,
     component: Investors
   },
   {
     path: "/Analytics",
     sidebarName: "Analytics",
     navbarName: "Analytics",
-    icon: LibraryBooks,
+    icon: AnalyticsIcon,
     component: Analytics
+  },
+  {
+    path: "/TransactionHistory",
+    sidebarName: "Transaction History",
+    navbarName: "Transaction History",
+    icon: HistoryIcon,
+    component: TransactionHistory
+  },
+  {
+    path: "/Ledgers",
+    sidebarName: "Ledgers",
+    navbarName: BubbleChart,
+    icon: LedgersIcon,
+    component: Ledgers
+  },
+  {
+    path: "/Simulator",
+    sidebarName: "Simulator",
+    navbarName: "Simulator",
+    icon: SimulatorIcon,
+    component: Simulator
   },
   {
     path: "/Settings",
     sidebarName: "Settings",
     navBarName: "Settings",
-    icon: LocationOn,
+    icon: SettingsIcon,
     component: Settings
   },
   {

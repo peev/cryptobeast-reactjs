@@ -15,20 +15,6 @@ import HistoryIcon from '../components/CustomIcons/HistoryIcon';
 import LedgersIcon  from '../components/CustomIcons/LedgersIcon';
 import MarketIcon from '../components/CustomIcons/MarketIcon';
 
-
-
-import {
-  Dashboard,
-  Person,
-  ContentPaste,
-  LibraryBooks,
-  BubbleChart,
-  LocationOn,
-  Notifications,
-  Done,
-} from "material-ui-icons";
-
-
 const appRoutes = [
   {
     path: "/summary",
@@ -68,7 +54,7 @@ const appRoutes = [
   {
     path: "/Ledgers",
     sidebarName: "Ledgers",
-    navbarName: BubbleChart,
+    navbarName: 'Ledgers',
     icon: LedgersIcon,
     component: Ledgers
   },

@@ -1,113 +1,97 @@
-import React from 'react';
-// import PropTypes from 'prop-types';
-import { ItemGrid } from 'components';
-import { Grid, Snackbar } from 'material-ui';
-import Paper from 'material-ui/Paper';
+import React, { Component } from 'react';
+import { withStyles, Grid } from 'material-ui';
 
-import RegularButton from '../../components/CustomButtons/Button';
-import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
-import InvestorDepositWrapped from '../../components/Modal/InvestorModals/InvestorDeposit';
-import SelectInvestor from '../../components/Selectors/SelectInvestor';
-import GenericTable from '../../components/CustomTables/GenericTable';
-import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
-import InvestorWithdrawWrapped from '../../components/Modal/InvestorModals/InvestorWithdraw';
 import TotalInvestorsWrapped from '../../components/Modal/InvestorModals/TotalInvestors';
 import SharesInCirculationWrapped from '../../components/Modal/InvestorModals/SharesInCirculation';
 import CurrentSharePriceWrapped from '../../components/Modal/InvestorModals/CurrentSharePrice';
 import TotalUSDEquivWrapped from '../../components/Modal/InvestorModals/TotalUSDEquiv';
-import './Investors.css';
 
-const dropStyle = {
-  width: '100%',
-};
+import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
+import InvestorDepositWrapped from '../../components/Modal/InvestorModals/InvestorDeposit';
+import InvestorWithdrawWrapped from '../../components/Modal/InvestorModals/InvestorWithdraw';
+import EditInvestorWrapped from '../../components/Modal/InvestorModals/EditInvestor';
 
-class Investors extends React.Component {
-  state = {
-    direction: 'row',
-    open: false,
-    // justify: 'flex-end',
-    // alignItems: 'center',
-  };
+import IndividualSummaryWrapper from '../../components/Cards/Investors/IndividualSummaryWrapper';
+
+
+const styles = () => ({
+  herderTopButton: {
+    '& button': {
+      display: 'flex',
+      width: '200px',
+      margin: '10px auto',
+    },
+  },
+  herderBottomButton: {
+    '& button': {
+      display: 'flex',
+      width: '200px',
+      margin: '10px auto',
+      color: '#fff',
+      backgroundColor: '#5e6779',
+      '&:hover': {
+        backgroundColor: '#666666',
+      },
+    },
+  },
+  headerPosition1: {
+    marginTop: '15px',
+  },
+  headerPosition2: {
+    marginTop: '0',
+  },
+  itemsCardPosition: {
+    marginTop: '30px',
+  },
+});
+
+
+class Investors extends Component {
+  state = {};
 
   render() {
+    const { classes } = this.props;
+
     return (
-      <div>
-        <Grid container className="InvCardsGroup">
-          <TotalInvestorsWrapped />
-          <SharesInCirculationWrapped />
-          <CurrentSharePriceWrapped />
-          <TotalUSDEquivWrapped />
+      <Grid container>
+        <Grid container spacing={40} className={classes.headerPosition1}>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderTopButton}>
+            <TotalInvestorsWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderTopButton}>
+            <SharesInCirculationWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderTopButton}>
+            <CurrentSharePriceWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderTopButton}>
+            <TotalUSDEquivWrapped />
+          </Grid>
         </Grid>
-        <Grid container className="InvButtonsGroup">
-          <AddInvestorWrapped />
-          <InvestorDepositWrapped />
-          <InvestorWithdrawWrapped />
 
-          <EditInvestorWrapped />
+        <Grid container spacing={40} className={classes.headerPosition2}>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+            <AddInvestorWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+            <InvestorDepositWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+            <InvestorWithdrawWrapped />
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+            <EditInvestorWrapped />
+          </Grid>
         </Grid>
-        <Grid container className="InvGrid">
-          <Paper container className="InvPaper">
-            <Grid >
-              <h5>INDIVIDUAL SUMMARY</h5>
-            </Grid>
 
-            <Grid container>
-              <Grid item xs={3}>
-                <SelectInvestor style={dropStyle} />
-              </Grid>
-              <Grid item xs={3}>
-                <p>Shares Held:</p>
-                <p>Weighted entry price:</p>
-                <p>Current Share Price:</p>
-              </Grid>
-              <Grid item xs={3}>
-                <p>USD Equivalent:</p>
-                <p>BTC Equivalent:</p>
-                <p>ETH Equivalent:</p>
-              </Grid>
-              <Grid item xs={3}>
-                <p>Investment Period:</p>
-                <p>Profit:</p>
-                <p>Fee Potential:</p>
-              </Grid>
-            </Grid>
-            <RegularButton color="primary">Export</RegularButton>
-          </Paper>
+        <Grid container className={classes.itemsCardPosition}>
+          <Grid item xs={12} sm={12} md={12}>
+            <IndividualSummaryWrapper />
+          </Grid>
         </Grid>
-        <Grid container className="InvGrid">
-          <Paper className="InvPaperTable">
-            <GenericTable
-              tableHead={[
-                "ID",
-                "Name",
-                "Date of Entry",
-                "Transaction date",
-                "Amount (USD)",
-                "Share price",
-                "New/Liquidated Shares",
-                "tatata",
-                "tatatatata",
-                "tatatata,"
-              ]}
-              tableData={[
-                [
-                  "1",
-                  "SomeINvestor",
-                  "A day",
-                  "Transaction Dates",
-                  "1$",
-                  "1$",
-                  "Test",
-                  "test",
-                  ""
-                ]
-              ]}
-            />
-          </Paper>
-        </Grid>
-      </div>
+      </Grid>
     );
   }
 }
 
-export default Investors;
+export default withStyles(styles)(Investors);

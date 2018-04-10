@@ -45,31 +45,26 @@ class InvestorStore {
   }
 
   @observable
-  depositedCurrency;
+  individualSummaryValues = {
+    sharesHeld: '',
+    weightedEntryPrice: '',
+    usdEquivalent: '',
+    btcEquivalent: '',
+    ethEquivalent: '',
+    investmentPeriod: '',
+    profit: '',
+    feePotential: '',
+  }
 
-  @observable
-  selectedBaseCurrency;
-
-  @observable
-  areFieldsEmpty;
-
-  @observable
-  selectedInvestor;
-
-  @observable
-  selectedInvestors;
-
-  @observable
-  selectedInvestorId;
-
-  @observable
-  investorError;
-
-  @observable
-  investorErrorDisplayed;
+  @observable selectedBaseCurrency;
+  @observable areFieldsEmpty;
+  @observable selectedInvestor;
+  @observable selectedInvestors;
+  @observable selectedInvestorId;
+  @observable investorError;
+  @observable investorErrorDisplayed;
 
   constructor() {
-    this.depositedCurrency = {};
     this.selectedBaseCurrency = null;
     this.areFieldsEmpty = true;
     this.selectedInvestor = null;
@@ -77,15 +72,6 @@ class InvestorStore {
     this.selectedInvestorId = null;
     this.investorError = [];
     this.investorErrorDisplayed = false;
-
-    // requester.Market.getCurrencies()
-    //   .then(this.onGetBaseCurrencies)
-    //   .catch(this.onError);
-
-    // // on component mount, this makes calls !!!
-    // // requester.Market.getSummaries()
-    // //   .then(this.onGetSummaries)
-    // //   .catch(this.onError);
   }
 
   @action.bound
@@ -113,8 +99,12 @@ class InvestorStore {
       this.values.depositUsdEquiv = calculatedDepositUsdEquiv;
       return calculatedDepositUsdEquiv;
     }
+
+    return null;
   }
 
+  // #region Computed Values
+  // #region Add Investor
   @computed
   get purchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
@@ -125,6 +115,8 @@ class InvestorStore {
       this.values.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
+
+    return null;
   }
 
   @computed
@@ -136,7 +128,10 @@ class InvestorStore {
       this.newDepositValues.sharePriceAtEntryDate = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
+
+    return null;
   }
+  // #endregion
 
   @computed
   get depositPurchasedShares() {
@@ -150,6 +145,8 @@ class InvestorStore {
 
       return calculatedPurchasedShares;
     }
+
+    return null;
   }
 
   @computed
@@ -159,6 +156,8 @@ class InvestorStore {
       this.withdrawalValues.inUSD = calculatedWithdrawInUSD;
       return calculatedWithdrawInUSD;
     }
+
+    return null;
   }
 
   @computed
@@ -168,6 +167,8 @@ class InvestorStore {
       this.withdrawalValues.sharePriceAtEntryDate = calculatedWithdrawSharePriceAtEntryDate;
       return calculatedWithdrawSharePriceAtEntryDate;
     }
+
+    return null;
   }
 
   @computed
@@ -181,6 +182,8 @@ class InvestorStore {
       this.withdrawalValues.purchasedShares = calculatedWithdrawPurchasedShares;
       return calculatedWithdrawPurchasedShares;
     }
+
+    return null;
   }
 
   @computed
@@ -190,6 +193,8 @@ class InvestorStore {
       this.withdrawalValues.managementFee = calculatedDepositManagementFee;
       return calculatedDepositManagementFee;
     }
+
+    return null;
   }
 
   @computed
@@ -204,7 +209,121 @@ class InvestorStore {
     if (filteredArray.length === 0) {
       this.areFieldsEmpty = false;
     }
+
+    return null;
   }
+
+  // #region Investor Individual Summary
+  @computed
+  get individualSharesHeld() {
+    if (this.selectedInvestor) {
+      const calculatedIndividualSharesHeld = this.selectedInvestor.purchasedShares;
+      this.individualSummaryValues.sharesHeld = calculatedIndividualSharesHeld;
+
+      return calculatedIndividualSharesHeld;
+    }
+
+    return null;
+  }
+
+  @computed
+  get individualWeightedEntryPrice() {
+    if (this.selectedInvestor) {
+      const calculatedIndividualWeightedEntryPrice = this.selectedInvestor.purchasedShares;
+      this.individualSummaryValues.weightedEntryPrice = calculatedIndividualWeightedEntryPrice;
+
+      return calculatedIndividualWeightedEntryPrice;
+    }
+
+    return null;
+  }
+
+  @computed
+  get individualUSDEquivalent() {
+    if (this.selectedInvestor) {
+      //  TODO: add real share price from PortfolioStore
+      const calculatedIndividualUSDEquivalent = this.selectedInvestor.purchasedShares * 1;
+      this.individualSummaryValues.usdEquivalent = calculatedIndividualUSDEquivalent;
+      // this.individualSummaryValues.feePotential = calculatedIndividualUSDEquivalent * this.selectedInvestor.managementFee;
+
+      return calculatedIndividualUSDEquivalent;
+    }
+
+    return null;
+  }
+
+  @computed
+  get individualBTCEquivalent() {
+    if (this.selectedInvestor) {
+      //  TODO: add real share price from PortfolioStore
+      const calculatedIndividualBTCEquivalent = (this.selectedInvestor.purchasedShares / MarketStore.baseCurrencies[4].last).toFixed(2);
+      this.individualSummaryValues.btcEquivalent = calculatedIndividualBTCEquivalent;
+
+      return calculatedIndividualBTCEquivalent;
+    }
+
+    return null;
+  }
+
+  @computed
+  get individualETHEquivalent() {
+    if (this.selectedInvestor && MarketStore.baseCurrencies) {
+      //  TODO: add real share price from PortfolioStore
+      const calculatedIndividualETHEquivalent = (this.selectedInvestor.purchasedShares / MarketStore.baseCurrencies[3].last).toFixed(2);
+      this.individualSummaryValues.ethEquivalent = calculatedIndividualETHEquivalent;
+
+      return calculatedIndividualETHEquivalent;
+    }
+
+    return null;
+  }
+
+  @computed
+  get individualInvestmentPeriod() {
+    if (this.selectedInvestor) {
+      // Get 1 day in milliseconds
+      const oneDay = 1000 * 60 * 60 * 24;
+      const currentDate = new Date();
+      const dateOfEntryConverted = new Date(this.selectedInvestor.dateOfEntry);
+
+      const calculatedIndividualInvestmentPeriod = Math.round((currentDate - dateOfEntryConverted) / oneDay);
+      this.individualSummaryValues.investmentPeriod = calculatedIndividualInvestmentPeriod;
+
+      return calculatedIndividualInvestmentPeriod;
+    }
+
+    return null;
+  }
+
+  @computed
+  get individualProfit() {
+    if (this.selectedInvestor) {
+      const calculatedIndividualProfit = 1;
+      // (current share price - weighted entry price) / weighted entry price*
+      this.individualSummaryValues.profit = calculatedIndividualProfit;
+
+      return calculatedIndividualProfit;
+    }
+
+    return null;
+  }
+
+  @computed
+  get individualFeePotential() {
+    if (this.selectedInvestor) {
+      // TODO: USD is hard coded
+      const calculatedIndividualFeePotential = ((MarketStore.baseCurrencies[3].last * this.selectedInvestor.managementFee) / 100).toFixed(2);
+      this.individualSummaryValues.feePotential = calculatedIndividualFeePotential;
+
+      return calculatedIndividualFeePotential;
+    }
+
+    return null;
+  }
+
+  // #endregion
+
+  // #endregion
 
   @action
   handleDepositEmptyFields() {

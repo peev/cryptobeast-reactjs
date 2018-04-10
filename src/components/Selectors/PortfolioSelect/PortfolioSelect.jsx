@@ -21,16 +21,19 @@ const styles = theme => ({
     float: 'left',
   },
   inputLabel: {
-    top: '17px',
-    left: 'calc(100% - 189px)',
+    // top: '17px',
+    // left: 'calc(100% - 189px)',
+    // color: '#F6F6F6',
+    // zIndex: '1',
+    margin: '0 auto',
     color: '#F6F6F6',
-    zIndex: '1',
+    marginLeft: '27px',
   },
   listItem: {
     display: 'flex',
     height: '100%',
     padding: '0 16px',
-    backgroundColor: '#22252f',
+    backgroundColor: '#22252f !important',
     '&:hover': {
       backgroundColor: '#1D2028',
     },
@@ -86,6 +89,7 @@ class PortfolioSelect extends React.Component {
   handleChange = (event) => {
     const { value, index } = event.target;
     // const index = event.target.index;
+    console.log(value)
     this.props.PortfolioStore.selectPortfolio(value, index);
 
     this.setState({ [event.target.name]: value }); // 'selectedPortfolioId: event.target.value' does same as above
@@ -113,6 +117,16 @@ class PortfolioSelect extends React.Component {
         </MenuItem>
       ));
 
+    portfoliosToShow.unshift(<MenuItem value="" disabled className={classes.listItem}>
+      <div className={classes.inputLabel}>
+        <div>
+          <p>Select Portfolio</p>
+        </div>
+      </div>
+    </MenuItem>);
+
+    console.log(portfoliosToShow)
+
     const nothingToShow = (
       <MenuItem
         value={1}
@@ -126,7 +140,7 @@ class PortfolioSelect extends React.Component {
       <form autoComplete="off">
 
         <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="controlled-open-select" className={classes.inputLabel}>Select Portfolio</InputLabel>
+          {/* <InputLabel htmlFor="controlled-open-select" className={classes.inputLabel}>Select Portfolio</InputLabel> */}
 
           <Select
             className="headerListSelect"
@@ -135,6 +149,8 @@ class PortfolioSelect extends React.Component {
             onClose={this.handleClose}
             onOpen={this.handleOpen}
             onChange={this.handleChange}
+            displayEmpty
+
             inputProps={{
               name: 'selectedPortfolioId',
               id: 'controlled-open-select',
@@ -143,6 +159,24 @@ class PortfolioSelect extends React.Component {
             {portfoliosToShow.length > 0 ? portfoliosToShow : nothingToShow}
           </Select>
         </FormControl>
+
+        {/* <FormControl className={classes.formControl}>
+          <Select
+            value={this.state.age}
+            onChange={this.handleChange}
+            displayEmpty
+            name="age"
+            className={classes.selectEmpty}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            <MenuItem value={10}>Ten</MenuItem>
+            <MenuItem value={20}>Twenty</MenuItem>
+            <MenuItem value={30}>Thirty</MenuItem>
+          </Select>
+          <FormHelperText>Without label</FormHelperText>
+        </FormControl> */}
       </form>
     );
   }

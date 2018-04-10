@@ -1,15 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, TextField, Input } from 'material-ui';
+import { withStyles, Grid, Input } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
-// import { TextField } from 'material-ui';
-// import { Icon } from 'material-ui-icons';
-// import Select from 'material-ui';
+
 
 const getModalStyle = () => {
   const top = 20;
@@ -28,24 +26,21 @@ const styles = theme => ({
     boxShadow: theme.shadows[3],
     padding: theme.spacing.unit * 4,
   },
-  button: {
-    float: 'right',
-    display: 'inline-flex',
+  headerContainer: {
+    fontSize: '19px',
   },
-  container: {
-    display: 'flex',
-    marginTop: '15px',
-    marginBottom: '25px',
-  },
-  nestedElementLeft: {
+  containerDirection: {
     display: 'flex',
     flexDirection: 'column',
-    marginRight: '20px',
   },
-  nestedElementRight: {
-    display: 'flex',
-    flexDirection: 'column',
+  alignInput: {
     marginTop: '16px',
+  },
+  alignInputAfter: {
+    marginTop: '10px',
+  },
+  buttonsContainer: {
+    marginTop: '20px',
   },
 });
 
@@ -94,92 +89,98 @@ class InvestorWithdraw extends React.Component {
     const { classes, InvestorStore, PortfolioStore } = this.props;
 
     return (
-      <div>
-        <div>
-          <Button onClick={this.handleOpen} color="primary">
+      <Grid container>
+        <Button onClick={this.handleOpen} color="primary">
+          Investor Withdrawal
+        </Button>
 
-            Investor Withdrawal
-          </Button>
-        </div>
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <form
+          <div
             style={getModalStyle()}
             className={classes.paper}
-          // onSubmit={() => this.handleWithdrawalInvestor}
           >
-            <Typography
-              variant="title"
-              id="modal-title"
-              style={{ fontSize: '18px', fontWeight: '400' }}
-            >
-              Investor Withdrawal
-            </Typography>
-            <div className={classes.container}>
-              <div className={classes.nestedElementLeft}>
+            <Grid container >
+              <Grid item xs={12} sm={12} md={12} className={classes.headerContainer}>
+                <Typography
+                  variant="title"
+                  id="modal-title"
+                  style={{ fontSize: '18px', fontWeight: '400' }}
+                >
+                  Investor Withdrawal
+                </Typography>
+              </Grid>
+            </Grid>
+
+            <Grid container>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <SelectInvestor />
 
                 <Input
                   type="number"
                   placeholder="Amount"
                   onChange={this.handleWithdrawRequests('amount')}
-                  className={classes.input}
+                  className={classes.alignInputAfter}
                 />
 
                 <Input
                   type="number"
                   placeholder="Share Price at Entry Date"
-                  // value={InvestorStore.withdrawSharePriceAtEntryDate}
+                  className={classes.alignInput}
                   value={PortfolioStore.currentPortfolioSharePrice}
-                  className={classes.input}
                 />
-              </div>
+              </Grid>
 
-              <div className={classes.nestedElementRight}>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input
                   type="date"
                   placeholder="Transaction Date"
                   onChange={this.handleWithdrawRequests('transactionDate')}
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
 
                 <Input
                   type="number"
                   placeholder="USD"
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
 
                 <Input
                   type="number"
                   placeholder="Purchased Shares"
                   value={InvestorStore.withdrawPurchasedShares}
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
 
                 <Input
                   type="number"
                   placeholder="Management Fee"
                   value={InvestorStore.depositManagementFee}
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
-              </div>
-            </div>
+              </Grid>
+            </Grid>
 
-            <div>
-              <Button onClick={this.handleClose} color="primary">
-                Cancel
+            <Grid container className={classes.buttonsContainer}>
+              <Button
+                color="primary"
+                onClick={this.handleClose}
+              >Cancel
               </Button>
 
-              <Button onClick={this.handleWithdrawalInvestor} color="primary" type="submit">
-                Save
+              <Button
+                type="submit"
+                color="primary"
+                onClick={this.handleWithdrawalInvestor}
+              >Save
               </Button>
-            </div>
-          </form>
+            </Grid>
+          </div>
         </Modal>
-      </div>
+      </Grid>
     );
   }
 }
@@ -188,6 +189,4 @@ InvestorWithdraw.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-const InvestorWithdrawWrapped = withStyles(styles)(InvestorWithdraw);
-
-export default InvestorWithdrawWrapped;
+export default withStyles(styles)(InvestorWithdraw);

@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import Highcharts from "highcharts/highstock";
+import React, { Component } from 'react';
+import Highcharts from 'highcharts/highstock';
 import {
   HighchartsStockChart,
   Chart,
@@ -13,7 +13,7 @@ import {
   RangeSelector,
   SplineSeries,
   Tooltip
-} from "react-jsx-highstock";
+} from 'react-jsx-highstock';
 // import { createRandomData } from "../utils/data-helpers";
 
 // ../utils/data-helpers
@@ -22,7 +22,6 @@ const createDataPoint = (time = Date.now(), magnitude = 100, offset = 0) => {
 };
 
 const createRandomData = (time, magnitude) => {
-  
   const data = [];
 
   for (let i = -99; i <= 0; i++) {
@@ -40,7 +39,6 @@ class PerformanceChart extends Component {
 
   render() {
     const now = Date.now();
-    
     const data = createRandomData(now, 1e8);
 
     const data2 = createRandomData(now, 1e8);
@@ -48,7 +46,6 @@ class PerformanceChart extends Component {
       <div>
         <HighchartsStockChart>
           <Chart zoomType="x" />
-          
           <RangeSelector>
             <RangeSelector.Button count={7} type="day">
               7d
@@ -57,19 +54,20 @@ class PerformanceChart extends Component {
               1m
             </RangeSelector.Button>
             <RangeSelector.Button type="all">All</RangeSelector.Button>
-         
+
           </RangeSelector>
-          
-          <Tooltip  valueSuffix= '%'  shared/>
+
+          <Tooltip valueSuffix='%' shared />
           <XAxis />
-         
+
           <YAxis id="price" opposite >
             <YAxis.Title>%</YAxis.Title>
             <SplineSeries id="portfolio" name="Basic Portfolio" data={data} />
             <SplineSeries id="BTC" name="BTC" data={data2} />
           </YAxis>
+
           <Navigator>
-            <Navigator.Series seriesId="portfolio" />           
+            <Navigator.Series seriesId="portfolio" />
             <Navigator.Series seriesId="BTC" />
           </Navigator>
         </HighchartsStockChart>

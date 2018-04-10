@@ -1,7 +1,7 @@
 const { Socket } = require('net');
 const { exec } = require('child_process');
 
-const port = process.env.PORT ? (process.env.PORT - 100) : 3000;
+const port = process.env.PORT ? (process.env.PORT - 100) : 3200;
 process.env.ELECTRON_START_URL = `http://localhost:${port}`;
 
 const client = new Socket();

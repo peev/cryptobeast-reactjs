@@ -69,11 +69,10 @@ class PerformanceChart extends Component {
             <SplineSeries id="BTC" name="BTC" data={data2} />
           </YAxis>
 
-          {/* FIXME: Looks for portfolio of null */}
-          {/* <Navigator>
+          <Navigator>
             <Navigator.Series seriesId="portfolio" />
             <Navigator.Series seriesId="BTC" />
-          </Navigator> */}
+          </Navigator>
         </HighchartsStockChart>
       </div>
     );

@@ -13,7 +13,7 @@ const investorController = (repository) => {
   };
 
   const updateInvestor = (req, res) => {
-    const id = req.params.id;
+    const id = req.params.id;  
     const investorData = req.body;
 
     repository.investor.update(id, investorData)

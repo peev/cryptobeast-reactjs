@@ -316,6 +316,7 @@ class InvestorStore {
   createNewInvestor(id) {
     const newInvestor = {
       portfolioId: id,
+      transactionBaseCurrency: MarketStore.selectBaseCurrency,
       investor: {
         isFounder: this.values.isFounder,
         fullName: this.values.fullName,
@@ -334,6 +335,8 @@ class InvestorStore {
         shares: parseFloat(this.values.purchasedShares),
       },
     };
+
+    console.log('>>> createNewInvestor: ', newInvestor);
 
     requester.Investor.add(newInvestor)
       .then((result) => {

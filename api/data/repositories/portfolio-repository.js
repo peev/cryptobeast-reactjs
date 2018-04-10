@@ -4,9 +4,14 @@ const init = (db) => {
   //   return db.portfolio.findAll();
   // };
   const create = (request) => {
-    const portfolioName = { name: request.name };
+    const newPortfolio = {
+      name: request.name,
+      baseCurrency: Object.prototype.hasOwnProperty.call(request, 'baseCurrency') ? request.baseCurrency : 'BTC',
+      cost: 0,
+      shares: 0,
+    };
 
-    return db.Portfolio.create(portfolioName);
+    return db.Portfolio.create(newPortfolio);
   };
 
   // With Eager loading of assets, accounts and investors
@@ -92,7 +97,10 @@ const init = (db) => {
         include: [db.Asset],
       })
         .then((pf) => {
-          pf.cost = 0;
+          if (pf.assets.length === 0) {
+            return pf;
+          }
+
           return Promise.all(pf.assets.map((asset) => {
             return updateAssetBTCEquivalent(asset).then((updatedAsset) => {
               const newPfCost = +pf.cost + updatedAsset.lastBTCEquivalent;
@@ -100,8 +108,9 @@ const init = (db) => {
             });
           }));
         }).then((result) => {
+          const portfolioId = Array.isArray(result) ? result[0].id : result.id;
           db.Portfolio.find({
-            where: { id: result[0].id },
+            where: { id: portfolioId },
             include: [db.Asset],
           }).then(finalResult => resolve(finalResult)); // Get updated pf with updated assets
         });
@@ -112,10 +121,10 @@ const init = (db) => {
     return new Promise((resolve, reject) => {
       db.Portfolio.findById(request.id)
         .then((pf) => {
-          db.Ticker.findById('USDT-BTC')
-            .then((ticker) => {
-              const sharePrice = pf.cost * ticker.last / pf.shares;
-              resolve({ sharePrice: sharePrice });
+          db.Ticker.findById('USD')
+            .then((usdTicker) => {
+              const sharePrice = pf.shares === 0 ? 1 : (pf.cost * usdTicker.last) / pf.shares;
+              resolve({ sharePrice });
             });
         }).catch((error) => {
           console.log(error);
@@ -127,15 +136,10 @@ const init = (db) => {
     return new Promise((resolve, reject) => {
       db.Portfolio.findById(request.portfolioId)
         .then((portfolio) => {
-
-
-
-
-
-
-
-          
         });
+
+
+
 
       foundInvestor.then((investor) => {
         const sharesToAdd = investor.purchasedShares + data.transaction.shares;

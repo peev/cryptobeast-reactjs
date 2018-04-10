@@ -53,20 +53,25 @@ class AnalyticsTabs extends React.Component {
           <Tab label="Liquidity" />
           <Tab label="Correlation matrix" />
         </Tabs>
+
         <br />
+
         <SwipeableViews
           index={this.state.value}
           onChange={this.handleChange}
         >
           <Performance />
+
           <Volatility />
+
           <div>
-            <h2>Here's another one!</h2>
+            <h2>Profit/Loss</h2>
           </div>
 
           <div>
             <h2>Here's one more again!</h2>
           </div>
+
         </SwipeableViews>
       </div>
     );

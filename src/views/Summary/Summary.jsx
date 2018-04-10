@@ -58,7 +58,7 @@ class Summary extends React.Component {
         </div>
       );
     } else {
-      summaryContent = <p>Summary is working</p>;
+      summaryContent = <p>Page is under construction...</p>;
     }
 
     return (

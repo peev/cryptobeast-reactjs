@@ -6,7 +6,9 @@ import summaryStyle from "variables/styles/summaryStyle";
 import { inject, observer } from "mobx-react";
 import CreatePortfolio from "../../components/Modal/CreatePortfolio";
 import "./Summary.css";
-import AnalyticsTabs from '../../components/Tabs/AnalyticsTabs';
+import AnalyticsTabs from "../../components/Tabs/AnalyticsTabs";
+import { IconButton } from "../../components";
+import { Done } from "material-ui-icons";
 // react plugin for creating charts
 // import ChartistGraph from 'react-chartist';
 // import {

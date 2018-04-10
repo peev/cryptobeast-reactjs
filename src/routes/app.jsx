@@ -17,16 +17,16 @@ import SummaryIcon from '../assets/Icons/Summary.svg';
 import SettingsIcon from '../assets/Icons/Settings.svg';
 
 
-
-// import {
-//   Dashboard,
-//   Person,
-//   ContentPaste,
-//   LibraryBooks,
-//   BubbleChart,
-//   LocationOn,
-//   Notifications
-// } from "material-ui-icons";
+import {
+  Dashboard,
+  Person,
+  ContentPaste,
+  LibraryBooks,
+  BubbleChart,
+  LocationOn,
+  Notifications,
+  Done,
+} from "material-ui-icons";
 
 
 const appRoutes = [
@@ -34,56 +34,56 @@ const appRoutes = [
     path: "/summary",
     sidebarName: "Summary",
     navbarName: "Summary",
-    icon: SummaryIcon,
+    icon: Dashboard,
     component: SummaryPage
   },
   {
     path: "/assetMovements",
     sidebarName: "Asset Movements",
     navbarName: "Asset Movements",
-    icon: 'market.svg',
+    icon: Person,
     component: AssetMovements
   },
   {
     path: "/Simulator",
     sidebarName: "Simulator",
     navbarName: "Simulator",
-    icon: 'simulatorIcon.svg',
+    icon: ContentPaste,
     component: Simulator
   },
   {
     path: "/TransactionHistory",
     sidebarName: "Transaction History",
     navbarName: "Transaction History",
-    icon: 'history.svg',
+    icon: LibraryBooks,
     component: TransactionHistory
   },
   {
     path: "/Ledgers",
     sidebarName: "Ledgers",
-    navbarName: "Ledgers",
-    icon: 'ledgersIcon.svg',
+    navbarName: BubbleChart,
+    icon: LocationOn,
     component: Ledgers
   },
   {
     path: "/Investors",
     sidebarName: "Investors",
     navbarName: "Investors",
-    icon: 'investorsIcon.svg',
+    icon: Notifications,
     component: Investors
   },
   {
     path: "/Analytics",
     sidebarName: "Analytics",
     navbarName: "Analytics",
-    icon: 'analyticsIcon.svg',
+    icon: LibraryBooks,
     component: Analytics
   },
   {
     path: "/Settings",
     sidebarName: "Settings",
     navBarName: "Settings",
-    icon: 'settingsIcon.svg',
+    icon: LocationOn,
     component: Settings
   },
   {

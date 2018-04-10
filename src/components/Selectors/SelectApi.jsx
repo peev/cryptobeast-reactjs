@@ -59,7 +59,7 @@ class SelectApi extends React.Component {
       <div autoComplete="off">
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
           <InputLabel htmlFor="controlled-open-select">
-            Select Currency
+            Select Exchange
           </InputLabel>
 
           <Select

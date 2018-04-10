@@ -49,21 +49,21 @@ const appRoutes = [
     sidebarName: "Transaction History",
     navbarName: "Transaction History",
     icon: HistoryIcon,
-    component: TransactionHistory
+    component: SummaryPage
   },
   {
     path: "/Ledgers",
     sidebarName: "Ledgers",
     navbarName: 'Ledgers',
     icon: LedgersIcon,
-    component: Ledgers
+    component: SummaryPage
   },
   {
     path: "/Simulator",
     sidebarName: "Simulator",
     navbarName: "Simulator",
     icon: SimulatorIcon,
-    component: Simulator
+    component: SummaryPage
   },
   {
     path: "/Settings",

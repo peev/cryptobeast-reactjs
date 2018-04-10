@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Input } from 'material-ui';
-import { withStyles } from 'material-ui/styles';
+import { withStyles, Grid, Input } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
-// import { Icon } from 'material-ui-icons';
+
 
 const getModalStyle = () => {
   const top = 20;
@@ -27,33 +26,19 @@ const styles = theme => ({
     boxShadow: theme.shadows[3],
     padding: theme.spacing.unit * 4,
   },
-  button: {
-    float: 'right',
-    display: 'inline-flex',
-  },
-  container: {
-    display: 'flex',
-    marginBottom: '25px',
-  },
-  selectorWrapper: {
-    width: '47.5%',
-  },
-  nestedElementLeft: {
+  containerDirection: {
     display: 'flex',
     flexDirection: 'column',
-    marginRight: '20px',
   },
-  nestedElementRight: {
-    display: 'flex',
-    flexDirection: 'column',
-    // marginTop: '55px',
+  alignInput: {
+    marginTop: '16px',
   },
-  headerContainer: {
-    display: 'flex',
-    alignItems: 'baseline',
-    justifyContent: 'space-between',
-    marginBottom: '20px',
-  }
+  alignInputAfter: {
+    marginTop: '10px',
+  },
+  buttonsContainer: {
+    marginTop: '20px',
+  },
 });
 
 @inject('InvestorStore', 'PortfolioStore')
@@ -96,43 +81,46 @@ class EditInvestor extends React.Component {
     const { classes, InvestorStore } = this.props;
 
     return (
-      <div>
-        <div>
-          <Button onClick={this.handleOpen} color="primary">
-            Edit Investor
-          </Button>
-        </div>
+      <Grid container>
+        <Button onClick={this.handleOpen} color="primary">
+          Edit Investor
+        </Button>
+
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <form
+          <div
             style={getModalStyle()}
             className={classes.paper}
-            onSubmit={() => this.handleSave}
           >
-            <Typography
-              variant="title"
-              id="modal-title"
-              style={{ fontSize: '18px', fontWeight: '400' }}
-            >
-              Edit Investor
-            </Typography>
+            <Grid container >
+              <Grid item xs={12} sm={12} md={12}>
+                <Typography
+                  variant="title"
+                  id="modal-title"
+                  style={{ fontSize: '18px', fontWeight: '400' }}
+                >
+                  Edit Investor
+                </Typography>
+              </Grid>
+            </Grid>
 
-            <div className={classes.selectorWrapper}>
-              <SelectInvestor />
-            </div>
-            <div className={classes.container}>
+            <Grid container >
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <SelectInvestor />
+              </Grid>
+            </Grid>
 
-              <div className={classes.nestedElementLeft}>
-
+            <Grid container>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input
                   type="text"
                   placeholder="Full name"
                   value={InvestorStore.editedValues.fullName}
                   onChange={this.handleEditRequests('fullName')}
-                  className={classes.input}
+                  className={classes.alignInputAfter}
                   autoFocus
                 />
 
@@ -141,17 +129,17 @@ class EditInvestor extends React.Component {
                   placeholder="Telephone"
                   value={InvestorStore.editedValues.telephone}
                   onChange={this.handleEditRequests('telephone')}
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
-              </div>
+              </Grid>
 
-              <div className={classes.nestedElementRight}>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input
                   type="email"
                   placeholder="Email Address"
                   value={InvestorStore.editedValues.email}
                   onChange={this.handleEditRequests('email')}
-                  className={classes.input}
+                  className={classes.alignInputAfter}
                 />
 
                 <Input
@@ -159,30 +147,30 @@ class EditInvestor extends React.Component {
                   placeholder="Management Fee %"
                   value={InvestorStore.editedValues.managementFee}
                   onChange={this.handleEditRequests('managementFee')}
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
-              </div>
-            </div>
+              </Grid>
+            </Grid>
 
-            <div>
+            <Grid container className={classes.buttonsContainer}>
               <Button
-                onClick={this.handleClose}
                 color="primary"
+                onClick={this.handleClose}
               >
                 Cancel
               </Button>
 
               <Button
-                onClick={this.handleSave}
-                color="primary"
                 type="submit"
+                color="primary"
+                onClick={this.handleSave}
               >
                 Save
               </Button>
-            </div>
-          </form>
+            </Grid>
+          </div>
         </Modal>
-      </div>
+      </Grid>
     );
   }
 }
@@ -191,6 +179,4 @@ EditInvestor.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const EditInvestorWrapped = withStyles(styles)(EditInvestor);
-
-export default EditInvestorWrapped;
+export default withStyles(styles)(EditInvestor);

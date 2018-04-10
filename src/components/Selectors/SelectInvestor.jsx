@@ -50,8 +50,8 @@ class SelectInvestor extends React.Component {
     const { classes, InvestorStore } = this.props;
     let investorsToShow = [];
 
-    if (InvestorStore.selectedInvestors) {
-      const investors = InvestorStore.selectedInvestors;
+    if (InvestorStore.getAllCurrentInvestors) {
+      const investors = InvestorStore.getAllCurrentInvestors;
 
       investors.forEach((element, i) => {
         investorsToShow.push((

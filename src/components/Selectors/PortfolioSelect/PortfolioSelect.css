@@ -26,6 +26,7 @@ ul[class^="MuiList-root"] {
   width: 200px;
   height: 45px;
   padding-left: 32px;
+  color: #F6F6F6;
   /* background-color: #22252f; */
 }
 

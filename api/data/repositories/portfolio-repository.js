@@ -112,7 +112,7 @@ const init = (db) => {
     return new Promise((resolve, reject) => {
       db.Portfolio.findById(request.id)
         .then((pf) => {
-          db.Ticker.findById('USDT-BTC')
+          db.Ticker.findById('USD')
             .then((ticker) => {
               const sharePrice = pf.cost * ticker.last / pf.shares;
               resolve({ sharePrice: sharePrice });

@@ -1,46 +1,39 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "material-ui/styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles, Grid } from 'material-ui';
+import Typography from 'material-ui/Typography';
 
-// import { Icon } from 'material-ui-icons';
-import Modal from "material-ui/Modal";
-import Typography from "material-ui/Typography";
-import InvestorCard from "../../CustomElements/InvestorCard";
-import InvestorCardButton from "../../CustomButtons/InvestorCardButton";
-import Button from "../../CustomButtons/Button";
+import Modal from 'material-ui/Modal';
+import InvestorCard from '../../CustomElements/InvestorCard';
+import InvestorCardButton from '../../CustomButtons/InvestorCardButton';
+import Button from '../../CustomButtons/Button';
 
-import InvestorsTable from "../../CustomTables/InvestorsTable";
-import buttonStyle from "../../../variables/styles/buttonStyle";
+import InvestorsTable from '../../CustomTables/InvestorsTable';
+import buttonStyle from '../../../variables/styles/buttonStyle';
 
 const getModalStyle = () => {
   const top = 22;
   const left = 28;
   return {
     top: `${top}%`,
-    left: `${left}%`
+    left: `${left}%`,
   };
 };
 
 const styles = theme => ({
   paper: {
-    position: "absolute",
-    minWidth: "100px",
+    position: 'absolute',
+    minWidth: '100px',
+    width: '730px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing.unit * 4,
   },
-  button: {
-    float: "right",
-    display: "inline-flex"
-  },
-  card: {
-    width: "180px"
-  }
 });
 
 class TotalInvestors extends React.Component {
   state = {
-    open: false
+    open: false,
   };
 
   handleOpen = () => {
@@ -54,12 +47,11 @@ class TotalInvestors extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div>
-        <div>
-          <InvestorCardButton onClick={this.handleOpen}>
-            <InvestorCard headerText="10" labelText="Total Investors" />
-          </InvestorCardButton>
-        </div>
+      <Grid container>
+        <InvestorCardButton onClick={this.handleOpen}>
+          <InvestorCard headerText="10" labelText="Total Investors" />
+        </InvestorCardButton>
+
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
@@ -68,97 +60,100 @@ class TotalInvestors extends React.Component {
           <div
             style={getModalStyle()}
             className={classes.paper}
-            onSubmit={() => this.handleSave}
           >
-            <Typography
-              variant="title"
-              id="modal-title"
-              style={{ fontSize: "18px", fontWeight: "400" }}
-            >
-              Total Investors
-            </Typography>
+            <Grid container>
+              <Grid item xs={12} sm={12} md={12}>
+                <Typography
+                  variant="title"
+                  id="modal-title"
+                  style={{ fontSize: '18px', fontWeight: '400' }}
+                >
+                  Total Investors
+                </Typography>
+              </Grid>
 
-            <InvestorsTable
-              tableHead={[
-                "name",
-                "name",
-                "name",
-                "name",
-                "name",
-                "name",
-                "name",
-                "name",
-                "name",
-                "name",
-                "name"
-              ]}
-              tableData={[
-                [
-                  "Name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  ""
-                ],
+              <Grid item xs={12} sm={12} md={12}>
+                <InvestorsTable
+                  tableHead={[
+                    'name',
+                    'name',
+                    'name',
+                    'name',
+                    'name',
+                    'name',
+                    'name',
+                    'name',
+                    'name',
+                    'name',
+                    'name',
+                  ]}
+                  tableData={[
+                    [
+                      'Name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      '',
+                    ],
 
-                [
-                  "Name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  ""
-                ],
+                    [
+                      'Name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      '',
+                    ],
 
-                [
-                  "Name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  ""
-                ],
+                    [
+                      'Name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      '',
+                    ],
 
-                [
-                  "Name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  "name",
-                  ""
-                ]
-              ]}
-            />
+                    [
+                      'Name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      'name',
+                      '',
+                    ],
+                  ]}
+                />
+              </Grid>
 
-            <br />
-
-            <Button onClick={this.handleClose} color="primary">
-              Cancel
-            </Button>
+              <Grid item xs={12} sm={12} md={12} >
+                <Button onClick={this.handleClose} color="primary">
+                  Cancel
+                </Button>
+              </Grid>
+            </Grid>
           </div>
         </Modal>
-      </div>
+      </Grid>
     );
   }
 }
 
 TotalInvestors.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
-const TotalInvestorsWrapped = withStyles(styles, buttonStyle)(TotalInvestors);
-
-export default TotalInvestorsWrapped;
+export default withStyles(styles, buttonStyle)(TotalInvestors);

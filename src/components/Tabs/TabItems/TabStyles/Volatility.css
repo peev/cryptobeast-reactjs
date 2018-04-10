@@ -1,5 +1,6 @@
 .hideOverflowV{
     overflow: hidden;
+    margin-top: 40px;
 }
 
 .VolatilityGrid{

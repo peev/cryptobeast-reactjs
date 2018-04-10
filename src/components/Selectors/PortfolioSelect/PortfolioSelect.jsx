@@ -16,7 +16,6 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 2,
   },
   formControl: {
-    // margin: theme.spacing.unit,
     minWidth: 150,
     float: 'left',
   },
@@ -25,15 +24,15 @@ const styles = theme => ({
     // left: 'calc(100% - 189px)',
     // color: '#F6F6F6',
     // zIndex: '1',
-    margin: '0 auto',
-    color: '#F6F6F6',
     marginLeft: '27px',
+    color: '#F6F6F6',
   },
   listItem: {
     display: 'flex',
     height: '100%',
     padding: '0 16px',
-    backgroundColor: '#22252f !important',
+    // backgroundColor: '#22252f !important',
+    backgroundColor: 'rgba(34, 37, 47, 1) !important',
     '&:hover': {
       backgroundColor: '#1D2028',
     },
@@ -150,7 +149,7 @@ class PortfolioSelect extends React.Component {
             onOpen={this.handleOpen}
             onChange={this.handleChange}
             displayEmpty
-
+            underline={false}
             inputProps={{
               name: 'selectedPortfolioId',
               id: 'controlled-open-select',

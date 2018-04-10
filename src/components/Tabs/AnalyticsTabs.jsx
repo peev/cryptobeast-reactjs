@@ -16,9 +16,13 @@ const styles = () => ({
   navigation: {
     backgroundColor: '#33435d',
     color: '#FFF',
-    marginTop:'-10px',
+    marginTop: '-10px',
     marginLeft: '-30px',
     marginRight: '-30px',
+    position: 'fixed',
+    width: '100%',
+    zIndex: 1,
+    top: '100px',
   },
   navbtn: {
     marginLeft: "20px"

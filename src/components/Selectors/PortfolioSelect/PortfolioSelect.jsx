@@ -116,7 +116,7 @@ class PortfolioSelect extends React.Component {
         </MenuItem>
       ));
 
-    portfoliosToShow.unshift(<MenuItem value="" disabled className={classes.listItem}>
+    portfoliosToShow.unshift(<MenuItem key={0} value={0} disabled className={classes.listItem}>
       <div className={classes.inputLabel}>
         <div>
           <p>Select Portfolio</p>
@@ -143,13 +143,13 @@ class PortfolioSelect extends React.Component {
 
           <Select
             className="headerListSelect"
+            placeholder="test"
             open={this.state.open}
             value={this.state.selectedPortfolioId}
             onClose={this.handleClose}
             onOpen={this.handleOpen}
             onChange={this.handleChange}
-            displayEmpty
-            underline={false}
+            disableUnderline
             inputProps={{
               name: 'selectedPortfolioId',
               id: 'controlled-open-select',

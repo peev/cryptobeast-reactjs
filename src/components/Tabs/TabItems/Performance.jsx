@@ -1,25 +1,27 @@
-import React from "react";
-import Paper from "material-ui/Paper";
-import { Grid } from "material-ui";
+import React from 'react';
+import Paper from 'material-ui/Paper';
+import { Grid } from 'material-ui';
 
-import RegularButton from "../../CustomButtons/Button";
-import SelectPeriod from "../../Selectors/SelectPeriod";
+import RegularButton from '../../CustomButtons/Button';
+import SelectBenchmark from '../../Selectors/SelectBenchmark';
 // import InvestorPieChart from "../../HighCharts/InvestorPie";
+import PerformanceTable from '../../CustomTables/PerformanceTable';
+import './TabStyles/Performance.css';
+import PerformanceChart from '../../HighCharts/PerformanceChart';
 
-import "./TabStyles/Volatility.css";
 
 class Performance extends React.Component {
   state = {
-    open: false
+    open: false,
   };
 
   render() {
     return (
-      <div className="hideOverflowV">
-        <Grid container className="VolatilityGrid">
+      <div className="hideOverflow">
+        <Grid container className="PerformanceGrid">
           <Grid container>
-            <Grid item xs={3}>
-              <SelectPeriod />
+            <Grid item xs={3} className="align" >
+              <SelectBenchmark />
             </Grid>
 
             <Grid item xs={3}>
@@ -27,19 +29,25 @@ class Performance extends React.Component {
             </Grid>
           </Grid>
         </Grid>
+
         <br />
-        <Grid container className="VolatilityGrid">
-          <Grid item xs={8}>
-            <VolatilityTable style={{ width: "100%" }} />
-          </Grid>
-          <Grid item xs={4}>
-            <Paper className="VolatilityPaper">
-              <div> </div>
+        <Grid container className="PerformanceGrid">
+          <Grid item xs={12}>
+            <Paper className="PerformancePaper">
+              <PerformanceChart className="PerformancePaperChart" />
             </Paper>
           </Grid>
         </Grid>
-        <br />
-        
+        <Grid container className="PerformanceGrid">
+          <Grid item xs={12}>
+            <Paper className="PerformancePaper">
+              <PerformanceTable />
+              <RegularButton>Export</RegularButton>
+              <br />
+
+            </Paper>
+          </Grid>
+        </Grid>
       </div>
     );
   }

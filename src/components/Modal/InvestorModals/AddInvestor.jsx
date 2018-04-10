@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles, Input, Snackbar } from 'material-ui';
+import { withStyles, Input, Snackbar, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
@@ -9,9 +9,6 @@ import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import Button from '../../CustomButtons/Button';
 import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
 
-// import { Icon } from 'material-ui-icons';
-// import PropTypes from 'prop-types';
-// import DatePicker from 'material-ui/DatePicker';
 
 const getModalStyle = () => {
   const top = 20;
@@ -32,25 +29,28 @@ const styles = theme => ({
     boxShadow: theme.shadows[3],
     padding: theme.spacing.unit * 4,
   },
-  container: {
+  headerContainerLeft: {
     display: 'flex',
-    marginBottom: '25px',
+    alignItems: 'center',
   },
-  nestedElementLeft: {
+  headerContainerRight: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  containerDirection: {
     display: 'flex',
     flexDirection: 'column',
-    marginRight: '20px',
   },
-  nestedElementRight: {
-    display: 'flex',
-    flexDirection: 'column',
+  alignInput: {
+    marginTop: '16px',
   },
-  headerContainer: {
-    display: 'flex',
-    alignItems: 'baseline',
-    justifyContent: 'space-between',
-    marginBottom: '20px',
+  alignInputAfter: {
+    marginTop: '10px',
   },
+  buttonsContainer: {
+    marginTop: '20px',
+  }
 });
 
 @inject('InvestorStore', 'PortfolioStore', 'MarketStore')
@@ -97,9 +97,12 @@ class AddInvestor extends React.Component {
   handleRequests = propertyType => (event) => {
     event.preventDefault();
     const { InvestorStore } = this.props;
-
     const inputValue = event.target.value;
     InvestorStore.setNewInvestorValues(propertyType, inputValue);
+    if (propertyType === 'depositedAmount') {
+      console.log('>>> from handleRequests: ', propertyType);
+      InvestorStore.depositUsdEquiv();
+    }
   }
 
   handleFounder = name => (event) => {
@@ -126,6 +129,7 @@ class AddInvestor extends React.Component {
       }, 6000);
     }
 
+    console.log('check fields: ', InvestorStore.areFieldsEmpty, emailChecked, profileChecked );
     if (InvestorStore.areFieldsEmpty === false && emailChecked && profileChecked) {
       InvestorStore.createNewInvestor(PortfolioStore.selectedPortfolioId);
 
@@ -134,7 +138,7 @@ class AddInvestor extends React.Component {
   };
 
   render() {
-    const { classes, InvestorStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore } = this.props;
     const investorErrors = InvestorStore.getAddInvestorErrors;
     let errorMessagesArray;
 
@@ -152,12 +156,10 @@ class AddInvestor extends React.Component {
     }
 
     return (
-      <div>
-        <div>
-          <Button onClick={this.handleOpen} color="primary">
-            Add new investor
-          </Button>
-        </div>
+      <Grid container>
+        <Button onClick={this.handleOpen} color="primary" >
+          Add new investor
+        </Button>
 
         <Modal
           aria-labelledby="simple-modal-title"
@@ -167,32 +169,40 @@ class AddInvestor extends React.Component {
           <div
             style={getModalStyle()}
             className={classes.paper}
-            onSubmit={() => this.handleSave}
           >
-            <div className={classes.headerContainer}>
-              <Typography
-                variant="title"
-                id="modal-title"
-                style={{ fontSize: '18px', fontWeight: '400' }}
-              >
-                Add a new investor
-              </Typography>
+            <Grid container>
+              <Grid item xs={6} sm={6} md={6} className={classes.headerContainerLeft}>
+                <Typography
+                  variant="title"
+                  id="modal-title"
+                  style={{ fontSize: '18px', fontWeight: '400' }}
+                >
+                  Add a new investor
+                </Typography>
+                <div />
+              </Grid>
 
-              <div>
-                Founder
+              <Grid item xs={6} sm={6} md={6} className={classes.headerContainerRight}>
+                <Typography
+                  variant="subheading"
+                  style={{ fontSize: '17px', fontWeight: '400' }}
+                >
+                  Founder
+                </Typography>
+
                 <Checkbox
                   onChange={this.handleFounder('founder')}
                   color="primary"
                 />
-              </div>
-            </div>
+              </Grid>
+            </Grid>
 
-            <div className={classes.container}>
-              <div className={classes.nestedElementLeft}>
+            <Grid container>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input
                   placeholder="Full name"
                   onChange={this.handleRequests('fullName')}
-                  className={classes.input}
+                  className={classes.alignInput}
                   autoFocus
                 />
 
@@ -200,42 +210,42 @@ class AddInvestor extends React.Component {
                   type="number"
                   placeholder="Telephone"
                   onChange={this.handleRequests('telephone')}
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
 
                 <Input
                   type="number"
                   placeholder="Deposited Amount"
                   onChange={this.handleRequests('depositedAmount')}
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
 
                 <Input
                   placeholder="Deposited USD Equiv."
-                  className={classes.input}
-                  value={InvestorStore.depositUsdEquiv}
+                  className={classes.alignInput}
+                  value={InvestorStore.values.depositUsdEquiv}
                 />
 
                 <Input
                   placeholder="Share price at entry Date"
-                  value={InvestorStore.sharePriceAtEntryDate}
-                  className={classes.input}
+                  className={classes.alignInput}
+                  value={PortfolioStore.currentPortfolioSharePrice}
                 />
-              </div>
+              </Grid>
 
-              <div className={classes.nestedElementRight}>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input
                   type="email"
                   placeholder="Email Address"
                   onChange={this.handleRequests('email')}
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
 
                 <Input
                   type="date"
                   placeholder="Date of Entry"
                   onChange={this.handleRequests('dateOfEntry')}
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
 
                 <SelectBaseCurrency />
@@ -245,49 +255,41 @@ class AddInvestor extends React.Component {
                   placeholder="Management Fee %"
                   value={InvestorStore.values.managementFee}
                   onChange={this.handleRequests('managementFee')}
-                  className={classes.input}
+                  className={classes.alignInputAfter}
                 />
 
                 <Input
                   type="number"
                   value={InvestorStore.purchasedShares}
                   placeholder="Purchased Shares"
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
-              </div>
-            </div>
+              </Grid>
+            </Grid>
 
-            <div>
+            <Grid container className={classes.buttonsContainer}>
               <Button
-                style={{ display: 'inline-flex' }}
-                onClick={this.handleClose}
                 color="primary"
+                onClick={this.handleClose}
               >
                 Cancel
               </Button>
 
               <Button
-                style={{ display: 'inline-flex' }}
-                onClick={this.handleSave}
-                color="primary"
                 type="submit"
+                color="primary"
+                onClick={this.handleSave}
                 disabled={this.state.disabledBtn}
               >
                 Save
               </Button>
-            </div>
+            </Grid >
           </div>
         </Modal>
         {errorMessagesArray}
-      </div>
+      </Grid >
     );
   }
 }
 
-// AddInvestor.propTypes = {
-//   classes: PropTypes.object,
-// };
-
-const AddInvestorWrapped = withStyles(styles, addInvestorModalStyle)(AddInvestor);
-
-export default AddInvestorWrapped;
+export default withStyles(styles, addInvestorModalStyle)(AddInvestor);

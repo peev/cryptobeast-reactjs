@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Input, Snackbar } from 'material-ui';
+import { withStyles, Input, Snackbar, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
@@ -26,27 +26,22 @@ const styles = theme => ({
     boxShadow: theme.shadows[3],
     padding: theme.spacing.unit * 4,
   },
-  button: {
-    float: 'right',
-    display: 'inline-flex',
-  },
-  container: {
-    display: 'flex',
-    marginTop: '15px',
-    marginBottom: '25px',
-  },
-  nestedElementLeft: {
+  containerDirection: {
     display: 'flex',
     flexDirection: 'column',
-    marginRight: '20px',
   },
-  nestedElementRight: {
-    display: 'flex',
-    flexDirection: 'column',
+  alignInput: {
+    marginTop: '16px',
+  },
+  alignInputAfter: {
+    marginTop: '10px',
+  },
+  buttonsContainer: {
+    marginTop: '20px',
   },
 });
 
-@inject('InvestorStore', 'MarketStore')
+@inject('InvestorStore', 'PortfolioStore', 'MarketStore')
 @observer
 class InvestorDeposit extends React.Component {
   state = {
@@ -72,9 +67,14 @@ class InvestorDeposit extends React.Component {
 
   handleDepositRequests = propertyType => (event) => {
     event.preventDefault();
-
+    const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     this.props.InvestorStore.setNewDepositInvestorValues(propertyType, inputValue);
+    
+    // To calculate purchased shares ===================
+    if (propertyType === 'amount') {
+      InvestorStore.depositUsdEquiv();
+    }
   }
 
   handleDepositSave = () => {
@@ -98,7 +98,7 @@ class InvestorDeposit extends React.Component {
   }
 
   render() {
-    const { classes, InvestorStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore } = this.props;
     const investorErrors = InvestorStore.getAddInvestorErrors;
     let errorMessagesArray;
 
@@ -115,15 +115,14 @@ class InvestorDeposit extends React.Component {
     }
 
     return (
-      <div>
-        <div>
-          <Button
-            onClick={this.handleOpen}
-            color="primary"
-          >
-            Investor Deposit
-          </Button>
-        </div>
+      <Grid container>
+        <Button
+          onClick={this.handleOpen}
+          color="primary"
+        >
+          Investor Deposit
+        </Button>
+
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
@@ -132,73 +131,77 @@ class InvestorDeposit extends React.Component {
           <div
             style={getModalStyle()}
             className={classes.paper}
-          // onSubmit={() => this.handleDepositSave}
           >
-            <Typography
-              variant="title"
-              id="modal-title"
-              style={{ fontSize: '18px', fontWeight: '400' }}
-            >
-              Investor Deposit
-            </Typography>
+            <Grid container >
+              <Grid item xs={12} sm={12} md={12}>
+                <Typography
+                  variant="title"
+                  id="modal-title"
+                  style={{ fontSize: '18px', fontWeight: '400' }}
+                >
+                  Investor Deposit
+                </Typography>
+              </Grid>
+            </Grid>
 
-            <div className={classes.container}>
-              <div className={classes.nestedElementLeft}>
+            <Grid container>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <SelectInvestor />
 
                 <Input
                   type="number"
                   placeholder="Amount"
                   onChange={this.handleDepositRequests('amount')}
-                  className={classes.input}
+                  className={classes.alignInputAfter}
                 />
 
                 <Input
                   placeholder="Share Price at Entry Date"
-                  className={classes.input}
-                  value={InvestorStore.depositSharePriceAtEntryDate}
+                  className={classes.alignInput}
+                  value={PortfolioStore.currentPortfolioSharePrice}
                 />
-              </div>
+              </Grid>
 
-              <div className={classes.nestedElementRight}>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input
                   type="date"
                   placeholder="Transaction Date"
                   onChange={this.handleDepositRequests('transactionDate')}
-                  className={classes.input}
+                  className={classes.alignInput}
                 />
 
                 <SelectBaseCurrency />
 
                 <Input
                   placeholder="Purchased Shares"
-                  className={classes.input}
+                  className={classes.alignInputAfter}
                   value={InvestorStore.depositPurchasedShares}
+                  // value={InvestorStore.purchasedShares}
                 />
-              </div>
-            </div>
+              </Grid>
+            </Grid>
 
-            <div>
+            <Grid container className={classes.buttonsContainer}>
               <Button
-                onClick={this.handleClose}
                 color="primary"
+                onClick={this.handleClose}
               >
                 Cancel
               </Button>
 
               <Button
-                onClick={this.handleDepositSave}
-                color="primary"
                 type="submit"
+                color="primary"
+                onClick={this.handleDepositSave}
                 disabled={this.state.disabledBtn}
               >
                 Save
               </Button>
-            </div>
+            </Grid>
           </div>
         </Modal>
         {errorMessagesArray}
-      </div>
+      </Grid >
     );
   }
 }
@@ -207,6 +210,4 @@ InvestorDeposit.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-const InvestorDepositWrapped = withStyles(styles)(InvestorDeposit);
-
-export default InvestorDepositWrapped;
+export default withStyles(styles)(InvestorDeposit);

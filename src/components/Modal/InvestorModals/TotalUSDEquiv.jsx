@@ -1,15 +1,13 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { TextField } from "material-ui";
-import { withStyles } from "material-ui/styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles, Grid, TextField } from 'material-ui';
 
-// import { Icon } from 'material-ui-icons';
-import Modal from "material-ui/Modal";
-import Typography from "material-ui/Typography";
-import InvestorCard from "../../CustomElements/InvestorCard";
-import Button from "../../CustomButtons/Button";
+import Modal from 'material-ui/Modal';
+import Typography from 'material-ui/Typography';
+import InvestorCard from '../../CustomElements/InvestorCard';
+import Button from '../../CustomButtons/Button';
 
-import InvestorCardButton from "../../CustomButtons/InvestorCardButton";
+import InvestorCardButton from '../../CustomButtons/InvestorCardButton';
 
 
 const getModalStyle = () => {
@@ -17,27 +15,27 @@ const getModalStyle = () => {
   const left = 50;
   return {
     top: `${top}%`,
-    left: `${left}%`
+    left: `${left}%`,
   };
 };
 
 const styles = theme => ({
   paper: {
-    position: "absolute",
-    minWidth: "100px",
+    position: 'absolute',
+    minWidth: '100px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing.unit * 4,
   },
   button: {
-    float: "right",
-    display: "inline-flex"
-  }
+    float: 'right',
+    display: 'inline-flex',
+  },
 });
 
 class TotalUSDEquiv extends React.Component {
   state = {
-    open: false
+    open: false,
   };
 
   handleOpen = () => {
@@ -51,15 +49,14 @@ class TotalUSDEquiv extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div>
-        <div>
-          <InvestorCardButton onClick={this.handleOpen} >
-            <InvestorCard
-              headerText="$3.1k"
-              labelText="Total USD Equivalent"
-            />
-          </InvestorCardButton>
-        </div>
+      <Grid container>
+        <InvestorCardButton onClick={this.handleOpen} >
+          <InvestorCard
+            headerText="$3.1k"
+            labelText="Total USD Equivalent"
+          />
+        </InvestorCardButton>
+
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
@@ -73,26 +70,26 @@ class TotalUSDEquiv extends React.Component {
             <Typography
               variant="title"
               id="modal-title"
-              style={{ fontSize: "18px", fontWeight: "400" }}
+              style={{ fontSize: '18px', fontWeight: '400' }}
             >
               Investor Deposit
             </Typography>
             <div className={classes.flex}>
-              <div style={{ display: "inline-block", marginRight: "10px" }}>
+              <div style={{ display: 'inline-block', marginRight: '10px' }}>
                 <TextField
                   placeholder="Amount"
-                  // inputRef={el =>this.name = el}
+                // inputRef={el =>this.name = el}
                 />
                 <br />
                 <TextField
                   placeholder="Share Price at Entry Date"
-                  // inputRef={el =>this.name = el}
+                // inputRef={el =>this.name = el}
                 />
               </div>
-              <div style={{ display: "inline-block" }}>
+              <div style={{ display: 'inline-block' }}>
                 <TextField
                   placeholder="Transaction Date "
-                  // inputRef={el =>this.name = el}
+                // inputRef={el =>this.name = el}
                 />
                 <br />
                 <TextField placeholder="Purchased Shares" />
@@ -105,20 +102,18 @@ class TotalUSDEquiv extends React.Component {
               Cancel
             </Button>
             <Button onClick={this.handleSave} color="primary" type="submit">
-              {" "}
+              {' '}
               Save
             </Button>
           </form>
         </Modal>
-      </div>
+      </Grid >
     );
   }
 }
 
 TotalUSDEquiv.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
-const TotalUSDEquivWrapped = withStyles(styles)(TotalUSDEquiv);
-
-export default TotalUSDEquivWrapped;
+export default withStyles(styles)(TotalUSDEquiv);

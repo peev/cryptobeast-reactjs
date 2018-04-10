@@ -2,15 +2,13 @@ import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
 class PortfolioStore {
-  @observable selectedPortfolio;
-
   @observable portfolios;
-
-  @observable selectedPortfolioId;
-
   @observable selectedPortfolio;
-
+  @observable selectedPortfolioId;
   @observable currentPortfolioAssets;
+
+  @observable currentPortfolioSharePrice;
+
 
   constructor() {
     this.selectedPortfolio = null;
@@ -18,6 +16,7 @@ class PortfolioStore {
     this.selectedPortfolioId = null;
     this.selectedPortfolio = null;
     this.currentPortfolioAssets = null;
+    this.currentPortfolioSharePrice = 0;
 
     // eslint-disable-next-line no-unused-expressions
     this.getPortfolios(); // gets portfolios at app init
@@ -54,6 +53,10 @@ class PortfolioStore {
         this.selectedPortfolio = { ...this.portfolios[key] };
       }
     });
+    requester.Portfolio.getSharePrice({ id })
+      .then(action((sharePrice) => {
+        this.currentPortfolioSharePrice = sharePrice.data.sharePrice;
+      }));
   }
 
   @action

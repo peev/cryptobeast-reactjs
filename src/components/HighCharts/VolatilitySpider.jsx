@@ -1,104 +1,66 @@
 import React, { Component } from "react";
-import HighCharts from "highcharts";
+import Highcharts from "highcharts/highstock";
 import {
-  HighchartsChart,
-  withHighcharts,
-  YAxis,
-  Legend,
-  Tooltip,
-  PolygonSeries,
-  XAxis,
+  HighchartsStockChart,
   Chart,
-  Subtitle,
+  withHighcharts,
+  XAxis,
+  YAxis,
+  Title,
+  Legend,
+  LineSeries,
+  Navigator,
+  RangeSelector,
+  SplineSeries,
+  AreaSeries,
+  AreaRangeSeries,
+  PolygonSeries,
+  Tooltip
+} from "react-jsx-highstock";
+import addHighchartsMore from "highcharts/highcharts-more";
+// import { createRandomData } from "../utils/data-helpers";
 
-} from "react-jsx-highcharts";
-import HighchartsMore from "highcharts-more";
-import ReactHighcharts from "react-highcharts";
-
-HighchartsMore(ReactHighcharts.Highcharts);
+addHighchartsMore(Highcharts);
 
 class VolatilitySpiderChart extends Component {
   state = {};
 
   render() {
-    const spiderData = [
-      {
-        label: "Global Equities",
-        y: 2
-      },
-      {
-        label: "Tech Index",
-        y: 32
-      },
-      {
-        label: "USBONDS",
-        y: 21
-      },
-      {
-        label: "US Equity",
-        y: 8
-      },
-      {
-        label: "Nat Gas",
-        y: 7
-      },
-      {
-        label: "Mexico",
-        y: 4
-      }
-    ];
-
-    const spiderDataX = [
-      {
-        label: "Global Equities",
-        x: -8
-      },
-      {
-        label: "Tech Index",
-        y: -32
-      },
-      {
-        label: "USBONDS",
-        y: -21
-      },
-      {
-        label: "US Equity",
-        y: 58
-      },
-      {
-        label: "Nat Gas",
-        y: 87
-      },
-      {
-        label: "Mexico",
-        y: -4
-      }
-    ];
-
     return (
-      <HighchartsChart type="polar">
-        <Chart type="polar" />
-
-
-        <Subtitle>Source: thesolarfoundation.com</Subtitle>
-
-        <Legend layout="vertical" align="right" verticalAlign="middle" />
-
-        <XAxis>
-          <XAxis.Title>Time</XAxis.Title>
-        </XAxis>
-
-        <YAxis id="number">
-          <YAxis.Title>Number of employees</YAxis.Title>
-          <PolygonSeries
+      <HighchartsStockChart className="test">
+        <Chart type="line" polar />
+        <Tooltip shared  />
+        <Legend  />
+        <Title>ASSETS BETAS (Absolute Values)</Title>
+        <XAxis
+          categories={[
+            "Global Equities",
+            "Tech Index",
+            "USBONDS",
+            "US Equity",
+            "Nat Gas",
+            "Mexico"
+          ]}
+          tickerPlacement="on"
+          lineWidth={0}
+        />
+        <YAxis id="number" gridLineInterpolation="polygon">
+          <LineSeries
             id="installation"
-            name="Installation"
-            data={[43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]}
+            name=">0"
+            data={[2.15, 0.85, 3, 1.75, 0.85, 0.5]}
+            lineWidth={2}
+          />
+          <LineSeries
+            lineWidth={2}
+            id="new"
+            name="<0"
+            data={[2.5, 2, 2.1, 1.55, 1.3, 0.7]}
           />
         </YAxis>
-      </HighchartsChart>
+      </HighchartsStockChart>
     );
   }
 }
 
-export default withHighcharts(VolatilitySpiderChart, HighCharts);
+export default withHighcharts(VolatilitySpiderChart, Highcharts);

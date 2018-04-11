@@ -20,12 +20,12 @@ const styles = theme => ({
     float: 'left',
   },
   inputLabel: {
-    // top: '17px',
-    // left: 'calc(100% - 189px)',
-    // color: '#F6F6F6',
-    // zIndex: '1',
+    marginTop: '8px',
     marginLeft: '27px',
     color: '#F6F6F6',
+    '& div p': {
+      margin: '0',
+    },
   },
   listItem: {
     display: 'flex',

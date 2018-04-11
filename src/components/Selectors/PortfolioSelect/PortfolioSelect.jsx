@@ -149,7 +149,7 @@ class PortfolioSelect extends React.Component {
             onOpen={this.handleOpen}
             onChange={this.handleChange}
             displayEmpty
-            underline={false}
+            disableUnderline
             inputProps={{
               name: 'selectedPortfolioId',
               id: 'controlled-open-select',

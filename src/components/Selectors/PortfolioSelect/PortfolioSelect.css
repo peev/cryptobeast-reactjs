@@ -1,7 +1,3 @@
-/* ul:has(> li.headerListSelect) {
-  background-color: green;
-} */
-
 ul[class^="MuiList-root"] {
   padding: 0;
 }
@@ -15,20 +11,15 @@ ul[class^="MuiList-root"] {
   border-right: 1px solid #F6F6F6;
 }
 
-.headerListSelect>div:before {
-  display: none;
-}
-
-.headerListSelect>div:after {
-  display: none;
-}
-
 .headerListSelect>div>div {
   width: 200px;
   height: 45px;
   padding-left: 32px;
   color: #F6F6F6;
-  /* background-color: #22252f; */
+}
+
+.headerListSelect>div>div>div {
+  padding: 7px 25px;
 }
 
 .headerListSelect>div>svg {
@@ -36,11 +27,3 @@ ul[class^="MuiList-root"] {
   fill: #F6F6F6;
   top: 18px;
 }
-/* 
-.MuiInput-inkbar-57:after {
-  display: none;
-}
-
-.MuiInput-underline-61:before {
-  display: none;
-} */

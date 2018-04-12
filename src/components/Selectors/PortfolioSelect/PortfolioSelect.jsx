@@ -86,7 +86,7 @@ class PortfolioSelect extends React.Component {
 
   handleChange = (event) => {
     const { value, index } = event.target;
-    this.props.PortfolioStore.selectPortfolio(value, index);
+    this.props.PortfolioStore.selectPortfolio(value);
 
     this.setState({ [event.target.name]: value }); // 'selectedPortfolioId: event.target.value' does same as above
   };
@@ -113,7 +113,7 @@ class PortfolioSelect extends React.Component {
 
     const currentPortfolios = PortfolioStore.getAllPortfolios;
     const portfoliosArray = Object.keys(currentPortfolios);
-    // if (portfoliosArray.length > 1) {
+
     portfoliosArray.map((port, i) => (
       portfoliosToShow.push(
         <MenuItem
@@ -121,6 +121,7 @@ class PortfolioSelect extends React.Component {
           key={currentPortfolios[port].id}
           value={currentPortfolios[port].id}
           index={i + 1}
+          select={i === 1}
         >
           <div className={classes.listItemContainer}>
             <p className={classes.listItemName}>{currentPortfolios[port].name}</p>
@@ -132,23 +133,6 @@ class PortfolioSelect extends React.Component {
         </MenuItem>
       )
     ));
-    // } else {
-    //   portfoliosToShow = (
-    //     <MenuItem
-    //       className={classes.listItem}
-    //       key={0}
-    //       value=''
-    //       index={0}
-    //       disabled
-    //     >
-    //       <div className={classes.inputLabel}>
-    //         <div>
-    //           <p>None</p>
-    //         </div>
-    //       </div>
-    //     </MenuItem>
-    //   );
-    // }
 
     return (
       <form autoComplete="off" >

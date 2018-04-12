@@ -11,10 +11,9 @@ class PortfolioStore {
 
 
   constructor() {
-    this.selectedPortfolio = null;
     this.portfolios = {};
-    this.selectedPortfolioId = null;
     this.selectedPortfolio = null;
+    this.selectedPortfolioId = null;
     this.currentPortfolioAssets = null;
     this.currentPortfolioSharePrice = 0;
 
@@ -43,7 +42,7 @@ class PortfolioStore {
   }
 
   @action
-  selectPortfolio(id, index) {
+  selectPortfolio(id) {
     this.selectedPortfolioId = id;
 
     // eslint-disable-next-line array-callback-return

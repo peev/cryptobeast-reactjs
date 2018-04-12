@@ -26,6 +26,16 @@ class Header extends Component {
     this.state = {};
   }
 
+  componentDidMount() {
+    const { PortfolioStore } = this.props;
+
+    const portfoliosArray = Object.keys(PortfolioStore.getAllPortfolios);
+
+    if (portfoliosArray.length > 0) {
+      PortfolioStore.selectPortfolio(1);
+    }
+  }
+
   render() {
     const { classes, PortfolioStore } = this.props;
     const portfoliosArray = Object.keys(PortfolioStore.getAllPortfolios);

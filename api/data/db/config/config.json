@@ -1,0 +1,14 @@
+{
+  "development": {
+    "dialect": "sqlite",
+    "storage": "../../CryptoBeast.db"
+  },
+  "test": {
+    "dialect": "sqlite",
+    "storage": "../../CryptoBeast.db"
+  },
+  "production": {
+    "dialect": "sqlite",
+    "storage": "../../CryptoBeast.db"
+  }
+}

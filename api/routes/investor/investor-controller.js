@@ -5,15 +5,23 @@ const investorController = (repository) => {
     const investorData = req.body;
     repository.investor.addInvestor(investorData)
       .then(() => {
-        res.status(200).send(investorData);
-      })
-      .catch((error) => {
-        return res.json(error);
+        repository.asset.addNewAsset({
+          currency: investorData.currency,
+          balance: investorData.balance,
+          origin: 'Manually Added',
+          portfolioId: investorData.portfolioId,
+        })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch((error) => {
+            return res.json(error);
+          });
       });
   };
 
   const updateInvestor = (req, res) => {
-    const id = req.params.id;
+    const { id } = req.params;
     const investorData = req.body;
 
     repository.investor.update(id, investorData)
@@ -26,22 +34,40 @@ const investorController = (repository) => {
   };
 
   const depositInvestor = (req, res) => {
-    repository.investor.moveShares(req.body, 'deposit')
-      .then((deposit) => {
-        res.status(200).send(deposit);
-      })
-      .catch((error) => {
-        return res.json(error);
+    const depositData = req.body;
+    repository.investor.moveShares(depositData, 'deposit')
+      .then(() => {
+        repository.asset.addNewAsset({
+          currency: depositData.currency,
+          balance: depositData.balance,
+          origin: 'Manually Added',
+          portfolioId: depositData.portfolioId,
+        })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch((error) => {
+            return res.json(error);
+          });
       });
   };
 
   const withdrawalInvestor = (req, res) => {
-    repository.investor.moveShares(req.body, 'withdrawal')
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        return res.json(error);
+    const withdrawalData = req.body;
+    repository.investor.moveShares(withdrawalData, 'withdrawal')
+      .then(() => {
+        repository.asset.addNewAsset({
+          currency: withdrawalData.currency,
+          balance: withdrawalData.balance,
+          origin: 'Manually Added',
+          portfolioId: withdrawalData.portfolioId,
+        })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch((error) => {
+            return res.json(error);
+          });
       });
   };
 

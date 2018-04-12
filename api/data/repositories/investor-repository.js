@@ -54,10 +54,14 @@ const init = (db) => {
           .then(() => moveShares({
             investorId: (values[1]).id,
             transaction: request.transaction,
-          }, 'newInvestor')));
-      }).catch((err) => {
-        reject(err);
-      });
+          }, 'newInvestor'))
+          .catch((err) => {
+            reject(err);
+          }));
+      })
+        .catch((err) => {
+          reject(err);
+        });
     });
   };
 
@@ -66,7 +70,6 @@ const init = (db) => {
       where: { id },
     });
   };
-
 
   const withdrawal = (id, data) => {
     const amountToWithdrawal = data.amount;

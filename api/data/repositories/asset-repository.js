@@ -1,26 +1,38 @@
 const init = (db) => {
   const addNewAsset = (request) => {
-    const newAsset = {
-      currency: request.currency,
-      balance: request.balance,
-      origin: request.origin,
-    };
-    const portfolio = db.Portfolio.findById(request.portfolioId);
-    const createdAsset = db.Asset.create(newAsset)
-      .then(result => result);
-
-    const ret = new Promise((resolve, reject) => {
-      Promise.all([
-        portfolio,
-        createdAsset,
-      ]).then((values) => {
-        resolve(values[0].addAsset(values[1]));
-      }).catch((err) => {
-        reject(err);
-      });
+    return new Promise((resolve, reject) => {
+      console.log('>>> addNewAsset requst: ', request);
+      db.Asset.findAll({
+        where: {
+          currency: request.currency,
+          origin: 'Manually Added',
+          portfolioId: request.portfolioId,
+        },
+      })
+        .then((assets) => {
+          if (assets.length === 0) {
+            db.Asset.create({
+              currency: request.currency,
+              balance: request.balance,
+              origin: 'Manually Added',
+              portfolioId: request.portfolioId,
+            })
+              .then(r => resolve(r))
+              .catch((err) => {
+                reject(err);
+              });
+          } else {
+            assets[0].increment('balance', { by: request.balance })
+              .then(r => resolve(r))
+              .catch((err) => {
+                reject(err);
+              });
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
-
-    return ret;
   };
 
   const update = (request) => {

@@ -129,7 +129,7 @@ class AddInvestor extends React.Component {
       }, 6000);
     }
 
-    console.log('check fields: ', InvestorStore.areFieldsEmpty, emailChecked, profileChecked );
+    console.log('check fields: ', InvestorStore.areFieldsEmpty, emailChecked, profileChecked);
     if (InvestorStore.areFieldsEmpty === false && emailChecked && profileChecked) {
       InvestorStore.createNewInvestor(PortfolioStore.selectedPortfolioId);
 

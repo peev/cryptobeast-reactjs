@@ -434,6 +434,8 @@ class InvestorStore {
   @action
   createNewInvestor(id) {
     const newInvestor = {
+      currency: MarketStore.selectedBaseCurrency.pair,
+      balance: +this.values.depositedAmount,
       portfolioId: id,
       investor: {
         isFounder: this.values.isFounder,
@@ -453,18 +455,21 @@ class InvestorStore {
         shares: parseFloat(this.values.purchasedShares),
       },
     };
-
     requester.Investor.add(newInvestor)
-      .then((result) => {
+      .then(action((result) => {
         // TODO: Something with result
+        PortfolioStore.getPortfolios();
         console.log(result);
-      })
+      }))
       .catch(this.onError);
   }
 
   @action
   createNewDepositInvestor(id) {
     const deposit = {
+      currency: MarketStore.selectedBaseCurrency.pair,
+      balance: +this.newDepositValues.amount,
+      portfolioId: PortfolioStore.selectedPortfolioId,
       investorId: id,
       transaction: {
         investorName: this.selectedInvestor.fullName,
@@ -510,7 +515,17 @@ class InvestorStore {
 
   @action
   withdrawalInvestor(id) {
+    const hasEnoughShares = this.selectedInvestor.purchasedShares >= this.withdrawalValues.purchasedShares;
+
+    if (!hasEnoughShares) {
+      this.investorError.push('The investor has not enough shares!');
+      return;
+    }
+
     const withdrawal = {
+      currency: 'USD',
+      balance: parseFloat(this.withdrawalValues.amount) * (-1),
+      portfolioId: PortfolioStore.selectedPortfolioId,
       investorId: id,
       transaction: {
         investorName: this.selectedInvestor.fullName,

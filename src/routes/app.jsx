@@ -1,82 +1,83 @@
-import SummaryPage from 'views/Summary/Summary.jsx';
-import AssetMovements from 'views/AssetMovements/AssetMovements.jsx';
-import Simulator from 'views/Simulator/Simulator.jsx';
-import TransactionHistory from 'views/TransactionHistory/TransactionHistory.jsx';
-import Ledgers from 'views/Ledgers/Ledgers.jsx';
-import Investors from 'views/Investors/Investors.jsx';
-import Analytics from 'views/Analytics/Analytics.jsx';
-import Settings from 'views/Settings/Settings.jsx';
-
-import {
-  Dashboard,
-  Person,
-  ContentPaste,
-  LibraryBooks,
-  BubbleChart,
-  LocationOn,
-  Notifications,
-} from 'material-ui-icons';
+import SummaryPage from "views/Summary/Summary.jsx";
+import AssetMovements from "views/AssetMovements/AssetMovements.jsx";
+import Simulator from "views/Simulator/Simulator.jsx";
+import TransactionHistory from "views/TransactionHistory/TransactionHistory.jsx";
+import Ledgers from "views/Ledgers/Ledgers.jsx";
+import Investors from "views/Investors/Investors.jsx";
+import Analytics from "views/Analytics/Analytics.jsx";
+import Settings from "views/Settings/Settings.jsx";
+import InvestorsIcon  from '../components/CustomIcons/InvestorsIcon';
+import SummaryIcon from '../components/CustomIcons/SummaryIcon';
+import SettingsIcon  from '../components/CustomIcons/SettingsIcon';
+import SimulatorIcon from '../components/CustomIcons/SimulatorIcon';
+import AnalyticsIcon  from '../components/CustomIcons/AnalyticsIcon';
+import HistoryIcon from '../components/CustomIcons/HistoryIcon';
+import LedgersIcon  from '../components/CustomIcons/LedgersIcon';
+import MarketIcon from '../components/CustomIcons/MarketIcon';
 
 const appRoutes = [
   {
-    path: '/summary',
-    sidebarName: 'Summary',
-    navbarName: 'Summary',
-    icon: Dashboard,
-    component: SummaryPage,
+    path: "/summary",
+    sidebarName: "Summary",
+    navbarName: "Summary",
+    icon: SummaryIcon,
+    component: SummaryPage
   },
   {
-    path: '/assetMovements',
-    sidebarName: 'Asset Movements',
-    navbarName: 'Asset Movements',
-    icon: Person,
-    component: AssetMovements,
+    path: "/assetMovements",
+    sidebarName: "Asset Movements",
+    navbarName: "Asset Movements",
+    icon: MarketIcon,
+    component: AssetMovements
   },
   {
-    path: '/Simulator',
-    sidebarName: 'Simulator',
-    navbarName: 'Simulator',
-    icon: ContentPaste,
-    component: Simulator,
+    path: "/Investors",
+    sidebarName: "Investors",
+    navbarName: "Investors",
+    icon: InvestorsIcon,
+    component: Investors
   },
   {
-    path: '/TransactionHistory',
-    sidebarName: 'Transaction History',
-    navbarName: 'Transaction History',
-    icon: LibraryBooks,
-    component: TransactionHistory,
+    path: "/Analytics",
+    sidebarName: "Analytics",
+    navbarName: "Analytics",
+    icon: AnalyticsIcon,
+    component: Analytics
   },
   {
-    path: '/Ledgers',
-    sidebarName: 'Ledgers',
+    path: "/TransactionHistory",
+    sidebarName: "Transaction History",
+    navbarName: "Transaction History",
+    icon: HistoryIcon,
+    component: SummaryPage
+  },
+  {
+    path: "/Ledgers",
+    sidebarName: "Ledgers",
     navbarName: 'Ledgers',
-    icon: BubbleChart,
-    component: Ledgers,
+    icon: LedgersIcon,
+    component: SummaryPage
   },
   {
-    path: '/Investors',
-    sidebarName: 'Investors',
-    navbarName: 'Investors',
-    icon: LocationOn,
-    component: Investors,
+    path: "/Simulator",
+    sidebarName: "Simulator",
+    navbarName: "Simulator",
+    icon: SimulatorIcon,
+    component: SummaryPage
   },
   {
-    path: '/Analytics',
-    sidebarName: 'Analytics',
-    navbarName: 'Analytics',
-    icon: Notifications,
-    component: Analytics,
+    path: "/Settings",
+    sidebarName: "Settings",
+    navBarName: "Settings",
+    icon: SettingsIcon,
+    component: Settings
   },
   {
-    path: '/Settings',
-    sidebarName: 'Settings',
-    navBarName: 'Settings',
-    icon: Notifications,
-    component: Settings,
-  },
-  {
-    redirect: true, path: '/', to: '/summary', navbarName: 'Redirect',
-  },
+    redirect: true,
+    path: "/",
+    to: "/summary",
+    navbarName: "Redirect"
+  }
 ];
 
 export default appRoutes;

@@ -1,5 +1,6 @@
 .hideOverflow{
     overflow: hidden;
+    margin-top: 40px;
 }
 .PerformanceGrid{
     flex-grow: 1;

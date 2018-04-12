@@ -5,15 +5,14 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import PerfectScrollbar from 'perfect-scrollbar';
 import 'perfect-scrollbar/css/perfect-scrollbar.css';
 import { withStyles } from 'material-ui';
+import { inject, observer } from 'mobx-react';
 
 import { Header, Sidebar } from 'components';
 
 import appRoutes from 'routes/app.jsx';
 
 import appStyle from 'variables/styles/appStyle.jsx';
-// import logo from 'assets/img/reactlogo.png';
-// import { navBackgroundColor, textPrimary } from '../../variables/styles';
-// import ControlledOpenSelect from '../../components/Selectors/PortSelect';
+
 
 const switchRoutes = (
   <Switch>
@@ -25,6 +24,8 @@ const switchRoutes = (
   </Switch>
 );
 
+@inject('PortfolioStore')
+@observer
 class App extends React.Component {
   state = {
     mobileOpen: false,
@@ -43,7 +44,23 @@ class App extends React.Component {
   }
 
   getRoute() {
-    return this.props.location.pathname !== '/maps';
+    const portfoliosArray = Object.keys(this.props.PortfolioStore.getAllPortfolios);
+
+    if (portfoliosArray.length === 0) {
+      console.log(this.props.location.pathname)
+      console.log(portfoliosArray)
+      return this.props.location['/summary'];
+    } else {
+      return this.props.location.pathname;
+    }
+  }
+
+  getOnlySummary() {
+    const onlySummary = [];
+    for (let i = 0; i < 10; i++) {
+      onlySummary
+    }
+    return onlySummary
   }
 
   handleDrawerToggle = () => {
@@ -51,7 +68,12 @@ class App extends React.Component {
   };
 
   render() {
-    const { classes, ...rest } = this.props;
+    const { classes, PortfolioStore, ...rest } = this.props;
+    console.log(appRoutes);
+    console.log(switchRoutes);
+    console.log(switchRoutes.props.children[0]);
+    const portfoliosArray = Object.keys(PortfolioStore.getAllPortfolios);
+
     return (
       <div className={classes.wrapper}>
 
@@ -61,6 +83,22 @@ class App extends React.Component {
           open={this.state.mobileOpen}
           {...rest}
         />
+        {/* {portfoliosArray.length > 0 ? (
+          <Sidebar
+            routes={appRoutes}
+            handleDrawerToggle={this.handleDrawerToggle}
+            open={this.state.mobileOpen}
+            {...rest}
+          />
+        ) : (
+            <Sidebar
+              routes={this.getOnlySummary}
+              handleDrawerToggle={this.handleDrawerToggle}
+              open={this.state.mobileOpen}
+              {...rest}
+            />
+          )} */}
+
         <div className={classes.mainPanel} ref="mainPanel">
           <Header
             routes={appRoutes}
@@ -70,15 +108,24 @@ class App extends React.Component {
           />
 
           {/* On the /maps route we want the map to be on full screen - this is not possible if the content and container classes are present because they have some paddings which would make the map smaller */}
-          {this.getRoute() ? (
+          {/* {this.getRoute() ? (
             <div className={classes.content}>
               <div className={classes.container}>{switchRoutes}</div>
             </div>
           ) : (
               <div className={classes.map}>{switchRoutes}</div>
+            )} */}
+          {portfoliosArray.length > 0 ? (
+            <div className={classes.content}>
+              <div className={classes.container}>{switchRoutes}</div>
+            </div>
+          ) : (
+              <div className={classes.content}>
+                <div className={classes.container}>{switchRoutes.props.children[0]}</div>
+              </div>
             )}
         </div>
-      </div>
+      </div >
     );
   }
 }

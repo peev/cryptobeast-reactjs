@@ -1,56 +1,32 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles, Grid } from "material-ui";
-import summaryStyle from "variables/styles/summaryStyle";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles, Grid } from 'material-ui';
+import summaryStyle from 'variables/styles/summaryStyle';
 
-import { inject, observer } from "mobx-react";
-import CreatePortfolio from "../../components/Modal/CreatePortfolio";
-import "./Summary.css";
-// react plugin for creating charts
-// import ChartistGraph from 'react-chartist';
-// import {
-//   ContentCopy, Store, InfoOutline, Warning, DateRange, LocalOffer, Update, ArrowUpward, AccessTime, Accessibility,
-// } from 'material-ui-icons';
-// import {
-//   StatsCard,
-//   ChartCard,
-//   TasksCard,
-//   RegularCard,
-//   Table,
-//   ItemGrid,
-// } from 'components';
-// import {
-//   dailySalesChart,
-//   emailsSubscriptionChart,
-//   completedTasksChart,
-// } from 'variables/charts';
-// import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
+import { inject, observer } from 'mobx-react';
+import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 
-@inject("PortfolioStore")
+const styles = () => ({
+  warningText: {
+    marginTop: '35%',
+    textAlign: 'center',
+  },
+});
+
+@inject('PortfolioStore')
 @observer
 class Summary extends React.Component {
-  state = {
-    value: 0,
-    inputName: ""
-  };
-
-  handleChange = (event, value) => {
-    this.setState({ value });
-  };
-
-  handleChangeIndex = index => {
-    this.setState({ value: index });
-  };
+  state = {};
 
   render() {
-    const { PortfolioStore } = this.props;
+    const { classes, PortfolioStore } = this.props;
     let createPortfolio;
     let summaryContent;
 
-    if (!PortfolioStore.portfolios.hasOwnProperty("0")) {
+    if (!PortfolioStore.portfolios.hasOwnProperty('0')) {
       createPortfolio = (
-        <div className="createPortfolio">
-          <p>
+        <div >
+          <p className={classes.warningText}>
             You currently have no portfolio to display. Please create a
             portfolio to start
           </p>
@@ -58,7 +34,7 @@ class Summary extends React.Component {
         </div>
       );
     } else {
-      summaryContent = <p>Page is under construction...</p>;
+      summaryContent = <p>Summary is under construction...</p>;
     }
 
     return (
@@ -66,7 +42,6 @@ class Summary extends React.Component {
         <Grid>
           {createPortfolio}
           {summaryContent}
-          {/* <AddInvestorWrapped /> */}
         </Grid>
       </div>
     );
@@ -74,7 +49,7 @@ class Summary extends React.Component {
 }
 
 Summary.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(summaryStyle)(Summary);
+export default withStyles(styles, summaryStyle)(Summary);

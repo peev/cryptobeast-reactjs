@@ -36,7 +36,7 @@ class SelectApi extends React.Component {
   };
 
   handleChange = (event) => {
-    const value = event.target.value;   
+    const value = event.target.value;
     this.props.ApiAccountStore.selectApiName(value);
     this.setState({ [event.target.name]: event.target.value });
   };

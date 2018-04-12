@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
+import { withStyles, MenuItem, FormControl } from 'material-ui';
 import Select from 'material-ui/Select';
 
 import { inject, observer } from 'mobx-react';
@@ -20,21 +17,23 @@ const styles = theme => ({
     float: 'left',
   },
   inputLabel: {
-    marginTop: '8px',
-    marginLeft: '27px',
     color: '#F6F6F6',
+    padding: '8px 27px',
+    width: '100%',
+    borderBottom: '1px solid #F6F6F6',
     '& div p': {
-      margin: '0',
+      margin: '10px 0',
     },
   },
   listItem: {
     display: 'flex',
     height: '100%',
     padding: '0 16px',
-    // backgroundColor: '#22252f !important',
-    backgroundColor: 'rgba(34, 37, 47, 1) !important',
+    backgroundColor: '#22252f !important',
+    // backgroundColor: 'rgba(34, 37, 47, 1) !important',
+    opacity: '1',
     '&:hover': {
-      backgroundColor: '#1D2028',
+      backgroundColor: '#414555 !important',
     },
     '&:last-child>div': {
       borderBottom: 'none',
@@ -87,60 +86,57 @@ class PortfolioSelect extends React.Component {
 
   handleChange = (event) => {
     const { value, index } = event.target;
-    // const index = event.target.index;
-    console.log(value)
-    this.props.PortfolioStore.selectPortfolio(value, index);
+    this.props.PortfolioStore.selectPortfolio(value);
 
     this.setState({ [event.target.name]: value }); // 'selectedPortfolioId: event.target.value' does same as above
   };
 
   render() {
     const { classes, PortfolioStore } = this.props;
-    const currentPortfolios = PortfolioStore.getAllPortfolios;
+    let portfoliosToShow = [];
 
-    const portfoliosToShow = Object.keys(currentPortfolios)
-      .map((port, i) => (
+    // 1st value is empty, this is required by the Select component
+    portfoliosToShow.push(
+      <MenuItem
+        className={classes.listItem}
+        key={0}
+        value=''
+        index={0}
+        disabled>
+        <div className={classes.inputLabel}>
+          <div>
+            <p>Select Portfolio</p>
+          </div>
+        </div>
+      </MenuItem>
+    );
+
+    const currentPortfolios = PortfolioStore.getAllPortfolios;
+    const portfoliosArray = Object.keys(currentPortfolios);
+
+    portfoliosArray.map((port, i) => (
+      portfoliosToShow.push(
         <MenuItem
           className={classes.listItem}
           key={currentPortfolios[port].id}
           value={currentPortfolios[port].id}
-          index={i}
+          index={i + 1}
+          select={i === 1}
         >
           <div className={classes.listItemContainer}>
             <p className={classes.listItemName}>{currentPortfolios[port].name}</p>
             <div className={classes.listItemDescription}>
-              <p className={classes.listItemDescriptionL}>^0.45%</p>
-              <p className={classes.listItemDescriptionR}>1103.90</p>
+              <p className={classes.listItemDescriptionL}>^4{0.45 + i}%</p>
+              <p className={classes.listItemDescriptionR}>{103.90 + i}</p>
             </div>
           </div>
         </MenuItem>
-      ));
-
-    portfoliosToShow.unshift(<MenuItem value="" disabled className={classes.listItem}>
-      <div className={classes.inputLabel}>
-        <div>
-          <p>Select Portfolio</p>
-        </div>
-      </div>
-    </MenuItem>);
-
-    console.log(portfoliosToShow)
-
-    const nothingToShow = (
-      <MenuItem
-        value={1}
-        className={classes.listItem}
-      >
-        <p>None</p>
-      </MenuItem>
-    );
+      )
+    ));
 
     return (
-      <form autoComplete="off">
-
+      <form autoComplete="off" >
         <FormControl className={classes.formControl}>
-          {/* <InputLabel htmlFor="controlled-open-select" className={classes.inputLabel}>Select Portfolio</InputLabel> */}
-
           <Select
             className="headerListSelect"
             open={this.state.open}
@@ -148,34 +144,16 @@ class PortfolioSelect extends React.Component {
             onClose={this.handleClose}
             onOpen={this.handleOpen}
             onChange={this.handleChange}
-            displayEmpty
-            disableUnderline
+            displayEmpty // uses the 1st element as placeholder
+            disableUnderline // removes underline from component
             inputProps={{
               name: 'selectedPortfolioId',
               id: 'controlled-open-select',
             }}
           >
-            {portfoliosToShow.length > 0 ? portfoliosToShow : nothingToShow}
+            {portfoliosToShow}
           </Select>
         </FormControl>
-
-        {/* <FormControl className={classes.formControl}>
-          <Select
-            value={this.state.age}
-            onChange={this.handleChange}
-            displayEmpty
-            name="age"
-            className={classes.selectEmpty}
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-          </Select>
-          <FormHelperText>Without label</FormHelperText>
-        </FormControl> */}
       </form>
     );
   }

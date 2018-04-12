@@ -42,7 +42,7 @@ class PortfolioStore {
   }
 
   @action
-  selectPortfolio(id, index) {
+  selectPortfolio(id) {
     this.selectedPortfolioId = id;
 
     // eslint-disable-next-line array-callback-return

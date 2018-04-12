@@ -1,24 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import { Menu } from 'material-ui-icons';
-import {
-  withStyles,
-  Toolbar,
-  // IconButton,
-  // Hidden,
-  // AppBar,
-  // Button,
-} from 'material-ui';
+import { withStyles, Toolbar } from 'material-ui';
+import { inject, observer } from 'mobx-react';
 
-// import cx from 'classnames';
 import PortfolioSelect from '../Selectors/PortfolioSelect/PortfolioSelect';
 import buttonStyle from '../../variables/styles/buttonStyle';
 import headerStyle from '../../variables/styles/headerStyle.jsx';
 
-// import CreatePortfolio from '../Modal/CreatePortfolio';
-// import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
-// import RegularButton from '../CustomButtons/Button';
-// import HeaderLinks from './HeaderLinks';
 
 const styles = () => ({
   headerContainer: {
@@ -30,52 +18,32 @@ const styles = () => ({
   },
 });
 
+@inject('PortfolioStore')
+@observer
 class Header extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
 
+  componentDidMount() {
+    const { PortfolioStore } = this.props;
+
+    const portfoliosArray = Object.keys(PortfolioStore.getAllPortfolios);
+
+    if (portfoliosArray.length > 0) {
+      PortfolioStore.selectPortfolio(1);
+    }
+  }
+
   render() {
-    const { classes } = this.props;
-    // const appBarClasses = cx({
-    //   [` ${classes[color]}`]: color,
-    // });
+    const { classes, PortfolioStore } = this.props;
+    const portfoliosArray = Object.keys(PortfolioStore.getAllPortfolios);
+
     return (
-      <Toolbar
-        // className={classes.container}
-        className={classes.headerContainer}
-      >
-        {/* Here we create navbar brand, based on route name */}
-        {/* <div className={classes.flex}>
-          <Hidden mdUp>
-            <IconButton
-              className={classes.appResponsive}
-              style={{ color: '#FFF' }}
-              aria-label="open drawer"
-              onClick={this.props.handleDrawerToggle}
-            >
-              <Menu />
-            </IconButton>
-          </Hidden>
-        </div> */}
-
-        <div >
-          <PortfolioSelect />
-
-          {/* <CreatePortfolio /> */}
-          {/* <UpdatePortfolioModal />
-            <div>
-              <RegularButton color="primary" >
-                Delete
-              </RegularButton>
-            </div> */}
-        </div>
-        {/* <Hidden smDown implementation="css">
-          <HeaderLinks />
-        </Hidden> */}
+      <Toolbar className={classes.headerContainer}>
+        {portfoliosArray.length > 0 ? <PortfolioSelect /> : ''}
       </Toolbar>
-
     );
   }
 }

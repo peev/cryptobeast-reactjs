@@ -69,6 +69,24 @@ const init = (db) => {
             });
         });
         break;
+      case 'USD':
+      case 'JPY':
+      case 'EUR':
+        assetPair = request.currency;
+        updatedAssetResult = new Promise((resolve, reject) => {
+          return db.Ticker
+            .findById(assetPair)
+            .then((ticker) => {
+              db.Asset
+                .findById(request.id)
+                .then((a) => {
+                  const price = a.balance / ticker.last;
+                  return a.update({ lastBTCEquivalent: price })
+                    .then(updatedAsset => resolve(updatedAsset));
+                });
+            });
+        });
+        break;
       default:
         assetPair = `BTC-${request.currency}`;
         updatedAssetResult = new Promise((resolve, reject) => {
@@ -97,7 +115,7 @@ const init = (db) => {
         include: [db.Asset],
       })
         .then((pf) => {
-          if (pf.assets.length === 0) {
+          if (pf.assets.length === 0) { // If there aren't any assets in the portfolio
             return pf;
           }
 

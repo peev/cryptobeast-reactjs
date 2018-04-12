@@ -31,8 +31,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     purchasedShares: {
       type: DataTypes.DOUBLE,
-      // isInt: true,
-      // min: 1
+      validate: {
+        min: 0,
+      },
     },
   });
 };

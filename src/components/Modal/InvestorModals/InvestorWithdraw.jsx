@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Grid, Input } from 'material-ui';
+import { withStyles, Grid, Input, Snackbar } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
@@ -49,6 +49,8 @@ const styles = theme => ({
 class InvestorWithdraw extends React.Component {
   state = {
     open: false,
+    openNotification: false,
+    disabledBtn: false,
   };
 
   handleOpen = () => {
@@ -81,12 +83,38 @@ class InvestorWithdraw extends React.Component {
     // InvestorStore.handleEmptyFields;
 
     InvestorStore.withdrawalInvestor(InvestorStore.selectedInvestor.id);
-    PortfolioStore.getPortfolios();
-    this.handleClose();
+
+    // Warnings popup
+    if (InvestorStore.getAddInvestorErrors.length > 0) {
+      this.setState({ openNotification: true, disabledBtn: true });
+      setTimeout(() => {
+        InvestorStore.resetErrors();
+        this.setState({ openNotification: false, disabledBtn: false });
+      }, 2000);
+    } else {
+      PortfolioStore.getPortfolios();
+      this.handleClose();
+    }
   }
 
   render() {
     const { classes, InvestorStore, PortfolioStore } = this.props;
+
+    const investorErrors = InvestorStore.getAddInvestorErrors;
+    let errorMessagesArray;
+
+    if (investorErrors.length > 0) {
+      // this.setState({ numberOfErrors: investorErrors.length });
+
+      let message = '';
+      investorErrors.forEach(errorMsg => message += `${errorMsg} \n`);
+
+      errorMessagesArray = (<Snackbar
+        message={message}
+        open={this.state.openNotification}
+        style={{ height: 'auto', lineHeight: '28px', padding: '24', whiteSpace: 'pre-line' }}
+      />);
+    }
 
     return (
       <Grid container>
@@ -175,11 +203,13 @@ class InvestorWithdraw extends React.Component {
                 type="submit"
                 color="primary"
                 onClick={this.handleWithdrawalInvestor}
+                disabled={this.state.disabledBtn}
               >Save
               </Button>
             </Grid>
           </div>
         </Modal>
+        {errorMessagesArray}
       </Grid>
     );
   }

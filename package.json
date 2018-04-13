@@ -1,7 +1,7 @@
 {
-  "name": "material-dashboard-react",
-  "description": "Material Dashboard ReactJS theme with Electron",
-  "author": "Krasen Ilkov",
+  "name": "CryptoBeast",
+  "description": "Crypto currency application",
+  "author": "Motion Software",
   "version": "1.0.0",
   "private": true,
   "homepage": "./",

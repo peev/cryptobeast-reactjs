@@ -3,7 +3,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 // const app = electron.app
 
 // Start the server
-// require('../api/server');
+require('../api/server');
 
 // Module to create native browser window.
 // const BrowserWindow = electron.BrowserWindow

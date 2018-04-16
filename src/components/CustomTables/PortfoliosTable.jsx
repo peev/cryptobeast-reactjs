@@ -20,7 +20,6 @@ import RemovePortfolioWrapped from '../Modal/RemovePortfolio';
 // TODO add Inject PortfolioStore and Remake function to const = () =>{}
 @inject('PortfolioStore')
 @observer
-
 class PortfoliosTable extends React.Component {
   state = {
     open: false,

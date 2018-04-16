@@ -1,6 +1,8 @@
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
+import PortfolioStore from './PortfolioStore';
+
 
 class MarketStore {
   @observable marketSummaries;
@@ -138,6 +140,7 @@ class MarketStore {
     requester.Asset.add(newBasicAsset)
       .then(action((result) => {
         // TODO: Something with result
+        PortfolioStore.getPortfolios();
         this.resetAsset();
       }));
   }

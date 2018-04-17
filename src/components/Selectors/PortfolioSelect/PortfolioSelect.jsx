@@ -112,19 +112,18 @@ class PortfolioSelect extends React.Component {
     );
 
     const currentPortfolios = PortfolioStore.getAllPortfolios;
-    const portfoliosArray = Object.keys(currentPortfolios);
 
-    portfoliosArray.map((port, i) => (
+    currentPortfolios.forEach((el, i) => {
       portfoliosToShow.push(
         <MenuItem
           className={classes.listItem}
-          key={currentPortfolios[port].id}
-          value={currentPortfolios[port].id}
+          key={el.id}
+          value={el.id}
           index={i + 1}
           select={i === 1}
         >
           <div className={classes.listItemContainer}>
-            <p className={classes.listItemName}>{currentPortfolios[port].name}</p>
+            <p className={classes.listItemName}>{el.name}</p>
             <div className={classes.listItemDescription}>
               <p className={classes.listItemDescriptionL}>^4{0.45 + i}%</p>
               <p className={classes.listItemDescriptionR}>{103.90 + i}</p>
@@ -132,7 +131,7 @@ class PortfolioSelect extends React.Component {
           </div>
         </MenuItem>
       )
-    ));
+    });
 
     return (
       <form autoComplete="off" >

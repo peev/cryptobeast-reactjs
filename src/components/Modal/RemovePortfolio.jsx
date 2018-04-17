@@ -45,7 +45,7 @@ class RemovePortfolio extends React.Component {
   state = {
     open: false,
     name: null,
-    id : '',
+    id: '',
   };
 
   handleClose = () => {
@@ -57,7 +57,7 @@ class RemovePortfolio extends React.Component {
   };
 
   handleRemove = () => {
-    const {PortfolioStore} = this.props;
+    const { PortfolioStore } = this.props;
     this.props.PortfolioStore.removePortfolio(this.props.id);
     this.setState({ open: false });
   };
@@ -115,7 +115,7 @@ class RemovePortfolio extends React.Component {
               type="submit"
               color="primary"
               onClick={() => this.handleRemove(portfolios.id)}
-              
+
             >
               {" "}
               DELETE

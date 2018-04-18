@@ -63,6 +63,7 @@ class InvestorStore {
   @observable selectedInvestorId;
   @observable investorError;
   @observable investorErrorDisplayed;
+  @observable selectedPortfolioId;
 
   constructor() {
     this.selectedBaseCurrency = null;
@@ -547,6 +548,7 @@ class InvestorStore {
   @action
   getPortfolio() {
     const currentSelectedPortfolio = PortfolioStore.getCurrentPortfolio();
+    console.log(currentSelectedPortfolio);
 
     if (currentSelectedPortfolio) {
       this.selectedPortfolioId = currentSelectedPortfolio.id;
@@ -597,7 +599,8 @@ class InvestorStore {
 
   @action
   handleNotSelectedPortfolio() {
-    if (!this.selectedPortfolioId) {
+    console.log(this.selectedInvestorId)
+    if (!PortfolioStore.selectedPortfolioId) {
       this.investorError.push('Please select portfolio first');
       return false;
     }

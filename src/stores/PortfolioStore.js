@@ -1,5 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
+import MarketStore from './MarketStore';
 
 class PortfolioStore {
   @observable portfolios;
@@ -8,22 +9,24 @@ class PortfolioStore {
   @observable currentPortfolioAssets;
 
   @observable currentPortfolioSharePrice;
-
+  @observable selectedPortfolioUsdEquivalent;
+  @observable currentPortfolioTotalInvestment;
+  @observable selectedPortfolioTotalDifference;
+  @observable selectedPortfolioTotalProfitLoss;
 
   constructor() {
-    this.portfolios = {};
+    this.portfolios = [];
     this.selectedPortfolio = null;
     this.selectedPortfolioId = null;
     this.currentPortfolioAssets = null;
     this.currentPortfolioSharePrice = 0;
+    this.selectedPortfolioUsdEquivalent = 0;
+    this.currentPortfolioTotalInvestment = 0;
+    this.selectedPortfolioTotalDifference = 0;
+    this.selectedPortfolioTotalProfitLoss = 0;
 
     // eslint-disable-next-line no-unused-expressions
     this.getPortfolios(); // gets portfolios at app init
-  }
-
-  @computed
-  get getLength() {
-    return Object.keys(this.portfolios).length;
   }
 
   @computed
@@ -36,22 +39,85 @@ class PortfolioStore {
     return this.selectedPortfolio;
   }
 
+  @computed
+  get summaryTotalNumberOfShares() {
+    if (this.selectedPortfolio) {
+      return this.selectedPortfolio.shares;
+    }
+
+    return 0;
+  }
+
+  @computed
+  get summarySharePrice() {
+    if (this.selectedPortfolio) {
+      const result = this.currentPortfolioSharePrice.toFixed(2);
+      return result;
+    }
+
+    return 0;
+  }
+
+  @computed
+  get summaryUsdEquivalent() {
+    if (this.selectedPortfolio) {
+      const result = (this.selectedPortfolio.cost * MarketStore.baseCurrencies[3].last).toFixed(2);
+      return result;
+    }
+
+    return 0;
+  }
+
+  @computed
+  get summaryTotalInvestment() {
+    if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
+      let totalAmount = 0;
+      this.selectedPortfolio.transactions.forEach((el) => {
+        if (el.shares > 0) {
+          totalAmount += el.amountInUSD;
+        } else {
+          totalAmount -= el.amountInUSD;
+        }
+      });
+
+      return totalAmount.toFixed(2);
+    }
+
+    return 0;
+  }
+
+  @computed
+  get summaryTotalProfitLoss() {
+    if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
+      const result = (((this.summaryUsdEquivalent - this.summaryTotalInvestment) / this.summaryTotalInvestment) * 100).toFixed(2);
+      return result;
+    }
+
+    return 0;
+  }
+
   @action
   getCurrentPortfolio() {
-    return this.selectedPortfolio;
+    if (this.selectedPortfolio) {
+      console.log(this.selectedPortfolio);
+      return this.selectedPortfolio.shares;
+    }
+
+    return 0;
   }
 
   @action
   selectPortfolio(id) {
+    console.log(id)
     this.selectedPortfolioId = id;
 
-    // eslint-disable-next-line array-callback-return
-    Object.keys(this.portfolios).map((key) => {
+    this.portfolios.forEach((el) => {
       // Returns only selected element
-      if (this.portfolios[key].id === id) {
-        this.selectedPortfolio = { ...this.portfolios[key] };
+      if (el.id === id) {
+        this.selectedPortfolio = { ...el };
       }
     });
+
     requester.Portfolio.getSharePrice({ id })
       .then(action((sharePrice) => {
         this.currentPortfolioSharePrice = sharePrice.data.sharePrice;
@@ -61,13 +127,10 @@ class PortfolioStore {
   @action
   getPortfolios() {
     return requester.Portfolio.getAll()
-      .then(this.onPortfoliosLoaded)
+      .then(action((result) => {
+        this.portfolios = result.data;
+      }))
       .catch(this.onError);
-  }
-
-  @action.bound
-  onPortfoliosLoaded(result) {
-    this.portfolios = { ...result.data };
   }
 
   @action

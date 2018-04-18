@@ -59,7 +59,7 @@ class App extends React.Component {
 
   render() {
     const { classes, PortfolioStore, ...rest } = this.props;
-    const portfoliosArray = Object.keys(PortfolioStore.getAllPortfolios);
+    const portfoliosArray = PortfolioStore.getAllPortfolios;
 
     return (
       <div className={classes.wrapper}>

@@ -1,12 +1,13 @@
 const { bittrexServices } = require('../../integrations/bittrex-services');
 const { krakenServices } = require('../../integrations/kraken-services');
 
+const modelName = 'Account';
+
 const accountController = (repository) => {
-  const addAccountToPortfolio = (req, res) => {
-    const accountData = req.body;
-    repository.account.addAccount(accountData)
+  const createAccount = (req, res) => {
+    const account = req.body;
+    repository.create({ modelName, newObject: account })
       .then((response) => {
-        console.log('\naddAccount response: ', response);
         res.status(200).send(response);
       })
       .catch((error) => {
@@ -15,24 +16,22 @@ const accountController = (repository) => {
   };
 
   const updateAccount = (req, res) => {
-    // const id = req.params.id;
-    const accountData = req.body;
-
-    repository.account.update(accountData)
+    const account = req.body;
+    repository.update({ modelName, updatedRecord: account })
       .then((response) => {
         res.status(200).send(response);
       })
       .catch((error) => {
-        return res.json(error);
+        res.json(error);
       });
   };
 
-  const removeAccountFromPortfolio = (req, res) => {
-    const requestData = req.body;
-    repository.account.removeAccount(requestData)
+  const removeAccount = (req, res) => {
+    const { accountId } = req.body;
+    repository.remove({ modelName, id: accountId })
       .then(result => responseHandler(res, result))
       .catch((error) => {
-        return res.json(error);
+        res.json(error);
       });
   };
 
@@ -42,7 +41,6 @@ const accountController = (repository) => {
     // TODO: switch between apis
     const account = req.body;
     let services = '';
-
     switch (account.apiServiceName) {
       case 'Bittrex':
         services = bittrexServices;
@@ -57,7 +55,7 @@ const accountController = (repository) => {
 
     services().getBalance(account)
       .then((assets) => {
-        return repository.asset.addAssetsFromApi(assets, account);
+        repository.createMany({ modelName: 'Asset', newObjects: assets });
       })
       .then((response) => {
         res.status(200).send(response);
@@ -68,9 +66,9 @@ const accountController = (repository) => {
   };
 
   return {
-    addAccountToPortfolio,
+    createAccount,
     updateAccount,
-    removeAccountFromPortfolio,
+    removeAccount,
     getAccountBalance,
   };
 };

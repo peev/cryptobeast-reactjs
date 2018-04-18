@@ -6,13 +6,13 @@ const attachTo = (app, data) => {
 
   router
     .post('/add', (req, res) => {
-      return assetController.addAssetToPortfolio(req, res);
+      return assetController.createAsset(req, res);
     })
     .put('/update', (req, res) => {
       return assetController.updateAsset(req, res);
     })
     .delete('/delete', (req, res) => {
-      return assetController.removeAssetFromPortfolio(req, res);
+      return assetController.removeAsset(req, res);
     });
 
   app.use('/asset', router);

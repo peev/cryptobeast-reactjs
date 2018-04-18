@@ -1,8 +1,8 @@
 const { Router } = require('express');
 
-const attachTo = (app, data) => {
+const attachTo = (app, repository) => {
   const router = new Router();
-  const portfolioController = require('./portfolio-controller')(data);
+  const portfolioController = require('./portfolio-controller')(repository);
 
   router
     .post('/create', (req, res) => {
@@ -10,6 +10,9 @@ const attachTo = (app, data) => {
     })
     .get('/all', (req, res) => {
       return portfolioController.getAllPortfolios(req, res);
+    })
+    .get('/:id', (req, res) => {
+      return portfolioController.getById(req, res);
     })
     .put('/update', (req, res) => {
       return portfolioController.updatePortfolio(req, res);

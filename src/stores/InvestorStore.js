@@ -445,6 +445,7 @@ class InvestorStore {
         dateOfEntry: this.values.dateOfEntry,
         managementFee: this.values.managementFee,
         purchasedShares: this.values.purchasedShares,
+        portfolioId: id,
       },
       transaction: {
         investorName: this.values.fullName,
@@ -453,6 +454,7 @@ class InvestorStore {
         amountInUSD: this.values.depositUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.values.purchasedShares),
+        portfolioId: id,
       },
     };
     requester.Investor.add(newInvestor)

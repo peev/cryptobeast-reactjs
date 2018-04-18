@@ -97,18 +97,16 @@ class ApiAccountStore {
   @action
   createNewAccount(id) {
     const newAccount = {
-      portfolioId: id,
       apiServiceName: this.values.apiServiceName,
       apiKey: this.values.apiKey,
       apiSecret: this.values.apiSecret,
       isActive: this.values.isActive,
+      portfolioId: id,
     };
-    // console.log('>>>> requester.ApiAccount: ', newAccount);
 
     requester.ApiAccount.addAccount(newAccount)
       .then((result) => {
         // TODO: Something with result
-        console.log('>>>> requester.ApiAccount.addAccount result: ', result);
       })
       .catch(this.onError);
   }

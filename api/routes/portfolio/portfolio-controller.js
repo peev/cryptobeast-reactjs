@@ -1,10 +1,11 @@
 const { responseHandler } = require('../utilities/response-handler');
 
+const modelName = 'Portfolio';
+
 const portfolioController = (repository) => {
   const createPortfolio = (req, res) => {
-    const portfolioData = req.body;
-    console.log(req.body)
-    repository.portfolio.create(portfolioData)
+    const portfolio = req.body;
+    repository.create({ modelName, newObject: portfolio })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -13,8 +14,18 @@ const portfolioController = (repository) => {
       });
   };
 
+  const getById = (req, res) => {
+    repository.findById({ modelName, id: req.params.id })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   const getAllPortfolios = (req, res) => {
-    repository.portfolio.getAll()
+    repository.find({ modelName })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -24,10 +35,8 @@ const portfolioController = (repository) => {
   };
 
   const updatePortfolio = (req, res) => {
-    // const id = req.params.id;
     const portfolioData = req.body;
-
-    repository.portfolio.update(portfolioData)
+    repository.update({ modelName, updatedRecord: portfolioData })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -35,7 +44,6 @@ const portfolioController = (repository) => {
         return res.json(error);
       });
   };
-
 
   const updateAssetBTCEquivalent = (req, res) => {
     repository.portfolio.updateAssetBTCEquivalent(req.body)
@@ -82,10 +90,8 @@ const portfolioController = (repository) => {
   };
 
   const removePortfolio = (req, res) => {
-
-    const id = req.params.id
-
-    repository.portfolio.remove({id})
+    const { id } = req.params;
+    repository.remove({ modelName, id })
       .then(result => responseHandler(res, result))
       .catch((error) => {
         return res.json(error);
@@ -93,6 +99,7 @@ const portfolioController = (repository) => {
   };
 
   return {
+    getById,
     getAllPortfolios,
     createPortfolio,
     updatePortfolio,

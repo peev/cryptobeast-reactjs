@@ -1,23 +1,34 @@
 const { responseHandler } = require('../utilities/response-handler');
 
+const modelName = 'Investor';
+
 const investorController = (repository) => {
-  const addInvestorToPortfolio = (req, res) => {
-    const investorData = req.body;
-    repository.investor.addInvestor(investorData)
-      .then(() => {
-        repository.asset.addNewAsset({
-          currency: investorData.currency,
-          balance: investorData.balance,
+  const assetController = require('../asset/asset-controller')(repository);
+
+  const createInvestor = (req, res) => {
+    const { investor } = req.body;
+    const { transaction } = req.body;
+
+    assetController.createAsset({
+      body:
+        {
+          currency: req.body.currency,
+          balance: req.body.balance,
           origin: 'Manually Added',
-          portfolioId: investorData.portfolioId,
-        })
-          .then((response) => {
-            res.status(200).send(response);
-          })
-          .catch((error) => {
-            return res.json(error);
-          });
+          portfolioId: req.body.portfolioId,
+        },
+    });
+
+    // TODO: Add transaction through repository
+
+    repository.create({ modelName, newObject: investor })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        return res.json(error);
       });
+    // });
   };
 
   const updateInvestor = (req, res) => {
@@ -81,7 +92,7 @@ const investorController = (repository) => {
   };
 
   return {
-    addInvestorToPortfolio,
+    createInvestor,
     updateInvestor,
     depositInvestor,
     withdrawalInvestor,

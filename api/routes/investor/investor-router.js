@@ -6,7 +6,7 @@ const attachTo = (app, data) => {
 
   router
     .post('/add', (req, res) => {
-      return investorController.addInvestorToPortfolio(req, res);
+      return investorController.createInvestor(req, res);
     })
     .put('/deposit/', (req, res) => {
       return investorController.depositInvestor(req, res);

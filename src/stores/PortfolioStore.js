@@ -9,7 +9,10 @@ class PortfolioStore {
   @observable currentPortfolioAssets;
 
   @observable currentPortfolioSharePrice;
-
+  @observable selectedPortfolioUsdEquivalent;
+  @observable currentPortfolioTotalInvestment;
+  @observable selectedPortfolioTotalDifference;
+  @observable selectedPortfolioTotalProfitLoss;
 
   constructor() {
     this.portfolios = [];
@@ -17,6 +20,10 @@ class PortfolioStore {
     this.selectedPortfolioId = null;
     this.currentPortfolioAssets = null;
     this.currentPortfolioSharePrice = 0;
+    this.selectedPortfolioUsdEquivalent = 0;
+    this.currentPortfolioTotalInvestment = 0;
+    this.selectedPortfolioTotalDifference = 0;
+    this.selectedPortfolioTotalProfitLoss = 0;
 
     // eslint-disable-next-line no-unused-expressions
     this.getPortfolios(); // gets portfolios at app init
@@ -45,7 +52,7 @@ class PortfolioStore {
   get summarySharePrice() {
     if (this.selectedPortfolio) {
       const result = this.currentPortfolioSharePrice.toFixed(2);
-      return `$ ${result}`;
+      return result;
     }
 
     return 0;
@@ -55,7 +62,7 @@ class PortfolioStore {
   get summaryUsdEquivalent() {
     if (this.selectedPortfolio) {
       const result = (this.selectedPortfolio.cost * MarketStore.baseCurrencies[3].last).toFixed(2);
-      return `$ ${result}`;
+      return result;
     }
 
     return 0;
@@ -63,9 +70,17 @@ class PortfolioStore {
 
   @computed
   get summaryTotalInvestment() {
-    if (this.selectedPortfolio) {
-      console.log(this.selectedPortfolio);
-      return this.selectedPortfolio.shares;
+    if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
+      let totalAmount = 0;
+      this.selectedPortfolio.transactions.forEach((el) => {
+        if (el.shares > 0) {
+          totalAmount += el.amountInUSD;
+        } else {
+          totalAmount -= el.amountInUSD;
+        }
+      });
+
+      return totalAmount.toFixed(2);
     }
 
     return 0;
@@ -73,9 +88,9 @@ class PortfolioStore {
 
   @computed
   get summaryTotalProfitLoss() {
-    if (this.selectedPortfolio) {
-      console.log(this.selectedPortfolio);
-      return this.selectedPortfolio.shares;
+    if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
+      const result = (((this.summaryUsdEquivalent - this.summaryTotalInvestment) / this.summaryTotalInvestment) * 100).toFixed(2);
+      return result;
     }
 
     return 0;
@@ -93,6 +108,7 @@ class PortfolioStore {
 
   @action
   selectPortfolio(id) {
+    console.log(id)
     this.selectedPortfolioId = id;
 
     this.portfolios.forEach((el) => {

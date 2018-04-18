@@ -58,28 +58,28 @@ class Summary extends React.Component {
             icon={InfoOutline}
             iconColor="gray"
             title="Share price"
-            description={PortfolioStore.summarySharePrice}
+            description={'$' + PortfolioStore.summarySharePrice}
           />
 
           <SummaryCard
             icon={InfoOutline}
             iconColor="gray"
             title="USD equivalent"
-            description={PortfolioStore.summaryUsdEquivalent}
+            description={'$' + PortfolioStore.summaryUsdEquivalent}
           />
 
           <SummaryCard
             icon={InfoOutline}
             iconColor="gray"
             title="Total investment"
-            description={PortfolioStore.summaryTotalInvestment}
+            description={'$' + PortfolioStore.summaryTotalInvestment}
           />
 
           <SummaryCard
             icon={InfoOutline}
             iconColor="gray"
             title="Total profit/loss"
-            description={PortfolioStore.summaryTotalProfitLoss}
+            description={PortfolioStore.summaryTotalProfitLoss > 0 ? '+' + PortfolioStore.summaryTotalProfitLoss + '%' : PortfolioStore.summaryTotalProfitLoss + '%'}
           />
         </Grid>
 

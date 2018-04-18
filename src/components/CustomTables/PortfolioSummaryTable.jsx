@@ -47,17 +47,13 @@ const AllInvestorTable = inject('PortfolioStore')(observer(({ ...props }) => {
   );
 
   let tableBodyContent;
-  console.log(PortfolioStore.selectedPortfolio);
   if (PortfolioStore.selectedPortfolio) {
-    const currentAssets = PortfolioStore.selectedPortfolio.assets;
-    console.log(currentAssets);
+    const currentAssets = PortfolioStore.summaryPortfolioAssets;
 
     tableBodyContent = currentAssets.map((el, key) => {
-      console.log(el, key);
       return (
         <TableRow key={key}>
           {el.map((prop, i) => {
-            console.log(prop, i);
             return (
               <TableCell className={classes.tableCell} key={i}>
                 {prop}
@@ -67,9 +63,7 @@ const AllInvestorTable = inject('PortfolioStore')(observer(({ ...props }) => {
         </TableRow>
       );
     });
-    console.log(currentAssets);
   }
-  console.log(tableBodyContent);
 
   return (
     <div className={classes.tableResponsive} >

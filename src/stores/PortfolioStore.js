@@ -96,6 +96,52 @@ class PortfolioStore {
     return 0;
   }
 
+  @computed
+  get summaryPortfolioAssets() {
+    if (this.selectedPortfolio && this.selectedPortfolio.assets) {
+      const currentAssets = this.selectedPortfolio.assets;
+      const usdValue = MarketStore.baseCurrencies[3].last;
+      const selectedPortfolioSummary = [];
+
+      currentAssets.forEach((el, i) => {
+        const currentRow = [];
+        Object.keys(el).map((prop, ind) => {
+          // console.log(el, el[prop], prop)
+          // Ticker
+          if (prop === 'currency') {
+            currentRow.push(el[prop]);
+          }
+          // Holdings
+          if (prop === 'balance') {
+            currentRow.push(el[prop]);
+          }
+          // Price(BTC)
+          if (ind === 2) {
+            const calcPrice = el.lastBTCEquivalent ? el.lastBTCEquivalent : 0;
+            currentRow.push(calcPrice);
+          }
+          // Price(USD)
+          if (ind === 3) {
+            const calcPrice = el.lastBTCEquivalent ? (el.lastBTCEquivalent * el.balance) : 0;
+            currentRow.push(calcPrice);
+          }
+          // Total Value(USD)
+          if (ind === 4) {
+            console.log(el, el[prop], prop)
+
+            const calcPrice = el.lastBTCEquivalent ? (el.balance * usdValue) : 0;
+            currentRow.push(calcPrice);
+          }
+        });
+        selectedPortfolioSummary.push(currentRow);
+      });
+
+      return selectedPortfolioSummary;
+    }
+
+    return 0;
+  }
+
   @action
   getCurrentPortfolio() {
     if (this.selectedPortfolio) {

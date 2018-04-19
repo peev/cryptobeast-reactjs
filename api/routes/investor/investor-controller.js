@@ -8,7 +8,6 @@ const investorController = (repository) => {
   const createInvestor = (req, res) => {
     const { investor } = req.body;
     const { transaction } = req.body;
-
     assetController.createAsset({
       body:
         {
@@ -18,9 +17,7 @@ const investorController = (repository) => {
           portfolioId: req.body.portfolioId,
         },
     });
-
-    // TODO: Add transaction through repository
-
+    repository.create({ modelName: 'Transaction', newObject: transaction });
     repository.create({ modelName, newObject: investor })
       .then((response) => {
         res.status(200).send(response);
@@ -28,14 +25,13 @@ const investorController = (repository) => {
       .catch((error) => {
         return res.json(error);
       });
-    // });
   };
 
   const updateInvestor = (req, res) => {
     const { id } = req.params;
     const investorData = req.body;
-
-    repository.investor.update(id, investorData)
+    Object.assign(investorData, { id });
+    repository.update({ modelName, updatedRecord: investorData })
       .then((response) => {
         res.status(200).send(response);
       })

@@ -25,7 +25,10 @@ const portfolioController = (repository) => {
   };
 
   const getAllPortfolios = (req, res) => {
-    repository.find({ modelName })
+    repository.find({
+      modelName,
+      options: { include: [{ all: true }] }, // Eager loading
+    })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -45,6 +48,16 @@ const portfolioController = (repository) => {
       });
   };
 
+  const removePortfolio = (req, res) => {
+    const { id } = req.params;
+    repository.remove({ modelName, id })
+      .then(result => responseHandler(res, result))
+      .catch((error) => {
+        return res.json(error);
+      });
+  };
+
+  // TODO: Calculate prices in the front end ==============================
   const updateAssetBTCEquivalent = (req, res) => {
     repository.portfolio.updateAssetBTCEquivalent(req.body)
       .then((response) => {
@@ -89,21 +102,13 @@ const portfolioController = (repository) => {
       });
   };
 
-  const removePortfolio = (req, res) => {
-    const { id } = req.params;
-    repository.remove({ modelName, id })
-      .then(result => responseHandler(res, result))
-      .catch((error) => {
-        return res.json(error);
-      });
-  };
-
   return {
     getById,
     getAllPortfolios,
     createPortfolio,
     updatePortfolio,
     removePortfolio,
+
     updateAssetBTCEquivalent,
     updatePortfolioBTCEquivalent,
     getPortfolioSharePrice,

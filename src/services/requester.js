@@ -53,6 +53,8 @@ const Market = {
     requests.get('/market/syncSummaries'),
   getBaseCurrencies: () =>
     requests.get('/market/baseCurrencies'),
+  getAllTickers: () =>
+    requests.get('/market/allTickers'),
   syncCurrencies: () =>
     requests.get('/market/syncCurrencies'),
   getAllCurrencies: () =>

@@ -6,6 +6,7 @@ class MarketStore {
   @observable marketSummaries;
   @observable baseCurrencies;
   @observable allCurrencies;
+  @observable allTickers;
   @observable baseCurrencyInUSD;
   @observable selectedBaseCurrency;
   @observable selectedАllCurrency;
@@ -17,6 +18,7 @@ class MarketStore {
     this.marketSummaries = [];
     this.baseCurrencies = [];
     this.allCurrencies = [];
+    this.allTickers = [];
     this.selectedBaseCurrency = null;
     this.selectedExchange = '';
     this.selectedCurrency = '';
@@ -36,6 +38,12 @@ class MarketStore {
     if (this.allCurrencies.length === 0) {
       requester.Market.syncCurrencies()
         .then(() => this.getAllCurrencies())
+        .catch(this.onError);
+    }
+
+    if (this.allTickers.length === 0) {
+      requester.Market.getAllTickers()
+        .then(this.getAllTickers)
         .catch(this.onError);
     }
   }
@@ -79,6 +87,11 @@ class MarketStore {
         });
       }))
       .catch(this.onError);
+  }
+
+  @action.bound
+  getAllTickers(result) {
+    this.allTickers = result.data;
   }
 
   @action

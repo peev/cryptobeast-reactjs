@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid, toolti } from 'material-ui';
 import summaryStyle from 'variables/styles/summaryStyle';
 
 import { InfoOutline } from 'material-ui-icons';
@@ -9,6 +9,7 @@ import { inject, observer } from 'mobx-react';
 import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 import SummaryCard from '../../components/Cards/SummaryCard';
 import PortfolioSummaryTable from '../../components/CustomTables/PortfolioSummaryTable';
+import PortfolioSummaryTable2 from '../../components/CustomTables/PortfolioSummaryTable2';
 
 const styles = () => ({
   containerSummary: {
@@ -107,6 +108,8 @@ class Summary extends React.Component {
                 '7D Change',
               ]}
             />
+
+            {/* <PortfolioSummaryTable2 /> */}
           </Grid>
         </Grid>
       </Grid>

@@ -97,16 +97,27 @@ class PortfolioStore {
   }
 
   @computed
+  get currentSelectedPortfolioCost() {
+    // FIXME: Portfolio cost is calculated here,
+    // because the value from database is incorrect
+    if (this.selectedPortfolio && this.selectedPortfolio.assets.length > 0) {
+      return this.selectedPortfolio.assets.reduce((array, el) => array + el.lastBTCEquivalent, 0);
+    }
+
+    return 0;
+  }
+
+  @computed
   get summaryPortfolioAssets() {
     if (this.selectedPortfolio && this.selectedPortfolio.assets) {
       const currentAssets = this.selectedPortfolio.assets;
-      const usdValue = MarketStore.baseCurrencies[3].last;
+      const valueOfUSD = MarketStore.baseCurrencies[3].last;
       const selectedPortfolioSummary = [];
 
       currentAssets.forEach((el, i) => {
         const currentRow = [];
         Object.keys(el).map((prop, ind) => {
-          // console.log(el, el[prop], prop)
+          const assetBTCEquiv = el.lastBTCEquivalent ? el.lastBTCEquivalent : 0;
           // Ticker
           if (prop === 'currency') {
             currentRow.push(el[prop]);
@@ -117,22 +128,45 @@ class PortfolioStore {
           }
           // Price(BTC)
           if (ind === 2) {
-            const calcPrice = el.lastBTCEquivalent ? el.lastBTCEquivalent : 0;
-            currentRow.push(calcPrice);
+            const calcPriceBTC = Math.round(assetBTCEquiv * (10 ** 12)) / (10 ** 12);
+            currentRow.push(calcPriceBTC);
           }
           // Price(USD)
           if (ind === 3) {
-            const calcPrice = el.lastBTCEquivalent ? (el.lastBTCEquivalent * el.balance) : 0;
-            currentRow.push(calcPrice);
+            let calculatedUSDPrice;
+            // for BTC, value is already
+            if (currentRow[0] === 'BTC') {
+              calculatedUSDPrice = Math.round(assetBTCEquiv * (10 ** 12)) / (10 ** 12);
+            } else {
+              calculatedUSDPrice = (assetBTCEquiv * valueOfUSD) / el.balance;
+            }
+
+            const roundedCalcPriceUSD = Math.round(calculatedUSDPrice * (10 ** 12)) / (10 ** 12);
+            currentRow.push(roundedCalcPriceUSD);
           }
           // Total Value(USD)
           if (ind === 4) {
-            console.log(el, el[prop], prop)
-
-            const calcPrice = el.lastBTCEquivalent ? (el.balance * usdValue) : 0;
-            currentRow.push(calcPrice);
+            const calcPriceUSD = assetBTCEquiv * valueOfUSD;
+            const roundedCalcPriceUSD = Math.round(calcPriceUSD * (10 ** 12)) / (10 ** 12);
+            currentRow.push(roundedCalcPriceUSD);
+          }
+          // Asset Weight
+          if (ind === 5) {
+            const percentOfItem = ((assetBTCEquiv / this.currentSelectedPortfolioCost) * 100).toFixed(0);
+            currentRow.push(percentOfItem);
+          }
+          // 24H Change
+          if (ind === 6) {
+            // FIXME: add real value
+            currentRow.push(4.92 + i);
+          }
+          // 7D Change
+          if (ind === 7) {
+            // FIXME: add real value
+            currentRow.push(12.54 + i);
           }
         });
+
         selectedPortfolioSummary.push(currentRow);
       });
 
@@ -145,7 +179,6 @@ class PortfolioStore {
   @action
   getCurrentPortfolio() {
     if (this.selectedPortfolio) {
-      console.log(this.selectedPortfolio);
       return this.selectedPortfolio.shares;
     }
 
@@ -154,7 +187,6 @@ class PortfolioStore {
 
   @action
   selectPortfolio(id) {
-    console.log(id)
     this.selectedPortfolioId = id;
 
     this.portfolios.forEach((el) => {
@@ -200,7 +232,6 @@ class PortfolioStore {
 
   @action
   removePortfolio(id) {
-    console.log(id);
     requester.Portfolio.delete(id)
       .then(() => {
         this.getPortfolios();

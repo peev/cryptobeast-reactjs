@@ -4,10 +4,15 @@ const path = require('path');
 
 
 const init = () => {
-  const sequelize = new Sequelize('CryptoBeast', 'postgres', 'crypto', {
+  const firstconnection = new Sequelize('postgres', 'postgres', 'crypto', {
     dialect: 'postgres',
     //storage: path.join(__dirname, '..', 'CryptoBeast.db'),
   });
+  firstconnection.query(`CREATE DATABASE IF NOT EXISTS cryptobeast WITH OWNER = postgres`);
+
+  const sequelize = new Sequelize('cryptobeast', 'postgres', 'crypto', {
+    dialect: 'postgres',
+  })
 
   const db = {};
 

@@ -25,11 +25,6 @@ const styles = () => ({
     paddingRight: '24px',
     borderBottom: 'none',
   },
-  tableCellFlex: {
-    display: 'flex',
-    paddingTop: '23px',
-    alignItems: 'center',
-  },
   progressBar: {
     width: '100px',
     height: '25px',
@@ -52,11 +47,22 @@ const styles = () => ({
   },
   upArrow: {
     paddingTop: '7px',
-    fill: '#3ec39d',
+    fill: '#0eff00',
   },
   downArrow: {
     paddingTop: '7px',
     fill: '#ca3f58',
+  },
+  change: {
+    margin: '0',
+    display: 'inline-block',
+    verticalAlign: 'text-bottom',
+  },
+  changeNoIcon: {
+    margin: '0',
+    display: 'inline-block',
+    verticalAlign: 'text-bottom',
+    paddingLeft: '25px',
   },
 });
 
@@ -79,11 +85,12 @@ const PortfolioSummaryTable = inject('PortfolioStore')(observer(({ ...props }) =
       </TableRow>
     </TableHead>
   );
+  const currentDisplayAssets = (PortfolioStore.selectedPortfolio &&
+    PortfolioStore.summaryPortfolioAssets !== 0) ?
+    PortfolioStore.summaryPortfolioAssets :
+    [[' ', 0, 0, 0, 0, 0, 0, 0]];
 
-  const currentAssets = PortfolioStore.selectedPortfolio ? PortfolioStore.summaryPortfolioAssets : [[' ', 0, 0, 0, 0, 0, 0, 0]];
-  console.log(currentAssets);
-
-  const tableBodyContent = currentAssets.map((el, key) => {
+  const tableBodyContent = currentDisplayAssets.map((el, key) => {
     return (
       <TableRow key={key}>
         {el.map((prop, i) => {
@@ -96,24 +103,22 @@ const PortfolioSummaryTable = inject('PortfolioStore')(observer(({ ...props }) =
               </TableCell>
             );
           }
-          if ((i === 6 || i === 7) && parseFloat(prop) !== 0) {
-            if (parseFloat(prop) > 0) {
+          if ((i === 6 || i === 7) && parseFloat(prop) !== 0 && prop !== undefined) {
+            if (prop === 'n/a') {
               return (
-                <TableCell className={`${classes.tableCell} ${classes.tableCellFlex}`} key={i} >
-                  <span>
-                    <UpArrowIcon className={classes.upArrow} />
-                  </span>
-                  <p>{prop}</p>
+                <TableCell className={classes.tableCell} key={i} >
+                  <p className={classes.changeNoIcon}>{prop}</p>
                 </TableCell>
               );
             }
 
             return (
-              <TableCell className={`${classes.tableCell} ${classes.tableCellFlex}`} key={i}>
-                <span>
-                  <DownArrowIcon className={classes.downArrow} />
-                </span>
-                <p>{prop}</p>
+              <TableCell className={classes.tableCell} key={i} >
+                {/* sets the arrow based on the passed value */}
+                {parseFloat(prop) > 0 ?
+                  <UpArrowIcon className={classes.upArrow} /> :
+                  <DownArrowIcon className={classes.downArrow} />}
+                <p className={classes.change}>{prop}</p>
               </TableCell>
             );
           }

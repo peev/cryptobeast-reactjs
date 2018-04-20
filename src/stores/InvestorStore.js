@@ -547,8 +547,7 @@ class InvestorStore {
 
   @action
   getPortfolio() {
-    const currentSelectedPortfolio = PortfolioStore.getCurrentPortfolio();
-    console.log(currentSelectedPortfolio);
+    const currentSelectedPortfolio = PortfolioStore.selectedPortfolio;
 
     if (currentSelectedPortfolio) {
       this.selectedPortfolioId = currentSelectedPortfolio.id;
@@ -658,7 +657,6 @@ class InvestorStore {
 
     this.selectedBaseCurrency = null;
     this.areFieldsEmpty = true;
-    console.log(this.values);
   }
 
   @action
@@ -667,7 +665,6 @@ class InvestorStore {
     this.editedValues.email = '';
     this.editedValues.telephone = '';
     this.editedValues.managementFee = '';
-    console.log(this.editedValues);
   }
 
   @action.bound
@@ -676,7 +673,6 @@ class InvestorStore {
     this.newDepositValues.transactionDate = '';
     this.newDepositValues.sharePriceAtEntryDate = '';
     this.newDepositValues.purchasedShares = '';
-    console.log(this.newDepositValues);
   }
 
   @action.bound
@@ -687,12 +683,7 @@ class InvestorStore {
     this.withdrawalValues.inUSD = '';
     this.withdrawalValues.purchasedShares = 0;
     this.withdrawalValues.managementFee = '';
-    console.log(this.withdrawalValues);
   }
-
-  @action.bound
-  // eslint-disable-next-line class-methods-use-this
-  onGetSummaries() { }
 
   @action.bound
   // eslint-disable-next-line class-methods-use-this

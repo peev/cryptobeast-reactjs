@@ -48,7 +48,7 @@ class SelectInvestor extends React.Component {
 
   render() {
     const { classes, InvestorStore } = this.props;
-    let investorsToShow = [];
+    const investorsToShow = [];
 
     if (InvestorStore.getAllCurrentInvestors) {
       const investors = InvestorStore.getAllCurrentInvestors;

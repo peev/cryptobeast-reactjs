@@ -22,7 +22,7 @@ class Settings extends Component {
   };
 
   getMarketSummaries = () => {
-    this.props.MarketStore.getMarketSummaries();
+    this.props.MarketStore.getSyncedSummaries();
     this.props.MarketStore.getBaseCurrencies();
   };
 

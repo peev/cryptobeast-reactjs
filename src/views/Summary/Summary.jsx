@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Grid, toolti } from 'material-ui';
+import { withStyles, Grid } from 'material-ui';
 import summaryStyle from 'variables/styles/summaryStyle';
 
 import { InfoOutline } from 'material-ui-icons';
@@ -53,14 +53,18 @@ class Summary extends React.Component {
             icon={InfoOutline}
             iconColor="gray"
             title="Total number of shares"
-            description={PortfolioStore.summaryTotalNumberOfShares}
+            description={PortfolioStore.selectedPortfolio ?
+              PortfolioStore.selectedPortfolio.shares :
+              0}
           />
 
           <SummaryCard
             icon={InfoOutline}
             iconColor="gray"
             title="Share price"
-            description={'$' + PortfolioStore.summarySharePrice}
+            description={PortfolioStore.selectedPortfolio ?
+              '$' + PortfolioStore.currentPortfolioSharePrice.toFixed(2) :
+              '$' + 0}
           />
 
           <SummaryCard
@@ -81,7 +85,9 @@ class Summary extends React.Component {
             icon={InfoOutline}
             iconColor="gray"
             title="Total profit/loss"
-            description={PortfolioStore.summaryTotalProfitLoss > 0 ? '+' + PortfolioStore.summaryTotalProfitLoss + '%' : PortfolioStore.summaryTotalProfitLoss + '%'}
+            description={PortfolioStore.summaryTotalProfitLoss > 0 ?
+              '+' + PortfolioStore.summaryTotalProfitLoss + '%' :
+              PortfolioStore.summaryTotalProfitLoss + '%'}
           />
         </Grid>
 
@@ -115,7 +121,7 @@ class Summary extends React.Component {
       </Grid>
     )
 
-    const portfoliosArray = PortfolioStore.getAllPortfolios;
+    const portfoliosArray = PortfolioStore.portfolios;
 
     return (
       <Grid container>

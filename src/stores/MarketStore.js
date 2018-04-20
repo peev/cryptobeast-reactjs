@@ -15,7 +15,7 @@ class MarketStore {
   @observable assetInputValue;
 
   constructor() {
-    this.marketSummaries = [];
+    this.marketSummaries = {};
     this.baseCurrencies = [];
     this.allCurrencies = [];
     this.allTickers = [];
@@ -27,33 +27,26 @@ class MarketStore {
     // Setups the database. This request gives the back-end what
     // currencies to get from internet, writes them to database.
     // After that, fetches information from  database.
-    if (this.baseCurrencies.length === 0) {
-      requester.Market.getBaseTickers({
-        currencies: 'XXBTZUSD,XXBTZEUR,XXBTZJPY,XETHXXBT',
-      })
-        .then(() => this.getBaseCurrencies())
-        .catch(this.onError);
-    }
+    requester.Market.getBaseTickers({
+      currencies: 'XXBTZUSD,XXBTZEUR,XXBTZJPY,XETHXXBT',
+    })
+      .then(() => this.getBaseCurrencies())
+      .catch(this.onError);
 
-    if (this.allCurrencies.length === 0) {
-      requester.Market.syncCurrencies()
-        .then(() => this.getAllCurrencies())
-        .catch(this.onError);
-    }
+    // gets all currencies(name representation) from api and sync them into database
+    // and then calls them back
+    requester.Market.syncCurrencies()
+      .then(() => this.getAllCurrencies())
+      .catch(this.onError);
 
-    if (this.allTickers.length === 0) {
-      requester.Market.getAllTickers()
-        .then(this.getAllTickers)
-        .catch(this.onError);
-    }
-  }
+    // gets all the tickers(name pairs, equivalent) saved in database
+    requester.Market.getAllTickers()
+      .then(action(result => this.allTickers = result.data))
+      .catch(this.onError);
 
-  @action
-  getMarketSummaries() {
+    // get the summary to the market for the past 24h
     requester.Market.getSummaries()
-      .then((response) => {
-        this.marketSummaries = response.data;
-      })
+      .then(this.convertMarketSummaries)
       .catch(this.onError);
   }
 
@@ -89,9 +82,19 @@ class MarketStore {
       .catch(this.onError);
   }
 
+  @action
+  getSyncedSummaries() {
+    requester.Market.getSyncedSummaries()
+      .then(this.convertMarketSummaries)
+      .catch(this.onError);
+  }
+
   @action.bound
-  getAllTickers(result) {
-    this.allTickers = result.data;
+  convertMarketSummaries(response) {
+    const result = {};
+    // eslint-disable-next-line no-return-assign
+    response.data.forEach(el => result[el.MarketName] = el);
+    this.marketSummaries = result;
   }
 
   @action
@@ -149,7 +152,7 @@ class MarketStore {
     };
 
     requester.Asset.add(newBasicAsset)
-      .then(action((result) => {
+      .then(action(() => {
         // TODO: Something with result
         this.resetAsset();
       }));

@@ -7,61 +7,24 @@ class PortfolioStore {
   @observable selectedPortfolio;
   @observable selectedPortfolioId;
   @observable currentPortfolioAssets;
-
   @observable currentPortfolioSharePrice;
-  @observable selectedPortfolioUsdEquivalent;
-  @observable currentPortfolioTotalInvestment;
-  @observable selectedPortfolioTotalDifference;
-  @observable selectedPortfolioTotalProfitLoss;
 
   constructor() {
     this.portfolios = [];
     this.selectedPortfolio = null;
     this.selectedPortfolioId = null;
-    this.currentPortfolioAssets = null;
+    this.currentPortfolioAssets = [];
     this.currentPortfolioSharePrice = 0;
-    this.selectedPortfolioUsdEquivalent = 0;
-    this.currentPortfolioTotalInvestment = 0;
-    this.selectedPortfolioTotalDifference = 0;
-    this.selectedPortfolioTotalProfitLoss = 0;
+
 
     // eslint-disable-next-line no-unused-expressions
     this.getPortfolios(); // gets portfolios at app init
   }
 
   @computed
-  get getAllPortfolios() {
-    return this.portfolios;
-  }
-
-  @computed
-  get currentPortfolio() {
-    return this.selectedPortfolio;
-  }
-
-  @computed
-  get summaryTotalNumberOfShares() {
-    if (this.selectedPortfolio) {
-      return this.selectedPortfolio.shares;
-    }
-
-    return 0;
-  }
-
-  @computed
-  get summarySharePrice() {
-    if (this.selectedPortfolio) {
-      const result = this.currentPortfolioSharePrice.toFixed(2);
-      return result;
-    }
-
-    return 0;
-  }
-
-  @computed
   get summaryUsdEquivalent() {
-    if (this.selectedPortfolio) {
-      const result = (this.selectedPortfolio.cost * MarketStore.baseCurrencies[3].last).toFixed(2);
+    if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
+      const result = (this.selectedPortfolio.cost * MarketStore.baseCurrencies[3].last).toFixed(2); // NOTE: this if USD
       return result;
     }
 
@@ -100,8 +63,8 @@ class PortfolioStore {
   get currentSelectedPortfolioCost() {
     // FIXME: Portfolio cost is calculated here,
     // because the value from database is incorrect
-    if (this.selectedPortfolio && this.selectedPortfolio.assets.length > 0) {
-      return this.selectedPortfolio.assets.reduce((array, el) => array + el.lastBTCEquivalent, 0);
+    if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0) {
+      return this.currentPortfolioAssets.reduce((array, el) => array + el.lastBTCEquivalent, 0);
     }
 
     return 0;
@@ -109,11 +72,18 @@ class PortfolioStore {
 
   @computed
   get summaryPortfolioAssets() {
-    if (this.selectedPortfolio && this.selectedPortfolio.assets) {
-      const currentAssets = this.selectedPortfolio.assets;
-      const valueOfUSD = MarketStore.baseCurrencies[3].last;
+    // NOTE: all the conditions needs to fulfilled in order to create
+    // portfolio asset summary
+    if (this.selectedPortfolio &&
+      this.currentPortfolioAssets.length > 0 &&
+      MarketStore.baseCurrencies.length > 0 &&
+      MarketStore.marketSummaries.hasOwnProperty("BTC-ETH")) {
+
+      const currentAssets = this.currentPortfolioAssets;
+      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       const selectedPortfolioSummary = [];
 
+      // Creates the needed array, that will be shown in the view
       currentAssets.forEach((el, i) => {
         const currentRow = [];
         Object.keys(el).map((prop, ind) => {
@@ -152,13 +122,38 @@ class PortfolioStore {
           }
           // Asset Weight
           if (ind === 5) {
-            const percentOfItem = ((assetBTCEquiv / this.currentSelectedPortfolioCost) * 100).toFixed(0);
+            const ifPortfolioCost = this.currentSelectedPortfolioCost !== 0 ? this.currentSelectedPortfolioCost : 1;
+            const percentOfItem = ((assetBTCEquiv / ifPortfolioCost) * 100).toFixed(0);
             currentRow.push(percentOfItem);
           }
           // 24H Change
           if (ind === 6) {
+            let lastCost;
+            let yesterdayCost;
+            let changeFromYesterday;
+            switch (currentRow[0]) {
+              case 'USD':
+                changeFromYesterday = 'n/a';
+                break;
+              case 'EUR':
+                changeFromYesterday = 'n/a';
+                break;
+              case 'JPY':
+                changeFromYesterday = 'n/a';
+                break;
+              case 'BTC':
+                lastCost = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].Last;
+                yesterdayCost = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].PrevDay;
+                changeFromYesterday = (((lastCost - yesterdayCost) / yesterdayCost) * 100).toFixed(2);
+                break;
+              default:
+                lastCost = MarketStore.marketSummaries[`BTC-${currentRow[0]}`].Last;
+                yesterdayCost = MarketStore.marketSummaries[`BTC-${currentRow[0]}`].PrevDay;
+                changeFromYesterday = (((lastCost - yesterdayCost) / yesterdayCost) * 100).toFixed(2);
+                break;
+            }
             // FIXME: add real value
-            currentRow.push(4.92 + i);
+            currentRow.push(changeFromYesterday);
           }
           // 7D Change
           if (ind === 7) {
@@ -177,15 +172,6 @@ class PortfolioStore {
   }
 
   @action
-  getCurrentPortfolio() {
-    if (this.selectedPortfolio) {
-      return this.selectedPortfolio.shares;
-    }
-
-    return 0;
-  }
-
-  @action
   selectPortfolio(id) {
     this.selectedPortfolioId = id;
 
@@ -193,6 +179,7 @@ class PortfolioStore {
       // Returns only selected element
       if (el.id === id) {
         this.selectedPortfolio = { ...el };
+        this.currentPortfolioAssets = el.assets;
       }
     });
 
@@ -215,7 +202,6 @@ class PortfolioStore {
   createPortfolio(portfolioName) {
     requester.Portfolio.create(portfolioName)
       .then(() => {
-        // eslint-disable-next-line no-unused-expressions
         this.getPortfolios(); // gets new portfolios
       })
       .catch(this.onError);
@@ -238,11 +224,6 @@ class PortfolioStore {
       })
       .catch(this.onError);
   }
-  // @action.bound
-  // removePortfolio(selectedPortfolio) {
-  //   this.portfolios = this.portfolios.filter(i => i !== selectedPortfolio);
-  //   this.portfolios.remove(selectedPortfolio);
-  // }
 
   @action.bound
   // eslint-disable-next-line class-methods-use-this

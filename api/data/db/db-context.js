@@ -4,9 +4,9 @@ const path = require('path');
 
 
 const init = () => {
-  const sequelize = new Sequelize('CryptoBeast', null, null, {
-    dialect: 'sqlite',
-    storage: path.join(__dirname, '..', 'CryptoBeast.db'),
+  const sequelize = new Sequelize('CryptoBeast', 'postgres', 'crypto', {
+    dialect: 'postgres',
+    //storage: path.join(__dirname, '..', 'CryptoBeast.db'),
   });
 
   const db = {};

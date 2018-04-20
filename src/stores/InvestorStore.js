@@ -444,7 +444,7 @@ class InvestorStore {
         telephone: this.values.telephone,
         dateOfEntry: this.values.dateOfEntry,
         managementFee: this.values.managementFee,
-        purchasedShares: this.values.purchasedShares,
+        // purchasedShares: this.values.purchasedShares, // Get shares after transaction
         portfolioId: id,
       },
       transaction: {

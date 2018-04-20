@@ -4,12 +4,12 @@ const path = require('path');
 
 
 const init = () => {
+  const db = {};
+
   const sequelize = new Sequelize('CryptoBeast', null, null, {
     dialect: 'sqlite',
     storage: path.join(__dirname, '..', 'CryptoBeast.db'),
   });
-
-  const db = {};
 
   // TODO: Add new models here
   db.Portfolio = sequelize.import(path.join(__dirname, '/models/portfolio.js'));

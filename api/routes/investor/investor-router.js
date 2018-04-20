@@ -18,7 +18,7 @@ const attachTo = (app, data) => {
       return investorController.updateInvestor(req, res);
     })
     .delete('/delete', (req, res) => {
-      return investorController.removeInvestorFromPortfolio(req, res);
+      return investorController.removeInvestor(req, res);
     });
 
   app.use('/investor', router);

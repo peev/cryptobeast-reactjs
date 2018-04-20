@@ -480,6 +480,8 @@ class InvestorStore {
         amountInUSD: this.values.depositUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newDepositValues.purchasedShares),
+        portfolioId: PortfolioStore.selectedPortfolioId,
+        investorId: id,
       },
     };
 

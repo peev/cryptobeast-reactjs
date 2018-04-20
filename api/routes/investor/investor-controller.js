@@ -40,9 +40,46 @@ const investorController = (repository) => {
       });
   };
 
+  const transactionPromise = (transaction) => {
+    return new Promise((resolve, reject) => {
+      const createTransactioPromise = repository.create({ modelName: 'Transaction', newObject: transaction });
+      const findInvestorPromise = repository.find({
+        modelName: 'Investor',
+        options: { where: { id: transaction.investorId } },
+      });
+      const findPortfolioPromise = repository.find({
+        modelName: 'Portfolio',
+        options: { where: { id: transaction.portfolioId } },
+      });
+
+      Promise.all([createTransactioPromise, findInvestorPromise, findPortfolioPromise])
+        .then(([newTransaction, investor, portfolio]) => {
+          const updatedInvestor = investor[0];
+          updatedInvestor.purchasedShares += transaction.shares;
+
+          const updatedPortfolio = portfolio[0];
+          updatedPortfolio.shares += transaction.shares;
+
+          // investor.purchasedShares += transaction.shares;
+          // portfolio.shares += transaction.shares;
+          repository.update({ modelName: 'Investor', updatedRecord: updatedInvestor });
+
+          resolve(repository.update({ modelName: 'Portfolio', updatedRecord: updatedPortfolio }));
+        });
+    });
+  };
+
   const depositInvestor = (req, res) => {
-    const depositData = req.body;
-    repository.investor.moveShares(depositData, 'deposit')
+    // const depositData = req.body;
+
+    const { transaction } = req.body;
+    const transactionResult = transactionPromise(transaction);
+    transactionResult.then(r => console.log('>>> from transactionResult: ', r))
+      // console.log('>>> transactionResult: ', transactionResult);
+
+
+
+      // repository.investor.moveShares(depositData, 'deposit')
       .then(() => {
         repository.asset.addNewAsset({
           currency: depositData.currency,
@@ -78,9 +115,9 @@ const investorController = (repository) => {
       });
   };
 
-  const removeInvestorFromPortfolio = (req, res) => {
-    const requestData = req.body;
-    repository.investor.removeInvestor(requestData)
+  const removeInvestor = (req, res) => {
+    const { id } = req.body;
+    repository.remove({ modelName, id })
       .then(result => responseHandler(res, result))
       .catch((error) => {
         return res.json(error);
@@ -92,7 +129,7 @@ const investorController = (repository) => {
     updateInvestor,
     depositInvestor,
     withdrawalInvestor,
-    removeInvestorFromPortfolio,
+    removeInvestor,
   };
 };
 

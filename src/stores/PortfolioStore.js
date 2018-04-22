@@ -7,6 +7,7 @@ class PortfolioStore {
   @observable selectedPortfolio;
   @observable selectedPortfolioId;
   @observable currentPortfolioAssets;
+  @observable currentPortfolioInvestors;
   @observable currentPortfolioSharePrice;
 
   constructor() {
@@ -14,18 +15,21 @@ class PortfolioStore {
     this.selectedPortfolio = null;
     this.selectedPortfolioId = null;
     this.currentPortfolioAssets = [];
+    this.currentPortfolioInvestors = [];
     this.currentPortfolioSharePrice = 0;
 
 
     // eslint-disable-next-line no-unused-expressions
     this.getPortfolios(); // gets portfolios at app init
   }
-
+  // ======= Computed =======
+  // #region Computed
+  // #region Summary Page
   @computed
   get summaryUsdEquivalent() {
     if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
-      const result = (this.selectedPortfolio.cost * MarketStore.baseCurrencies[3].last).toFixed(2); // NOTE: this if USD
-      return result;
+      const result = this.selectedPortfolio.cost * MarketStore.baseCurrencies[3].last; // NOTE: this if USD
+      return result.toFixed(2);
     }
 
     return 0;
@@ -52,19 +56,8 @@ class PortfolioStore {
   @computed
   get summaryTotalProfitLoss() {
     if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
-      const result = (((this.summaryUsdEquivalent - this.summaryTotalInvestment) / this.summaryTotalInvestment) * 100).toFixed(2);
-      return result;
-    }
-
-    return 0;
-  }
-
-  @computed
-  get currentSelectedPortfolioCost() {
-    // FIXME: Portfolio cost is calculated here,
-    // because the value from database is incorrect
-    if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0) {
-      return this.currentPortfolioAssets.reduce((array, el) => array + el.lastBTCEquivalent, 0);
+      const result = ((this.summaryUsdEquivalent - this.summaryTotalInvestment) / this.summaryTotalInvestment) * 100;
+      return result.toFixed(2);
     }
 
     return 0;
@@ -72,13 +65,12 @@ class PortfolioStore {
 
   @computed
   get summaryPortfolioAssets() {
-    // NOTE: all the conditions needs to fulfilled in order to create
+    // NOTE: all the conditions needs to be fulfilled in order to create
     // portfolio asset summary
     if (this.selectedPortfolio &&
       this.currentPortfolioAssets.length > 0 &&
       MarketStore.baseCurrencies.length > 0 &&
-      MarketStore.marketSummaries.hasOwnProperty("BTC-ETH")) {
-
+      MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
       const currentAssets = this.currentPortfolioAssets;
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       const selectedPortfolioSummary = [];
@@ -87,21 +79,37 @@ class PortfolioStore {
       currentAssets.forEach((el, i) => {
         const currentRow = [];
         Object.keys(el).map((prop, ind) => {
-          const assetBTCEquiv = el.lastBTCEquivalent ? el.lastBTCEquivalent : 0;
-          // Ticker
+          // 1. Ticker
           if (prop === 'currency') {
             currentRow.push(el[prop]);
           }
-          // Holdings
+          // 2. Holdings
           if (prop === 'balance') {
             currentRow.push(el[prop]);
           }
-          // Price(BTC)
+          // ------------------------------
+          // Depends on array's 0 index
+          let assetBTCEquiv;
+          if (currentRow[0] === 'BTC' && ind > 1) {
+            assetBTCEquiv = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].Last;
+          } else {
+            assetBTCEquiv = MarketStore.marketSummaries[`BTC-${currentRow[0]}`] ?
+              MarketStore.marketSummaries[`BTC-${currentRow[0]}`].Last :
+              0;
+          }
+          // ------------------------------
+          // 3. Price(BTC)
           if (ind === 2) {
-            const calcPriceBTC = Math.round(assetBTCEquiv * (10 ** 12)) / (10 ** 12);
+            let calcPriceBTC;
+            if (currentRow[0] === 'BTC') {
+              calcPriceBTC = el.balance;
+            } else {
+              calcPriceBTC = Math.round(assetBTCEquiv * (10 ** 12)) / (10 ** 12);
+            }
+
             currentRow.push(calcPriceBTC);
           }
-          // Price(USD)
+          // 4. Price(USD)
           if (ind === 3) {
             let calculatedUSDPrice;
             // for BTC, value is already
@@ -114,21 +122,27 @@ class PortfolioStore {
             const roundedCalcPriceUSD = Math.round(calculatedUSDPrice * (10 ** 12)) / (10 ** 12);
             currentRow.push(roundedCalcPriceUSD);
           }
-          // Total Value(USD)
+          // 5. Total Value(USD)
           if (ind === 4) {
-            const calcPriceUSD = assetBTCEquiv * valueOfUSD;
+            // console.log(assetBTCEquiv, valueOfUSD);
+            let calcPriceUSD;
+            if (currentRow[0] === 'BTC') {
+              calcPriceUSD = assetBTCEquiv * el.balance;
+            } else {
+              calcPriceUSD = assetBTCEquiv * valueOfUSD;
+            }
+
             const roundedCalcPriceUSD = Math.round(calcPriceUSD * (10 ** 12)) / (10 ** 12);
             currentRow.push(roundedCalcPriceUSD);
           }
-          // Asset Weight
+          // 6. Asset Weight
           if (ind === 5) {
             const ifPortfolioCost = this.currentSelectedPortfolioCost !== 0 ? this.currentSelectedPortfolioCost : 1;
-            const percentOfItem = ((assetBTCEquiv / ifPortfolioCost) * 100).toFixed(0);
+            const percentOfItem = ((currentRow[4] / ifPortfolioCost) * 100).toFixed(0);
             currentRow.push(percentOfItem);
           }
-          // 24H Change
+          // 7. 24H Change
           if (ind === 6) {
-            let lastCost;
             let yesterdayCost;
             let changeFromYesterday;
             switch (currentRow[0]) {
@@ -142,20 +156,23 @@ class PortfolioStore {
                 changeFromYesterday = 'n/a';
                 break;
               case 'BTC':
-                lastCost = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].Last;
                 yesterdayCost = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].PrevDay;
-                changeFromYesterday = (((lastCost - yesterdayCost) / yesterdayCost) * 100).toFixed(2);
+                changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100).toFixed(2);
                 break;
               default:
-                lastCost = MarketStore.marketSummaries[`BTC-${currentRow[0]}`].Last;
-                yesterdayCost = MarketStore.marketSummaries[`BTC-${currentRow[0]}`].PrevDay;
-                changeFromYesterday = (((lastCost - yesterdayCost) / yesterdayCost) * 100).toFixed(2);
-                break;
+                if (MarketStore.marketSummaries[`BTC-${currentRow[0]}`]) {
+                  yesterdayCost = MarketStore.marketSummaries[`BTC-${currentRow[0]}`].PrevDay;
+                  changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100).toFixed(2);
+                  break;
+                } else {
+                  changeFromYesterday = 'n/a';
+                  break;
+                }
             }
-            // FIXME: add real value
+
             currentRow.push(changeFromYesterday);
           }
-          // 7D Change
+          // 8. 7D Change
           if (ind === 7) {
             // FIXME: add real value
             currentRow.push(12.54 + i);
@@ -168,18 +185,77 @@ class PortfolioStore {
       return selectedPortfolioSummary;
     }
 
+    return [];
+  }
+  // #endregion
+
+  @computed
+  get currentSelectedPortfolioCost() {
+    // FIXME: Portfolio cost is calculated here,
+    // because the value from database is incorrect
+    if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0) {
+      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
+      return this.currentPortfolioAssets.reduce((array, el) => {
+        let assetBTCValue;
+        if (el.currency === 'BTC') {
+          assetBTCValue = MarketStore.marketSummaries[`USDT-${el.currency}`].Last * el.balance;
+        } else {
+          const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${el.currency}`] ?
+            MarketStore.marketSummaries[`BTC-${el.currency}`].Last :
+            0;
+
+          assetBTCValue = assetBTCEquiv * valueOfUSD;
+        }
+
+        return array + assetBTCValue;
+      }, 0);
+    }
+
     return 0;
   }
+  // #endregion
+
+  // ======= Action =======
+  // Portfolio -> Create, Update, Delete
+  // #region Portfolio
+  @action
+  createPortfolio(portfolioName) {
+    requester.Portfolio.create(portfolioName)
+      .then(() => {
+        this.getPortfolios(); // gets new portfolios
+      })
+      .catch(err => console.log(err));
+  }
+
+  @action
+  updatePortfolio(portfolioName, id) {
+    requester.Portfolio.update(portfolioName, id)
+      .then(() => {
+        this.getPortfolios();
+      })
+      .catch(err => console.log(err));
+  }
+
+  @action
+  removePortfolio(id) {
+    requester.Portfolio.delete(id)
+      .then(() => {
+        this.getPortfolios();
+      })
+      .catch(err => console.log(err));
+  }
+  // #endregion
 
   @action
   selectPortfolio(id) {
     this.selectedPortfolioId = id;
 
     this.portfolios.forEach((el) => {
-      // Returns only selected element
+      // Returns only needed values from selected portfolio
       if (el.id === id) {
         this.selectedPortfolio = { ...el };
         this.currentPortfolioAssets = el.assets;
+        this.currentPortfolioInvestors = el.investors;
       }
     });
 
@@ -195,40 +271,7 @@ class PortfolioStore {
       .then(action((result) => {
         this.portfolios = result.data;
       }))
-      .catch(this.onError);
-  }
-
-  @action
-  createPortfolio(portfolioName) {
-    requester.Portfolio.create(portfolioName)
-      .then(() => {
-        this.getPortfolios(); // gets new portfolios
-      })
-      .catch(this.onError);
-  }
-
-  @action
-  updatePortfolio(portfolioName, id) {
-    requester.Portfolio.update(portfolioName, id)
-      .then(() => {
-        this.getPortfolios();
-      })
-      .catch(this.onError);
-  }
-
-  @action
-  removePortfolio(id) {
-    requester.Portfolio.delete(id)
-      .then(() => {
-        this.getPortfolios();
-      })
-      .catch(this.onError);
-  }
-
-  @action.bound
-  // eslint-disable-next-line class-methods-use-this
-  onError(err) {
-    console.log(err);
+      .catch(err => console.log(err));
   }
 }
 

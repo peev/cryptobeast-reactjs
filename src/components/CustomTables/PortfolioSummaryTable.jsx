@@ -86,7 +86,7 @@ const PortfolioSummaryTable = inject('PortfolioStore')(observer(({ ...props }) =
     </TableHead>
   );
   const currentDisplayAssets = (PortfolioStore.selectedPortfolio &&
-    PortfolioStore.summaryPortfolioAssets !== 0) ?
+    PortfolioStore.summaryPortfolioAssets.length > 0) ?
     PortfolioStore.summaryPortfolioAssets :
     [[' ', 0, 0, 0, 0, 0, 0, 0]];
 

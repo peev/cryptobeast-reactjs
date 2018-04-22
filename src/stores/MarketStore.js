@@ -9,7 +9,6 @@ class MarketStore {
   @observable allTickers;
   @observable baseCurrencyInUSD;
   @observable selectedBaseCurrency;
-  @observable selectedАllCurrency;
   @observable selectedExchange;
   @observable selectedCurrency;
   @observable assetInputValue;
@@ -19,6 +18,7 @@ class MarketStore {
     this.baseCurrencies = [];
     this.allCurrencies = [];
     this.allTickers = [];
+    this.baseCurrencyInUSD = null;
     this.selectedBaseCurrency = null;
     this.selectedExchange = '';
     this.selectedCurrency = '';
@@ -31,23 +31,23 @@ class MarketStore {
       currencies: 'XXBTZUSD,XXBTZEUR,XXBTZJPY,XETHXXBT',
     })
       .then(() => this.getBaseCurrencies())
-      .catch(this.onError);
+      .catch(err => console.log(err));
 
     // gets all currencies(name representation) from api and sync them into database
     // and then calls them back
     requester.Market.syncCurrencies()
       .then(() => this.getAllCurrencies())
-      .catch(this.onError);
+      .catch(err => console.log(err));
 
     // gets all the tickers(name pairs, equivalent) saved in database
     requester.Market.getAllTickers()
       .then(action(result => this.allTickers = result.data))
-      .catch(this.onError);
+      .catch(err => console.log(err));
 
     // get the summary to the market for the past 24h
     requester.Market.getSummaries()
       .then(this.convertMarketSummaries)
-      .catch(this.onError);
+      .catch(err => console.log(err));
   }
 
   @action.bound
@@ -64,7 +64,7 @@ class MarketStore {
         });
         this.baseCurrencies.push({ pair: 'BTC', last: 1 });
       }))
-      .catch(this.onError);
+      .catch(err => console.log(err));
   }
 
   @action.bound
@@ -79,14 +79,14 @@ class MarketStore {
           };
         });
       }))
-      .catch(this.onError);
+      .catch(err => console.log(err));
   }
 
   @action
   getSyncedSummaries() {
     requester.Market.getSyncedSummaries()
       .then(this.convertMarketSummaries)
-      .catch(this.onError);
+      .catch(err => console.log(err));
   }
 
   @action.bound
@@ -163,12 +163,6 @@ class MarketStore {
     this.selectedCurrency = '';
     this.assetInputValue = '';
     this.selectedExchange = '';
-  }
-
-  @action.bound
-  // eslint-disable-next-line class-methods-use-this
-  onError(err) {
-    console.log(err);
   }
 }
 

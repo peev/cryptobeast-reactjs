@@ -19,7 +19,7 @@ const styles = theme => ({
   },
 });
 
-@inject('InvestorStore')
+@inject('InvestorStore', 'PortfolioStore')
 @observer
 class SelectInvestor extends React.Component {
   state = {
@@ -27,14 +27,10 @@ class SelectInvestor extends React.Component {
     open: false,
   };
 
-  componentDidMount() {
-    this.props.InvestorStore.getPortfolio();
-  }
-
   handleChange = (event) => {
-    const { value, index } = event.target;
+    const { value } = event.target;
 
-    this.props.InvestorStore.selectInvestor(value, index);
+    this.props.InvestorStore.selectInvestor(value);
     this.setState({ [event.target.name]: value });
   };
 
@@ -47,24 +43,21 @@ class SelectInvestor extends React.Component {
   };
 
   render() {
-    const { classes, InvestorStore } = this.props;
+    const { classes, PortfolioStore } = this.props;
+    const investors = PortfolioStore.currentPortfolioInvestors;
     const investorsToShow = [];
 
-    if (InvestorStore.getAllCurrentInvestors) {
-      const investors = InvestorStore.getAllCurrentInvestors;
-
-      investors.forEach((element, i) => {
-        investorsToShow.push((
-          <MenuItem
-            key={element.id}
-            value={element.id}
-            index={i}
-          >
-            <em>{element.fullName}</em>
-          </MenuItem>
-        ));
-      });
-    }
+    investors.forEach((element, i) => {
+      investorsToShow.push((
+        <MenuItem
+          key={element.id}
+          value={element.id}
+          index={i}
+        >
+          <em>{element.fullName}</em>
+        </MenuItem>
+      ));
+    });
 
     return (
       <div autoComplete="off" >

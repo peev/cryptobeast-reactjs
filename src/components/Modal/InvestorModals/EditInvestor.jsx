@@ -53,7 +53,7 @@ class EditInvestor extends React.Component {
   };
 
   handleClose = () => {
-    this.props.InvestorStore.resetEdit();
+    this.props.InvestorStore.resetUpdate();
     this.setState({ open: false });
   };
 
@@ -65,15 +65,13 @@ class EditInvestor extends React.Component {
     event.preventDefault();
 
     const inputValue = event.target.value;
-    this.props.InvestorStore.setInvestorEditingValues(propertyType, inputValue);
+    this.props.InvestorStore.setInvestorUpdateValues(propertyType, inputValue);
   }
 
   handleSave = () => {
     const { InvestorStore, PortfolioStore } = this.props;
-    // InvestorStore.handleEmptyFields;
 
     InvestorStore.updateCurrentInvestor(InvestorStore.selectedInvestor.id);
-    PortfolioStore.getPortfolios();
     this.handleClose();
   }
 
@@ -118,7 +116,7 @@ class EditInvestor extends React.Component {
                 <Input
                   type="text"
                   placeholder="Full name"
-                  value={InvestorStore.editedValues.fullName}
+                  value={InvestorStore.updateInvestorValues.fullName}
                   onChange={this.handleEditRequests('fullName')}
                   className={classes.alignInputAfter}
                   autoFocus
@@ -127,7 +125,7 @@ class EditInvestor extends React.Component {
                 <Input
                   type="number"
                   placeholder="Telephone"
-                  value={InvestorStore.editedValues.telephone}
+                  value={InvestorStore.updateInvestorValues.telephone}
                   onChange={this.handleEditRequests('telephone')}
                   className={classes.alignInput}
                 />
@@ -137,7 +135,7 @@ class EditInvestor extends React.Component {
                 <Input
                   type="email"
                   placeholder="Email Address"
-                  value={InvestorStore.editedValues.email}
+                  value={InvestorStore.updateInvestorValues.email}
                   onChange={this.handleEditRequests('email')}
                   className={classes.alignInputAfter}
                 />
@@ -145,7 +143,7 @@ class EditInvestor extends React.Component {
                 <Input
                   type="number"
                   placeholder="Management Fee %"
-                  value={InvestorStore.editedValues.managementFee}
+                  value={InvestorStore.updateInvestorValues.managementFee}
                   onChange={this.handleEditRequests('managementFee')}
                   className={classes.alignInput}
                 />

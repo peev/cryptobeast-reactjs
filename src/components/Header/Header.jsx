@@ -29,7 +29,7 @@ class Header extends Component {
   componentDidMount() {
     const { PortfolioStore } = this.props;
 
-    const portfoliosArray = PortfolioStore.getAllPortfolios;
+    const portfoliosArray = PortfolioStore.portfolios;
 
     if (portfoliosArray.length > 0) {
       PortfolioStore.selectPortfolio(1);
@@ -38,7 +38,7 @@ class Header extends Component {
 
   render() {
     const { classes, PortfolioStore } = this.props;
-    const portfoliosArray = PortfolioStore.getAllPortfolios;
+    const portfoliosArray = PortfolioStore.portfolios;
 
     return (
       <Toolbar className={classes.headerContainer}>

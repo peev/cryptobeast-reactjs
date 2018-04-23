@@ -7,6 +7,7 @@ import { inject, observer } from 'mobx-react';
 
 import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import Button from '../../CustomButtons/Button';
+import ErrorSnackbar from '../../Modal/ErrorSnackbar';
 import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
 
 
@@ -53,33 +54,15 @@ const styles = theme => ({
   }
 });
 
-@inject('InvestorStore', 'PortfolioStore', 'MarketStore')
+@inject('InvestorStore', 'PortfolioStore', 'MarketStore', 'ErrorStore')
 @observer
 class AddInvestor extends React.Component {
   state = {
     open: false,
-    openNotification: false,
-    disabledBtn: false,
   };
 
   componentWillMount() {
-    const { InvestorStore } = this.props;
-
-    InvestorStore.handleNotSelectedPortfolio();
-
-    if (InvestorStore.getAddInvestorErrors.length > 0) {
-      this.setState({ openNotification: true, disabledBtn: true });
-      setTimeout(() => {
-        this.setState({ openNotification: false, disabledBtn: false });
-        InvestorStore.resetErrors();
-      }, 6000);
-    }
-  }
-
-  componentWillUpdate() {
-    if (!this.props.InvestorStore.selectedPortfolioId) {
-      this.props.InvestorStore.getPortfolio();
-    }
+    this.props.InvestorStore.handleIsPortfolioSelected();
   }
 
   handleOpen = () => {
@@ -88,7 +71,6 @@ class AddInvestor extends React.Component {
 
   handleClose = () => {
     this.props.InvestorStore.reset();
-    this.props.InvestorStore.resetErrors();
     this.props.MarketStore.resetMarket();
 
     this.setState({ open: false });
@@ -111,26 +93,12 @@ class AddInvestor extends React.Component {
   };
 
   handleSave = () => {
-    const { PortfolioStore, InvestorStore } = this.props;
+    const { PortfolioStore, InvestorStore, ErrorStore } = this.props;
 
     // FIXME: dont spam Save Button
-    const profileChecked = InvestorStore.handleNotSelectedPortfolio();
-    InvestorStore.handleEmptyFields;
-    InvestorStore.handleAddInvestorErrors();
-    const emailChecked = InvestorStore.emailFieldValidation();
+    const hasErrors = InvestorStore.handleAddInvestorErrors();
 
-    // Warnings popup
-    if (InvestorStore.getAddInvestorErrors.length > 0) {
-      this.setState({ openNotification: true, disabledBtn: true });
-      setTimeout(() => {
-        InvestorStore.resetErrors();
-
-        this.setState({ openNotification: false, disabledBtn: false });
-      }, 6000);
-    }
-
-    console.log('check fields: ', InvestorStore.areFieldsEmpty, emailChecked, profileChecked);
-    if (InvestorStore.areFieldsEmpty === false && emailChecked && profileChecked) {
+    if (hasErrors) {
       InvestorStore.createNewInvestor(PortfolioStore.selectedPortfolioId);
 
       this.handleClose();
@@ -138,22 +106,7 @@ class AddInvestor extends React.Component {
   };
 
   render() {
-    const { classes, InvestorStore, PortfolioStore } = this.props;
-    const investorErrors = InvestorStore.getAddInvestorErrors;
-    let errorMessagesArray;
-
-    if (investorErrors.length > 0) {
-      // this.setState({ numberOfErrors: investorErrors.length });
-
-      let message = '';
-      investorErrors.forEach(errorMsg => message += `${errorMsg} \n`);
-
-      errorMessagesArray = (<Snackbar
-        message={message}
-        open={this.state.openNotification}
-        style={{ height: 'auto', lineHeight: '28px', padding: '24', whiteSpace: 'pre-line' }}
-      />);
-    }
+    const { classes, InvestorStore, PortfolioStore, ErrorStore } = this.props;
 
     return (
       <Grid container>
@@ -223,7 +176,7 @@ class AddInvestor extends React.Component {
                 <Input
                   placeholder="Deposited USD Equiv."
                   className={classes.alignInput}
-                  value={InvestorStore.values.depositUsdEquiv}
+                  value={InvestorStore.newInvestorValues.depositUsdEquiv}
                 />
 
                 <Input
@@ -253,7 +206,7 @@ class AddInvestor extends React.Component {
                 <Input
                   type="number"
                   placeholder="Management Fee %"
-                  value={InvestorStore.values.managementFee}
+                  value={InvestorStore.newInvestorValues.managementFee}
                   onChange={this.handleRequests('managementFee')}
                   className={classes.alignInputAfter}
                 />
@@ -279,14 +232,15 @@ class AddInvestor extends React.Component {
                 type="submit"
                 color="primary"
                 onClick={this.handleSave}
-                disabled={this.state.disabledBtn}
+                disabled={ErrorStore.getErrorsLength > 0}
               >
                 Save
               </Button>
             </Grid >
           </div>
         </Modal>
-        {errorMessagesArray}
+
+        <ErrorSnackbar />
       </Grid >
     );
   }

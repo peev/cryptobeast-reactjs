@@ -111,7 +111,7 @@ class PortfolioSelect extends React.Component {
       </MenuItem>
     );
 
-    const currentPortfolios = PortfolioStore.getAllPortfolios;
+    const currentPortfolios = PortfolioStore.portfolios;
 
     currentPortfolios.forEach((el, i) => {
       portfoliosToShow.push(

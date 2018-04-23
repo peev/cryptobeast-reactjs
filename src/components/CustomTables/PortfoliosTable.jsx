@@ -20,7 +20,6 @@ import RemovePortfolioWrapped from '../Modal/RemovePortfolio';
 // TODO add Inject PortfolioStore and Remake function to const = () =>{}
 @inject('PortfolioStore')
 @observer
-
 class PortfoliosTable extends React.Component {
   state = {
     open: false,
@@ -30,14 +29,12 @@ class PortfoliosTable extends React.Component {
   //   this.props.PortfolioStore.deletePortfolio();
   // };
   handleOpen = (id) => {
-   
-//    this.props.PortfolioStore.removePortfolio(id);
+    //    this.props.PortfolioStore.removePortfolio(id);
     this.props.PortfolioStore.selectPortfolio(id);
     console.log(id);
-
   };
+
   handleRemove = (id) => {
-    
     this.props.PortfolioStore.removePortfolio(id);
     console.log(id);
   }
@@ -69,7 +66,7 @@ class PortfoliosTable extends React.Component {
     );
 
     const itemsToArray = Object.values(portfolios);
-    const filteredItems = itemsToArray.map(obj => [
+    const filteredItems = portfolios.map(obj => [
       obj.name,
       obj.shares,
       null,
@@ -78,20 +75,14 @@ class PortfoliosTable extends React.Component {
     ]);
 
     const tableInfo = filteredItems.map((prop, key) => (
-
       <TableRow key={key}>
         {prop.map((item, ind) => {
-          // if () {
-          //   return;
-          // }
-          console.log(portfolios[key]);
           if (ind === 4) {
             return (
               <TableCell className={classes.tableCell} key={ind}>
                 {item}
                 <UpdatePortfolioModal />
-                {/* <RemovePortfolioWrapped
-                  onClick={() => this.handleRemove(portfolios[key].id)} /> */}
+
                 <IconButton
                   onClick={() => this.handleRemove(portfolios[key].id)}
                   color="primary"

@@ -4,9 +4,18 @@ const path = require('path');
 
 
 const init = () => {
-  const sequelize = new Sequelize('CryptoBeast', null, null, {
-    dialect: 'sqlite',
-    storage: path.join(__dirname, '..', 'CryptoBeast.db'),
+  const firstconnection = new Sequelize('postgres', 'postgres', 'crypto', {
+    dialect: 'postgres',
+    // storage: path.join(__dirname, '..', 'CryptoBeast.db'),
+  });
+
+  firstconnection.query('CREATE DATABASE cryptobeast WITH OWNER = postgres')
+    .catch((err) => {
+      console.log('Database already exists.');
+    });
+
+  const sequelize = new Sequelize('cryptobeast', 'postgres', 'crypto', {
+    dialect: 'postgres',
   });
 
   const db = {};
@@ -19,7 +28,7 @@ const init = () => {
   db.MarketSummary = sequelize.import(path.join(__dirname, '/models/marketSummary.js'));
   db.Ticker = sequelize.import(path.join(__dirname, '/models/ticker.js'));
   db.Currency = sequelize.import(path.join(__dirname, '/models/currency.js'));
-  db.Transaction = sequelize.import(path.join(__dirname, '/models/transaction.js'))
+  db.Transaction = sequelize.import(path.join(__dirname, '/models/transaction.js'));
   // TODO: Configure model connections here (one-to-one/one-to-many etc.)
   db.Portfolio.hasMany(db.Account);
   db.Account.belongsTo(db.Portfolio);
@@ -40,9 +49,13 @@ const init = () => {
   db.Sequelize = Sequelize;
   db.sequelize = sequelize;
   // sync with 'force: true' will 'DROP TABLE IF EXISTS'
-  db.sequelize.sync({ force: false });
+  db.sequelize.sync({
+    force: false,
+  });
 
   return Promise.resolve(db);
 };
 
-module.exports = { init };
+module.exports = {
+  init,
+};

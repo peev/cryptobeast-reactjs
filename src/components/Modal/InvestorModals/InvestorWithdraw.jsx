@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Grid, Input } from 'material-ui';
+import { withStyles, Grid, Input, Snackbar } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
+import ErrorSnackbar from '../../Modal/ErrorSnackbar';
 
 
 const getModalStyle = () => {
@@ -44,7 +45,7 @@ const styles = theme => ({
   },
 });
 
-@inject('InvestorStore', 'PortfolioStore')
+@inject('InvestorStore', 'PortfolioStore', 'ErrorStore')
 @observer
 class InvestorWithdraw extends React.Component {
   state = {
@@ -66,6 +67,7 @@ class InvestorWithdraw extends React.Component {
 
   handleWithdrawRequests = propertyType => (event) => {
     event.preventDefault();
+
     const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     this.props.InvestorStore.setWithdrawInvestorValues(propertyType, inputValue);
@@ -77,16 +79,17 @@ class InvestorWithdraw extends React.Component {
   }
 
   handleWithdrawalInvestor = () => {
-    const { InvestorStore, PortfolioStore } = this.props;
-    // InvestorStore.handleEmptyFields;
+    const { InvestorStore } = this.props;
+    const hasErrors = InvestorStore.handleWithdrawalInvestorErrors();
 
-    InvestorStore.withdrawalInvestor(InvestorStore.selectedInvestor.id);
-    PortfolioStore.getPortfolios();
-    this.handleClose();
+    if (hasErrors) {
+      InvestorStore.withdrawalInvestor(InvestorStore.selectedInvestor.id);
+      this.handleClose()
+    }
   }
 
   render() {
-    const { classes, InvestorStore, PortfolioStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore, ErrorStore } = this.props;
 
     return (
       <Grid container>
@@ -158,7 +161,7 @@ class InvestorWithdraw extends React.Component {
                 <Input
                   type="number"
                   placeholder="Management Fee"
-                  value={InvestorStore.depositManagementFee}
+                  value={InvestorStore.withdrawManagementFee}
                   className={classes.alignInput}
                 />
               </Grid>
@@ -175,11 +178,14 @@ class InvestorWithdraw extends React.Component {
                 type="submit"
                 color="primary"
                 onClick={this.handleWithdrawalInvestor}
+                disabled={ErrorStore.getErrorsLength > 0}
               >Save
               </Button>
             </Grid>
           </div>
         </Modal>
+
+        <ErrorSnackbar />
       </Grid>
     );
   }

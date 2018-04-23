@@ -6,13 +6,13 @@ const attachTo = (app, data) => {
 
   router
     .post('/add', (req, res) => {
-      return accountController.addAccountToPortfolio(req, res);
+      return accountController.createAccount(req, res);
     })
     .put('/update', (req, res) => {
       return accountController.updateAccount(req, res);
     })
     .delete('/delete', (req, res) => {
-      return accountController.removeAccountFromPortfolio(req, res);
+      return accountController.removeAccount(req, res);
     })
     .post('/getBalance', (req, res) => {
       return accountController.getAccountBalance(req, res);

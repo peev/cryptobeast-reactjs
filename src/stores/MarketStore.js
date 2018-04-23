@@ -1,22 +1,26 @@
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
+import PortfolioStore from './PortfolioStore';
+
 
 class MarketStore {
   @observable marketSummaries;
   @observable baseCurrencies;
   @observable allCurrencies;
+  @observable allTickers;
   @observable baseCurrencyInUSD;
   @observable selectedBaseCurrency;
-  @observable selectedАllCurrency;
   @observable selectedExchange;
   @observable selectedCurrency;
   @observable assetInputValue;
 
   constructor() {
-    this.marketSummaries = [];
+    this.marketSummaries = {};
     this.baseCurrencies = [];
     this.allCurrencies = [];
+    this.allTickers = [];
+    this.baseCurrencyInUSD = null;
     this.selectedBaseCurrency = null;
     this.selectedExchange = '';
     this.selectedCurrency = '';
@@ -25,28 +29,27 @@ class MarketStore {
     // Setups the database. This request gives the back-end what
     // currencies to get from internet, writes them to database.
     // After that, fetches information from  database.
-    if (this.baseCurrencies.length === 0) {
-      requester.Market.getBaseTickers({
-        currencies: 'XXBTZUSD,XXBTZEUR,XXBTZJPY,XETHXXBT',
-      })
-        .then(() => this.getBaseCurrencies())
-        .catch(this.onError);
-    }
+    requester.Market.getBaseTickers({
+      currencies: 'XXBTZUSD,XXBTZEUR,XXBTZJPY,XETHXXBT',
+    })
+      .then(() => this.getBaseCurrencies())
+      .catch(err => console.log(err));
 
-    if (this.allCurrencies.length === 0) {
-      requester.Market.syncCurrencies()
-        .then(() => this.getAllCurrencies())
-        .catch(this.onError);
-    }
-  }
+    // gets all currencies(name representation) from api and sync them into database
+    // and then calls them back
+    requester.Market.syncCurrencies()
+      .then(() => this.getAllCurrencies())
+      .catch(err => console.log(err));
 
-  @action
-  getMarketSummaries() {
+    // gets all the tickers(name pairs, equivalent) saved in database
+    requester.Market.getAllTickers()
+      .then(action(result => this.allTickers = result.data))
+      .catch(err => console.log(err));
+
+    // get the summary to the market for the past 24h
     requester.Market.getSummaries()
-      .then((response) => {
-        this.marketSummaries = response.data;
-      })
-      .catch(this.onError);
+      .then(this.convertMarketSummaries)
+      .catch(err => console.log(err));
   }
 
   @action.bound
@@ -63,7 +66,7 @@ class MarketStore {
         });
         this.baseCurrencies.push({ pair: 'BTC', last: 1 });
       }))
-      .catch(this.onError);
+      .catch(err => console.log(err));
   }
 
   @action.bound
@@ -78,7 +81,22 @@ class MarketStore {
           };
         });
       }))
-      .catch(this.onError);
+      .catch(err => console.log(err));
+  }
+
+  @action
+  getSyncedSummaries() {
+    requester.Market.getSyncedSummaries()
+      .then(this.convertMarketSummaries)
+      .catch(err => console.log(err));
+  }
+
+  @action.bound
+  convertMarketSummaries(response) {
+    const result = {};
+    // eslint-disable-next-line no-return-assign
+    response.data.forEach(el => result[el.MarketName] = el);
+    this.marketSummaries = result;
   }
 
   @action
@@ -136,8 +154,9 @@ class MarketStore {
     };
 
     requester.Asset.add(newBasicAsset)
-      .then(action((result) => {
+      .then(action(() => {
         // TODO: Something with result
+        PortfolioStore.getPortfolios();
         this.resetAsset();
       }));
   }
@@ -147,12 +166,6 @@ class MarketStore {
     this.selectedCurrency = '';
     this.assetInputValue = '';
     this.selectedExchange = '';
-  }
-
-  @action.bound
-  // eslint-disable-next-line class-methods-use-this
-  onError(err) {
-    console.log(err);
   }
 }
 

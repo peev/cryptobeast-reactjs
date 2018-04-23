@@ -528,7 +528,7 @@ class InvestorStore {
 
     const withdrawal = {
       currency: 'USD',
-      balance: parseFloat(this.withdrawalValues.amount) * (-1),
+      balance: +this.withdrawalValues.amount,
       portfolioId: PortfolioStore.selectedPortfolioId,
       investorId: id,
       transaction: {
@@ -538,8 +538,11 @@ class InvestorStore {
         amountInUSD: this.withdrawalValues.amount,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.withdrawalValues.purchasedShares) * (-1),
+        portfolioId: PortfolioStore.selectedPortfolioId,
+        investorId: id,
       },
-    }
+    };
+
     requester.Investor.withdrawal(withdrawal)
       .then((result) => {
         // TODO: Something with result

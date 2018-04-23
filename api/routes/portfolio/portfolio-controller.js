@@ -58,18 +58,71 @@ const portfolioController = (repository) => {
   };
 
   // TODO: Calculate prices in the front end ==============================
-  const updateAssetBTCEquivalent = (req, res) => {
-    repository.portfolio.updateAssetBTCEquivalent(req.body)
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
-      });
+  const updateAssetBTCEquivalent = (asset) => {
+    return new Promise((resolve, reject) => {
+      let assetPair;
+      let lastBTCEquivalent;
+      let updatedRecord;
+
+      switch (asset.currency) {
+        case 'BTC':
+          lastBTCEquivalent = asset.balance;
+          resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
+          repository.update({ modelName: 'Asset', updatedRecord });
+          break;
+        case 'USDT':
+          assetPair = `${asset.currency}-BTC`;
+          repository.findById({ modelName: 'Ticker', id: assetPair })
+            .then((foundTickers) => {
+              lastBTCEquivalent = asset.balance / foundTickers.last;
+              resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
+              repository.update({ modelName: 'Asset', updatedRecord });
+            });
+          break;
+        case 'USD':
+        case 'JPY':
+        case 'EUR':
+          assetPair = asset.currency;
+          repository.findById({ modelName: 'Ticker', id: assetPair })
+            .then((foundTickers) => {
+              lastBTCEquivalent = asset.balance / foundTickers.last;
+              resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
+              repository.update({ modelName: 'Asset', updatedRecord });
+            });
+          break;
+        default:
+          assetPair = `BTC-${asset.currency}`;
+          repository.findById({ modelName: 'Ticker', id: assetPair })
+            .then((foundTickers) => {
+              lastBTCEquivalent = asset.balance * foundTickers.last;
+              resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
+              repository.update({ modelName: 'Asset', updatedRecord });
+            });
+          break;
+      }
+    });
   };
 
   const updatePortfolioBTCEquivalent = (req, res) => {
-    repository.portfolio.updatePortfolioBTCEquivalent(req.body)
+    repository.find({
+      modelName,
+      options: {
+        where: { id: req.body.id },
+        include: [{ all: true }],
+      },
+    })
+      .then((foundPortfolios) => {
+        if (foundPortfolios[0].assets !== 0) {
+          return Promise.all(foundPortfolios[0].assets.map((asset) => {
+            return updateAssetBTCEquivalent(asset)
+          }))
+            .then((r) => {
+              const cost = r.reduce((a, b) => a + b.lastBTCEquivalent, 0);
+              const updatedRecord = { id: foundPortfolios[0].id, cost };
+              return repository.update({ modelName, updatedRecord });
+            });
+        }
+      })
       .then((response) => {
         res.status(200).send(response);
       })

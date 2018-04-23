@@ -5,18 +5,10 @@ const attachTo = (app, data) => {
   const accountController = require('./account-controller')(data);
 
   router
-    .post('/add', (req, res) => {
-      return accountController.createAccount(req, res);
-    })
-    .put('/update', (req, res) => {
-      return accountController.updateAccount(req, res);
-    })
-    .delete('/delete', (req, res) => {
-      return accountController.removeAccount(req, res);
-    })
-    .post('/getBalance', (req, res) => {
-      return accountController.getAccountBalance(req, res);
-    });
+    .post('/add', (req, res) => accountController.createAccount(req, res))
+    .put('/update', (req, res) => accountController.updateAccount(req, res))
+    .delete('/delete', (req, res) => accountController.removeAccount(req, res))
+    .post('/getBalance', (req, res) => accountController.getAccountBalance(req, res));
 
   app.use('/account', router);
 };

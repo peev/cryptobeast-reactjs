@@ -71,7 +71,7 @@ class AssetBreakdown extends React.Component {
               className="tessstssssssssssssss333333"
               name="Total Shares"
               data={pieData}
-              center={[300, 120]}
+              center={[200, 120]}
               size={255}
               tooltip={{ valueSuffix: "%" }}
               showInLegend

@@ -8,6 +8,7 @@ import { InfoOutline } from 'material-ui-icons';
 import { inject, observer } from 'mobx-react';
 import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 import SummaryCard from '../../components/Cards/SummaryCard';
+import AssetBreakdown from '../../components/Cards/Summary/AssetBreakdown';
 
 const styles = () => ({
   containerSummary: {
@@ -88,7 +89,7 @@ class Summary extends React.Component {
             <p>left</p>
           </Grid>
           <Grid item xs={6} sm={6} md={6}>
-            <p>right</p>
+            <AssetBreakdown />
           </Grid>
         </Grid>
 

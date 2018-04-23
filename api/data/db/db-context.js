@@ -8,7 +8,7 @@ const init = () => {
     dialect: 'postgres',
     //storage: path.join(__dirname, '..', 'CryptoBeast.db'),
   });
-  firstconnection.query(`CREATE DATABASE IF NOT EXISTS cryptobeast WITH OWNER = postgres`);
+  firstconnection.query(`CREATE DATABASE cryptobeast WITH OWNER = postgres`);
 
   const sequelize = new Sequelize('cryptobeast', 'postgres', 'crypto', {
     dialect: 'postgres',

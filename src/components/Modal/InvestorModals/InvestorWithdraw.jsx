@@ -7,6 +7,7 @@ import { inject, observer } from 'mobx-react';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
+import ErrorSnackbar from '../../Modal/ErrorSnackbar';
 
 
 const getModalStyle = () => {
@@ -44,13 +45,11 @@ const styles = theme => ({
   },
 });
 
-@inject('InvestorStore', 'PortfolioStore')
+@inject('InvestorStore', 'PortfolioStore', 'ErrorStore')
 @observer
 class InvestorWithdraw extends React.Component {
   state = {
     open: false,
-    openNotification: false,
-    disabledBtn: false,
   };
 
   handleOpen = () => {
@@ -68,6 +67,7 @@ class InvestorWithdraw extends React.Component {
 
   handleWithdrawRequests = propertyType => (event) => {
     event.preventDefault();
+
     const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     this.props.InvestorStore.setWithdrawInvestorValues(propertyType, inputValue);
@@ -79,42 +79,17 @@ class InvestorWithdraw extends React.Component {
   }
 
   handleWithdrawalInvestor = () => {
-    const { InvestorStore, PortfolioStore } = this.props;
-    // InvestorStore.handleEmptyFields;
+    const { InvestorStore } = this.props;
+    const hasErrors = InvestorStore.handleWithdrawalInvestorErrors();
 
-    InvestorStore.withdrawalInvestor(InvestorStore.selectedInvestor.id);
-
-    // Warnings popup
-    if (InvestorStore.getAddInvestorErrors.length > 0) {
-      this.setState({ openNotification: true, disabledBtn: true });
-      setTimeout(() => {
-        InvestorStore.resetErrors();
-        this.setState({ openNotification: false, disabledBtn: false });
-      }, 2000);
-    } else {
-      PortfolioStore.getPortfolios();
-      this.handleClose();
+    if (hasErrors) {
+      InvestorStore.withdrawalInvestor(InvestorStore.selectedInvestor.id);
+      this.handleClose()
     }
   }
 
   render() {
-    const { classes, InvestorStore, PortfolioStore } = this.props;
-
-    const investorErrors = InvestorStore.getAddInvestorErrors;
-    let errorMessagesArray;
-
-    if (investorErrors.length > 0) {
-      // this.setState({ numberOfErrors: investorErrors.length });
-
-      let message = '';
-      investorErrors.forEach(errorMsg => message += `${errorMsg} \n`);
-
-      errorMessagesArray = (<Snackbar
-        message={message}
-        open={this.state.openNotification}
-        style={{ height: 'auto', lineHeight: '28px', padding: '24', whiteSpace: 'pre-line' }}
-      />);
-    }
+    const { classes, InvestorStore, PortfolioStore, ErrorStore } = this.props;
 
     return (
       <Grid container>
@@ -186,7 +161,7 @@ class InvestorWithdraw extends React.Component {
                 <Input
                   type="number"
                   placeholder="Management Fee"
-                  value={InvestorStore.depositManagementFee}
+                  value={InvestorStore.withdrawManagementFee}
                   className={classes.alignInput}
                 />
               </Grid>
@@ -203,13 +178,14 @@ class InvestorWithdraw extends React.Component {
                 type="submit"
                 color="primary"
                 onClick={this.handleWithdrawalInvestor}
-                disabled={this.state.disabledBtn}
+                disabled={ErrorStore.getErrorsLength > 0}
               >Save
               </Button>
             </Grid>
           </div>
         </Modal>
-        {errorMessagesArray}
+
+        <ErrorSnackbar />
       </Grid>
     );
   }

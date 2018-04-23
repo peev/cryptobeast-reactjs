@@ -9,6 +9,8 @@ import { inject, observer } from 'mobx-react';
 import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 import SummaryCard from '../../components/Cards/SummaryCard';
 import AssetBreakdown from '../../components/Cards/Summary/AssetBreakdown';
+import PortfolioSummaryTable from '../../components/CustomTables/PortfolioSummaryTable';
+// import PortfolioSummaryTable2 from '../../components/CustomTables/PortfolioSummaryTable2';
 
 const styles = () => ({
   containerSummary: {
@@ -52,14 +54,18 @@ class Summary extends React.Component {
             icon={InfoOutline}
             iconColor="gray"
             title="Total number of shares"
-            description={PortfolioStore.summaryTotalNumberOfShares}
+            description={PortfolioStore.selectedPortfolio ?
+              PortfolioStore.selectedPortfolio.shares :
+              0}
           />
 
           <SummaryCard
             icon={InfoOutline}
             iconColor="gray"
             title="Share price"
-            description={'$' + PortfolioStore.summarySharePrice}
+            description={PortfolioStore.selectedPortfolio ?
+              '$' + PortfolioStore.currentPortfolioSharePrice.toFixed(2) :
+              '$' + 0}
           />
 
           <SummaryCard
@@ -80,11 +86,13 @@ class Summary extends React.Component {
             icon={InfoOutline}
             iconColor="gray"
             title="Total profit/loss"
-            description={PortfolioStore.summaryTotalProfitLoss > 0 ? '+' + PortfolioStore.summaryTotalProfitLoss + '%' : PortfolioStore.summaryTotalProfitLoss + '%'}
+            description={PortfolioStore.summaryTotalProfitLoss > 0 ?
+              '+' + PortfolioStore.summaryTotalProfitLoss + '%' :
+              PortfolioStore.summaryTotalProfitLoss + '%'}
           />
         </Grid>
 
-        <Grid container spacing={40} >
+        <Grid container>
           <Grid item xs={6} sm={6} md={6}>
             <p>left</p>
           </Grid>
@@ -93,15 +101,28 @@ class Summary extends React.Component {
           </Grid>
         </Grid>
 
-        <Grid container spacing={40} >
+        <Grid container>
           <Grid item xs={12} sm={12} md={12}>
-            <p>bottom</p>
+            <PortfolioSummaryTable
+              tableHead={[
+                'Ticker',
+                'Holdings',
+                'Price(BTC)',
+                'Price(USD)',
+                'Total Value(USD)',
+                'Asset Weight',
+                '24H Change',
+                '7D Change',
+              ]}
+            />
+
+            {/* <PortfolioSummaryTable2 /> */}
           </Grid>
         </Grid>
       </Grid>
     )
 
-    const portfoliosArray = PortfolioStore.getAllPortfolios;
+    const portfoliosArray = PortfolioStore.portfolios;
 
     return (
       <Grid container>

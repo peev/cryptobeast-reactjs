@@ -2,118 +2,78 @@ import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
+import ErrorStore from './ErrorStore';
 
 class InvestorStore {
-  @observable
-  values = {
-    isFounder: false,
-    fullName: '',
-    email: '',
-    telephone: '',
-    dateOfEntry: '',
-    depositedAmount: '',
-    depositUsdEquiv: '',
-    managementFee: '',
-    sharePriceAtEntryDate: '',
-    purchasedShares: '',
-  }
-
-  @observable
-  editedValues = {
-    fullName: '',
-    email: '',
-    telephone: '',
-    managementFee: '',
-  }
-
-  @observable
-  newDepositValues = {
-    amount: '',
-    transactionDate: '',
-    sharePriceAtEntryDate: '',
-    purchasedShares: '',
-  }
-
-  @observable
-  withdrawalValues = {
-    amount: '',
-    transactionDate: '',
-    sharePriceAtEntryDate: '',
-    inUSD: '',
-    purchasedShares: 0,
-    managementFee: '',
-  }
-
-  @observable
-  individualSummaryValues = {
-    sharesHeld: '',
-    weightedEntryPrice: '',
-    usdEquivalent: '',
-    btcEquivalent: '',
-    ethEquivalent: '',
-    investmentPeriod: '',
-    profit: '',
-    feePotential: '',
-  }
-
-  @observable selectedBaseCurrency;
-  @observable areFieldsEmpty;
+  @observable newInvestorValues
+  @observable updateInvestorValues;
+  @observable newDepositValues;
+  @observable withdrawalValues;
+  @observable individualSummaryValues;
   @observable selectedInvestor;
-  @observable selectedInvestors;
   @observable selectedInvestorId;
-  @observable investorError;
-  @observable investorErrorDisplayed;
-  @observable selectedPortfolioId;
 
   constructor() {
-    this.selectedBaseCurrency = null;
-    this.areFieldsEmpty = true;
-    this.selectedInvestor = null;
-    this.selectedInvestors = [];
-    this.selectedInvestorId = null;
-    this.investorError = [];
-    this.investorErrorDisplayed = false;
-  }
-
-  @action.bound
-  depositUsdEquiv() {
-    const baseCurrency = MarketStore.selectedBaseCurrency;
-    const currentAmount = this.values.depositedAmount || this.newDepositValues.amount;
-    if (baseCurrency && currentAmount) {
-      let calculatedDepositUsdEquiv;
-      switch (baseCurrency.pair) {
-        case 'JPY':
-        case 'EUR':
-        case 'USD':
-          calculatedDepositUsdEquiv = (currentAmount / baseCurrency.last) * MarketStore.baseCurrencyInUSD.last;
-          break;
-        case 'ETH':
-          calculatedDepositUsdEquiv = currentAmount * baseCurrency.last * MarketStore.baseCurrencyInUSD.last;
-          break;
-        case 'BTC':
-          calculatedDepositUsdEquiv = currentAmount * MarketStore.baseCurrencyInUSD.last;
-          break;
-        default:
-          console.log('The is no such currency');
-          break;
-      }
-      this.values.depositUsdEquiv = calculatedDepositUsdEquiv;
-      return calculatedDepositUsdEquiv;
+    // #region Initialize Values
+    this.newInvestorValues = {
+      isFounder: false,
+      fullName: '',
+      email: '',
+      telephone: '',
+      dateOfEntry: '',
+      depositedAmount: '',
+      depositUsdEquiv: '',
+      managementFee: '',
+      sharePriceAtEntryDate: '',
+      purchasedShares: '',
+    }
+    this.updateInvestorValues = {
+      fullName: '',
+      email: '',
+      telephone: '',
+      managementFee: '',
+    }
+    this.newDepositValues = {
+      amount: '',
+      transactionDate: '',
+      sharePriceAtEntryDate: '',
+      purchasedShares: '',
+    }
+    this.withdrawalValues = {
+      amount: '',
+      transactionDate: '',
+      sharePriceAtEntryDate: '',
+      inUSD: '',
+      purchasedShares: 0,
+      managementFee: '',
+    }
+    this.individualSummaryValues = {
+      sharesHeld: '',
+      weightedEntryPrice: '',
+      usdEquivalent: '',
+      btcEquivalent: '',
+      ethEquivalent: '',
+      investmentPeriod: '',
+      profit: '',
+      feePotential: '',
     }
 
-    return null;
+    this.selectedInvestor = null;
+    this.selectedInvestorId = null;
+    // #endregion
   }
 
-  // #region Computed Values
+  // ======= Computed =======
+  // #region Computed
   // #region Add Investor
   @computed
   get purchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
     const { currentPortfolioSharePrice } = PortfolioStore;
-    if (baseCurrency && (this.values.depositedAmount || this.newDepositValues.amount)) {
+    if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
       // TODO: To add Assets value below
-      const calculatedPurchasedShares = (this.values.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
-      this.values.purchasedShares = calculatedPurchasedShares;
+      const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
+      this.newInvestorValues.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
 
@@ -134,6 +94,7 @@ class InvestorStore {
   }
   // #endregion
 
+  // #region Deposit Investor
   @computed
   get depositPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
@@ -141,7 +102,7 @@ class InvestorStore {
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
       // const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
-      const calculatedPurchasedShares = (this.values.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
+      const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
       this.newDepositValues.purchasedShares = calculatedPurchasedShares;
 
       return calculatedPurchasedShares;
@@ -149,7 +110,9 @@ class InvestorStore {
 
     return null;
   }
+  // #endregion
 
+  // #region Withdraw Investor
   @computed
   get withdrawInUSD() {
     if (this.selectedInvestor && this.withdrawalValues.amount) {
@@ -188,31 +151,16 @@ class InvestorStore {
   }
 
   @computed
-  get depositManagementFee() {
+  get withdrawManagementFee() {
     if (this.selectedInvestor && this.withdrawalValues.amount) {
-      const calculatedDepositManagementFee = this.selectedInvestor.managementFee;
-      this.withdrawalValues.managementFee = calculatedDepositManagementFee;
-      return calculatedDepositManagementFee;
+      const calculatedWithdrawManagementFee = this.selectedInvestor.managementFee;
+      this.withdrawalValues.managementFee = calculatedWithdrawManagementFee;
+      return calculatedWithdrawManagementFee;
     }
 
     return null;
   }
-
-  @computed
-  get handleEmptyFields() {
-    const currentInvestor = this.values;
-    const arrayOfValues = Object.values(currentInvestor);
-    // filters all the input values and returns only empty once,
-    // skips telephone (i !== 3), it is not required
-    // skips sharePrice (i !== 8), it calculated by default
-    const filteredArray = arrayOfValues.filter((value, i) => value === '' && i !== 3 && i !== 8);
-
-    if (filteredArray.length === 0) {
-      this.areFieldsEmpty = false;
-    }
-
-    return null;
-  }
+  // #endregion
 
   // #region Investor Individual Summary
   @computed
@@ -321,80 +269,40 @@ class InvestorStore {
 
     return null;
   }
-
+  // #endregion
   // #endregion
 
-  // #endregion
-
-  @action
-  handleDepositEmptyFields() {
-    const currentDeposit = this.newDepositValues;
-
-    // const arrayOfValues = Object.values(currentDeposit);
-    // console.log(arrayOfValues)
-    // const filteredArray = arrayOfValues.filter((value, i) => value === '' && (i !== 2 || i !== 3));
-    // console.log(filteredArray)
-
-    // if (filteredArray.length === 0) {
-    //   this.areFieldsEmpty = false;
-    // }
-    // const currentInvestor = this.values;
-
-    const baseCurrency = MarketStore.selectedBaseCurrency;
-    if (baseCurrency === null) {
-      this.investorError.push('Please select currency');
-    }
-
-    // Checks the currently entered values. If value is empty and it is required,
-    // than adds a error massage to the array of errors
-    Object.keys(currentDeposit).forEach((prop) => {
-      if (currentDeposit[prop] === '' && prop === 'transactionDate') {
-        this.investorError.push('Entry date is required.');
-      }
-      if (currentDeposit[prop] === '' && prop === 'amount') {
-        this.investorError.push('Amount is required.');
-      }
-    });
-  }
-
+  // ======= Action =======
+  // Investor Set Values -> Founder, New, Update, Deposit, Withdraw
+  // #region Investor Set Values
   @action
   setIsFounder() {
-    this.values.isFounder = !this.values.isFounder;
-  }
-
-  @action
-  getCurrentInvestor() {
-    return this.selectedInvestor;
-  }
-
-  @computed
-  get getAllCurrentInvestors() {
-    return this.selectedInvestors;
+    this.newInvestorValues.isFounder = !this.newInvestorValues.isFounder;
   }
 
   @action
   setNewInvestorValues(propertyType, newValue) {
-    const fieldsChecked = this.fieldValidations(propertyType, newValue);
+    const fieldsChecked = this.handleFieldValidations(propertyType, newValue);
 
     if (fieldsChecked) {
       // all properties are send as string !!!
-      this.values[propertyType] = newValue;
+      this.newInvestorValues[propertyType] = newValue;
     }
   }
 
   @action
-  setInvestorEditingValues(propertyType, newValue) {
-    const fieldsChecked = this.fieldValidations(propertyType, newValue);
+  setInvestorUpdateValues(propertyType, newValue) {
+    const fieldsChecked = this.handleFieldValidations(propertyType, newValue);
 
     if (fieldsChecked) {
       // all properties are send as string !!!
-      this.editedValues[propertyType] = newValue;
+      this.updateInvestorValues[propertyType] = newValue;
     }
   }
 
   @action
   setNewDepositInvestorValues(propertyType, newValue) {
-    const fieldsChecked = this.fieldValidations(propertyType, newValue);
+    const fieldsChecked = this.handleFieldValidations(propertyType, newValue);
 
     if (fieldsChecked) {
       // all properties are send as string !!!
@@ -404,39 +312,22 @@ class InvestorStore {
 
   @action
   setWithdrawInvestorValues(propertyType, newValue) {
-    const fieldsChecked = this.fieldValidations(propertyType, newValue);
+    const fieldsChecked = this.handleFieldValidations(propertyType, newValue);
 
     if (fieldsChecked) {
       // all properties are send as string !!!
       this.withdrawalValues[propertyType] = newValue;
     }
   }
+  // #endregion
 
-  @action
-  selectInvestor(id, index) {
-    this.selectedInvestorId = id;
-
-    // selects the marked investor
-    this.getAllCurrentInvestors.find((element) => {
-      if (element.id === id) {
-        this.selectedInvestor = { ...element };
-      }
-    });
-
-    if (this.selectedInvestor) {
-      // sets the editing values for the current investor
-      this.editedValues.fullName = this.selectedInvestor.fullName;
-      this.editedValues.email = this.selectedInvestor.email;
-      this.editedValues.telephone = this.selectedInvestor.telephone;
-      this.editedValues.managementFee = this.selectedInvestor.managementFee;
-    }
-  }
-
+  // Investor -> New, Update, Deposit, Withdraw
+  // #region Investor
   @action
   createNewInvestor(id) {
     const newInvestor = {
       currency: MarketStore.selectedBaseCurrency.pair,
-      balance: +this.values.depositedAmount,
+      balance: +this.newInvestorValues.depositedAmount,
       portfolioId: id,
       investor: {
         isFounder: this.values.isFounder,
@@ -449,10 +340,10 @@ class InvestorStore {
         portfolioId: id,
       },
       transaction: {
-        investorName: this.values.fullName,
+        investorName: this.newInvestorValues.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
-        transactionDate: this.values.dateOfEntry,
-        amountInUSD: this.values.depositUsdEquiv,
+        transactionDate: this.newInvestorValues.dateOfEntry,
+        amountInUSD: this.newInvestorValues.depositUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.values.purchasedShares),
         portfolioId: id,
@@ -464,7 +355,32 @@ class InvestorStore {
         PortfolioStore.getPortfolios();
         console.log(result);
       }))
-      .catch(this.onError);
+      .catch(err => console.log(err));
+  }
+
+  @action
+  updateCurrentInvestor(investorId) {
+    const updatedValues = this.updateInvestorValues;
+    const finalResult = {};
+
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key in updatedValues) {
+      if (updatedValues.hasOwnProperty(key) && (updatedValues[key] !== '')) {
+        finalResult[key] = updatedValues[key];
+      }
+    }
+
+    requester.Investor.update(investorId, finalResult)
+      .then(action((result) => {
+        // TODO: Something with result
+        // this.selectedInvestor is null here?!?
+        // this.selectedInvestor.fullName = updatedValues.fullName;
+        // this.selectedInvestor.email = updatedValues.email;
+        // this.selectedInvestor.telephone = updatedValues.telephone;
+        // this.selectedInvestor.managementFee = updatedValues.managementFee;
+      }))
+      .catch(err => console.log(err));
   }
 
   @action
@@ -478,7 +394,7 @@ class InvestorStore {
         investorName: this.selectedInvestor.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
         transactionDate: this.newDepositValues.transactionDate,
-        amountInUSD: this.values.depositUsdEquiv,
+        amountInUSD: this.newInvestorValues.depositUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newDepositValues.purchasedShares),
         portfolioId: PortfolioStore.selectedPortfolioId,
@@ -491,42 +407,11 @@ class InvestorStore {
         // TODO: Something with result
         console.log(result);
       })
-      .catch(this.onError);
-  }
-
-  @action
-  updateCurrentInvestor(investorId) {
-    const updatedValues = this.editedValues;
-    const finalResult = {};
-
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const key in updatedValues) {
-      if (updatedValues.hasOwnProperty(key) && (updatedValues[key] !== '')) {
-        finalResult[key] = updatedValues[key];
-      }
-    }
-
-    requester.Investor.update(investorId, finalResult)
-      .then((result) => {
-        // TODO: Something with result
-        this.selectedInvestor.fullName = this.editedValues.fullName;
-        this.selectedInvestor.email = this.editedValues.email;
-        this.selectedInvestor.telephone = this.editedValues.telephone;
-        this.selectedInvestor.managementFee = this.editedValues.managementFee;
-      })
-      .catch(this.onError);
+      .catch(err => console.log(err));
   }
 
   @action
   withdrawalInvestor(id) {
-    const hasEnoughShares = this.selectedInvestor.purchasedShares >= this.withdrawalValues.purchasedShares;
-
-    if (!hasEnoughShares) {
-      this.investorError.push('The investor has not enough shares!');
-      return;
-    }
-
     const withdrawal = {
       currency: 'USD',
       balance: parseFloat(this.withdrawalValues.amount) * (-1),
@@ -546,24 +431,132 @@ class InvestorStore {
         // TODO: Something with result
         console.log(result);
       })
-      .catch(this.onError);
+      .catch(err => console.log(err));
+  }
+
+
+  // #endregion
+
+  // Validations
+  // #region Validations
+  @action
+  handleAddInvestorErrors() {
+    const currentInvestor = this.newInvestorValues;
+    let noErrors = true;
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+
+    // Checks if portfolio is selected
+    noErrors = this.handleIsPortfolioSelected();
+
+    // Checks if base currency is added
+    if (baseCurrency === null) {
+      ErrorStore.addError('Please select currency');
+      noErrors = false;
+    }
+
+    // Checks if email is valid - duplication only
+    noErrors = this.handleEmailValidation();
+
+    // Checks the currently entered values. If value is empty and it is required,
+    // than adds a error massage to the array of errors
+    Object.keys(currentInvestor).forEach((prop) => {
+      if (currentInvestor[prop] === '' && prop === 'dateOfEntry') {
+        ErrorStore.addError('Entry date is required.');
+        noErrors = false;
+      }
+      if (currentInvestor[prop] === '' && prop === 'depositedAmount') {
+        ErrorStore.addError('Deposited amount is required.');
+        noErrors = false;
+      }
+      if (currentInvestor[prop] === '' && prop === 'email') {
+        ErrorStore.addError('Email is required.');
+        noErrors = false;
+      }
+      if (currentInvestor[prop] === '' && prop === 'fullName') {
+        ErrorStore.addError('Full name is required.');
+        noErrors = false;
+      }
+      if (currentInvestor[prop] === '' && prop === 'managementFee') {
+        ErrorStore.addError('Management Fee is required.');
+        noErrors = false;
+      }
+    });
+
+    return noErrors;
   }
 
   @action
-  getPortfolio() {
-    const currentSelectedPortfolio = PortfolioStore.getCurrentPortfolio();
-    console.log(currentSelectedPortfolio);
+  handleDepositInvestorErrors() {
+    const currentDeposit = this.newDepositValues;
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    let noErrors = true;
 
-    if (currentSelectedPortfolio) {
-      this.selectedPortfolioId = currentSelectedPortfolio.id;
-      this.selectedInvestors = currentSelectedPortfolio.investors;
+    // Checks if portfolio is selected
+    noErrors = this.handleIsPortfolioSelected();
+
+    // Checks if Investor is selected
+    if (this.selectedInvestor === null) {
+      ErrorStore.addError('Please select Investor');
+      noErrors = false;
     }
+
+    // Checks if base currency is added
+    if (baseCurrency === null) {
+      ErrorStore.addError('Please select currency');
+      noErrors = false;
+    }
+
+    // Checks the currently entered values. If value is empty and it is required,
+    // than adds a error massage to the array of errors
+    Object.keys(currentDeposit).forEach((prop) => {
+      if (currentDeposit[prop] === '' && prop === 'transactionDate') {
+        ErrorStore.addError('Entry date is required.');
+        noErrors = false;
+      }
+      if (currentDeposit[prop] === '' && prop === 'amount') {
+        ErrorStore.addError('Amount is required.');
+        noErrors = false;
+      }
+    });
+
+    return noErrors;
   }
 
-  // VALIDATIONS
+  @action
+  handleWithdrawalInvestorErrors() {
+    let noErrors = true;
+
+    // Checks if Investor is selected
+    if (this.selectedInvestor === null) {
+      ErrorStore.addError('Please select Investor');
+      noErrors = false;
+    }
+
+    // Checks if amount is entered
+    if (this.withdrawalValues.amount === '') {
+      ErrorStore.addError('Withdrawal amount is required.');
+      noErrors = false;
+    }
+
+    // Checks if date is entered
+    if (this.withdrawalValues.transactionDate === '') {
+      ErrorStore.addError('Withdrawal date is required.');
+      noErrors = false;
+    }
+
+    const hasInputShares = this.selectedInvestor !== null ? this.selectedInvestor.purchasedShares : 0;
+    const hasEnoughShares = hasInputShares >= this.withdrawalValues.purchasedShares;
+    if (!hasEnoughShares) {
+      ErrorStore.addError('The investor has not enough shares!');
+      noErrors = false;
+    }
+
+    return noErrors;
+  }
+
   @action.bound
   // eslint-disable-next-line class-methods-use-this
-  fieldValidations(propertyType, newValue) {
+  handleFieldValidations(propertyType, newValue) {
     if (propertyType === 'depositedAmount' && (newValue < 0)) {
       return false;
     }
@@ -579,130 +572,138 @@ class InvestorStore {
 
   @action
   // eslint-disable-next-line class-methods-use-this
-  emailFieldValidation() {
-    const currentEmail = this.values.email;
-    const currentInvestors = this.getAllCurrentInvestors;
-    let result = [];
+  handleEmailValidation() {
+    const currentEmail = this.newInvestorValues.email;
+    const currentInvestors = PortfolioStore.currentPortfolioInvestors;
+    let hasDuplicate = true;
 
     if (currentInvestors) {
-      result = currentInvestors.filter(x => x.email === currentEmail);
+      const result = currentInvestors.filter(x => x.email === currentEmail);
 
       if (result.length > 0) {
-        this.investorError.push('Email already exists');
-        return false;
+        ErrorStore.addError('Email already exists in this Portfolio');
+        hasDuplicate = false;
       }
     }
 
-    return true;
-  }
-
-  @computed
-  get getAddInvestorErrors() {
-    return this.investorError;
+    return hasDuplicate;
   }
 
   @action
-  handleNotSelectedPortfolio() {
-    console.log(this.selectedInvestorId)
+  // eslint-disable-next-line class-methods-use-this
+  handleIsPortfolioSelected() {
     if (!PortfolioStore.selectedPortfolioId) {
-      this.investorError.push('Please select portfolio first');
+      ErrorStore.addError('Please select Portfolio first');
       return false;
     }
     return true;
   }
+  // #endregion
 
-  @action
-  handleAddInvestorErrors() {
-    const currentInvestor = this.values;
-
-    const baseCurrency = MarketStore.selectedBaseCurrency;
-    if (baseCurrency === null) {
-      this.investorError.push('Please select currency');
-    }
-
-    // Checks the currently entered values. If value is empty and it is required,
-    // than adds a error massage to the array of errors
-    Object.keys(currentInvestor).forEach((prop) => {
-      if (currentInvestor[prop] === '' && prop === 'dateOfEntry') {
-        this.investorError.push('Entry date is required.');
-      }
-      if (currentInvestor[prop] === '' && prop === 'depositedAmount') {
-        this.investorError.push('Deposited amount is required.');
-      }
-      if (currentInvestor[prop] === '' && prop === 'email') {
-        this.investorError.push('Email is required.');
-      }
-      if (currentInvestor[prop] === '' && prop === 'fullName') {
-        this.investorError.push('Full name is required.');
-      }
-      if (currentInvestor[prop] === '' && prop === 'managementFee') {
-        this.investorError.push('Management Fee is required.');
-      }
-    });
-  }
-
-  // RESETS
-  @action
-  resetErrors() {
-    this.investorError = [];
-  }
-
+  // Resets
+  // #region Resets
   @action
   reset() {
-    this.values.isFounder = false;
-    this.values.fullName = '';
-    this.values.email = '';
-    this.values.telephone = '';
-    this.values.dateOfEntry = '';
-    this.values.depositedAmount = '';
-    this.values.depositUsdEquiv = '';
-    this.values.managementFee = '';
-    this.values.sharePriceAtEntryDate = '';
-    this.values.purchasedShares = '';
-
-    this.selectedBaseCurrency = null;
-    this.areFieldsEmpty = true;
-    console.log(this.values);
+    console.log(this.newInvestorValues);
+    this.newInvestorValues.isFounder = false;
+    this.newInvestorValues.fullName = '';
+    this.newInvestorValues.email = '';
+    this.newInvestorValues.telephone = '';
+    this.newInvestorValues.dateOfEntry = '';
+    this.newInvestorValues.depositedAmount = '';
+    this.newInvestorValues.depositUsdEquiv = '';
+    this.newInvestorValues.managementFee = '';
+    this.newInvestorValues.sharePriceAtEntryDate = '';
+    this.newInvestorValues.purchasedShares = '';
   }
 
   @action
-  resetEdit() {
-    this.editedValues.fullName = '';
-    this.editedValues.email = '';
-    this.editedValues.telephone = '';
-    this.editedValues.managementFee = '';
-    console.log(this.editedValues);
+  resetUpdate() {
+    console.log(this.updateInvestorValues);
+    this.updateInvestorValues.fullName = '';
+    this.updateInvestorValues.email = '';
+    this.updateInvestorValues.telephone = '';
+    this.updateInvestorValues.managementFee = '';
+
+    this.selectedInvestor = null;
   }
 
   @action.bound
   resetDeposit() {
+    console.log(this.newDepositValues);
     this.newDepositValues.amount = '';
     this.newDepositValues.transactionDate = '';
     this.newDepositValues.sharePriceAtEntryDate = '';
     this.newDepositValues.purchasedShares = '';
-    console.log(this.newDepositValues);
+
+    this.selectedInvestor = null;
   }
 
   @action.bound
   resetWithdrawal() {
+    console.log(this.withdrawalValues);
     this.withdrawalValues.amount = '';
     this.withdrawalValues.transactionDate = '';
     this.withdrawalValues.sharePriceAtEntryDate = '';
     this.withdrawalValues.inUSD = '';
     this.withdrawalValues.purchasedShares = 0;
     this.withdrawalValues.managementFee = '';
-    console.log(this.withdrawalValues);
+
+    this.selectedInvestor = null;
+  }
+  // #endregion
+
+  // Others
+  // #region Others
+  @action
+  selectInvestor(id) {
+    this.selectedInvestorId = id;
+
+    // selects the marked investor
+    PortfolioStore.currentPortfolioInvestors.find((element) => {
+      if (element.id === id) {
+        this.selectedInvestor = { ...element };
+      }
+    });
+
+    if (this.selectedInvestor) {
+      // sets the editing values for the current investor
+      this.updateInvestorValues.fullName = this.selectedInvestor.fullName;
+      this.updateInvestorValues.email = this.selectedInvestor.email;
+      this.updateInvestorValues.telephone = this.selectedInvestor.telephone;
+      this.updateInvestorValues.managementFee = this.selectedInvestor.managementFee;
+    }
   }
 
   @action.bound
-  // eslint-disable-next-line class-methods-use-this
-  onGetSummaries() { }
+  depositUsdEquiv() {
+    const baseCurrency = MarketStore.selectedBaseCurrency;
+    const currentAmount = this.newInvestorValues.depositedAmount || this.newDepositValues.amount;
+    if (baseCurrency && currentAmount) {
+      let calculatedDepositUsdEquiv;
+      switch (baseCurrency.pair) {
+        case 'JPY':
+        case 'EUR':
+        case 'USD':
+          calculatedDepositUsdEquiv = (currentAmount / baseCurrency.last) * MarketStore.baseCurrencyInUSD.last;
+          break;
+        case 'ETH':
+          calculatedDepositUsdEquiv = currentAmount * baseCurrency.last * MarketStore.baseCurrencyInUSD.last;
+          break;
+        case 'BTC':
+          calculatedDepositUsdEquiv = currentAmount * MarketStore.baseCurrencyInUSD.last;
+          break;
+        default:
+          console.log('The is no such currency');
+          break;
+      }
+      this.newInvestorValues.depositUsdEquiv = calculatedDepositUsdEquiv;
+      return calculatedDepositUsdEquiv;
+    }
 
-  @action.bound
-  // eslint-disable-next-line class-methods-use-this
-  onError(err) {
-    console.log(err);
+    return null;
   }
+  // #endregion
 }
 
 export default new InvestorStore();

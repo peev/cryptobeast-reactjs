@@ -13,7 +13,7 @@ import PortfolioSummaryTable from '../../components/CustomTables/PortfolioSummar
 // import PortfolioSummaryTable2 from '../../components/CustomTables/PortfolioSummaryTable2';
 
 const styles = () => ({
-  containerSummary: {
+  container: {
     marginTop: '20px',
   },
   containerHeader: {
@@ -48,7 +48,7 @@ class Summary extends React.Component {
     );
 
     const summaryContent = (
-      <Grid container className={classes.containerSummary}>
+      <Grid container className={classes.container}>
         <Grid container spacing={10} className={classes.containerHeader}>
           <SummaryCard
             icon={InfoOutline}
@@ -92,7 +92,7 @@ class Summary extends React.Component {
           />
         </Grid>
 
-        <Grid container>
+        <Grid container className={classes.container}>
           <Grid item xs={6} sm={6} md={6}>
             <p>left</p>
           </Grid>
@@ -101,7 +101,7 @@ class Summary extends React.Component {
           </Grid>
         </Grid>
 
-        <Grid container>
+        <Grid container className={classes.container}>
           <Grid item xs={12} sm={12} md={12}>
             <PortfolioSummaryTable
               tableHead={[

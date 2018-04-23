@@ -190,6 +190,13 @@ class PortfolioStore {
   // #endregion
 
   @computed
+  get summaryAssetsBreakdown() {
+    return this.summaryPortfolioAssets.map((el) => {
+      return { y: parseInt(el[5], 10), name: el[0] };
+    });
+  }
+
+  @computed
   get currentSelectedPortfolioCost() {
     // FIXME: Portfolio cost is calculated here,
     // because the value from database is incorrect

@@ -1,87 +1,69 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Grid } from 'material-ui';
-import Typography from 'material-ui/Typography';
-import ReactHighcharts from 'react-highcharts';
+import { withStyles, Grid, Paper, Typography } from 'material-ui';
 import Highcharts from 'highcharts';
 import {
-  HighchartsChart,
   withHighcharts,
-  YAxis,
+  HighchartsChart,
   Legend,
-  Tooltip,
   PieSeries,
-
-  Title,
 } from 'react-jsx-highcharts';
+import { inject, observer } from 'mobx-react';
 
 
 const styles = () => ({
-  button: {
-    float: 'right',
+  text: {
+    padding: '10px 23px',
+    fontSize: '20px',
+    fontWeight: '500',
+    textTransform: 'uppercase',
+  },
+  container: {
+    height: '330px',
   },
 });
 
+@inject('PortfolioStore')
+@observer
 class AssetBreakdown extends React.Component {
   state = {};
 
   render() {
-    const { classes } = this.props;
-
-    const pieData = [
-      {
-        name: 'Jane',
-        y: 17,
-      },
-      {
-        name: 'John',
-        y: 13,
-      },
-      {
-        name: 'Joe',
-        y: 20,
-      },
-      {
-        name: 'Ivan',
-        y: 50,
-      },
-    ];
+    const { classes, PortfolioStore } = this.props;
 
     return (
-      <Grid container>
-        <Grid item xs={12} sm={12} md={12}>
-          <Typography
-            variant="title"
-            id="modal-title"
-            style={{ fontSize: '18px', fontWeight: '400' }}
-          >
-            Shareholders Breakdown
-          </Typography>
+      <Paper>
+        <Grid container >
+          <Grid item xs={12} sm={12} md={12}>
+            <Typography
+              variant="title"
+              id="modal-title"
+              className={classes.text}
+            >
+              Asset Breakdown
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12} sm={12} md={12} id="main">
+            <HighchartsChart className={classes.container}>
+              <Legend layout="vertical" align="right" verticalAlign="middle" />
+
+              <PieSeries
+                type="Pie"
+                id="total-consumption"
+                name="Asset Breakdown"
+                data={PortfolioStore.summaryAssetsBreakdown}
+                center={[205, 135]}
+                size={280}
+                tooltip={{ followPointer: true, valueSuffix: '%' }}
+                showInLegend
+                dataLabels={{ enabled: true }}
+              />
+            </HighchartsChart>
+          </Grid>
         </Grid>
+      </Paper >
 
-        <Grid item xs={12} sm={12} md={12} id="main">
-          <HighchartsChart className="tessstssssssssssssss1111">
-            <Legend layout="vertical" align="right" verticalAlign="middle" />
-
-            <Tooltip animation pointFormat={pieData.y} />
-
-            <PieSeries
-              type="Pie"
-              id="total-consumption"
-              className="tessstssssssssssssss333333"
-              name="Total Shares"
-              data={pieData}
-              center={[200, 120]}
-              size={255}
-              tooltip={{ valueSuffix: "%" }}
-              showInLegend
-              dataLabels={{ enabled: true, }}
-            />
-            {/* <YAxis id="number" className="tessstssssssssssssss2222">
-            </YAxis> */}
-          </HighchartsChart>
-        </Grid>
-      </Grid>
     );
   }
 }

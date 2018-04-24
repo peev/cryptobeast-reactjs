@@ -1,16 +1,12 @@
-import React from "react";
-import SwipeableViews from "react-swipeable-views";
-import Paper from "material-ui/Paper";
+import React from 'react';
+import SwipeableViews from 'react-swipeable-views';
 import {
   Tabs,
   Tab,
-  TabScrollButton,
   withStyles,
-  Typography,
-  Grid
-} from "material-ui";
-import Volatility from "./TabItems/Volatility";
-import Performance from "./TabItems/Performance";
+} from 'material-ui';
+import Volatility from './AnalyticsItems/Volatility';
+import Performance from './AnalyticsItems/Performance';
 
 const styles = () => ({
   navigation: {
@@ -25,13 +21,13 @@ const styles = () => ({
     top: '100px',
   },
   navbtn: {
-    marginLeft: "20px"
-  }
+    marginLeft: '20px',
+  },
 });
 
 class AnalyticsTabs extends React.Component {
   state = {
-    value: null
+    value: null,
   };
 
   handleChange = (event, value) => {
@@ -69,9 +65,12 @@ class AnalyticsTabs extends React.Component {
           </div>
 
           <div>
-            <h2>Here's one more again!</h2>
+            <h2>Liquidity</h2>
           </div>
 
+          <div>
+            <h2>Correlation matrix</h2>
+          </div>
         </SwipeableViews>
       </div>
     );

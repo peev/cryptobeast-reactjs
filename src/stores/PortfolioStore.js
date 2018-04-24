@@ -191,7 +191,7 @@ class PortfolioStore {
 
   @computed
   get currentSelectedPortfolioCost() {
-    // FIXME: Portfolio cost is calculated here,
+    // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
     if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0) {
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD

@@ -57,7 +57,7 @@ const portfolioController = (repository) => {
       });
   };
 
-  // TODO: Calculate prices in the front end ==============================
+  // TODO: Calculate prices in the front end
   const updateAssetBTCEquivalent = (asset) => {
     return new Promise((resolve, reject) => {
       let assetPair;
@@ -114,10 +114,10 @@ const portfolioController = (repository) => {
       .then((foundPortfolios) => {
         if (foundPortfolios[0].assets !== 0) {
           return Promise.all(foundPortfolios[0].assets.map((asset) => {
-            return updateAssetBTCEquivalent(asset)
+            return updateAssetBTCEquivalent(asset);
           }))
             .then((r) => {
-              const cost = r.reduce((a, b) => a + b.lastBTCEquivalent, 0);
+              const cost = r.reduce((acc, b) => acc + b.lastBTCEquivalent, 0);
               const updatedRecord = { id: foundPortfolios[0].id, cost };
               return repository.update({ modelName, updatedRecord });
             });
@@ -132,26 +132,18 @@ const portfolioController = (repository) => {
   };
 
   const getPortfolioSharePrice = (req, res) => {
-    repository.portfolio.getSharePrice(req.body)
-      .then((response) => {
-        res.status(200).send(response);
+    const findPortfolio = repository.findById({ modelName: 'Portfolio', id: req.body.id });
+    const findUSDTicker = repository.findOne({ modelName: 'Ticker', options: { where: { pair: 'USD' } } });
+
+    Promise.all([findPortfolio, findUSDTicker])
+      .then(([pf, usdTicker]) => {
+        return pf.shares === 0 ? 1 : ((pf.cost * usdTicker.last) / pf.shares);
+      })
+      .then((sharePrice) => {
+        res.status(200).send({ sharePrice });
       })
       .catch((error) => {
         res.json(error);
-      });
-  };
-
-  const getUpdatedPortfolioSharePrice = (req, res) => {
-    repository.portfolio.updatePortfolioBTCEquivalent(req.body)
-      .then((updatedPortfolio) => {
-        repository.portfolio.getSharePrice(updatedPortfolio)
-          .then((response) => {
-            console.log('>>> share price: ', response);
-            res.status(200).send(response);
-          })
-          .catch((error) => {
-            res.json(error);
-          });
       });
   };
 
@@ -165,7 +157,6 @@ const portfolioController = (repository) => {
     updateAssetBTCEquivalent,
     updatePortfolioBTCEquivalent,
     getPortfolioSharePrice,
-    getUpdatedPortfolioSharePrice,
   };
 };
 

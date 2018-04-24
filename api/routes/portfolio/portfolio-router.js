@@ -13,7 +13,6 @@ const attachTo = (app, repository) => {
     .post('/updateAssetCost', (req, res) => portfolioController.updateAssetBTCEquivalent(req, res))
     .post('/updatePortfolioCost', (req, res) => portfolioController.updatePortfolioBTCEquivalent(req, res))
     .post('/getPortfolioSharePrice', (req, res) => portfolioController.getPortfolioSharePrice(req, res))
-    .post('/getUpdatedPortfolioSharePrice', (req, res) => portfolioController.getUpdatedPortfolioSharePrice(req, res));
 
   app.use('/portfolio', router);
 };

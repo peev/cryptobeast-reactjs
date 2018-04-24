@@ -3,7 +3,7 @@ const assetController = (repository) => {
 
   const createAsset = (req, res) => {
     const asset = req.body;
-    const findAssetPromise = repository.find({
+    const findAssetPromise = repository.findOne({
       modelName,
       options: {
         where: {
@@ -16,8 +16,8 @@ const assetController = (repository) => {
 
     Promise.resolve(findAssetPromise)
       .then((assets) => {
-        if (assets[0] !== undefined) {
-          const foundAsset = assets[0].dataValues;
+        if (assets !== undefined) {
+          const foundAsset = assets.dataValues;
           foundAsset.balance += asset.balance;
           return repository.update({ modelName, updatedRecord: foundAsset });
         }

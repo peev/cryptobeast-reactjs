@@ -5,9 +5,6 @@ const modelName = 'Investor';
 const investorController = (repository) => {
   // Update or insert new asset
   const upsertAsset = (depositData) => {
-    console.log('>>> depositData: ', depositData);
-
-
     const assetController = require('../asset/asset-controller')(repository);
     const assetData = {
       currency: depositData.currency,
@@ -15,32 +12,30 @@ const investorController = (repository) => {
       origin: 'Manually Added',
       portfolioId: depositData.portfolioId,
     };
-
-    console.log('>>> assetData: ', assetData);
     assetController.createAsset({
       body: assetData,
     });
   };
 
   const updateShares = (transaction) => {
-    const findInvestor = repository.find({
+    const findInvestor = repository.findOne({
       modelName: 'Investor',
       options: { where: { id: transaction.investorId } },
     });
-    const findPortfolio = repository.find({
+    const findPortfolio = repository.findOne({
       modelName: 'Portfolio',
       options: { where: { id: transaction.portfolioId } },
     });
 
     Promise.all([findInvestor, findPortfolio])
-      .then(([foundInvestors, foundPortfolios]) => {
-        const purchasedShares = foundInvestors[0].purchasedShares + transaction.shares;
-        const shares = foundPortfolios[0].shares + transaction.shares;
+      .then(([foundInvestor, foundPortfolio]) => {
+        const purchasedShares = foundInvestor.purchasedShares + transaction.shares;
+        const shares = foundPortfolio.shares + transaction.shares;
 
         repository.update({
           modelName: 'Investor',
           updatedRecord: {
-            id: foundInvestors[0].id,
+            id: foundInvestor.id,
             purchasedShares,
           },
         });
@@ -48,7 +43,7 @@ const investorController = (repository) => {
         repository.update({
           modelName: 'Portfolio',
           updatedRecord: {
-            id: foundPortfolios[0].id,
+            id: foundPortfolio.id,
             shares,
           },
         });

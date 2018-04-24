@@ -17,7 +17,14 @@ class AssetMovements extends React.Component {
 
           <AssetAllocation />
 
-          <AssetsTable />
+          <AssetsTable tableHead={[
+            'Currency',
+            'Balance',
+            'Origin',
+            'BTC Equivalent',
+            '',
+          ]}
+          />
         </Grid>
       </div>
     );

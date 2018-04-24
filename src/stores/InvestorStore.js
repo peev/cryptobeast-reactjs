@@ -330,13 +330,14 @@ class InvestorStore {
       balance: +this.newInvestorValues.depositedAmount,
       portfolioId: id,
       investor: {
-        isFounder: this.newInvestorValues.isFounder,
-        fullName: this.newInvestorValues.fullName,
-        email: this.newInvestorValues.email,
-        telephone: this.newInvestorValues.telephone,
-        dateOfEntry: this.newInvestorValues.dateOfEntry,
-        managementFee: this.newInvestorValues.managementFee,
-        purchasedShares: this.newInvestorValues.purchasedShares,
+        isFounder: this.values.isFounder,
+        fullName: this.values.fullName,
+        email: this.values.email,
+        telephone: this.values.telephone,
+        dateOfEntry: this.values.dateOfEntry,
+        managementFee: this.values.managementFee,
+        purchasedShares: this.values.purchasedShares,
+        portfolioId: id,
       },
       transaction: {
         investorName: this.newInvestorValues.fullName,
@@ -344,7 +345,8 @@ class InvestorStore {
         transactionDate: this.newInvestorValues.dateOfEntry,
         amountInUSD: this.newInvestorValues.depositUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
-        shares: parseFloat(this.newInvestorValues.purchasedShares),
+        shares: parseFloat(this.values.purchasedShares),
+        portfolioId: id,
       },
     };
     requester.Investor.add(newInvestor)
@@ -395,6 +397,8 @@ class InvestorStore {
         amountInUSD: this.newInvestorValues.depositUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newDepositValues.purchasedShares),
+        portfolioId: PortfolioStore.selectedPortfolioId,
+        investorId: id,
       },
     };
 

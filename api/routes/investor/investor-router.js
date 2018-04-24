@@ -6,7 +6,7 @@ const attachTo = (app, data) => {
 
   router
     .post('/add', (req, res) => {
-      return investorController.addInvestorToPortfolio(req, res);
+      return investorController.createInvestor(req, res);
     })
     .put('/deposit/', (req, res) => {
       return investorController.depositInvestor(req, res);
@@ -18,7 +18,7 @@ const attachTo = (app, data) => {
       return investorController.updateInvestor(req, res);
     })
     .delete('/delete', (req, res) => {
-      return investorController.removeInvestorFromPortfolio(req, res);
+      return investorController.removeInvestor(req, res);
     });
 
   app.use('/investor', router);

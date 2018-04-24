@@ -30,7 +30,7 @@ const bittrexServices = () => {
   const getTicker = (marketName) => {
     return new Promise((resolve, reject) => {
       bittrex.getticker({ market: marketName }, (ticker) => {
-        resolve({ pair: marketName, last: (ticker.result ? ticker.result.Last : null) });
+        resolve({ pair: marketName, last: (ticker ? ticker.result.Last : null) });
       });
     });
   };

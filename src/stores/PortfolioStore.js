@@ -190,6 +190,31 @@ class PortfolioStore {
   // #endregion
 
   @computed
+  get currentMarketSummaryPersantegeChange() {
+    // NOTE: Portfolio cost is calculated here,
+    // because the value from database is incorrect
+    if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0) {
+      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
+      return this.currentPortfolioAssets.reduce((array, el) => {
+        let assetBTCValue;
+        if (el.currency === 'BTC') {
+          assetBTCValue = MarketStore.marketSummaries[`USDT-${el.currency}`].Last * el.balance;
+        } else {
+          const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${el.currency}`] ?
+            MarketStore.marketSummaries[`BTC-${el.currency}`].Last :
+            0;
+
+          assetBTCValue = assetBTCEquiv * valueOfUSD;
+        }
+
+        return array + assetBTCValue;
+      }, 0);
+    }
+
+    return 0;
+  }
+
+  @computed
   get currentSelectedPortfolioCost() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect

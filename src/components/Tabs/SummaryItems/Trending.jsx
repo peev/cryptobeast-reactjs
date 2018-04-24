@@ -47,6 +47,7 @@ class Trending extends Component {
         <Grid container className={classes.container}>
           <Grid item xs={6} sm={6} md={6}>
             <p>Best Performing Assets</p>
+
             <Table className={classes.table}>
               {tableHead !== undefined ? tableHeader : null}
               {/* <TableBody>{tableInfo}</TableBody> */}

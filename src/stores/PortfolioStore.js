@@ -20,7 +20,13 @@ class PortfolioStore {
 
 
     // eslint-disable-next-line no-unused-expressions
-    this.getPortfolios(); // gets portfolios at app init
+    // gets portfolios at app init
+    this.getPortfolios().then(() => {
+      console.log(this.portfolios);
+      if (this.portfolios.length > 0) {
+        MarketStore.init();
+      }
+    });
   }
   // ======= Computed =======
   // #region Computed

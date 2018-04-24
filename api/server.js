@@ -1,6 +1,7 @@
 const constants = require('./config/constants');
+const dbConfig = require('./config/db');
 
-require('./data/db/db-context').init()
+require('./data/db/db-context').init(dbConfig)
   .then((dbContext) => {
     return require('./data/repository').init(dbContext);
   })

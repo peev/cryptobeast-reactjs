@@ -1,4 +1,8 @@
-import { observable, action, computed } from 'mobx';
+import {
+  observable,
+  action,
+  computed
+} from 'mobx';
 import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
@@ -69,7 +73,9 @@ class InvestorStore {
   @computed
   get purchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const { currentPortfolioSharePrice } = PortfolioStore;
+    const {
+      currentPortfolioSharePrice
+    } = PortfolioStore;
     if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
       // TODO: To add Assets value below
       const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
@@ -98,7 +104,9 @@ class InvestorStore {
   @computed
   get depositPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const { currentPortfolioSharePrice } = PortfolioStore;
+    const {
+      currentPortfolioSharePrice
+    } = PortfolioStore;
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
       // const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
@@ -138,7 +146,9 @@ class InvestorStore {
   @computed
   get withdrawPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const { currentPortfolioSharePrice } = PortfolioStore;
+    const {
+      currentPortfolioSharePrice
+    } = PortfolioStore;
 
     if (this.selectedInvestor && this.withdrawalValues.amount) {
       // const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / 1.75).toFixed(2);
@@ -373,12 +383,18 @@ class InvestorStore {
 
     requester.Investor.update(investorId, finalResult)
       .then(action((result) => {
-        // TODO: Something with result
-        // this.selectedInvestor is null here?!?
-        // this.selectedInvestor.fullName = updatedValues.fullName;
-        // this.selectedInvestor.email = updatedValues.email;
-        // this.selectedInvestor.telephone = updatedValues.telephone;
-        // this.selectedInvestor.managementFee = updatedValues.managementFee;
+        const portfolioInvestors = PortfolioStore.currentPortfolioInvestors;
+        // console.log(PortfolioStore.currentPortfolioInvestors, finalResult, investorId)
+        portfolioInvestors.forEach((investor) => {
+          if (investor.id === investorId) {
+            // eslint-disable-next-line no-restricted-syntax
+            for (const key in investor) {
+              if (investor.hasOwnProperty(key) && finalResult.hasOwnProperty(key)) {
+                investor[key] = finalResult[key]; 
+              }
+            }
+          }
+        });
       }))
       .catch(err => console.log(err));
   }
@@ -662,7 +678,8 @@ class InvestorStore {
     // selects the marked investor
     PortfolioStore.currentPortfolioInvestors.find((element) => {
       if (element.id === id) {
-        this.selectedInvestor = { ...element };
+        this.selectedInvestor = { ...element
+        };
       }
     });
 

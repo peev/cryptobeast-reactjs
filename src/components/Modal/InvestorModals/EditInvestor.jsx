@@ -37,7 +37,12 @@ const styles = theme => ({
     marginTop: '10px',
   },
   buttonsContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
     marginTop: '20px',
+  },
+  alignBtn: {
+    marginRight: '20px',
   },
 });
 
@@ -151,12 +156,16 @@ class EditInvestor extends React.Component {
             </Grid>
 
             <Grid container className={classes.buttonsContainer}>
-              <Button
-                color="primary"
-                onClick={this.handleClose}
-              >
+              <div className={classes.alignBtn}>
+
+                <Button
+                  className={classes.alignBtn}
+                  color="primary"
+                  onClick={this.handleClose}
+                >
                 Cancel
-              </Button>
+                </Button>
+              </div>
 
               <Button
                 type="submit"

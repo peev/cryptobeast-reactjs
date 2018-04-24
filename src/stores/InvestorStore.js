@@ -340,13 +340,13 @@ class InvestorStore {
       balance: +this.newInvestorValues.depositedAmount,
       portfolioId: id,
       investor: {
-        isFounder: this.values.isFounder,
-        fullName: this.values.fullName,
-        email: this.values.email,
-        telephone: this.values.telephone,
-        dateOfEntry: this.values.dateOfEntry,
-        managementFee: this.values.managementFee,
-        purchasedShares: this.values.purchasedShares,
+        isFounder: this.newInvestorValues.isFounder,
+        fullName: this.newInvestorValues.fullName,
+        email: this.newInvestorValues.email,
+        telephone: this.newInvestorValues.telephone,
+        dateOfEntry: this.newInvestorValues.dateOfEntry,
+        managementFee: this.newInvestorValues.managementFee,
+        purchasedShares: this.newInvestorValues.purchasedShares,
         portfolioId: id,
       },
       transaction: {
@@ -355,7 +355,7 @@ class InvestorStore {
         transactionDate: this.newInvestorValues.dateOfEntry,
         amountInUSD: this.newInvestorValues.depositUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
-        shares: parseFloat(this.values.purchasedShares),
+        shares: parseFloat(this.newInvestorValues.purchasedShares),
         portfolioId: id,
       },
     };
@@ -390,7 +390,7 @@ class InvestorStore {
             // eslint-disable-next-line no-restricted-syntax
             for (const key in investor) {
               if (investor.hasOwnProperty(key) && finalResult.hasOwnProperty(key)) {
-                investor[key] = finalResult[key]; 
+                investor[key] = finalResult[key];
               }
             }
           }

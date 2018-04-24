@@ -7,6 +7,7 @@ import {
   HighchartsChart,
   Legend,
   PieSeries,
+  Tooltip,
 } from 'react-jsx-highcharts';
 import { inject, observer } from 'mobx-react';
 
@@ -14,12 +15,18 @@ import { inject, observer } from 'mobx-react';
 const styles = () => ({
   text: {
     padding: '10px 23px',
-    fontSize: '20px',
+    color: 'white',
+    backgroundColor: '#4c5265',
+    fontSize: '15px',
     fontWeight: '500',
     textTransform: 'uppercase',
   },
   container: {
-    height: '330px',
+    height: '290px',
+  },
+  containerParagraph: {
+    paddingTop: '0 !important',
+    textAlign: 'center',
   },
 });
 
@@ -34,7 +41,7 @@ class AssetBreakdown extends React.Component {
     return (
       <Paper>
         <Grid container >
-          <Grid item xs={12} sm={12} md={12}>
+          <Grid item xs={12} sm={12} md={12} className={classes.containerParagraph}>
             <Typography
               variant="title"
               id="modal-title"
@@ -48,14 +55,16 @@ class AssetBreakdown extends React.Component {
             <HighchartsChart className={classes.container}>
               <Legend layout="vertical" align="right" verticalAlign="middle" />
 
+              <Tooltip />
+
               <PieSeries
                 type="Pie"
                 id="total-consumption"
                 name="Asset Breakdown"
                 data={PortfolioStore.summaryAssetsBreakdown}
-                center={[205, 135]}
-                size={280}
-                tooltip={{ followPointer: true, valueSuffix: '%' }}
+                center={[205, 115]}
+                size={230}
+                tooltip={{ valueSuffix: '%' }}
                 showInLegend
                 dataLabels={{ enabled: true }}
               />

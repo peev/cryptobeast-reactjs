@@ -192,7 +192,7 @@ class PortfolioStore {
   @computed
   get summaryAssetsBreakdown() {
     return this.summaryPortfolioAssets.map((el) => {
-      return { y: parseInt(el[5], 10), name: el[0] };
+      return { y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` };
     });
   }
 

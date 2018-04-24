@@ -3,9 +3,12 @@ import PropTypes from 'prop-types';
 import { withStyles, Grid } from 'material-ui';
 import summaryStyle from 'variables/styles/summaryStyle';
 
-import { InfoOutline } from 'material-ui-icons';
-
 import { inject, observer } from 'mobx-react';
+
+import { InfoOutline } from 'material-ui-icons';
+import AnalyticsIcon from '../../components/CustomIcons/Summary/AnalyticsIcon';
+import TotalIcon from '../../components/CustomIcons/Summary/TotalIcon';
+
 import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 import SummaryCard from '../../components/Cards/SummaryCard';
 import AssetBreakdown from '../../components/Cards/Summary/AssetBreakdown';
@@ -41,7 +44,6 @@ class Summary extends React.Component {
             You currently have no portfolio to display. Please create a
             portfolio to start
           </p>
-
           <CreatePortfolio />
         </Grid>
       </Grid>
@@ -51,7 +53,7 @@ class Summary extends React.Component {
       <Grid container className={classes.container}>
         <Grid container spacing={10} className={classes.containerHeader}>
           <SummaryCard
-            icon={InfoOutline}
+            icon={AnalyticsIcon}
             iconColor="gray"
             title="Total number of shares"
             description={PortfolioStore.selectedPortfolio ?
@@ -60,7 +62,7 @@ class Summary extends React.Component {
           />
 
           <SummaryCard
-            icon={InfoOutline}
+            icon={TotalIcon}
             iconColor="gray"
             title="Share price"
             description={PortfolioStore.selectedPortfolio ?
@@ -83,7 +85,7 @@ class Summary extends React.Component {
           />
 
           <SummaryCard
-            icon={InfoOutline}
+            icon={AnalyticsIcon}
             iconColor="gray"
             title="Total profit/loss"
             description={PortfolioStore.summaryTotalProfitLoss > 0 ?

@@ -11,8 +11,8 @@ import {
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import tableStyle from '../../variables/styles/tableStyle';
-import UpArrowIcon from '../CustomIcons/UpArrowIcon';
-import DownArrowIcon from '../CustomIcons/DownArrowIcon';
+import UpArrowIcon from '../CustomIcons/Summary/UpArrowIcon';
+import DownArrowIcon from '../CustomIcons/Summary/DownArrowIcon';
 
 const styles = () => ({
   paper: {

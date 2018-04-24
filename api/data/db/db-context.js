@@ -18,6 +18,8 @@ const init = () => {
     dialect: 'postgres',
   });
 
+  const db = {};
+
   // TODO: Add new models here
   db.Portfolio = sequelize.import(path.join(__dirname, '/models/portfolio.js'));
   db.Account = sequelize.import(path.join(__dirname, '/models/account.js'));

@@ -63,7 +63,7 @@ class Summary extends React.Component {
             iconColor="gray"
             title="Share price"
             description={PortfolioStore.selectedPortfolio ?
-              '$' + PortfolioStore.currentPortfolioSharePrice.toFixed(2) :
+              (PortfolioStore.currentPortfolioSharePrice ? '$' + PortfolioStore.currentPortfolioSharePrice.toFixed(2) : '$' + 1) :
               '$' + 0}
           />
 

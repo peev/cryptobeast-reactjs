@@ -48,7 +48,7 @@ class Summary extends React.Component {
 
     const summaryContent = (
       <Grid container className={classes.containerSummary}>
-        <Grid container spacing={10} className={classes.containerHeader}>
+        <Grid container spacing={8} className={classes.containerHeader}>
           <SummaryCard
             icon={InfoOutline}
             iconColor="gray"

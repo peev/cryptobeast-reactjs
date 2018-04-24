@@ -10,8 +10,12 @@ const init = () => {
   });
 
   firstconnection.query('CREATE DATABASE cryptobeast WITH OWNER = postgres')
+    .then((result) => {
+      firstconnection.close();
+    })
     .catch((err) => {
       console.log('Database already exists.');
+      firstconnection.close();
     });
 
   const sequelize = new Sequelize('cryptobeast', 'postgres', 'crypto', {

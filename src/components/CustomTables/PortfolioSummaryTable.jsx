@@ -16,7 +16,8 @@ import DownArrowIcon from '../CustomIcons/Summary/DownArrowIcon';
 
 const styles = () => ({
   paper: {
-    padding: '15px',
+    margin: '40px 30px 0',
+    padding: '20px 25px',
   },
   tableHead: {
     borderBottom: '1px solid black',

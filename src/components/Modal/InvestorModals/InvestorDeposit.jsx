@@ -8,6 +8,7 @@ import { inject, observer } from 'mobx-react';
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
+import ErrorSnackbar from '../../Modal/ErrorSnackbar';
 
 const getModalStyle = () => {
   const top = 20;
@@ -41,13 +42,11 @@ const styles = theme => ({
   },
 });
 
-@inject('InvestorStore', 'PortfolioStore', 'MarketStore')
+@inject('InvestorStore', 'PortfolioStore', 'MarketStore', 'ErrorStore')
 @observer
 class InvestorDeposit extends React.Component {
   state = {
     open: false,
-    openNotification: false,
-    disabledBtn: false,
   };
 
   handleOpen = () => {
@@ -67,10 +66,11 @@ class InvestorDeposit extends React.Component {
 
   handleDepositRequests = propertyType => (event) => {
     event.preventDefault();
+
     const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     this.props.InvestorStore.setNewDepositInvestorValues(propertyType, inputValue);
-    
+
     // To calculate purchased shares ===================
     if (propertyType === 'amount') {
       InvestorStore.depositUsdEquiv();
@@ -79,40 +79,16 @@ class InvestorDeposit extends React.Component {
 
   handleDepositSave = () => {
     const { InvestorStore } = this.props;
-    const profileChecked = InvestorStore.handleNotSelectedPortfolio();
-    InvestorStore.handleDepositEmptyFields();
+    const hasErrors = InvestorStore.handleDepositInvestorErrors();
 
-    // Warnings popup
-    if (InvestorStore.getAddInvestorErrors.length > 0) {
-      this.setState({ openNotification: true, disabledBtn: true });
-      setTimeout(() => {
-        InvestorStore.resetErrors();
-        this.setState({ openNotification: false, disabledBtn: false });
-      }, 6000);
-    }
-
-    if (InvestorStore.getAddInvestorErrors.length === 0 && profileChecked) {
+    if (hasErrors) {
       InvestorStore.createNewDepositInvestor(InvestorStore.selectedInvestor.id);
       this.handleClose();
     }
   }
 
   render() {
-    const { classes, InvestorStore, PortfolioStore } = this.props;
-    const investorErrors = InvestorStore.getAddInvestorErrors;
-    let errorMessagesArray;
-
-    if (investorErrors.length > 0) {
-      let message = '';
-
-      investorErrors.forEach(errorMsg => message += `${errorMsg} \n`);
-
-      errorMessagesArray = (<Snackbar
-        message={message}
-        open={this.state.openNotification}
-        style={{ height: 'auto', lineHeight: '28px', padding: '24', whiteSpace: 'pre-line' }}
-      />);
-    }
+    const { classes, InvestorStore, PortfolioStore, ErrorStore } = this.props;
 
     return (
       <Grid container>
@@ -176,7 +152,6 @@ class InvestorDeposit extends React.Component {
                   placeholder="Purchased Shares"
                   className={classes.alignInputAfter}
                   value={InvestorStore.depositPurchasedShares}
-                  // value={InvestorStore.purchasedShares}
                 />
               </Grid>
             </Grid>
@@ -193,14 +168,15 @@ class InvestorDeposit extends React.Component {
                 type="submit"
                 color="primary"
                 onClick={this.handleDepositSave}
-                disabled={this.state.disabledBtn}
+                disabled={ErrorStore.getErrorsLength > 0}
               >
                 Save
               </Button>
             </Grid>
           </div>
         </Modal>
-        {errorMessagesArray}
+        {/* {errorMessagesArray} */}
+        <ErrorSnackbar />
       </Grid >
     );
   }

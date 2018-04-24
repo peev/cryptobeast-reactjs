@@ -8,9 +8,12 @@ import { inject, observer } from 'mobx-react';
 import { InfoOutline } from 'material-ui-icons';
 import AnalyticsIcon from '../../components/CustomIcons/Summary/AnalyticsIcon';
 import TotalIcon from '../../components/CustomIcons/Summary/TotalIcon';
+import CoinIcon from '../../components/CustomIcons/Summary/CoinIcon';
+import DollarIcon from '../../components/CustomIcons/Summary/DollarIcon';
+import AscendantBarsIcon from '../../components/CustomIcons/Summary/AscendantBarsIcon';
 
 import CreatePortfolio from '../../components/Modal/CreatePortfolio';
-import SummaryCard from '../../components/Cards/SummaryCard';
+import SummaryCard from '../../components/Cards/Summary/SummaryCard';
 import AssetBreakdown from '../../components/Cards/Summary/AssetBreakdown';
 import PortfolioSummaryTable from '../../components/CustomTables/PortfolioSummaryTable';
 // import PortfolioSummaryTable2 from '../../components/CustomTables/PortfolioSummaryTable2';
@@ -53,7 +56,7 @@ class Summary extends React.Component {
       <Grid container className={classes.container}>
         <Grid container spacing={10} className={classes.containerHeader}>
           <SummaryCard
-            icon={AnalyticsIcon}
+            icon={TotalIcon}
             iconColor="gray"
             title="Total number of shares"
             description={PortfolioStore.selectedPortfolio ?
@@ -62,7 +65,7 @@ class Summary extends React.Component {
           />
 
           <SummaryCard
-            icon={TotalIcon}
+            icon={AscendantBarsIcon}
             iconColor="gray"
             title="Share price"
             description={PortfolioStore.selectedPortfolio ?
@@ -71,14 +74,14 @@ class Summary extends React.Component {
           />
 
           <SummaryCard
-            icon={InfoOutline}
+            icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
             description={'$' + PortfolioStore.summaryUsdEquivalent}
           />
 
           <SummaryCard
-            icon={InfoOutline}
+            icon={CoinIcon}
             iconColor="gray"
             title="Total investment"
             description={'$' + PortfolioStore.summaryTotalInvestment}

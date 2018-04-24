@@ -10,14 +10,8 @@ const wrapSvgPath = (path, viewBox = '0 0 15 20') => props => (
 );
 
 const SimulatorPath = (
-<svg xmlns="http://www.w3.org/2000/svg"  width="24px" height="24px" className="">
-<g>
-    <g>
-	<g>
-		<polygon points="298.667,0 42.667,0 42.667,42.667 181.333,170.667 42.667,298.667 42.667,341.333 298.667,341.333     298.667,277.333 149.333,277.333 256,170.667 149.333,64 298.667,64   " data-original="#000000" className="active-path" data-old_color="#FBFBFB" fill="#FDFDFD"/>
-	</g>
-</g>
-</g> 
+<svg viewBox="0 0 341.333 341.333">
+  <path data-original="#000000" className="active-path" data-old_color="#FBFBFB" fill="#FDFDFD" d="M298.667 0h-256v42.667l138.666 128-138.666 128v42.666h256v-64H149.333L256 170.667 149.333 64h149.334z"/>
 </svg>
 );
 

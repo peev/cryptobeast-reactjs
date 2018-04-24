@@ -5,7 +5,6 @@ import summaryStyle from 'variables/styles/summaryStyle';
 
 import { inject, observer } from 'mobx-react';
 
-import { InfoOutline } from 'material-ui-icons';
 import AnalyticsIcon from '../../components/CustomIcons/Summary/AnalyticsIcon';
 import TotalIcon from '../../components/CustomIcons/Summary/TotalIcon';
 import CoinIcon from '../../components/CustomIcons/Summary/CoinIcon';

@@ -3,6 +3,7 @@ const { responseHandler } = require('../utilities/response-handler');
 const modelName = 'Investor';
 
 const investorController = (repository) => {
+  // TODO: delete upsertAsset + the check in the asset-controller -> do the check in the MarketStore
   // Update or insert new asset
   const upsertAsset = (depositData) => {
     const assetController = require('../asset/asset-controller')(repository);

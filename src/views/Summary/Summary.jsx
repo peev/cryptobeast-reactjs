@@ -68,7 +68,7 @@ class Summary extends React.Component {
             iconColor="gray"
             title="Share price"
             description={PortfolioStore.selectedPortfolio ?
-              '$' + PortfolioStore.currentPortfolioSharePrice.toFixed(2) :
+              (PortfolioStore.currentPortfolioSharePrice ? '$' + PortfolioStore.currentPortfolioSharePrice.toFixed(2) : '$' + 1) :
               '$' + 0}
           />
 
@@ -76,7 +76,7 @@ class Summary extends React.Component {
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            description={'$' + PortfolioStore.summaryUsdEquivalent}
+            description={'$' + PortfolioStore.currentSelectedPortfolioCost.toFixed(2)}
           />
 
           <SummaryCard

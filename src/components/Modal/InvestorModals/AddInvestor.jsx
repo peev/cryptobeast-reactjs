@@ -182,7 +182,7 @@ class AddInvestor extends React.Component {
                 <Input
                   placeholder="Share price at entry Date"
                   className={classes.alignInput}
-                  value={PortfolioStore.currentPortfolioSharePrice}
+                  value={PortfolioStore.currentPortfolioSharePrice || 1}
                 />
               </Grid>
 

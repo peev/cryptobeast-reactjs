@@ -78,7 +78,7 @@ class InvestorStore {
     } = PortfolioStore;
     if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
       // TODO: To add Assets value below
-      const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
+      const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / (currentPortfolioSharePrice || 1)).toFixed(2);
       this.newInvestorValues.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -430,7 +430,7 @@ class InvestorStore {
   withdrawalInvestor(id) {
     const withdrawal = {
       currency: 'USD',
-      balance: parseFloat(this.withdrawalValues.amount) * (-1),
+      balance: +this.withdrawalValues.amount,
       portfolioId: PortfolioStore.selectedPortfolioId,
       investorId: id,
       transaction: {
@@ -440,8 +440,11 @@ class InvestorStore {
         amountInUSD: this.withdrawalValues.amount,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.withdrawalValues.purchasedShares) * (-1),
+        portfolioId: PortfolioStore.selectedPortfolioId,
+        investorId: id,
       },
-    }
+    };
+
     requester.Investor.withdrawal(withdrawal)
       .then((result) => {
         // TODO: Something with result

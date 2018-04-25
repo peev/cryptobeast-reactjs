@@ -20,7 +20,13 @@ class PortfolioStore {
 
 
     // eslint-disable-next-line no-unused-expressions
-    this.getPortfolios(); // gets portfolios at app init
+    // gets portfolios at app init
+    this.getPortfolios().then(() => {
+      console.log(this.portfolios);
+      if (this.portfolios.length > 0) {
+        MarketStore.init();
+      }
+    });
   }
   // ======= Computed =======
   // #region Computed
@@ -114,9 +120,9 @@ class PortfolioStore {
             let calculatedUSDPrice;
             // for BTC, value is already
             if (currentRow[0] === 'BTC') {
-              calculatedUSDPrice = Math.round(assetBTCEquiv * (10 ** 12)) / (10 ** 12);
+              calculatedUSDPrice = valueOfUSD;
             } else {
-              calculatedUSDPrice = (assetBTCEquiv * valueOfUSD) / el.balance;
+              calculatedUSDPrice = (assetBTCEquiv * valueOfUSD);
             }
 
             const roundedCalcPriceUSD = Math.round(calculatedUSDPrice * (10 ** 12)) / (10 ** 12);
@@ -124,14 +130,7 @@ class PortfolioStore {
           }
           // 5. Total Value(USD)
           if (ind === 4) {
-            // console.log(assetBTCEquiv, valueOfUSD);
-            let calcPriceUSD;
-            if (currentRow[0] === 'BTC') {
-              calcPriceUSD = assetBTCEquiv * el.balance;
-            } else {
-              calcPriceUSD = assetBTCEquiv * valueOfUSD;
-            }
-
+            const calcPriceUSD = currentRow[3] * el.balance;
             const roundedCalcPriceUSD = Math.round(calcPriceUSD * (10 ** 12)) / (10 ** 12);
             currentRow.push(roundedCalcPriceUSD);
           }
@@ -190,7 +189,7 @@ class PortfolioStore {
   // #endregion
 
   @computed
-  get currentMarketSummaryPersantegeChange() {
+  get currentMarketSummaryPercentageChange() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
     if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0) {
@@ -210,8 +209,13 @@ class PortfolioStore {
         return array + assetBTCValue;
       }, 0);
     }
-
     return 0;
+  }
+
+  get summaryAssetsBreakdown() {
+    return this.summaryPortfolioAssets.map((el) => {
+      return { y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` };
+    });
   }
 
   @computed
@@ -226,7 +230,7 @@ class PortfolioStore {
           assetBTCValue = MarketStore.marketSummaries[`USDT-${el.currency}`].Last * el.balance;
         } else {
           const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${el.currency}`] ?
-            MarketStore.marketSummaries[`BTC-${el.currency}`].Last :
+            (MarketStore.marketSummaries[`BTC-${el.currency}`].Last * el.balance) :
             0;
 
           assetBTCValue = assetBTCEquiv * valueOfUSD;

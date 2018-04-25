@@ -25,7 +25,9 @@ class MarketStore {
     this.selectedExchange = '';
     this.selectedCurrency = '';
     this.assetInputValue = '';
+  }
 
+  init() {
     // Setups the database. This request gives the back-end what
     // currencies to get from internet, writes them to database.
     // After that, fetches information from  database.
@@ -154,10 +156,10 @@ class MarketStore {
     };
 
     requester.Asset.add(newBasicAsset)
-      .then(action(() => {
+      .then(action((result) => {
         // TODO: Something with result
-        PortfolioStore.getPortfolios();
-        this.resetAsset();
+
+        PortfolioStore.currentPortfolioAssets.push(result.data);
       }));
   }
 

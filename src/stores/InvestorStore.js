@@ -390,7 +390,7 @@ class InvestorStore {
             // eslint-disable-next-line no-restricted-syntax
             for (const key in investor) {
               if (investor.hasOwnProperty(key) && finalResult.hasOwnProperty(key)) {
-                investor[key] = finalResult[key]; 
+                investor[key] = finalResult[key];
               }
             }
           }
@@ -678,7 +678,8 @@ class InvestorStore {
     // selects the marked investor
     PortfolioStore.currentPortfolioInvestors.find((element) => {
       if (element.id === id) {
-        this.selectedInvestor = { ...element
+        this.selectedInvestor = {
+          ...element
         };
       }
     });

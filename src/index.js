@@ -15,6 +15,7 @@ import InvestorStore from './stores/InvestorStore';
 import MarketStore from './stores/MarketStore';
 import ApiAccountStore from './stores/ApiAccountStore';
 import ErrorStore from './stores/ErrorStore';
+import UserStore from './stores/UserStore';
 
 const stores = {
   PortfolioStore,
@@ -23,6 +24,7 @@ const stores = {
   MarketStore,
   ApiAccountStore,
   ErrorStore,
+  UserStore,
 };
 
 // For easier debugging

@@ -5,45 +5,49 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import PerfectScrollbar from 'perfect-scrollbar';
 import 'perfect-scrollbar/css/perfect-scrollbar.css';
 import { withStyles } from 'material-ui';
+import { inject, observer } from 'mobx-react';
 
 import { Header, Sidebar } from 'components';
 
 import appRoutes from 'routes/app.jsx';
 
 import appStyle from 'variables/styles/appStyle.jsx';
-// import logo from 'assets/img/reactlogo.png';
-// import { navBackgroundColor, textPrimary } from '../../variables/styles';
-// import ControlledOpenSelect from '../../components/Selectors/PortSelect';
+
 
 const switchRoutes = (
   <Switch>
     {appRoutes.map((prop, key) => {
-      if (prop.redirect)
-        return <Redirect from={prop.path} to={prop.to} key={key} />;
+      if (prop.redirect) { return <Redirect from={prop.path} to={prop.to} key={key} />; }
       return <Route path={prop.path} component={prop.component} key={key} />;
     })}
   </Switch>
 );
 
+const switchCreatePortfolioRoutes = (
+  <Switch>
+    {appRoutes.map((prop, key) => {
+      if (prop.redirect) { return <Redirect from={prop.path} to={prop.to} key={key} />; }
+      return <Route path="/summary" component={appRoutes[0].component} key={key} />;
+    })}
+  </Switch>
+);
+
+@inject('PortfolioStore')
+@observer
 class App extends React.Component {
   state = {
     mobileOpen: false,
-    username: '',
   };
 
   componentDidMount() {
     if (navigator.platform.indexOf('Win') > -1) {
       // eslint-disable-next-line
-      const ps = new PerfectScrollbar(this.refs.mainPanel);
+      const ps = new PerfectScrollbar(this.mainPanel);
     }
   }
 
   componentDidUpdate() {
-    this.refs.mainPanel.scrollTop = 0;
-  }
-
-  getRoute() {
-    return this.props.location.pathname !== '/maps';
+    this.mainPanel.scrollTop = 0;
   }
 
   handleDrawerToggle = () => {
@@ -51,17 +55,19 @@ class App extends React.Component {
   };
 
   render() {
-    const { classes, ...rest } = this.props;
+    const { classes, PortfolioStore, ...rest } = this.props;
+    const portfoliosArray = PortfolioStore.portfolios;
+
     return (
       <div className={classes.wrapper}>
-
         <Sidebar
           routes={appRoutes}
           handleDrawerToggle={this.handleDrawerToggle}
           open={this.state.mobileOpen}
           {...rest}
         />
-        <div className={classes.mainPanel} ref="mainPanel">
+
+        <div className={classes.mainPanel} ref={(ref) => { this.mainPanel = ref; }}>
           <Header
             routes={appRoutes}
             handleDrawerToggle={this.handleDrawerToggle}
@@ -69,22 +75,28 @@ class App extends React.Component {
             {...rest}
           />
 
-          {/* On the /maps route we want the map to be on full screen - this is not possible if the content and container classes are present because they have some paddings which would make the map smaller */}
-          {this.getRoute() ? (
+          {/*
+              Checks if there are portfolios.
+              If there are none, makes routing array with only summary tabs
+          */}
+          {portfoliosArray.length > 0 ? (
             <div className={classes.content}>
               <div className={classes.container}>{switchRoutes}</div>
             </div>
           ) : (
-              <div className={classes.map}>{switchRoutes}</div>
+            <div className={classes.content}>
+              <div className={classes.container}>{switchCreatePortfolioRoutes}</div>
+            </div>
             )}
         </div>
-      </div>
+      </div >
     );
   }
 }
 
 App.propTypes = {
   classes: PropTypes.object.isRequired,
+  PortfolioStore: PropTypes.object,
 };
 
 export default withStyles(appStyle)(App);

@@ -3,9 +3,13 @@ const { bittrexServices } = require('../../integrations/bittrex-services');
 
 const marketController = (repository) => {
   const syncSummaries = (req, res) => {
-    bittrexServices().getSummaries()
-      .then((summaries) => {
-        return repository.market.updateSummary(summaries);
+    const clearOldSummariesPromise = repository.removeAll({ modelName: 'MarketSummary' });
+    const getSummariesPromise = clearOldSummariesPromise
+      .then(() => bittrexServices().getSummaries());
+
+    Promise.resolve(getSummariesPromise)
+      .then((currencies) => {
+        return repository.createMany({ modelName: 'MarketSummary', newObjects: currencies });
       })
       .then((response) => {
         res.status(200).send(response);
@@ -16,7 +20,7 @@ const marketController = (repository) => {
   };
 
   const getSummaries = (req, res) => {
-    repository.market.getAll()
+    repository.find({ modelName: 'MarketSummary' })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -26,22 +30,13 @@ const marketController = (repository) => {
   };
 
   const getBaseCurrencies = (req, res) => {
-    repository.market.getBase()
+    repository.find({ modelName: 'Ticker', options: { where: { pair: ['USD', 'EUR', 'JPY', 'ETH'] } } })
       .then((response) => {
         res.status(200).send(response);
       })
       .catch((error) => {
         res.json(error);
       });
-
-    // Bittrex variant
-    // repository.market.getBase()
-    //   .then((response) => {
-    //     res.status(200).send(response);
-    //   })
-    //   .catch((error) => {
-    //     res.json(error);
-    //   });
   };
 
   const syncTickersFromKraken = (req, res) => {
@@ -62,8 +57,8 @@ const marketController = (repository) => {
             last: tickers[currency].c[0],
           });
         });
-
-        return repository.ticker.saveManyTickers(currentTickerPairs).then(result => result);
+        return repository.createMany({ modelName: 'Ticker', newObjects: currentTickerPairs })
+          .then(result => result);
       })
       .then((response) => {
         res.status(200).send(response);
@@ -75,9 +70,13 @@ const marketController = (repository) => {
 
   // Ticker services ======================================================
   const syncTickersFromApi = (req, res) => {
-    bittrexServices().getAllTickers()
+    const clearOldTickersPromise = repository.removeAll({ modelName: 'Ticker' });
+    const getTickersPromise = clearOldTickersPromise
+      .then(() => bittrexServices().getAllTickers());
+
+    Promise.resolve(getTickersPromise)
       .then((tickers) => {
-        return repository.ticker.syncTickers(tickers);
+        return repository.createMany({ modelName: 'Ticker', newObjects: tickers });
       })
       .then((response) => {
         res.status(200).send(response);
@@ -99,7 +98,7 @@ const marketController = (repository) => {
   };
 
   const getAllTickers = (req, res) => {
-    repository.ticker.getAll()
+    repository.find({ modelName: 'Ticker' })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -109,20 +108,24 @@ const marketController = (repository) => {
   };
 
   const syncCurrenciesFromApi = (req, res) => {
-    bittrexServices().getCurrencies()
+    const clearOldCurrenciesPromise = repository.removeAll({ modelName: 'Currency' });
+    const getCurrenciesPromise = clearOldCurrenciesPromise
+      .then(() => bittrexServices().getCurrencies());
+
+    Promise.resolve(getCurrenciesPromise)
       .then((currencies) => {
-        return repository.currency.syncCurrencies(currencies);
+        return repository.createMany({ modelName: 'Currency', newObjects: currencies });
       })
       .then((response) => {
         res.status(200).send(response);
       })
       .catch((error) => {
-        res.json(error);
+        res.status(404).json(error);
       });
   };
 
   const getAllCurrencies = (req, res) => {
-    repository.currency.getAll()
+    repository.find({ modelName: 'Currency' })
       .then((response) => {
         res.status(200).send(response);
       })

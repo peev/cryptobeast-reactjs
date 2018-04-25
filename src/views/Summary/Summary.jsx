@@ -1,80 +1,143 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles, Grid } from "material-ui";
-import summaryStyle from "variables/styles/summaryStyle";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles, Grid } from 'material-ui';
+import summaryStyle from 'variables/styles/summaryStyle';
 
-import { inject, observer } from "mobx-react";
-import CreatePortfolio from "../../components/Modal/CreatePortfolio";
-import "./Summary.css";
-// react plugin for creating charts
-// import ChartistGraph from 'react-chartist';
-// import {
-//   ContentCopy, Store, InfoOutline, Warning, DateRange, LocalOffer, Update, ArrowUpward, AccessTime, Accessibility,
-// } from 'material-ui-icons';
-// import {
-//   StatsCard,
-//   ChartCard,
-//   TasksCard,
-//   RegularCard,
-//   Table,
-//   ItemGrid,
-// } from 'components';
-// import {
-//   dailySalesChart,
-//   emailsSubscriptionChart,
-//   completedTasksChart,
-// } from 'variables/charts';
-// import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
+import { inject, observer } from 'mobx-react';
 
-@inject("PortfolioStore")
+import AnalyticsIcon from '../../components/CustomIcons/Summary/AnalyticsIcon';
+import TotalIcon from '../../components/CustomIcons/Summary/TotalIcon';
+import CoinIcon from '../../components/CustomIcons/Summary/CoinIcon';
+import DollarIcon from '../../components/CustomIcons/Summary/DollarIcon';
+import AscendantBarsIcon from '../../components/CustomIcons/Summary/AscendantBarsIcon';
+
+import CreatePortfolio from '../../components/Modal/CreatePortfolio';
+import SummaryCard from '../../components/Cards/Summary/SummaryCard';
+import AssetBreakdown from '../../components/Cards/Summary/AssetBreakdown';
+import PortfolioSummaryTable from '../../components/CustomTables/PortfolioSummaryTable';
+// import PortfolioSummaryTable2 from '../../components/CustomTables/PortfolioSummaryTable2';
+
+const styles = () => ({
+  container: {
+    marginTop: '20px',
+  },
+  containerHeader: {
+    display: 'flex',
+    justifyContent: 'space-around',
+  },
+  warningText: {
+    marginTop: '35%',
+    textAlign: 'center',
+  },
+});
+
+@inject('PortfolioStore')
 @observer
 class Summary extends React.Component {
-  state = {
-    value: 0,
-    inputName: ""
-  };
-
-  handleChange = (event, value) => {
-    this.setState({ value });
-  };
-
-  handleChangeIndex = index => {
-    this.setState({ value: index });
-  };
+  state = {};
 
   render() {
-    const { PortfolioStore } = this.props;
-    let createPortfolio;
-    let summaryContent;
+    const { classes, PortfolioStore } = this.props;
 
-    if (!PortfolioStore.portfolios.hasOwnProperty("0")) {
-      createPortfolio = (
-        <div className="createPortfolio">
-          <p>
+    const createPortfolio = (
+      <Grid container>
+        <Grid item xs={12} sm={12} md={12}>
+          <p className={classes.warningText}>
             You currently have no portfolio to display. Please create a
             portfolio to start
           </p>
           <CreatePortfolio />
-        </div>
-      );
-    } else {
-      summaryContent = <p>Page is under construction...</p>;
-    }
+        </Grid>
+      </Grid>
+    );
+
+    const summaryContent = (
+      <Grid container className={classes.container}>
+        <Grid container spacing={8} className={classes.containerHeader}>
+          <SummaryCard
+            icon={TotalIcon}
+            iconColor="gray"
+            title="Total number of shares"
+            description={PortfolioStore.selectedPortfolio ?
+              PortfolioStore.selectedPortfolio.shares :
+              0}
+          />
+
+          <SummaryCard
+            icon={AscendantBarsIcon}
+            iconColor="gray"
+            title="Share price"
+            description={PortfolioStore.selectedPortfolio ?
+              (PortfolioStore.currentPortfolioSharePrice ? '$' + PortfolioStore.currentPortfolioSharePrice.toFixed(2) : '$' + 1) :
+              '$' + 0}
+          />
+
+          <SummaryCard
+            icon={DollarIcon}
+            iconColor="gray"
+            title="USD equivalent"
+            description={'$' + PortfolioStore.currentSelectedPortfolioCost.toFixed(2)}
+          />
+
+          <SummaryCard
+            icon={CoinIcon}
+            iconColor="gray"
+            title="Total investment"
+            description={'$' + PortfolioStore.summaryTotalInvestment}
+          />
+
+          <SummaryCard
+            icon={AnalyticsIcon}
+            iconColor="gray"
+            title="Total profit/loss"
+            description={PortfolioStore.summaryTotalProfitLoss > 0 ?
+              '+' + PortfolioStore.summaryTotalProfitLoss + '%' :
+              PortfolioStore.summaryTotalProfitLoss + '%'}
+          />
+        </Grid>
+
+        <Grid container className={classes.container}>
+          <Grid item xs={6} sm={6} md={6}>
+            <p>left</p>
+          </Grid>
+          <Grid item xs={6} sm={6} md={6}>
+            <AssetBreakdown />
+          </Grid>
+        </Grid>
+
+        <Grid container className={classes.container}>
+          <Grid item xs={12} sm={12} md={12}>
+            <PortfolioSummaryTable
+              tableHead={[
+                'Ticker',
+                'Holdings',
+                'Price(BTC)',
+                'Price(USD)',
+                'Total Value(USD)',
+                'Asset Weight',
+                '24H Change',
+                '7D Change',
+              ]}
+            />
+
+            {/* <PortfolioSummaryTable2 /> */}
+          </Grid>
+        </Grid>
+      </Grid>
+    )
+
+    const portfoliosArray = PortfolioStore.portfolios;
 
     return (
-      <div className="Summary">
-        <Grid>
-          {createPortfolio}
-          {summaryContent}
-          {/* <AddInvestorWrapped /> */}
-        </Grid>
-      </div>
+      <Grid container>
+        {portfoliosArray.length > 0 ? summaryContent : createPortfolio}
+      </Grid>
     );
   }
 }
 
 Summary.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(summaryStyle)(Summary);
+export default withStyles(styles, summaryStyle)(Summary);

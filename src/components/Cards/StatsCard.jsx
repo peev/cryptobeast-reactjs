@@ -49,7 +49,7 @@ function StatsCard({ ...props }) {
           ) : null}
         </Typography>
       </CardContent>
-      <CardActions className={classes.cardActions}>
+      {/* <CardActions className={classes.cardActions}>
         <div className={classes.cardStats} onClick={getProducts}>
           <props.statIcon
             className={
@@ -64,7 +64,7 @@ function StatsCard({ ...props }) {
             statText
           ) : null}
         </div>
-      </CardActions>
+      </CardActions> */}
     </Card>
   );
 }

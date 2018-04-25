@@ -5,21 +5,11 @@ const attachTo = (app, data) => {
   const investorController = require('./investor-controller')(data);
 
   router
-    .post('/add', (req, res) => {
-      return investorController.addInvestorToPortfolio(req, res);
-    })
-    .put('/deposit/', (req, res) => {
-      return investorController.depositInvestor(req, res);
-    })
-    .put('/withdrawal/', (req, res) => {
-      return investorController.withdrawalInvestor(req, res);
-    })
-    .put('/update/:id', (req, res) => {
-      return investorController.updateInvestor(req, res);
-    })
-    .delete('/delete', (req, res) => {
-      return investorController.removeInvestorFromPortfolio(req, res);
-    });
+    .post('/add', (req, res) => investorController.createInvestor(req, res))
+    .put('/deposit/', (req, res) => investorController.depositInvestor(req, res))
+    .put('/withdrawal/', (req, res) => investorController.withdrawalInvestor(req, res))
+    .put('/update/:id', (req, res) => investorController.updateInvestor(req, res))
+    .delete('/delete', (req, res) => investorController.removeInvestor(req, res));
 
   app.use('/investor', router);
 };

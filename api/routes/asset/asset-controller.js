@@ -1,21 +1,35 @@
 const assetController = (repository) => {
-  const addAssetToPortfolio = (req, res) => {
-    const assetData = req.body;
-    repository.asset.addNewAsset(assetData)
-      .then(() => {
-        console.log('\naddNewAsset response: ', assetData);
-        res.status(200).send(assetData);
-      })
-      .catch((error) => {
-        return res.json(error);
+  const modelName = 'Asset';
+
+  const createAsset = (req, res) => {
+    return new Promise((resolve, reject) => {
+      const asset = req.body;
+      const findAssetPromise = repository.findOne({
+        modelName,
+        options: {
+          where: {
+            currency: asset.currency,
+            origin: asset.origin,
+            portfolioId: asset.portfolioId,
+          },
+        },
       });
-  };
 
-  const updateAsset = (req, res) => {
-    // const id = req.params.id;
-    const assetData = req.body;
-
-    repository.asset.update(assetData)
+      findAssetPromise
+        .then((assets) => {
+          if (assets !== null) {
+            const foundAsset = assets.dataValues;
+            foundAsset.balance += asset.balance;
+            repository.update({ modelName, updatedRecord: foundAsset })
+              .then(() => {
+                findAssetPromise
+                  .then(updatedAsset => resolve(updatedAsset));
+              });
+          } else {
+            resolve(repository.create({ modelName, newObject: asset }));
+          }
+        });
+    })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -24,9 +38,20 @@ const assetController = (repository) => {
       });
   };
 
-  const removeAssetFromPortfolio = (req, res) => {
-    const requestData = req.body;
-    repository.asset.removeAsset(requestData)
+  const updateAsset = (req, res) => {
+    const asset = req.body;
+    repository.update({ modelName, updatedRecord: asset })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        return res.json(error);
+      });
+  };
+
+  const removeAsset = (req, res) => {
+    const { assetId } = req.body;
+    repository.remove({ modelName, id: assetId })
       .then(result => responseHandler(res, result))
       .catch((error) => {
         return res.json(error);
@@ -34,9 +59,9 @@ const assetController = (repository) => {
   };
 
   return {
-    addAssetToPortfolio,
+    createAsset,
     updateAsset,
-    removeAssetFromPortfolio,
+    removeAsset,
   };
 };
 

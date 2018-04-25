@@ -2,6 +2,12 @@
 
 # Electron, React with Material-UI design theme and SQLite with Sequelize
 
+## Project setup
+
+# Database
+Download & install PostgreSQL version 10.3 from https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+
+copy `/api/config/db.example.js` to `/api/config/example.js` and set yout db credentials
 
 ## Commands to use
 * To start the project:
@@ -14,6 +20,7 @@ execute the following from the Console tab of your running Electron app's develo
 ``` javascript
 require('devtron').install();
 ```
+
 
 You should then see a Devtron tab added.
 
@@ -38,4 +45,3 @@ You should then see a Devtron tab added.
 
 * Sequelize - ORM
     - [repository description](https://github.com/sequelize/sequelize)
-

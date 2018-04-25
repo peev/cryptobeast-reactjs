@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
-// import { Menu } from 'material-ui-icons';
 import cx from 'classnames';
 import {
   withStyles,
@@ -12,10 +11,8 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  // IconButton,
 } from 'material-ui';
 
-import { HeaderLinks } from 'components';
 
 import sidebarStyle from 'variables/styles/sidebarStyle.jsx';
 
@@ -63,7 +60,7 @@ const Sidebar = ({ ...props }) => {
       })}
     </List>
   );
-  
+
   return (
     <div>
       <Hidden mdUp>
@@ -81,7 +78,6 @@ const Sidebar = ({ ...props }) => {
         >
 
           <div className={classes.sidebarWrapper}>
-            <HeaderLinks />
             {links}
           </div>
           {image !== undefined ? (

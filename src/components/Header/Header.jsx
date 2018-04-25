@@ -42,7 +42,7 @@ class Header extends Component {
 
     return (
       <Toolbar className={classes.headerContainer}>
-        {portfoliosArray.length > 0 ? <PortfolioSelect /> : ''}
+        {portfoliosArray.length > 0 && <PortfolioSelect />}
       </Toolbar>
     );
   }

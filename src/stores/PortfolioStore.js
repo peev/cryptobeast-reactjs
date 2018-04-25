@@ -8,7 +8,7 @@ class PortfolioStore {
   @observable selectedPortfolioId;
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
-  @observable currentPortfolioSharePrice;
+  // @observable currentPortfolioSharePrice;
 
   constructor() {
     this.portfolios = [];
@@ -16,7 +16,7 @@ class PortfolioStore {
     this.selectedPortfolioId = null;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
-    this.currentPortfolioSharePrice = 0;
+    // this.currentPortfolioSharePrice = 0;
 
 
     // eslint-disable-next-line no-unused-expressions
@@ -219,6 +219,14 @@ class PortfolioStore {
 
     return 0;
   }
+
+  @computed
+  get currentPortfolioSharePrice() {
+    if (this.selectedPortfolio) {
+      return this.currentSelectedPortfolioCost / this.selectedPortfolio.shares;
+    }
+    return 1;
+  }
   // #endregion
 
   // ======= Action =======
@@ -265,10 +273,10 @@ class PortfolioStore {
       }
     });
 
-    requester.Portfolio.getSharePrice({ id })
-      .then(action((sharePrice) => {
-        this.currentPortfolioSharePrice = sharePrice.data.sharePrice;
-      }));
+    // requester.Portfolio.getSharePrice({ id })
+    //   .then(action((sharePrice) => {
+    //     this.currentPortfolioSharePrice = sharePrice.data.sharePrice;
+    //   }));
   }
 
   @action

@@ -120,7 +120,7 @@ class PortfolioSelect extends React.Component {
           key={el.id}
           value={el.id}
           index={i + 1}
-          select={i === 1}
+          select={i === 1 ? el.id : undefined}
         >
           <div className={classes.listItemContainer}>
             <p className={classes.listItemName}>{el.name}</p>

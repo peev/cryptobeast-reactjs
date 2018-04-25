@@ -12,6 +12,7 @@ import DollarIcon from '../../components/CustomIcons/Summary/DollarIcon';
 import AscendantBarsIcon from '../../components/CustomIcons/Summary/AscendantBarsIcon';
 
 import CreatePortfolio from '../../components/Modal/CreatePortfolio';
+import TasksCard from '../../components/Cards/TasksCard';
 import SummaryCard from '../../components/Cards/Summary/SummaryCard';
 import AssetBreakdown from '../../components/Cards/Summary/AssetBreakdown';
 import SummaryTabs from '../../components/Tabs/SummaryTabs';
@@ -77,7 +78,7 @@ class Summary extends React.Component {
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            description={'$' + PortfolioStore.summaryUsdEquivalent}
+            description={'$' + PortfolioStore.currentSelectedPortfolioCost.toFixed(2)}
           />
 
           <SummaryCard
@@ -99,7 +100,8 @@ class Summary extends React.Component {
 
         <Grid container className={classes.container}>
           <Grid item xs={6} sm={6} md={6}>
-            <SummaryTabs />
+            {/* <SummaryTabs /> */}
+            <TasksCard />
           </Grid>
           <Grid item xs={6} sm={6} md={6}>
             <AssetBreakdown />

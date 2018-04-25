@@ -40,12 +40,10 @@ class Portfolio extends Component {
 
     return (
       <Grid container>
-        <Paper className={classes.container}>
-          <Table className={classes.table}>
-            {tableHead !== undefined ? tableHeader : null}
-            {/* <TableBody>{tableInfo}</TableBody> */}
-          </Table>
-        </Paper>
+        <Table className={classes.table}>
+          {tableHead !== undefined ? tableHeader : null}
+          {/* <TableBody>{tableInfo}</TableBody> */}
+        </Table>
       </Grid>
     );
   }

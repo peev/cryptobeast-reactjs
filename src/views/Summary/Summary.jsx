@@ -55,7 +55,7 @@ class Summary extends React.Component {
 
     const summaryContent = (
       <Grid container className={classes.container}>
-        <Grid container spacing={10} className={classes.containerHeader}>
+        <Grid container spacing={8} className={classes.containerHeader}>
           <SummaryCard
             icon={TotalIcon}
             iconColor="gray"
@@ -70,7 +70,7 @@ class Summary extends React.Component {
             iconColor="gray"
             title="Share price"
             description={PortfolioStore.selectedPortfolio ?
-              '$' + PortfolioStore.currentPortfolioSharePrice.toFixed(2) :
+              (PortfolioStore.currentPortfolioSharePrice ? '$' + PortfolioStore.currentPortfolioSharePrice.toFixed(2) : '$' + 1) :
               '$' + 0}
           />
 

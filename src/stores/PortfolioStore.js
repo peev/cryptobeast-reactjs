@@ -120,9 +120,9 @@ class PortfolioStore {
             let calculatedUSDPrice;
             // for BTC, value is already
             if (currentRow[0] === 'BTC') {
-              calculatedUSDPrice = Math.round(assetBTCEquiv * (10 ** 12)) / (10 ** 12);
+              calculatedUSDPrice = valueOfUSD;
             } else {
-              calculatedUSDPrice = (assetBTCEquiv * valueOfUSD) / el.balance;
+              calculatedUSDPrice = (assetBTCEquiv * valueOfUSD);
             }
 
             const roundedCalcPriceUSD = Math.round(calculatedUSDPrice * (10 ** 12)) / (10 ** 12);
@@ -130,14 +130,7 @@ class PortfolioStore {
           }
           // 5. Total Value(USD)
           if (ind === 4) {
-            // console.log(assetBTCEquiv, valueOfUSD);
-            let calcPriceUSD;
-            if (currentRow[0] === 'BTC') {
-              calcPriceUSD = assetBTCEquiv * el.balance;
-            } else {
-              calcPriceUSD = assetBTCEquiv * valueOfUSD;
-            }
-
+            const calcPriceUSD = currentRow[3] * el.balance;
             const roundedCalcPriceUSD = Math.round(calcPriceUSD * (10 ** 12)) / (10 ** 12);
             currentRow.push(roundedCalcPriceUSD);
           }
@@ -196,6 +189,13 @@ class PortfolioStore {
   // #endregion
 
   @computed
+  get summaryAssetsBreakdown() {
+    return this.summaryPortfolioAssets.map((el) => {
+      return { y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` };
+    });
+  }
+
+  @computed
   get currentSelectedPortfolioCost() {
     // FIXME: Portfolio cost is calculated here,
     // because the value from database is incorrect
@@ -207,7 +207,7 @@ class PortfolioStore {
           assetBTCValue = MarketStore.marketSummaries[`USDT-${el.currency}`].Last * el.balance;
         } else {
           const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${el.currency}`] ?
-            MarketStore.marketSummaries[`BTC-${el.currency}`].Last :
+            (MarketStore.marketSummaries[`BTC-${el.currency}`].Last * el.balance) :
             0;
 
           assetBTCValue = assetBTCEquiv * valueOfUSD;

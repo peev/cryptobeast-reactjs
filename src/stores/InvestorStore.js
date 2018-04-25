@@ -681,7 +681,8 @@ class InvestorStore {
     // selects the marked investor
     PortfolioStore.currentPortfolioInvestors.find((element) => {
       if (element.id === id) {
-        this.selectedInvestor = { ...element
+        this.selectedInvestor = {
+          ...element
         };
       }
     });

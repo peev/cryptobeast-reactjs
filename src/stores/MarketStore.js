@@ -156,10 +156,10 @@ class MarketStore {
     };
 
     requester.Asset.add(newBasicAsset)
-      .then(action(() => {
+      .then(action((result) => {
         // TODO: Something with result
-        PortfolioStore.getPortfolios();
-        this.resetAsset();
+
+        PortfolioStore.currentPortfolioAssets.push(result.data);
       }));
   }
 

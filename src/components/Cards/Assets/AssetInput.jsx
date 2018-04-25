@@ -52,7 +52,11 @@ class AssetInput extends React.Component {
 
     if (portfolioId !== null) {
       this.props.MarketStore.createBasicAsset(portfolioId);
+<<<<<<< HEAD
       this.props.ErrorStore.addError('Transaction recorded successfully')
+=======
+      this.props.MarketStore.resetAsset();
+>>>>>>> c84bfaf063c2b74c24eebd109f76629d2b792e4a
     }
   }
 

@@ -53,7 +53,7 @@ class Summary extends React.Component {
 
     const summaryContent = (
       <Grid container className={classes.container}>
-        <Grid container spacing={10} className={classes.containerHeader}>
+        <Grid container spacing={8} className={classes.containerHeader}>
           <SummaryCard
             icon={TotalIcon}
             iconColor="gray"

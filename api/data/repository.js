@@ -17,7 +17,7 @@ const init = (db) => {
   const update = request =>
     db[request.modelName].update(
       request.updatedRecord,
-      { where: { id: request.updatedRecord.id } },
+      { where: { id: request.updatedRecord.id } }
     );
 
   const remove = request =>

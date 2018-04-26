@@ -1,5 +1,3 @@
-import { reject } from 'bluebird-lst';
-
 const initUserData = {
   selectedPortfolio: 0,
 };
@@ -8,7 +6,6 @@ const User = {
   getUserData: () => new Promise((resolve, reject) => {
     setTimeout(() => {
       const userData = JSON.parse(window.localStorage.getItem('cb_user'));
-      console.log(userData || initUserData);
       resolve(userData || initUserData);
     }, 500);
   }),

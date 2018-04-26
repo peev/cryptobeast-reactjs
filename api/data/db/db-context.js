@@ -17,7 +17,6 @@ const init = ({ dbName, dbUser, dbPassword }) => new Promise((resolve, reject) =
     })
     .catch((err) => {
       console.log('Database already exists.'.grey);
-      console.log(err);
     }).then(() => {
       testconnection.close();
       const sequelize = createConnection(dbName, dbUser, dbPassword);

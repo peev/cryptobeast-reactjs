@@ -32,12 +32,17 @@ const switchCreatePortfolioRoutes = (
   </Switch>
 );
 
-@inject('PortfolioStore')
+@inject('PortfolioStore', 'UserStore')
 @observer
 class App extends React.Component {
-  state = {
-    mobileOpen: false,
-  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      mobileOpen: false,
+    };
+  }
 
   componentDidMount() {
     if (navigator.platform.indexOf('Win') > -1) {
@@ -55,7 +60,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { classes, PortfolioStore, ...rest } = this.props;
+    const { classes, PortfolioStore, UserStore, ...rest } = this.props;
     const portfoliosArray = PortfolioStore.portfolios;
 
     return (
@@ -97,6 +102,7 @@ class App extends React.Component {
 App.propTypes = {
   classes: PropTypes.object.isRequired,
   PortfolioStore: PropTypes.object,
+  UserStore: PropTypes.object
 };
 
 export default withStyles(appStyle)(App);

@@ -7,7 +7,7 @@ import { inject, observer } from 'mobx-react';
 
 import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import Button from '../../CustomButtons/Button';
-import ErrorSnackbar from '../../Modal/ErrorSnackbar';
+import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
 
 
@@ -54,7 +54,7 @@ const styles = theme => ({
   }
 });
 
-@inject('InvestorStore', 'PortfolioStore', 'MarketStore', 'ErrorStore')
+@inject('InvestorStore', 'PortfolioStore', 'MarketStore', 'NotificationStore')
 @observer
 class AddInvestor extends React.Component {
   state = {
@@ -93,7 +93,7 @@ class AddInvestor extends React.Component {
   };
 
   handleSave = () => {
-    const { PortfolioStore, InvestorStore, ErrorStore } = this.props;
+    const { PortfolioStore, InvestorStore, NotificationStore } = this.props;
 
     // FIXME: dont spam Save Button
     const hasErrors = InvestorStore.handleAddInvestorErrors();
@@ -106,7 +106,7 @@ class AddInvestor extends React.Component {
   };
 
   render() {
-    const { classes, InvestorStore, PortfolioStore, ErrorStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore, NotificationStore } = this.props;
 
     return (
       <Grid container>
@@ -232,7 +232,7 @@ class AddInvestor extends React.Component {
                 type="submit"
                 color="primary"
                 onClick={this.handleSave}
-                disabled={ErrorStore.getErrorsLength > 0}
+                disabled={NotificationStore.getErrorsLength > 0}
               >
                 Save
               </Button>
@@ -240,7 +240,7 @@ class AddInvestor extends React.Component {
           </div>
         </Modal>
 
-        <ErrorSnackbar />
+        <NotificationSnackbar />
       </Grid >
     );
   }

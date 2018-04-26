@@ -4,6 +4,7 @@ import Paper from 'material-ui/Paper';
 import RegularButton from '../../CustomButtons/Button';
 import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
+import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 
 const styles = () => ({
   container: {

@@ -1,12 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
-import Paper from 'material-ui/Paper';
 import {
   Tabs,
   Tab,
-  TabScrollButton,
   withStyles,
-  Typography,
   Grid,
 } from 'material-ui';
 import Portfolio from './SummaryItems/Portfolio';
@@ -27,9 +25,6 @@ const styles = () => ({
     height: '314px',
     '&::-webkit-scrollbar': {
       display: 'none',
-    },
-    '& >div:first-child': {
-      color: 'green',
     },
   },
   tabItem: {
@@ -88,5 +83,9 @@ class SummaryTabs extends React.Component {
     );
   }
 }
+
+SummaryTabs.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
 
 export default withStyles(styles)(SummaryTabs);

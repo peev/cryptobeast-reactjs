@@ -194,12 +194,12 @@ class PortfolioStore {
       const marketSummary = MarketStore.marketSummaries;
 
       return Object.keys(marketSummary)
-        .filter((el, i) => el.includes('BTC-') || el.includes('USDT-BTC'))
+        .filter(el => el.includes('BTC-') || el.includes('USDT-BTC'))
         .map((el) => {
           const index = marketSummary[el].MarketName.indexOf('-');
           const name = marketSummary[el].MarketName.slice(index + 1);
           const elemCost = +(((marketSummary[el].Last - marketSummary[el].PrevDay) / marketSummary[el].PrevDay) * 100).toFixed(2);
-          return [name, elemCost];
+          return [name, elemCost, 42];
         })
         .sort((a, b) => b[1] - a[1]);
     }

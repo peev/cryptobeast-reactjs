@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Paper from 'material-ui/Paper';
+import PropTypes from 'prop-types';
 import {
   withStyles,
   Grid,
@@ -48,5 +48,10 @@ class Portfolio extends Component {
     );
   }
 }
+
+Portfolio.propTypes = {
+  classes: PropTypes.object.isRequired,
+  tableHead: PropTypes.array.isRequired,
+};
 
 export default withStyles(styles)(Portfolio);

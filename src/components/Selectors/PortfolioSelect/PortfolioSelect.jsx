@@ -71,14 +71,6 @@ const styles = theme => ({
 @observer
 class PortfolioSelect extends React.Component {
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      open: false,
-    };
-  }
-
   handleChange = (event) => {
     const { value, index } = event.target;
 

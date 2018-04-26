@@ -32,8 +32,8 @@ const snackbarContentStyle = {
     ...infoBoxShadow,
   },
   success: {
-    backgroundColor: '#5cb860',
-    color: '#ffffff',
+    backgroundColor: '#ffffff',
+    color: '#3ab693',
     ...successBoxShadow,
   },
   warning: {
@@ -42,8 +42,8 @@ const snackbarContentStyle = {
     ...warningBoxShadow,
   },
   danger: {
-    backgroundColor: '#f55a4e',
-    color: '#ffffff',
+    backgroundColor: '#ffffff',
+    color: '#eb4562',
     ...dangerBoxShadow,
   },
   primary: {
@@ -74,6 +74,7 @@ const snackbarContentStyle = {
     height: '30px',
   },
   iconMessage: {
+    color: '#000000',
     paddingLeft: '65px',
     display: 'block',
   },

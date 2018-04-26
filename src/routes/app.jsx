@@ -72,12 +72,6 @@ const appRoutes = [
     navBarName: 'Settings',
     icon: SettingsIcon,
     component: Settings,
-  },
-  {
-    redirect: true,
-    path: '/',
-    to: '/summary',
-    navbarName: 'Redirect',
   }
 ];
 

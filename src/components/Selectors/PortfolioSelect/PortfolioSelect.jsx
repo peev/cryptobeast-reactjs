@@ -67,33 +67,19 @@ const styles = theme => ({
   },
 });
 
-@inject('PortfolioStore')
+@inject('PortfolioStore', 'UserStore')
 @observer
 class PortfolioSelect extends React.Component {
-  state = {
-    selectedPortfolioId: '',
-    open: false,
-  };
-
-
-  handleOpen = () => {
-    this.setState({ open: true });
-  };
-
-  handleClose = () => {
-    this.setState({ open: false });
-  };
 
   handleChange = (event) => {
     const { value, index } = event.target;
-    this.props.PortfolioStore.selectPortfolio(value);
 
-    this.setState({ [event.target.name]: value }); // 'selectedPortfolioId: event.target.value' does same as above
+    this.props.UserStore.setPortfolio(value);
   };
 
   render() {
     const { classes, PortfolioStore } = this.props;
-    let portfoliosToShow = [];
+    const portfoliosToShow = [];
 
     // 1st value is empty, this is required by the Select component
     portfoliosToShow.push(
@@ -138,11 +124,7 @@ class PortfolioSelect extends React.Component {
         <FormControl className={classes.formControl}>
           <Select
             className="headerListSelect"
-            placeholder="test"
-            open={this.state.open}
-            value={this.state.selectedPortfolioId}
-            onClose={this.handleClose}
-            onOpen={this.handleOpen}
+            value={PortfolioStore.selectedPortfolioId || ''}
             onChange={this.handleChange}
             displayEmpty // uses the 1st element as placeholder
             disableUnderline // removes underline from component
@@ -161,6 +143,8 @@ class PortfolioSelect extends React.Component {
 
 PortfolioSelect.propTypes = {
   classes: PropTypes.object.isRequired,
+  PortfolioStore: PropTypes.object,
+  UserStore: PropTypes.object
 };
 
 export default withStyles(styles)(PortfolioSelect);

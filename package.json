@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@types/pg": "^7.4.7",
+    "@material-ui/icons": "^1.0.0-beta.43",
     "axios": "^0.18.0",
     "babel-plugin-styled-components": "^1.5.1",
     "chartist": "^0.10.1",

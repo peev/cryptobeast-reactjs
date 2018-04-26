@@ -8,7 +8,7 @@ import { inject, observer } from 'mobx-react';
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
-import ErrorSnackbar from '../../Modal/ErrorSnackbar';
+import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 
 const getModalStyle = () => {
   const top = 20;
@@ -42,7 +42,7 @@ const styles = theme => ({
   },
 });
 
-@inject('InvestorStore', 'PortfolioStore', 'MarketStore', 'ErrorStore')
+@inject('InvestorStore', 'PortfolioStore', 'MarketStore', 'NotificationStore')
 @observer
 class InvestorDeposit extends React.Component {
   state = {
@@ -88,7 +88,7 @@ class InvestorDeposit extends React.Component {
   }
 
   render() {
-    const { classes, InvestorStore, PortfolioStore, ErrorStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore, NotificationStore } = this.props;
 
     return (
       <Grid container>
@@ -168,7 +168,7 @@ class InvestorDeposit extends React.Component {
                 type="submit"
                 color="primary"
                 onClick={this.handleDepositSave}
-                disabled={ErrorStore.getErrorsLength > 0}
+                disabled={NotificationStore.getErrorsLength > 0}
               >
                 Save
               </Button>
@@ -176,7 +176,7 @@ class InvestorDeposit extends React.Component {
           </div>
         </Modal>
         {/* {errorMessagesArray} */}
-        <ErrorSnackbar />
+        <NotificationSnackbar />
       </Grid >
     );
   }

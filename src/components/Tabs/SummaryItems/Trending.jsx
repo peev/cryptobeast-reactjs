@@ -9,11 +9,13 @@ import {
   TableBody,
   TableCell,
 } from 'material-ui';
+import { inject, observer } from 'mobx-react';
 
 const styles = () => ({
   container: {
     width: '100%',
-    color: 'red',
+    margin: '0',
+    backgroundColor: '#FFFFFF',
   },
   tableCell: {
     paddingRight: '18px',
@@ -21,11 +23,16 @@ const styles = () => ({
   },
 });
 
+@inject('PortfolioStore')
+@observer
 class Trending extends Component {
   state = {};
 
   render() {
-    const { classes, tableHead } = this.props;
+    const { classes, tableHead, PortfolioStore } = this.props;
+    const array = PortfolioStore.currentMarketSummaryPercentageChange;
+    const topFive = array.slice(0, 5);
+    const lastFive = array.slice(array.length - 5).reverse();
 
     const tableHeader = (
       <TableHead>
@@ -42,6 +49,43 @@ class Trending extends Component {
       </TableHead>
     );
 
+    const tableBodyTopFive = topFive.map((prop, key) => (
+      <TableRow key={key}>
+        {prop.map((item, ind) => {
+
+          console.log(item);
+          if (ind === 1) {
+            return (
+              <TableCell className={classes.tableCell} key={ind}>
+                {item}
+              </TableCell>
+            );
+          }
+
+          return (
+            <TableCell className={classes.tableCell} key={ind}>
+              {item}
+            </TableCell>
+          );
+        })}
+      </TableRow>
+    ));
+
+    const tableBodyLastFive = lastFive.map((prop, key) => (
+      <TableRow key={key}>
+        {prop.map((item, ind) => {
+
+          console.log(item);
+
+          return (
+            <TableCell className={classes.tableCell} key={ind}>
+              {item}
+            </TableCell>
+          );
+        })}
+      </TableRow>
+    ));
+
     return (
       <Grid container className={classes.container}>
         <Grid item xs={6} sm={6} md={6}>
@@ -49,11 +93,7 @@ class Trending extends Component {
 
           <Table className={classes.table}>
             {tableHead !== undefined ? tableHeader : null}
-            {/* <TableBody>{tableInfo}</TableBody> */}
-            <p>test</p>
-            <p>test</p>
-            <p>test</p>
-            <p>test</p>
+            <TableBody>{tableBodyTopFive}</TableBody>
           </Table>
         </Grid>
 
@@ -61,7 +101,7 @@ class Trending extends Component {
           <p>Worst Performing Assets</p>
           <Table className={classes.table}>
             {tableHead !== undefined ? tableHeader : null}
-            {/* <TableBody>{tableInfo}</TableBody> */}
+            <TableBody>{tableBodyLastFive}</TableBody>
           </Table>
         </Grid>
       </Grid>

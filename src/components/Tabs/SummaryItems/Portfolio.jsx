@@ -13,7 +13,7 @@ import {
 const styles = () => ({
   container: {
     width: '100%',
-    color: 'red',
+    backgroundColor: '#FFFFFF',
   },
 });
 

@@ -25,11 +25,18 @@ const styles = () => ({
   },
   containerHeader: {
     display: 'flex',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    margin: '0 30px',
+  },
+  containerMiddle: {
+    margin: '20px 22px 0',
   },
   warningText: {
     marginTop: '35%',
     textAlign: 'center',
+  },
+  removePaddingBottom: {
+    paddingBottom: '0',
   },
 });
 
@@ -98,10 +105,10 @@ class Summary extends React.Component {
           />
         </Grid>
 
-        <Grid container className={classes.container}>
-          <Grid item xs={6} sm={6} md={6}>
-            {/* <SummaryTabs /> */}
-            <TasksCard />
+        <Grid container className={classes.containerMiddle}>
+          <Grid item xs={6} sm={6} md={6} className={classes.removePaddingBottom}>
+            <SummaryTabs />
+            {/* <TasksCard /> */}
           </Grid>
           <Grid item xs={6} sm={6} md={6}>
             <AssetBreakdown />
@@ -141,6 +148,7 @@ class Summary extends React.Component {
 
 Summary.propTypes = {
   classes: PropTypes.object.isRequired,
+  PortfolioStore: PropTypes.object.isRequired
 };
 
 export default withStyles(styles, summaryStyle)(Summary);

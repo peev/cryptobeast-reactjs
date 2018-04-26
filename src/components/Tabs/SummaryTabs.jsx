@@ -14,15 +14,31 @@ import Trending from './SummaryItems/Trending';
 
 const styles = () => ({
   container: {
-    height: '350px',
-    marginTop: '20px',
+    height: '363px',
+    marginTop: '-16px',
   },
   navigation: {
-    backgroundColor: '#33435d',
+    height: '41px',
+    minHeight: '41px',
+    backgroundColor: '#4c5265',
     color: '#FFF',
   },
   content: {
-    height: '350px',
+    height: '314px',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+    '& >div:first-child': {
+      color: 'green',
+    },
+  },
+  tabItem: {
+    width: '50%',
+    height: '41px',
+    minHeight: '41px',
+  },
+  removePaddingBottom: {
+    paddingBottom: '0',
   },
 });
 
@@ -39,14 +55,14 @@ class SummaryTabs extends React.Component {
 
     return (
       <Grid container className={classes.container}>
-        <Grid item xs={12} sm={12} md={12}>
+        <Grid item xs={12} sm={12} md={12} className={classes.removePaddingBottom}>
           <Tabs
             className={classes.navigation}
             value={this.state.value}
             onChange={this.handleChange}
           >
-            <Tab label="Portfolio" value={this.value} />
-            <Tab label="Trending" />
+            <Tab label="Portfolio" value={this.value} className={classes.tabItem} />
+            <Tab label="Trending" className={classes.tabItem} />
           </Tabs>
 
           <SwipeableViews
@@ -59,6 +75,7 @@ class SummaryTabs extends React.Component {
               'Status',
             ]}
             />
+
             <Trending tableHead={[
               'Ticker',
               '24H Change',

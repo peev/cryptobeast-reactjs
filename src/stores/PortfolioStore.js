@@ -190,28 +190,22 @@ class PortfolioStore {
 
   @computed
   get currentMarketSummaryPercentageChange() {
-    // NOTE: Portfolio cost is calculated here,
-    // because the value from database is incorrect
     if (this.selectedPortfolio &&
-      this.currentPortfolioAssets.length > 0 &&
       MarketStore.baseCurrencies.length > 0) {
-      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
-      return this.currentPortfolioAssets.reduce((array, el) => {
-        let assetBTCValue;
-        if (el.currency === 'BTC') {
-          assetBTCValue = MarketStore.marketSummaries[`USDT-${el.currency}`].Last * el.balance;
-        } else {
-          const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${el.currency}`] ?
-            MarketStore.marketSummaries[`BTC-${el.currency}`].Last :
-            0;
+      const marketSummary = MarketStore.marketSummaries;
 
-          assetBTCValue = assetBTCEquiv * valueOfUSD;
-        }
-
-        return array + assetBTCValue;
-      }, 0);
+      return Object.keys(marketSummary)
+        .filter((el, i) => el.includes('BTC-') || el.includes('USDT-BTC'))
+        .map((el) => {
+          const index = marketSummary[el].MarketName.indexOf('-');
+          const name = marketSummary[el].MarketName.slice(index + 1);
+          const elemCost = +(((marketSummary[el].Last - marketSummary[el].PrevDay) / marketSummary[el].PrevDay) * 100).toFixed(2);
+          return [name, elemCost];
+        })
+        .sort((a, b) => b[1] - a[1]);
     }
-    return 0;
+
+    return [];
   }
 
   get summaryAssetsBreakdown() {
@@ -224,7 +218,9 @@ class PortfolioStore {
   get currentSelectedPortfolioCost() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
-    if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0) {
+    if (this.selectedPortfolio &&
+      MarketStore.baseCurrencies.length > 0 &&
+      this.currentPortfolioAssets.length > 0) {
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       return this.currentPortfolioAssets.reduce((array, el) => {
         let assetBTCValue;

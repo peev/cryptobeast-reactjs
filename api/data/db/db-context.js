@@ -3,13 +3,13 @@ const Sequelize = require('sequelize');
 const path = require('path');
 require('colors');
 
-const createConnection = ({ dbName, dbUser, dbPassword }) => new Sequelize(dbName, dbUser, dbPassword, {
+const createConnection = (dbToConnect, dbUser, dbPassword) => new Sequelize(dbToConnect, dbUser, dbPassword, {
   dialect: 'postgres',
 });
 
 const init = ({ dbName, dbUser, dbPassword }) => new Promise((resolve, reject) => {
   const defaultDbName = 'postgres';
-  const testconnection = createConnection({ defaultDbName, dbUser, dbPassword });
+  const testconnection = createConnection(defaultDbName, dbUser, dbPassword);
 
   testconnection.query(`CREATE DATABASE ${dbName} WITH OWNER = ${dbUser}`)
     .then(() => {
@@ -19,7 +19,7 @@ const init = ({ dbName, dbUser, dbPassword }) => new Promise((resolve, reject) =
       console.log('Database already exists.'.grey);
     }).then(() => {
       testconnection.close();
-      const sequelize = createConnection({ dbName, dbUser, dbPassword });
+      const sequelize = createConnection(dbName, dbUser, dbPassword);
       const db = {};
 
       // TODO: Add new models here

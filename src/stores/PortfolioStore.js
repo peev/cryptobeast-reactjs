@@ -13,7 +13,7 @@ class PortfolioStore {
   constructor() {
     this.portfolios = [];
     this.selectedPortfolio = null;
-    this.selectedPortfolioId = null;
+    this.selectedPortfolioId = 0;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     // this.currentPortfolioSharePrice = 0;
@@ -22,7 +22,6 @@ class PortfolioStore {
     // eslint-disable-next-line no-unused-expressions
     // gets portfolios at app init
     this.getPortfolios().then(() => {
-      console.log(this.portfolios);
       if (this.portfolios.length > 0) {
         MarketStore.init();
       }

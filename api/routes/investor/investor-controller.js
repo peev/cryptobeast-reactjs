@@ -3,28 +3,74 @@ const { responseHandler } = require('../utilities/response-handler');
 const modelName = 'Investor';
 
 const investorController = (repository) => {
-  const assetController = require('../asset/asset-controller')(repository);
+  // Update or insert new asset
+  const upsertAsset = (depositData) => {
+    const assetController = require('../asset/asset-controller')(repository);
+    const assetData = {
+      currency: depositData.currency,
+      balance: depositData.balance,
+      origin: 'Manually Added',
+      portfolioId: depositData.portfolioId,
+    };
+    assetController.createAsset({
+      body: assetData,
+    });
+  };
+
+  const updateShares = (transaction) => {
+    const findInvestor = repository.findOne({
+      modelName: 'Investor',
+      options: { where: { id: transaction.investorId } },
+    });
+    const findPortfolio = repository.findOne({
+      modelName: 'Portfolio',
+      options: { where: { id: transaction.portfolioId } },
+    });
+
+    Promise.all([findInvestor, findPortfolio])
+      .then(([foundInvestor, foundPortfolio]) => {
+        const purchasedShares = foundInvestor.purchasedShares + transaction.shares;
+        const shares = foundPortfolio.shares + transaction.shares;
+
+        repository.update({
+          modelName: 'Investor',
+          updatedRecord: {
+            id: foundInvestor.id,
+            purchasedShares,
+          },
+        });
+
+        repository.update({
+          modelName: 'Portfolio',
+          updatedRecord: {
+            id: foundPortfolio.id,
+            shares,
+          },
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const createInvestor = (req, res) => {
     const { investor } = req.body;
     const { transaction } = req.body;
-    assetController.createAsset({
-      body:
-        {
-          currency: req.body.currency,
-          balance: req.body.balance,
-          origin: 'Manually Added',
-          portfolioId: req.body.portfolioId,
-        },
-    });
-    repository.create({ modelName: 'Transaction', newObject: transaction });
+    const depositData = req.body;
+
+    upsertAsset(depositData);
+
     repository.create({ modelName, newObject: investor })
-      .then((response) => {
-        res.status(200).send(response);
+      .then((newInvestor) => {
+        Object.assign(transaction, { investorId: newInvestor.id });
+        updateShares(transaction);
+        repository.create({ modelName: 'Transaction', newObject: transaction })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch(error => res.json(error));
       })
-      .catch((error) => {
-        return res.json(error);
-      });
+      .catch(error => res.json(error));
   };
 
   const updateInvestor = (req, res) => {
@@ -35,93 +81,42 @@ const investorController = (repository) => {
       .then((response) => {
         res.status(200).send(response);
       })
-      .catch((error) => {
-        return res.json(error);
-      });
-  };
-
-  const transactionPromise = (transaction) => {
-    return new Promise((resolve, reject) => {
-      const createTransactioPromise = repository.create({ modelName: 'Transaction', newObject: transaction });
-      const findInvestorPromise = repository.find({
-        modelName: 'Investor',
-        options: { where: { id: transaction.investorId } },
-      });
-      const findPortfolioPromise = repository.find({
-        modelName: 'Portfolio',
-        options: { where: { id: transaction.portfolioId } },
-      });
-
-      Promise.all([createTransactioPromise, findInvestorPromise, findPortfolioPromise])
-        .then(([newTransaction, investor, portfolio]) => {
-          const updatedInvestor = investor[0];
-          updatedInvestor.purchasedShares += transaction.shares;
-
-          const updatedPortfolio = portfolio[0];
-          updatedPortfolio.shares += transaction.shares;
-
-          // investor.purchasedShares += transaction.shares;
-          // portfolio.shares += transaction.shares;
-          repository.update({ modelName: 'Investor', updatedRecord: updatedInvestor });
-
-          resolve(repository.update({ modelName: 'Portfolio', updatedRecord: updatedPortfolio }));
-        });
-    });
+      .catch(error => res.json(error));
   };
 
   const depositInvestor = (req, res) => {
-    // const depositData = req.body;
-
+    const depositData = req.body;
     const { transaction } = req.body;
-    const transactionResult = transactionPromise(transaction);
-    transactionResult.then(r => console.log('>>> from transactionResult: ', r))
-      // console.log('>>> transactionResult: ', transactionResult);
-
-
-
-      // repository.investor.moveShares(depositData, 'deposit')
-      .then(() => {
-        repository.asset.addNewAsset({
-          currency: depositData.currency,
-          balance: depositData.balance,
-          origin: 'Manually Added',
-          portfolioId: depositData.portfolioId,
-        })
-          .then((response) => {
-            res.status(200).send(response);
-          })
-          .catch((error) => {
-            return res.json(error);
-          });
-      });
+    upsertAsset(depositData);
+    updateShares(transaction);
+    repository.create({ modelName: 'Transaction', newObject: transaction })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch(error => res.json(error));
   };
 
   const withdrawalInvestor = (req, res) => {
+    const { transaction } = req.body;
+    transaction.shares *= (-1);
+    updateShares(transaction);
+
     const withdrawalData = req.body;
-    repository.investor.moveShares(withdrawalData, 'withdrawal')
-      .then(() => {
-        repository.asset.addNewAsset({
-          currency: withdrawalData.currency,
-          balance: withdrawalData.balance,
-          origin: 'Manually Added',
-          portfolioId: withdrawalData.portfolioId,
-        })
-          .then((response) => {
-            res.status(200).send(response);
-          })
-          .catch((error) => {
-            return res.json(error);
-          });
-      });
+    withdrawalData.balance *= (-1);
+    upsertAsset(withdrawalData);
+
+    repository.create({ modelName: 'Transaction', newObject: transaction })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch(error => res.json(error));
   };
 
   const removeInvestor = (req, res) => {
     const { id } = req.body;
     repository.remove({ modelName, id })
       .then(result => responseHandler(res, result))
-      .catch((error) => {
-        return res.json(error);
-      });
+      .catch(error => res.json(error));
   };
 
   return {

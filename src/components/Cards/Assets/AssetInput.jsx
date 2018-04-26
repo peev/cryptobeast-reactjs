@@ -51,6 +51,7 @@ class AssetInput extends React.Component {
 
     if (portfolioId !== null) {
       this.props.MarketStore.createBasicAsset(portfolioId);
+      this.props.MarketStore.resetAsset();
     }
   }
 

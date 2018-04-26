@@ -11,6 +11,9 @@ const init = (db) => {
   const find = request =>
     db[request.modelName].findAll(request.options);
 
+  const findOne = request =>
+    db[request.modelName].findOne(request.options);
+
   const update = request =>
     db[request.modelName].update(
       request.updatedRecord,
@@ -32,6 +35,7 @@ const init = (db) => {
     createMany,
     findById,
     find,
+    findOne,
     update,
     remove,
     removeAll,

@@ -1,4 +1,8 @@
-import { observable, action, computed } from 'mobx';
+import {
+  observable,
+  action,
+  computed
+} from 'mobx';
 import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
@@ -69,10 +73,12 @@ class InvestorStore {
   @computed
   get purchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const { currentPortfolioSharePrice } = PortfolioStore;
+    const {
+      currentPortfolioSharePrice
+    } = PortfolioStore;
     if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
       // TODO: To add Assets value below
-      const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
+      const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / (currentPortfolioSharePrice || 1)).toFixed(2);
       this.newInvestorValues.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -98,7 +104,9 @@ class InvestorStore {
   @computed
   get depositPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const { currentPortfolioSharePrice } = PortfolioStore;
+    const {
+      currentPortfolioSharePrice
+    } = PortfolioStore;
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
       // const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
@@ -138,7 +146,9 @@ class InvestorStore {
   @computed
   get withdrawPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const { currentPortfolioSharePrice } = PortfolioStore;
+    const {
+      currentPortfolioSharePrice
+    } = PortfolioStore;
 
     if (this.selectedInvestor && this.withdrawalValues.amount) {
       // const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / 1.75).toFixed(2);
@@ -330,13 +340,13 @@ class InvestorStore {
       balance: +this.newInvestorValues.depositedAmount,
       portfolioId: id,
       investor: {
-        isFounder: this.values.isFounder,
-        fullName: this.values.fullName,
-        email: this.values.email,
-        telephone: this.values.telephone,
-        dateOfEntry: this.values.dateOfEntry,
-        managementFee: this.values.managementFee,
-        purchasedShares: this.values.purchasedShares,
+        isFounder: this.newInvestorValues.isFounder,
+        fullName: this.newInvestorValues.fullName,
+        email: this.newInvestorValues.email,
+        telephone: this.newInvestorValues.telephone,
+        dateOfEntry: this.newInvestorValues.dateOfEntry,
+        managementFee: this.newInvestorValues.managementFee,
+        purchasedShares: this.newInvestorValues.purchasedShares,
         portfolioId: id,
       },
       transaction: {
@@ -345,7 +355,7 @@ class InvestorStore {
         transactionDate: this.newInvestorValues.dateOfEntry,
         amountInUSD: this.newInvestorValues.depositUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
-        shares: parseFloat(this.values.purchasedShares),
+        shares: parseFloat(this.newInvestorValues.purchasedShares),
         portfolioId: id,
       },
     };
@@ -373,12 +383,18 @@ class InvestorStore {
 
     requester.Investor.update(investorId, finalResult)
       .then(action((result) => {
-        // TODO: Something with result
-        // this.selectedInvestor is null here?!?
-        // this.selectedInvestor.fullName = updatedValues.fullName;
-        // this.selectedInvestor.email = updatedValues.email;
-        // this.selectedInvestor.telephone = updatedValues.telephone;
-        // this.selectedInvestor.managementFee = updatedValues.managementFee;
+        const portfolioInvestors = PortfolioStore.currentPortfolioInvestors;
+        // console.log(PortfolioStore.currentPortfolioInvestors, finalResult, investorId)
+        portfolioInvestors.forEach((investor) => {
+          if (investor.id === investorId) {
+            // eslint-disable-next-line no-restricted-syntax
+            for (const key in investor) {
+              if (investor.hasOwnProperty(key) && finalResult.hasOwnProperty(key)) {
+                investor[key] = finalResult[key];
+              }
+            }
+          }
+        });
       }))
       .catch(err => console.log(err));
   }
@@ -414,7 +430,7 @@ class InvestorStore {
   withdrawalInvestor(id) {
     const withdrawal = {
       currency: 'USD',
-      balance: parseFloat(this.withdrawalValues.amount) * (-1),
+      balance: +this.withdrawalValues.amount,
       portfolioId: PortfolioStore.selectedPortfolioId,
       investorId: id,
       transaction: {
@@ -424,8 +440,11 @@ class InvestorStore {
         amountInUSD: this.withdrawalValues.amount,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.withdrawalValues.purchasedShares) * (-1),
+        portfolioId: PortfolioStore.selectedPortfolioId,
+        investorId: id,
       },
-    }
+    };
+
     requester.Investor.withdrawal(withdrawal)
       .then((result) => {
         // TODO: Something with result
@@ -662,7 +681,9 @@ class InvestorStore {
     // selects the marked investor
     PortfolioStore.currentPortfolioInvestors.find((element) => {
       if (element.id === id) {
-        this.selectedInvestor = { ...element };
+        this.selectedInvestor = {
+          ...element
+        };
       }
     });
 

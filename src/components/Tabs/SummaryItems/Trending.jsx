@@ -16,15 +16,20 @@ import DownArrowIcon from '../../CustomIcons/Summary/DownArrowIcon';
 const styles = () => ({
   container: {
     width: '100%',
+    height: '314px',
     margin: '0',
     backgroundColor: '#FFFFFF',
   },
   containerTable: {
     textAlign: 'center',
   },
+  tableCellHead: {
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
   tableCell: {
-    paddingRight: '18px',
-    paddingLeft: '18px',
+    paddingRight: '10px !important',
+    paddingLeft: '10px',
     borderBottom: 'none',
   },
   upArrow: {
@@ -43,10 +48,14 @@ const styles = () => ({
   titleBest: {
     marginTop: '0',
     color: '#0eff00',
+    textTransform: 'uppercase',
+    fontSize: '12px',
   },
   titleWorst: {
     marginTop: '0',
     color: '#ca3f58',
+    textTransform: 'uppercase',
+    fontSize: '12px',
   },
 });
 
@@ -66,7 +75,7 @@ class Trending extends Component {
         <TableRow>
           {tableHead.map((prop, key) => (
             <TableCell
-              className={classes.tableCell}
+              className={`${classes.tableCell} ${classes.tableCellHead}`}
               key={key}
             >
               {prop}

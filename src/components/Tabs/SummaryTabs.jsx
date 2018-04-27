@@ -23,6 +23,7 @@ const styles = () => ({
   },
   content: {
     height: '314px',
+    minHeight: '314px',
     '&::-webkit-scrollbar': {
       display: 'none',
     },

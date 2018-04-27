@@ -20,6 +20,7 @@ ul[class^="MuiList-root"] {
 
 .headerListSelect>div>div>div {
   padding: 7px 25px;
+  border-bottom: none;
 }
 
 .headerListSelect>div>svg {

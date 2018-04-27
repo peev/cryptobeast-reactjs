@@ -146,7 +146,7 @@ class Summary extends React.Component {
 
 Summary.propTypes = {
   classes: PropTypes.object.isRequired,
-  PortfolioStore: PropTypes.object.isRequired,
+  PortfolioStore: PropTypes.object,
 };
 
 export default withStyles(styles, summaryStyle)(Summary);

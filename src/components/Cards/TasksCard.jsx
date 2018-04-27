@@ -12,7 +12,6 @@ import {
 import tasksCardStyle from 'variables/styles/tasksCardStyle';
 import Trending from '../Tabs/SummaryItems/Trending';
 import Portfolio from '../Tabs/SummaryItems/Portfolio';
-import './TasksCard.css';
 
 const styles = () => ({
   container: {

@@ -36,9 +36,15 @@ const styles = () => ({
 @inject('MarketStore', 'PortfolioStore', 'NotificationStore')
 @observer
 class AssetInput extends React.Component {
-  state = {
-    direction: 'row',
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      direction: 'row',
+    };
+
+    // this.handleExchangeBasicInput = this.handleExchangeBasicInput.bind(this);
+    // this.handleFromAllCurrenciesBasicAsset = this.handleFromAllCurrenciesBasicAsset.bind(this);
+  }
 
   handleRequest = (event) => {
     event.preventDefault();
@@ -57,6 +63,14 @@ class AssetInput extends React.Component {
     }
   }
 
+  handleExchangeBasicInput = (value) => {
+    this.props.MarketStore.selectExchangeBasicInput(value);
+  }
+
+  handleFromAllCurrenciesBasicAsset = (value) => {
+    this.props.MarketStore.selectCurrencyBasicAsset(value);
+  }
+
   render() {
     const { classes, MarketStore } = this.props;
 
@@ -67,7 +81,10 @@ class AssetInput extends React.Component {
 
           <Grid container className={classes.containerItems}>
             <Grid item xs={4} sm={3} md={3}>
-              <SelectAllCurrency />
+              <SelectAllCurrency
+                value={MarketStore.selectedCurrencyBasicAsset}
+                handleChange={this.handleFromAllCurrenciesBasicAsset}
+              />
 
               <Input
                 type="number"
@@ -79,7 +96,11 @@ class AssetInput extends React.Component {
             </Grid>
 
             <Grid item xs={4} sm={3} md={3}>
-              <SelectExchange floatingLabelText="Frequency" />
+              <SelectExchange
+                floatingLabelText="Frequency"
+                value={MarketStore.selectedExchangeBasicInput}
+                handleChange={this.handleExchangeBasicInput}
+              />
             </Grid>
           </Grid>
 

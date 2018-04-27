@@ -1,10 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { withStyles, Grid, Input } from 'material-ui';
 import Paper from 'material-ui/Paper';
 import RegularButton from '../../CustomButtons/Button';
-import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
+import SelectAllCurrency from '../../Selectors/Asset/SelectAllCurrency';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
-import NotificationSnackbar from '../../Modal/NotificationSnackbar';
+// import NotificationSnackbar from '../../Modal/NotificationSnackbar';
+import { inject, observer } from 'mobx-react';
 
 const styles = () => ({
   container: {
@@ -32,13 +34,45 @@ const styles = () => ({
   },
 });
 
+@inject('MarketStore')
+@observer
 class AssetAllocation extends React.Component {
-  state = {
-    direction: 'row',
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      direction: 'row',
+    };
+
+    // this.handleExchangeAssetAllocation = this.handleExchangeAssetAllocation.bind(this);
+  }
+
+  componentWillUnmount() {
+    this.props.MarketStore.resetAsset();
+  }
+
+  handleSave = () => {
+    this.props.MarketStore.createAssetAllocation();
+  }
+
+  handleRequests = (type, event) => {
+    const inputValue = event.target.value;
+    this.props.MarketStore.setAssetAllocationValue(type, inputValue);
+  }
+
+  handleExchangeAssetAllocation = (value) => {
+    this.props.MarketStore.selectExchangeAssetAllocation(value);
+  }
+
+  handleCurrencyFromAssetAllocation = (value) => {
+    this.props.MarketStore.selectCurrencyFromAssetAllocation(value);
+  }
+
+  handleCurrencyToAssetAllocation = (value) => {
+    this.props.MarketStore.selectCurrencyToAssetAllocation(value);
+  }
 
   render() {
-    const { classes } = this.props;
+    const { classes, MarketStore } = this.props;
 
     return (
       <Grid container>
@@ -47,8 +81,23 @@ class AssetAllocation extends React.Component {
 
           <Grid container className={classes.containerItems}>
             <Grid item xs={3}>
-              <SelectBaseCurrency />
+              <SelectExchange
+                value={MarketStore.selectedExchangeAssetAllocation}
+                handleChange={this.handleExchangeAssetAllocation}
+              />
+              <Input
+                type="date"
+                placeholder="Select Date"
+                onChange={() => this.handleRequests('selectedDate')}
+                className={classes.alignInput}
+              />
+            </Grid>
 
+            <Grid item xs={3}>
+              <SelectAllCurrency
+                value={MarketStore.selectedCurrencyFromAssetAllocation}
+                handleChange={this.handleCurrencyFromAssetAllocation}
+              />
               <Input
                 type="number"
                 placeholder="QUANTITY..."
@@ -57,8 +106,10 @@ class AssetAllocation extends React.Component {
             </Grid>
 
             <Grid item xs={3}>
-              <SelectExchange />
-
+              <SelectAllCurrency
+                value={MarketStore.selectedCurrencyToAssetAllocation}
+                handleChange={this.handleCurrencyToAssetAllocation}
+              />
               <Input
                 type="number"
                 placeholder="QUANTITY..."
@@ -67,18 +118,10 @@ class AssetAllocation extends React.Component {
             </Grid>
 
             <Grid item xs={3}>
-              <SelectBaseCurrency />
-
-              <Input
-                type="number"
-                placeholder="QUANTITY..."
-                className={classes.input}
+              <SelectAllCurrency
+                value={MarketStore.selectedCurrencyFromAssetAllocation}
+                handleChange={this.handleCurrencyFromAssetAllocation}
               />
-            </Grid>
-
-            <Grid item xs={3}>
-              <SelectExchange />
-
               <Input
                 type="number"
                 placeholder="QUANTITY..."
@@ -88,12 +131,17 @@ class AssetAllocation extends React.Component {
           </Grid>
 
           <Grid container className={classes.containerButton}>
-            <RegularButton color="primary">RECORD</RegularButton>
+            <RegularButton color="primary" onClick={this.handleSave}>RECORD</RegularButton>
           </Grid>
         </Paper>
       </Grid>
     );
   }
 }
+
+AssetAllocation.propTypes = {
+  classes: PropTypes.object.isRequired,
+  MarketStore: PropTypes.object,
+};
 
 export default withStyles(styles)(AssetAllocation);

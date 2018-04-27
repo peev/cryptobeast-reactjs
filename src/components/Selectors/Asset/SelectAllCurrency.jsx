@@ -1,97 +1,98 @@
 /* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, MenuItem } from 'material-ui';
-import Typography from 'material-ui/Typography';
+import { withStyles, MenuItem, AutoComplete } from 'material-ui';
+// import Typography from 'material-ui/Typography';
 import Input from 'material-ui/Input';
-import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown';
-import CancelIcon from 'material-ui-icons/Cancel';
-import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp';
-import ClearIcon from 'material-ui-icons/Clear';
-import Chip from 'material-ui/Chip';
-import Select from 'react-select';
+// import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown';
+// import CancelIcon from 'material-ui-icons/Cancel';
+// import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp';
+// import ClearIcon from 'material-ui-icons/Clear';
+// import Chip from 'material-ui/Chip';
+// import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import { inject, observer } from 'mobx-react';
 
-class Option extends Component {
-  handleClick = (event) => {
-    this.props.onSelect(this.props.option, event);
-  };
+import SelectWrapped from './SelectWrapped';
+// class Option extends Component {
+//   handleClick = (event) => {
+//     this.props.onSelect(this.props.option, event);
+//   };
 
-  render() {
-    const { children, isFocused, isSelected, onFocus } = this.props;
+//   render() {
+//     const { children, isFocused, isSelected, onFocus } = this.props;
 
-    return (
-      <MenuItem
-        onFocus={onFocus}
-        selected={isFocused}
-        onClick={this.handleClick}
-        component="div"
-        style={{
-          fontWeight: isSelected ? 500 : 400,
-        }}
-      >
-        {children}
-      </MenuItem>
-    );
-  }
-}
+//     return (
+//       <MenuItem
+//         onFocus={onFocus}
+//         selected={isFocused}
+//         onClick={this.handleClick}
+//         component="div"
+//         style={{
+//           fontWeight: isSelected ? 500 : 400,
+//         }}
+//       >
+//         {children}
+//       </MenuItem>
+//     );
+//   }
+// }
 
-@inject('MarketStore')
-@observer
-// eslint-disable-next-line react/no-multi-comp
-class SelectWrapped extends Component {
-  render() {
-    const { classes, MarketStore, ...other } = this.props;
+// @inject('MarketStore')
+// @observer
+// // eslint-disable-next-line react/no-multi-comp
+// class SelectWrapped extends Component {
+//   render() {
+//     const { classes, MarketStore, value, ...other } = this.props;
+//     console.log(value);
+//     return (
+//       <Select
+//         optionComponent={Option}
+//         noResultsText={<Typography>{'No results found'}</Typography>}
+//         arrowRenderer={(arrowProps) => {
+//           return arrowProps.isOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />;
+//         }}
+//         clearRenderer={() => <ClearIcon />}
+//         valueComponent={(valueProps) => {
+//           const { value, children, onRemove } = valueProps;
 
-    return (
-      <Select
-        optionComponent={Option}
-        noResultsText={<Typography>{'No results found'}</Typography>}
-        arrowRenderer={(arrowProps) => {
-          return arrowProps.isOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />;
-        }}
-        clearRenderer={() => <ClearIcon />}
-        valueComponent={(valueProps) => {
-          const { value, children, onRemove } = valueProps;
+//           const onDelete = (event) => {
+//             event.preventDefault();
+//             event.stopPropagation();
+//             onRemove(value);
+//           };
 
-          const onDelete = (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onRemove(value);
-          };
+//           if (onRemove) {
+//             return (
+//               <Chip
+//                 tabIndex={-1}
+//                 label={children}
+//                 className={classes.chip}
+//                 deleteIcon={<CancelIcon onTouchEnd={onDelete} />}
+//                 onDelete={onDelete}
+//               />
+//             );
+//           }
 
-          if (onRemove) {
-            return (
-              <Chip
-                tabIndex={-1}
-                label={children}
-                className={classes.chip}
-                deleteIcon={<CancelIcon onTouchEnd={onDelete} />}
-                onDelete={onDelete}
-              />
-            );
-          }
-
-          return <div className="Select-value">{MarketStore.selectedCurrency}</div>;
-        }}
-        {...other}
-      />
-    );
-  }
-}
+//           return <div className="Select-value">{value}</div>;
+//         }}
+//         {...other}
+//       />
+//     );
+//   }
+// }
 
 const ITEM_HEIGHT = 48;
 
 const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    marginTop: '16px',
-    // height: 250,
-  },
-  chip: {
-    margin: theme.spacing.unit / 4,
-  },
+  // root: {
+  //   flexGrow: 1,
+  //   marginTop: '16px',
+  //   // height: 250,
+  // },
+  // chip: {
+  //   margin: theme.spacing.unit / 4,
+  // },
   // We had to use a lot of global selectors in order to style react-select.
   // We are waiting on https://github.com/JedWatson/react-select/issues/1679
   // to provide a much better implementation.
@@ -202,20 +203,20 @@ class SelectAllCurrency extends Component {
   };
 
   handleChange = (value) => {
-    this.props.MarketStore.selectCurrencyFromAllCurrencies(value);
+    this.props.handleChange(value);
     this.setState({ single: value });
   };
 
   render() {
-    const { classes, MarketStore } = this.props;
+    const { classes, MarketStore, value } = this.props;
 
     return (
       <div className={classes.root}>
         <Input
           fullWidth
           inputComponent={SelectWrapped}
-          value={MarketStore.selectedCurrency}
-          onChange={e => this.handleChange(e)}
+          value={value}
+          onChange={this.handleChange}
           placeholder="Search currency"
           id="react-select-single"
           inputProps={{

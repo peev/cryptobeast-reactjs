@@ -11,9 +11,14 @@ class MarketStore {
   @observable allTickers;
   @observable baseCurrencyInUSD;
   @observable selectedBaseCurrency;
-  @observable selectedExchange;
-  @observable selectedCurrency;
+  @observable selectedExchangeBasicInput;
+  @observable selectedExchangeCreateAccount;
+  @observable selectedExchangeAssetAllocation;
+  @observable selectedCurrencyBasicAsset;
+  @observable selectedCurrencyFromAssetAllocation;
+  @observable selectedCurrencyToAssetAllocation;
   @observable assetInputValue;
+  @observable selectedDate;
 
   constructor() {
     this.marketSummaries = {};
@@ -22,9 +27,14 @@ class MarketStore {
     this.allTickers = [];
     this.baseCurrencyInUSD = null;
     this.selectedBaseCurrency = null;
-    this.selectedExchange = '';
-    this.selectedCurrency = '';
+    this.selectedExchangeBasicInput = '';
+    this.selectedExchangeCreateAccount = '';
+    this.selectedExchangeAssetAllocation = '';
+    this.selectedCurrencyBasicAsset = '';
+    this.selectedCurrencyFromAssetAllocation = '';
+    this.selectedCurrencyToAssetAllocation = '';
     this.assetInputValue = '';
+    this.selectedDate = '';
   }
 
   init() {
@@ -101,20 +111,43 @@ class MarketStore {
     this.marketSummaries = result;
   }
 
-  @action
+  @action.bound
   selectBaseCurrency(index) {
     this.selectedBaseCurrency = this.baseCurrencies[index];
   }
-
-  @action
-  selectCurrencyFromAllCurrencies(value) {
-    this.selectedCurrency = value;
+  // start: select from all currencies
+  @action.bound
+  selectCurrencyBasicAsset(value) {
+    this.selectedCurrencyBasicAsset = value;
   }
 
-  @action
-  selectExchange(value) {
-    this.selectedExchange = value;
+  @action.bound
+  selectCurrencyFromAssetAllocation(value) {
+    this.selectedCurrencyFromAssetAllocation = value;
   }
+
+  @action.bound
+  selectCurrencyToAssetAllocation(value) {
+    this.selectedCurrencyToAssetAllocation = value;
+  }
+  // end: select from all currencies
+
+  // start: select exchange
+  @action.bound
+  selectExchangeBasicInput(value) {
+    this.selectedExchangeBasicInput = value;
+  }
+
+  @action.bound
+  selectExchangeAssetAllocation(value) {
+    this.selectedExchangeAssetAllocation = value;
+  }
+
+  @action.bound
+  selectExchangeCreateAccount(value) {
+    this.selectedExchangeCreateAccount = value;
+  }
+  // end: select exchange
 
   @action.bound
   resetMarket() {
@@ -131,8 +164,14 @@ class MarketStore {
   }
 
   @action
+  setAssetAllocationValue(type, value) {
+    this[type] = value;
+    console.log(this[type])
+  }
+
+  @action
   createBasicAsset(id) {
-    if (this.selectedCurrency === null || this.selectedCurrency === '') {
+    if (this.selectedCurrencyBasicAsset === null || this.selectedCurrencyBasicAsset === '') {
       return;
     }
 
@@ -142,14 +181,14 @@ class MarketStore {
     }
 
     let selectedExchangeOrigin;
-    if (this.selectedExchange !== '') {
-      selectedExchangeOrigin = this.selectedExchange;
+    if (this.selectedExchangeBasicInput !== '') {
+      selectedExchangeOrigin = this.selectedExchangeBasicInput;
     } else {
       selectedExchangeOrigin = 'Manually Added';
     }
 
     const newBasicAsset = {
-      currency: this.selectedCurrency,
+      currency: this.selectedCurrencyBasicAsset,
       balance: parsedAssetInputValue,
       origin: selectedExchangeOrigin,
       portfolioId: id,
@@ -163,11 +202,26 @@ class MarketStore {
       }));
   }
 
+  @action
+  createAssetAllocation() {
+    const newAssetAllocation = {
+      selectedExchange: this.selectedExchangeAssetAllocation,
+      selectedDate: '',
+      fromCurrency: this.selectedCurrencyFromAssetAllocation,
+      fromCurrencyAmount: '',
+      toCurrency: this.selectedCurrencyToAssetAllocation,
+      toCurrencyAmount: '',
+    }
+
+    console.log(newAssetAllocation);
+  }
+
   @action.bound
   resetAsset() {
-    this.selectedCurrency = '';
+    this.selectedCurrencyBasicAsset = '';
     this.assetInputValue = '';
-    this.selectedExchange = '';
+    this.selectedExchangeBasicInput = '';
+    this.selectedExchangeAssetAllocation = '';
   }
 }
 

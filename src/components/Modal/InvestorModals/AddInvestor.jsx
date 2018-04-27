@@ -82,8 +82,8 @@ class AddInvestor extends React.Component {
     const inputValue = event.target.value;
     InvestorStore.setNewInvestorValues(propertyType, inputValue);
     if (propertyType === 'depositedAmount') {
-      console.log('>>> from handleRequests: ', propertyType);
-      InvestorStore.depositUsdEquiv();
+      console.log('>>> from handleRequests: ', propertyType)
+      InvestorStore.depositUsdEquiv;
     }
   }
 
@@ -119,7 +119,7 @@ class AddInvestor extends React.Component {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <div
+          <form
             style={getModalStyle()}
             className={classes.paper}
           >
@@ -176,7 +176,7 @@ class AddInvestor extends React.Component {
                 <Input
                   placeholder="Deposited USD Equiv."
                   className={classes.alignInput}
-                  value={InvestorStore.newInvestorValues.depositUsdEquiv}
+                  value={InvestorStore.depositUsdEquiv}
                 />
 
                 <Input
@@ -237,7 +237,7 @@ class AddInvestor extends React.Component {
                 Save
               </Button>
             </Grid >
-          </div>
+          </form>
         </Modal>
 
         <NotificationSnackbar />

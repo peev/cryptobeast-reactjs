@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
+import InvestorStore from './InvestorStore';
 
 class PortfolioStore {
   @observable portfolios;
@@ -8,7 +9,7 @@ class PortfolioStore {
   @observable selectedPortfolioId;
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
-  // @observable currentPortfolioSharePrice;
+  @observable currentPortfolioTransactions;
 
   constructor() {
     this.portfolios = [];
@@ -16,7 +17,7 @@ class PortfolioStore {
     this.selectedPortfolioId = null;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
-    // this.currentPortfolioSharePrice = 0;
+    this.currentPortfolioTransactions = [];
 
 
     // eslint-disable-next-line no-unused-expressions
@@ -223,7 +224,7 @@ class PortfolioStore {
   @computed
   get currentPortfolioSharePrice() {
     if (this.selectedPortfolio) {
-      return this.currentSelectedPortfolioCost / this.selectedPortfolio.shares;
+      return this.currentSelectedPortfolioCost / (this.selectedPortfolio.shares || 1);
     }
     return 1;
   }
@@ -262,21 +263,17 @@ class PortfolioStore {
 
   @action
   selectPortfolio(id) {
+    InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
     this.selectedPortfolioId = id;
-
     this.portfolios.forEach((el) => {
       // Returns only needed values from selected portfolio
       if (el.id === id) {
         this.selectedPortfolio = { ...el };
         this.currentPortfolioAssets = el.assets;
         this.currentPortfolioInvestors = el.investors;
+        this.currentPortfolioTransactions = el.transactions;
       }
     });
-
-    // requester.Portfolio.getSharePrice({ id })
-    //   .then(action((sharePrice) => {
-    //     this.currentPortfolioSharePrice = sharePrice.data.sharePrice;
-    //   }));
   }
 
   @action

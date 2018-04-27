@@ -100,6 +100,7 @@ const investorController = (repository) => {
   const withdrawalInvestor = (req, res) => {
     const { transaction } = req.body;
     transaction.shares *= (-1);
+    transaction.amountInUSD *= (-1);
     updateShares(transaction);
 
     const withdrawalData = req.body;

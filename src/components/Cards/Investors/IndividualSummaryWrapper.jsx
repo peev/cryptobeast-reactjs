@@ -4,7 +4,6 @@ import { withStyles } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 
 import IndividualSummary from './IndividualSummary';
-import InvestorDetailsTable from '../../CustomTables/Investors/InvestorDetailsTable';
 import AllInvestorTable from '../../CustomTables/Investors/AllInvestorTable';
 import ExportPdfButton from '../../CustomButtons/ExportPdfButton';
 
@@ -14,7 +13,7 @@ const styles = () => ({
   },
 });
 
-@inject('InvestorStore')
+@inject('InvestorStore', 'PortfolioStore')
 @observer
 class IndividualSummaryWrapper extends Component {
   state = {
@@ -22,31 +21,14 @@ class IndividualSummaryWrapper extends Component {
   };
 
   render() {
-    const { classes, InvestorStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore } = this.props;
 
-    const investorDetailsTable = (<InvestorDetailsTable
-      tableHead={[
-        'ID',
-        'Name',
-        'Date of Entry',
-        'Transaction date',
-        'Amount (USD)',
-        'Share price',
-        'Shares',
-      ]}
-      tableData={[
-        [
-          '1',
-          'SomeInvestor',
-          'A day',
-          'Transaction Dates',
-          '1$',
-          '1$',
-          'Test',
-        ],
-      ]}
-    />);
-
+    const data = InvestorStore.selectedInvestor ?
+      PortfolioStore.currentPortfolioTransactions
+        .filter(t => t.investorId === (InvestorStore.selectedInvestor ?
+          InvestorStore.selectedInvestor.id :
+          1)) :
+      PortfolioStore.currentPortfolioTransactions;
     const investorsTable = (<AllInvestorTable
       tableHead={[
         'ID',
@@ -57,17 +39,7 @@ class IndividualSummaryWrapper extends Component {
         'Share price',
         'Shares',
       ]}
-      tableData={[
-        [
-          '1',
-          'Investor',
-          'Today',
-          'Tomorrow',
-          '100$',
-          '100$',
-          '23',
-        ],
-      ]}
+      tableData={data}
     />);
 
     return (
@@ -78,7 +50,7 @@ class IndividualSummaryWrapper extends Component {
           <div>
             <IndividualSummary />
             <div className={classes.tablePosition}>
-              {InvestorStore.selectedInvestor ? investorDetailsTable : investorsTable}
+              {investorsTable}
             </div>
           </div>
         }

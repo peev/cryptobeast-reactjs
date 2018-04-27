@@ -5,6 +5,8 @@ import { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
+import { SelectValidator } from 'react-material-ui-form-validator';
+
 
 import { inject, observer } from 'mobx-react';
 
@@ -62,14 +64,14 @@ class SelectInvestor extends React.Component {
     return (
       <div autoComplete="off" >
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
-          <InputLabel htmlFor="controlled-open-select">
+          {/* <InputLabel htmlFor="controlled-open-select">
             Investor
-          </InputLabel>
+          </InputLabel> */}
           <Select
             open={this.state.open}
             value={this.state.selectedInvestorId}
             onClose={this.handleClose}
-            onOpen={this.handleOpen}
+            // onOpen={this.handleOpen}
             onChange={this.handleChange}
             inputProps={{
               name: 'selectedInvestorId',

@@ -361,7 +361,7 @@ class InvestorStore {
     };
     requester.Investor.add(newInvestor)
       .then(action((result) => {
-        // TODO: Something with result
+        NotificationStore.addMessage('successMessages', 'New investor successfully added');
         PortfolioStore.getPortfolios();
         console.log(result);
       }))
@@ -469,7 +469,7 @@ class InvestorStore {
 
     // Checks if base currency is added
     if (baseCurrency === null) {
-      NotificationStore.addMessage('errorMessages', 'Please select currency');
+      // NotificationStore.addMessage('errorMessages', 'Please select currency');
       noErrors = false;
     }
 
@@ -480,23 +480,23 @@ class InvestorStore {
     // than adds a error massage to the array of errors
     Object.keys(currentInvestor).forEach((prop) => {
       if (currentInvestor[prop] === '' && prop === 'dateOfEntry') {
-        NotificationStore.addMessage('errorMessages', 'Entry date is required.');
+        // NotificationStore.addMessage('errorMessages', 'Entry date is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'depositedAmount') {
-        NotificationStore.addMessage('errorMessages', 'Deposited amount is required.');
+        // NotificationStore.addMessage('errorMessages', 'Deposited amount is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'email') {
-        NotificationStore.addMessage('errorMessages', 'Email is required.');
+        // NotificationStore.addMessage('errorMessages', 'Email is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'fullName') {
-        NotificationStore.addMessage('errorMessages', 'Full name is required.');
+        // NotificationStore.addMessage('errorMessages', 'Full name is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'managementFee') {
-        NotificationStore.addMessage('errorMessages', 'Management Fee is required.');
+        // NotificationStore.addMessage('errorMessages', 'Management Fee is required.');
         noErrors = false;
       }
     });
@@ -594,18 +594,18 @@ class InvestorStore {
   handleEmailValidation() {
     const currentEmail = this.newInvestorValues.email;
     const currentInvestors = PortfolioStore.currentPortfolioInvestors;
-    let hasDuplicate = true;
+    let hasNoDuplicate = true;
 
     if (currentInvestors) {
       const result = currentInvestors.filter(x => x.email === currentEmail);
 
       if (result.length > 0) {
         NotificationStore.addMessage('errorMessages', 'Email already exists in this Portfolio');
-        hasDuplicate = false;
+        hasNoDuplicate = false;
       }
     }
 
-    return hasDuplicate;
+    return hasNoDuplicate;
   }
 
   @action

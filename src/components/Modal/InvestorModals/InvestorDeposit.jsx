@@ -4,6 +4,7 @@ import { withStyles, Input, Snackbar, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
+import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
@@ -104,7 +105,10 @@ class InvestorDeposit extends React.Component {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <div
+          <ValidatorForm
+            ref="form"
+            onSubmit={this.handleDepositSave}
+            onError={errors => console.log(errors)}
             style={getModalStyle()}
             className={classes.paper}
           >
@@ -173,7 +177,7 @@ class InvestorDeposit extends React.Component {
                 Save
               </Button>
             </Grid>
-          </div>
+          </ValidatorForm>
         </Modal>
         {/* {errorMessagesArray} */}
         <NotificationSnackbar />

@@ -4,7 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
-import Select from 'material-ui/Select';
+import { SelectValidator } from 'react-material-ui-form-validator';
 import { inject, observer } from 'mobx-react';
 
 const styles = theme => ({
@@ -43,37 +43,39 @@ class SelectBaseCurrency extends React.Component {
 
   render() {
     const { classes, MarketStore } = this.props;
-    const baseCurrencies = MarketStore.baseCurrencies.map((currency, i) => {
-      return (
-        <MenuItem
-          key={i}
-          value={i}
-        >
-          <em>{MarketStore.baseCurrencies[i].pair}</em>
-        </MenuItem>
-      );
-    });
+    const baseCurrencies = MarketStore.baseCurrencies.map((currency, i) => (
+      <MenuItem
+        key={i}
+        value={i}
+      >
+        <em>{MarketStore.baseCurrencies[i].pair}</em>
+      </MenuItem>
+    ));
 
     return (
       <div autoComplete="off">
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
-          <InputLabel htmlFor="controlled-open-select">
+          {/* <InputLabel htmlFor="controlled-open-select">
             Select Currency
-          </InputLabel>
+          </InputLabel> */}
 
-          <Select
+          <SelectValidator
+            name="currency"
+            label="Select Base Currency"
             open={this.state.open}
             value={this.state.baseCurrencyId}
-            onOpen={this.handleOpen}
+            // onOpen={this.handleOpen}
             onClose={this.handleClose}
             onChange={this.handleChange}
+            validators={['required']}
+            errorMessages={['this field is required']}
             inputProps={{
               name: 'baseCurrencyId',
               id: 'controlled-open-select',
             }}
           >
             {baseCurrencies}
-          </Select>
+          </SelectValidator>
         </FormControl>
       </div>
     );

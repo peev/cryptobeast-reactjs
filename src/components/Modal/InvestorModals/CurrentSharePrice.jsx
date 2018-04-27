@@ -110,7 +110,7 @@ class CurrentSharePrice extends React.Component {
 }
 
 CurrentSharePrice.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(CurrentSharePrice);

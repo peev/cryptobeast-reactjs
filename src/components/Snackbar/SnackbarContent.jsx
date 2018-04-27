@@ -21,7 +21,7 @@ function SnackbarContent({ ...props }) {
         color="inherit"
       >
         <Close className={classes.close} />
-      </IconButton>
+      </IconButton>,
     ];
   }
   return (

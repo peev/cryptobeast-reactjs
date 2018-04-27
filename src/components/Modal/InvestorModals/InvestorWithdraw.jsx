@@ -7,7 +7,7 @@ import { inject, observer } from 'mobx-react';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
-import ErrorSnackbar from '../../Modal/ErrorSnackbar';
+import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 
 
 const getModalStyle = () => {
@@ -45,7 +45,7 @@ const styles = theme => ({
   },
 });
 
-@inject('InvestorStore', 'PortfolioStore', 'ErrorStore')
+@inject('InvestorStore', 'PortfolioStore', 'NotificationStore')
 @observer
 class InvestorWithdraw extends React.Component {
   state = {
@@ -89,7 +89,7 @@ class InvestorWithdraw extends React.Component {
   }
 
   render() {
-    const { classes, InvestorStore, PortfolioStore, ErrorStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore, NotificationStore } = this.props;
 
     return (
       <Grid container>
@@ -178,14 +178,14 @@ class InvestorWithdraw extends React.Component {
                 type="submit"
                 color="primary"
                 onClick={this.handleWithdrawalInvestor}
-                disabled={ErrorStore.getErrorsLength > 0}
+                disabled={NotificationStore.getErrorsLength > 0}
               >Save
               </Button>
             </Grid>
           </div>
         </Modal>
 
-        <ErrorSnackbar />
+        <NotificationSnackbar />
       </Grid>
     );
   }

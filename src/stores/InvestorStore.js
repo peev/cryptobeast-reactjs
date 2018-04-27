@@ -1,12 +1,12 @@
 import {
   observable,
   action,
-  computed
+  computed,
 } from 'mobx';
 import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
-import ErrorStore from './ErrorStore';
+import NotificationStore from './NotificationStore';
 
 class InvestorStore {
   @observable newInvestorValues
@@ -30,19 +30,19 @@ class InvestorStore {
       managementFee: '',
       sharePriceAtEntryDate: '',
       purchasedShares: '',
-    }
+    };
     this.updateInvestorValues = {
       fullName: '',
       email: '',
       telephone: '',
       managementFee: '',
-    }
+    };
     this.newDepositValues = {
       amount: '',
       transactionDate: '',
       sharePriceAtEntryDate: '',
       purchasedShares: '',
-    }
+    };
     this.withdrawalValues = {
       amount: '',
       transactionDate: '',
@@ -50,7 +50,7 @@ class InvestorStore {
       inUSD: '',
       purchasedShares: 0,
       managementFee: '',
-    }
+    };
     this.individualSummaryValues = {
       sharesHeld: '',
       weightedEntryPrice: '',
@@ -60,7 +60,7 @@ class InvestorStore {
       investmentPeriod: '',
       profit: '',
       feePotential: '',
-    }
+    };
 
     this.selectedInvestor = null;
     this.selectedInvestorId = null;
@@ -74,7 +74,7 @@ class InvestorStore {
   get purchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
     const {
-      currentPortfolioSharePrice
+      currentPortfolioSharePrice,
     } = PortfolioStore;
     if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
       // TODO: To add Assets value below
@@ -105,7 +105,7 @@ class InvestorStore {
   get depositPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
     const {
-      currentPortfolioSharePrice
+      currentPortfolioSharePrice,
     } = PortfolioStore;
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
@@ -147,7 +147,7 @@ class InvestorStore {
   get withdrawPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
     const {
-      currentPortfolioSharePrice
+      currentPortfolioSharePrice,
     } = PortfolioStore;
 
     if (this.selectedInvestor && this.withdrawalValues.amount) {
@@ -465,7 +465,7 @@ class InvestorStore {
 
     // Checks if base currency is added
     if (baseCurrency === null) {
-      ErrorStore.addError('Please select currency');
+      NotificationStore.addMessage('errorMessages', 'Please select currency');
       noErrors = false;
     }
 
@@ -476,23 +476,23 @@ class InvestorStore {
     // than adds a error massage to the array of errors
     Object.keys(currentInvestor).forEach((prop) => {
       if (currentInvestor[prop] === '' && prop === 'dateOfEntry') {
-        ErrorStore.addError('Entry date is required.');
+        NotificationStore.addMessage('errorMessages', 'Entry date is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'depositedAmount') {
-        ErrorStore.addError('Deposited amount is required.');
+        NotificationStore.addMessage('errorMessages', 'Deposited amount is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'email') {
-        ErrorStore.addError('Email is required.');
+        NotificationStore.addMessage('errorMessages', 'Email is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'fullName') {
-        ErrorStore.addError('Full name is required.');
+        NotificationStore.addMessage('errorMessages', 'Full name is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'managementFee') {
-        ErrorStore.addError('Management Fee is required.');
+        NotificationStore.addMessage('errorMessages', 'Management Fee is required.');
         noErrors = false;
       }
     });
@@ -511,13 +511,13 @@ class InvestorStore {
 
     // Checks if Investor is selected
     if (this.selectedInvestor === null) {
-      ErrorStore.addError('Please select Investor');
+      NotificationStore.addMessage('errorMessages', 'Please select Investor');
       noErrors = false;
     }
 
     // Checks if base currency is added
     if (baseCurrency === null) {
-      ErrorStore.addError('Please select currency');
+      NotificationStore.addMessage('errorMessages', 'Please select currency');
       noErrors = false;
     }
 
@@ -525,11 +525,11 @@ class InvestorStore {
     // than adds a error massage to the array of errors
     Object.keys(currentDeposit).forEach((prop) => {
       if (currentDeposit[prop] === '' && prop === 'transactionDate') {
-        ErrorStore.addError('Entry date is required.');
+        NotificationStore.addMessage('errorMessages', 'Entry date is required.');
         noErrors = false;
       }
       if (currentDeposit[prop] === '' && prop === 'amount') {
-        ErrorStore.addError('Amount is required.');
+        NotificationStore.addMessage('errorMessages', 'Amount is required.');
         noErrors = false;
       }
     });
@@ -543,26 +543,26 @@ class InvestorStore {
 
     // Checks if Investor is selected
     if (this.selectedInvestor === null) {
-      ErrorStore.addError('Please select Investor');
+      NotificationStore.addMessage('errorMessages', 'Please select Investor');
       noErrors = false;
     }
 
     // Checks if amount is entered
     if (this.withdrawalValues.amount === '') {
-      ErrorStore.addError('Withdrawal amount is required.');
+      NotificationStore.addMessage('errorMessages', 'Withdrawal amount is required.');
       noErrors = false;
     }
 
     // Checks if date is entered
     if (this.withdrawalValues.transactionDate === '') {
-      ErrorStore.addError('Withdrawal date is required.');
+      NotificationStore.addMessage('errorMessages', 'Withdrawal date is required.');
       noErrors = false;
     }
 
     const hasInputShares = this.selectedInvestor !== null ? this.selectedInvestor.purchasedShares : 0;
     const hasEnoughShares = hasInputShares >= this.withdrawalValues.purchasedShares;
     if (!hasEnoughShares) {
-      ErrorStore.addError('The investor has not enough shares!');
+      NotificationStore.addMessage('errorMessages', 'The investor has not enough shares!');
       noErrors = false;
     }
 
@@ -596,7 +596,7 @@ class InvestorStore {
       const result = currentInvestors.filter(x => x.email === currentEmail);
 
       if (result.length > 0) {
-        ErrorStore.addError('Email already exists in this Portfolio');
+        NotificationStore.addMessage('errorMessages', 'Email already exists in this Portfolio');
         hasDuplicate = false;
       }
     }
@@ -608,7 +608,7 @@ class InvestorStore {
   // eslint-disable-next-line class-methods-use-this
   handleIsPortfolioSelected() {
     if (!PortfolioStore.selectedPortfolioId) {
-      ErrorStore.addError('Please select Portfolio first');
+      NotificationStore.addMessage('errorMessages', 'Please select Portfolio first');
       return false;
     }
     return true;
@@ -678,7 +678,7 @@ class InvestorStore {
     PortfolioStore.currentPortfolioInvestors.find((element) => {
       if (element.id === id) {
         this.selectedInvestor = {
-          ...element
+          ...element,
         };
       }
     });

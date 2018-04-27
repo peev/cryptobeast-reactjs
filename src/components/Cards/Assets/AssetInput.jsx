@@ -5,6 +5,7 @@ import { inject, observer } from 'mobx-react';
 import RegularButton from '../../CustomButtons/Button';
 import SelectAllCurrency from '../../Selectors/Asset/SelectAllCurrency';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
+import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 
 const styles = () => ({
   container: {
@@ -32,7 +33,7 @@ const styles = () => ({
   },
 });
 
-@inject('MarketStore', 'PortfolioStore')
+@inject('MarketStore', 'PortfolioStore', 'NotificationStore')
 @observer
 class AssetInput extends React.Component {
   state = {
@@ -51,6 +52,7 @@ class AssetInput extends React.Component {
 
     if (portfolioId !== null) {
       this.props.MarketStore.createBasicAsset(portfolioId);
+      this.props.NotificationStore.addMessage('successMessages', 'Transaction recorded successfully');
       this.props.MarketStore.resetAsset();
     }
   }
@@ -90,6 +92,7 @@ class AssetInput extends React.Component {
             </RegularButton>
           </Grid>
         </Paper>
+        <NotificationSnackbar />
       </Grid>
     );
   }

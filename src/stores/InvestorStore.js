@@ -422,8 +422,6 @@ class InvestorStore {
       .then((result) => {
         // TODO: Something with result
         this.selectInvestor(result.data.investorId);
-        PortfolioStore.getPortfolios();
-        console.log(PortfolioStore.currentPortfolioInvestors);
       })
       .catch(err => console.log(err));
   }

@@ -110,7 +110,7 @@ class InvestorStore {
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
       // const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
-      const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
+      const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / (currentPortfolioSharePrice || 1)).toFixed(2);
       this.newDepositValues.purchasedShares = calculatedPurchasedShares;
 
       return calculatedPurchasedShares;
@@ -421,7 +421,9 @@ class InvestorStore {
     requester.Investor.addDeposit(deposit)
       .then((result) => {
         // TODO: Something with result
-        console.log(result);
+        this.selectInvestor(result.data.investorId);
+        PortfolioStore.getPortfolios();
+        console.log(PortfolioStore.currentPortfolioInvestors);
       })
       .catch(err => console.log(err));
   }
@@ -649,13 +651,10 @@ class InvestorStore {
 
   @action.bound
   resetDeposit() {
-    console.log(this.newDepositValues);
     this.newDepositValues.amount = '';
     this.newDepositValues.transactionDate = '';
     this.newDepositValues.sharePriceAtEntryDate = '';
     this.newDepositValues.purchasedShares = '';
-
-    this.selectedInvestor = null;
   }
 
   @action.bound

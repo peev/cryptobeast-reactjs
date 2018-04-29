@@ -89,6 +89,7 @@ const investorController = (repository) => {
     const { transaction } = req.body;
     upsertAsset(depositData);
     updateShares(transaction);
+    transaction.dateOfEntry = transaction.transactionDate;
     repository.create({ modelName: 'Transaction', newObject: transaction })
       .then((response) => {
         res.status(200).send(response);

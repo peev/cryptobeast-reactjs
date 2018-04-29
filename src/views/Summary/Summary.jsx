@@ -76,7 +76,7 @@ class Summary extends React.Component {
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            description={'$' + PortfolioStore.currentSelectedPortfolioCost.toFixed(2)}
+            description={`$${PortfolioStore.currentSelectedPortfolioCost.toFixed(2) || ''}`}
           />
 
           <SummaryCard

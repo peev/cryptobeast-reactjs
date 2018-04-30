@@ -1,7 +1,7 @@
 import { observable, action, computed, autorun } from 'mobx';
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
-import { reject } from 'bluebird-lst';
+import InvestorStore from './InvestorStore';
 
 class PortfolioStore {
   @observable portfolios;
@@ -9,7 +9,7 @@ class PortfolioStore {
   @observable selectedPortfolioId;
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
-  // @observable currentPortfolioSharePrice;
+  @observable currentPortfolioTransactions;
 
   constructor() {
     this.portfolios = [];
@@ -17,7 +17,7 @@ class PortfolioStore {
     this.selectedPortfolioId = 0;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
-    // this.currentPortfolioSharePrice = 0;
+    this.currentPortfolioTransactions = [];
 
 
     // eslint-disable-next-line no-unused-expressions
@@ -189,15 +189,36 @@ class PortfolioStore {
   // #endregion
 
   @computed
+  get currentMarketSummaryPercentageChange() {
+    if (this.selectedPortfolio &&
+      MarketStore.baseCurrencies.length > 0) {
+      const marketSummary = MarketStore.marketSummaries;
+
+      return Object.keys(marketSummary)
+        .filter(el => el.includes('BTC-') || el.includes('USDT-BTC'))
+        .map((el) => {
+          const index = marketSummary[el].MarketName.indexOf('-');
+          const name = marketSummary[el].MarketName.slice(index + 1);
+          const elemCost = +(((marketSummary[el].Last - marketSummary[el].PrevDay) / marketSummary[el].PrevDay) * 100).toFixed(2);
+          return [name, elemCost, 42];
+        })
+        .sort((a, b) => b[1] - a[1]);
+    }
+
+    return [];
+  }
+
   get summaryAssetsBreakdown() {
     return this.summaryPortfolioAssets.map((el) => ({ y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` }));
   }
 
   @computed
   get currentSelectedPortfolioCost() {
-    // FIXME: Portfolio cost is calculated here,
+    // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
-    if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0 && MarketStore.baseCurrencies.length > 0) {
+    if (this.selectedPortfolio &&
+      MarketStore.baseCurrencies.length > 0 &&
+      this.currentPortfolioAssets.length > 0) {
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       return this.currentPortfolioAssets.reduce((array, el) => {
         let assetBTCValue;
@@ -221,7 +242,7 @@ class PortfolioStore {
   @computed
   get currentPortfolioSharePrice() {
     if (this.selectedPortfolio) {
-      return this.currentSelectedPortfolioCost / this.selectedPortfolio.shares;
+      return this.currentSelectedPortfolioCost / (this.selectedPortfolio.shares || 1);
     }
     return 1;
   }
@@ -260,21 +281,17 @@ class PortfolioStore {
 
   @action
   selectPortfolio(id) {
+    InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
     this.selectedPortfolioId = id;
-
     this.portfolios.forEach((el) => {
       // Returns only needed values from selected portfolio
       if (el.id === id) {
         this.selectedPortfolio = { ...el };
         this.currentPortfolioAssets = el.assets;
         this.currentPortfolioInvestors = el.investors;
+        this.currentPortfolioTransactions = el.transactions;
       }
     });
-
-    // requester.Portfolio.getSharePrice({ id })
-    //   .then(action((sharePrice) => {
-    //     this.currentPortfolioSharePrice = sharePrice.data.sharePrice;
-    //   }));
   }
 
   @action

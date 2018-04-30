@@ -361,9 +361,7 @@ class InvestorStore {
     };
     requester.Investor.add(newInvestor)
       .then(action((result) => {
-        // TODO: Something with result
-        PortfolioStore.getPortfolios();
-        console.log(result);
+        PortfolioStore.currentPortfolioTransactions.push(result.data);
       }))
       .catch(err => console.log(err));
   }
@@ -420,7 +418,8 @@ class InvestorStore {
 
     requester.Investor.addDeposit(deposit)
       .then((result) => {
-        // TODO: Something with result
+        PortfolioStore.currentPortfolioTransactions.push(result.data);
+
         PortfolioStore.getPortfolios().then(() => {
           this.selectInvestor(result.data.investorId);
         })
@@ -441,17 +440,16 @@ class InvestorStore {
         transactionDate: this.withdrawalValues.transactionDate,
         amountInUSD: this.withdrawalValues.amount,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
-        shares: parseFloat(this.withdrawalValues.purchasedShares) * (-1),
+        shares: parseFloat(this.withdrawalValues.purchasedShares),
         portfolioId: PortfolioStore.selectedPortfolioId,
         investorId: id,
       },
     };
 
     requester.Investor.withdrawal(withdrawal)
-      .then((result) => {
-        // TODO: Something with result
-        console.log(result);
-      })
+      .then(action((result) => {
+        PortfolioStore.currentPortfolioTransactions.push(result.data);
+      }))
       .catch(err => console.log(err));
   }
 
@@ -646,7 +644,7 @@ class InvestorStore {
     this.updateInvestorValues.telephone = '';
     this.updateInvestorValues.managementFee = '';
 
-    this.selectedInvestor = null;
+    this.selectedInvestor = '';
   }
 
   @action.bound
@@ -655,6 +653,8 @@ class InvestorStore {
     this.newDepositValues.transactionDate = '';
     this.newDepositValues.sharePriceAtEntryDate = '';
     this.newDepositValues.purchasedShares = '';
+
+    this.selectedInvestor = '';
   }
 
   @action.bound
@@ -667,7 +667,7 @@ class InvestorStore {
     this.withdrawalValues.purchasedShares = 0;
     this.withdrawalValues.managementFee = '';
 
-    this.selectedInvestor = null;
+    this.selectedInvestor = '';
   }
   // #endregion
 

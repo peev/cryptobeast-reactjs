@@ -13,8 +13,6 @@ class AssetStore {
 
   @observable selectedCurrencyBasicAsset;
   @observable selectedCurrencyFromAssetAllocation;
-  @observable selectedCurrencyBalanceFromAssetAllocation;
-  @observable selectedCurrencyIdFromAssetAllocation;
   @observable selectedCurrencyToAssetAllocation;
   @observable selectedCurrencyForTransactionFee;
 
@@ -30,8 +28,6 @@ class AssetStore {
     this.selectedExchangeAssetAllocation = '';
     this.selectedCurrencyBasicAsset = '';
     this.selectedCurrencyFromAssetAllocation = '';
-    this.selectedCurrencyBalanceFromAssetAllocation = 0;
-    this.selectedCurrencyIdFromAssetAllocation = '';
     this.selectedCurrencyToAssetAllocation = '';
     this.selectedCurrencyForTransactionFee = '';
     this.assetInputValue = '';
@@ -51,9 +47,7 @@ class AssetStore {
   selectCurrencyFromAssetAllocation(id) {
     PortfolioStore.currentPortfolioAssets.forEach((el) => {
       if (el.id === id) {
-        this.selectedCurrencyFromAssetAllocation = el.currency;
-        this.selectedCurrencyBalanceFromAssetAllocation = el.balance;
-        this.selectedCurrencyIdFromAssetAllocation = el.id;
+        this.selectedCurrencyFromAssetAllocation = el;
       }
     });
   }
@@ -101,11 +95,10 @@ class AssetStore {
       NotificationStore.addMessage('errorMessages', 'No negative values.');
       return;
     }
-    console.log(type, value);
 
     if (type === 'assetAllocationFromAmount' &&
       this.selectedCurrencyFromAssetAllocation !== '') {
-      if (parseInt(value, 10) > this.selectedCurrencyBalanceFromAssetAllocation) {
+      if (parseInt(value, 10) > this.selectedCurrencyFromAssetAllocation.balance) {
         NotificationStore.addMessage('errorMessages', 'Not enough balance');
         return;
       }
@@ -114,9 +107,9 @@ class AssetStore {
     /**
      * This checks if current available asset can be converted to desired output asset.
      * Soo the output asset will not outgrow the available asset
-     * currentFromValue => current BTC or other crypto currencies value for available asset
-     * currentToValue => current BTC or other crypto currencies value for output asset
-     * maxValueToConvert => output asset threshold
+     * currentFromQuantity => current BTC or other crypto currencies quantity for available asset
+     * currentToQuantity => current BTC or other crypto currencies quantity for output asset
+     * maxQuantityToConvert => output asset threshold
      */
     if (type === 'assetAllocationToAmount' &&
       this.selectedCurrencyFromAssetAllocation !== '' &&
@@ -125,22 +118,24 @@ class AssetStore {
         NotificationStore.addMessage('errorMessages', 'Add amount to covert from');
         return;
       }
-      const currentFromValue = this.selectedCurrencyFromAssetAllocation === 'BTC' ?
-        MarketStore.marketSummaries[`USDT-${this.selectedCurrencyFromAssetAllocation}`].Last :
-        MarketStore.marketSummaries[`BTC-${this.selectedCurrencyFromAssetAllocation}`].Last;
 
-      const currentToValue = this.selectedCurrencyFromAssetAllocation === 'BTC' ?
-        MarketStore.marketSummaries[`USDT-${this.selectedCurrencyToAssetAllocation}`].Last :
-        MarketStore.marketSummaries[`BTC-${this.selectedCurrencyToAssetAllocation}`].Last;
+      const currentFromQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyFromAssetAllocation.currency);
+      const currentToQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyToAssetAllocation);
+      const maxQuantityToConvert = (this.assetAllocationFromAmount * currentFromQuantity) / currentToQuantity;
 
-      const maxValueToConvert = (this.assetAllocationFromAmount * currentFromValue) / currentToValue;
-
-      if (parseInt(value, 10) > maxValueToConvert) {
-        NotificationStore.addMessage('errorMessages', `Maximum ${this.selectedCurrencyToAssetAllocation} to convert for: ${maxValueToConvert}`);
+      if (parseInt(value, 10) > maxQuantityToConvert) {
+        NotificationStore.addMessage('errorMessages', `Maximum ${this.selectedCurrencyToAssetAllocation} to convert for: ${maxQuantityToConvert}`);
         return;
       }
     }
 
+    if (type === 'assetAllocationFee' &&
+      this.assetAllocationToAmount !== '') {
+      if (this.assetAllocationToAmount < value) {
+        NotificationStore.addMessage('errorMessages', 'Fee amount cannot be more then the converted asset.');
+        return;
+      }
+    }
 
     this[type] = value;
   }
@@ -221,13 +216,22 @@ class AssetStore {
     const newAssetAllocation = {
       selectedExchange: usedExchange,
       selectedDate: this.assetAllocationSelectedDate,
-      fromCurrency: this.selectedCurrencyFromAssetAllocation,
+      fromCurrency: this.selectedCurrencyFromAssetAllocation.currency,
+      portfolioId: PortfolioStore.selectedPortfolioId,
       fromAmount: this.assetAllocationFromAmount,
       toCurrency: this.selectedCurrencyToAssetAllocation,
       toAmount: this.assetAllocationToAmount,
       feeCurrency: this.selectedCurrencyForTransactionFee,
       feeAmount: this.assetAllocationFee,
     };
+
+    // NOTE: conversion with update, create, even delete. If the
+    // currency to convert from is selected all the amount
+    requester.Asset.allocate(newAssetAllocation)
+      .then(action((result) => {
+        console.log(result);
+        PortfolioStore.currentPortfolioAssets = result.data;
+      }));
 
     console.log(newAssetAllocation);
   }
@@ -251,6 +255,22 @@ class AssetStore {
     this.selectedCurrencyToAssetAllocation = '';
     this.selectedCurrencyForTransactionFee = '';
     this.selectedCurrencyIdFromAssetAllocation = '';
+  }
+
+  @action.bound
+  // eslint-disable-next-line class-methods-use-this
+  selectCurrencyFromMarketSummaries(currencyName) {
+    let foundCurrency;
+    switch (currencyName) {
+      case 'BTC':
+        foundCurrency = MarketStore.marketSummaries[`USDT-${currencyName}`].Last;
+        break;
+      default:
+        foundCurrency = MarketStore.marketSummaries[`BTC-${currencyName}`].Last;
+        break;
+    }
+
+    return foundCurrency;
   }
 }
 

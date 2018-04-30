@@ -70,7 +70,7 @@ class SelectExchange extends React.Component {
 }
 
 SelectExchange.propTypes = {
-  classes: PropTypes.object.isRequire,
+  classes: PropTypes.object,
   handleChange: PropTypes.func,
   value: PropTypes.string,
 };

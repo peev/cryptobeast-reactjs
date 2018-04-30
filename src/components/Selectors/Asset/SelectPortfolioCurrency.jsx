@@ -60,7 +60,7 @@ class SelectPortfolioCurrency extends React.Component {
 
           <Select
             open={this.state.open}
-            value={AssetStore.selectedCurrencyIdFromAssetAllocation}
+            value={AssetStore.selectedCurrencyFromAssetAllocation.id || ''}
             onClose={this.handleClose}
             onOpen={this.handleOpen}
             onChange={this.handleChange}

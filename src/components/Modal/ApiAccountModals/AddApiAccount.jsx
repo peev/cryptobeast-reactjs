@@ -55,7 +55,7 @@ const styles = theme => ({
   }
 });
 
-@inject('ApiAccountStore', 'PortfolioStore', 'MarketStore')
+@inject('ApiAccountStore', 'PortfolioStore', 'MarketStore', 'AssetStore')
 @observer
 class AddApiAccount extends React.Component {
   constructor() {
@@ -69,7 +69,7 @@ class AddApiAccount extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.MarketStore.resetAsset();
+    this.props.AssetStore.resetAsset();
   }
 
   handleOpen = () => {

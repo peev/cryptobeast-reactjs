@@ -227,10 +227,10 @@ class AddInvestor extends React.Component {
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <Input
+                <TextValidator
+                  name="USD"
                   label="Deposited USD Equiv."
-                  placeholder="Deposited USD Equiv."
-                  className={classes.alignInput}
+                  // className={classes.alignInputAfter}
                   value={InvestorStore.newInvestorValues.depositUsdEquiv || ''}
                 />
               </Grid>

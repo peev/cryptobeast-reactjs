@@ -4,7 +4,7 @@ import '../icon.css';
 
 
 const wrapSvgPath = (path, viewBox = '0 0 15 20') => props => (
-  <SvgIcon {...props} viewBox={viewBox}>
+  <SvgIcon {...props} viewBox={viewBox} >
     {path}
   </SvgIcon>
 );

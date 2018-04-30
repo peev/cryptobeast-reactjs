@@ -79,6 +79,7 @@ class AssetBreakdown extends React.Component {
 
 AssetBreakdown.propTypes = {
   classes: PropTypes.object.isRequired,
+  PortfolioStore: PropTypes.object,
 };
 
 export default withStyles(styles)(withHighcharts(AssetBreakdown, Highcharts));

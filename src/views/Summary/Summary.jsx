@@ -14,6 +14,7 @@ import AscendantBarsIcon from '../../components/CustomIcons/Summary/AscendantBar
 import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 import SummaryCard from '../../components/Cards/Summary/SummaryCard';
 import AssetBreakdown from '../../components/Cards/Summary/AssetBreakdown';
+import SummaryTabs from '../../components/Tabs/SummaryTabs';
 import PortfolioSummaryTable from '../../components/CustomTables/PortfolioSummaryTable';
 // import PortfolioSummaryTable2 from '../../components/CustomTables/PortfolioSummaryTable2';
 
@@ -23,11 +24,18 @@ const styles = () => ({
   },
   containerHeader: {
     display: 'flex',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    margin: '0 30px',
+  },
+  containerMiddle: {
+    margin: '20px 22px 0',
   },
   warningText: {
     marginTop: '35%',
     textAlign: 'center',
+  },
+  removePaddingBottom: {
+    paddingBottom: '0',
   },
 });
 
@@ -68,22 +76,22 @@ class Summary extends React.Component {
             iconColor="gray"
             title="Share price"
             description={PortfolioStore.selectedPortfolio ?
-              (PortfolioStore.currentPortfolioSharePrice ? '$' + PortfolioStore.currentPortfolioSharePrice.toFixed(2) : '$' + 1) :
-              '$' + 0}
+              (PortfolioStore.currentPortfolioSharePrice ? `$${PortfolioStore.currentPortfolioSharePrice.toFixed(2)}` : `$${1}`) :
+              `$${0}`}
           />
 
           <SummaryCard
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            description={'$' + PortfolioStore.currentSelectedPortfolioCost.toFixed(2)}
+            description={`$${PortfolioStore.currentSelectedPortfolioCost.toFixed(2)}`}
           />
 
           <SummaryCard
             icon={CoinIcon}
             iconColor="gray"
             title="Total investment"
-            description={'$' + PortfolioStore.summaryTotalInvestment}
+            description={`$${PortfolioStore.summaryTotalInvestment}`}
           />
 
           <SummaryCard
@@ -91,14 +99,14 @@ class Summary extends React.Component {
             iconColor="gray"
             title="Total profit/loss"
             description={PortfolioStore.summaryTotalProfitLoss > 0 ?
-              '+' + PortfolioStore.summaryTotalProfitLoss + '%' :
-              PortfolioStore.summaryTotalProfitLoss + '%'}
+              `+${PortfolioStore.summaryTotalProfitLoss}%` :
+              `${PortfolioStore.summaryTotalProfitLoss}%`}
           />
         </Grid>
 
-        <Grid container className={classes.container}>
-          <Grid item xs={6} sm={6} md={6}>
-            <p>left</p>
+        <Grid container className={classes.containerMiddle}>
+          <Grid item xs={6} sm={6} md={6} className={classes.removePaddingBottom}>
+            <SummaryTabs />
           </Grid>
           <Grid item xs={6} sm={6} md={6}>
             <AssetBreakdown />
@@ -138,6 +146,7 @@ class Summary extends React.Component {
 
 Summary.propTypes = {
   classes: PropTypes.object.isRequired,
+  PortfolioStore: PropTypes.object,
 };
 
 export default withStyles(styles, summaryStyle)(Summary);

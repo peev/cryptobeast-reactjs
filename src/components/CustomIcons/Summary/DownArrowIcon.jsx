@@ -9,7 +9,7 @@ const wrapSvgPath = (path, viewBox = '0 0 15 20') => props => (
   </SvgIcon>
 );
 
-const SimulatorPath = (
+const DownArrowIcon = (
   <path
     fill="#eb4562"
     id="down-arrow"
@@ -19,4 +19,4 @@ const SimulatorPath = (
   />
 );
 
-export default wrapSvgPath(SimulatorPath);
+export default wrapSvgPath(DownArrowIcon);

@@ -9,14 +9,16 @@ import {
 } from 'material-ui';
 
 import PropTypes from 'prop-types';
+import { inject, observer } from 'mobx-react';
 
 import { Edit } from 'material-ui-icons';
 import IconButton from '../../CustomButtons/IconButton';
 
 import tableStyle from '../../../variables/styles/tableStyle';
 
-function AllInvestorTable({ ...props }) {
+const AllInvestorTable = inject('PortfolioStore')(observer(({ ...props }) => {
   const { classes, tableHead, tableData, tableHeaderColor } = props;
+
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
@@ -40,22 +42,14 @@ function AllInvestorTable({ ...props }) {
           {tableData.map((prop, key) => {
             return (
               <TableRow key={key}>
-                {prop.map((prop, key) => {
-                  if (8 <= key) {
+                {Object.keys(prop).map((el, key) => {
+                  if (6 >= key) {
                     return (
                       <TableCell className={classes.tableCell} key={key}>
-                        {prop}
-                        <IconButton color="primary">
-                          <Edit style={{ color: '#FFF' }} />
-                        </IconButton>
+                        {prop[el]}
                       </TableCell>
                     );
                   }
-                  return (
-                    <TableCell className={classes.tableCell} key={key}>
-                      {prop}
-                    </TableCell>
-                  );
                 })}
               </TableRow>
             );
@@ -64,10 +58,10 @@ function AllInvestorTable({ ...props }) {
       </Table>
     </div>
   );
-}
+}))
 
 AllInvestorTable.defaultProps = {
-  tableHeaderColor: 'gray'
+  tableHeaderColor: 'gray',
 };
 
 AllInvestorTable.propTypes = {
@@ -79,10 +73,9 @@ AllInvestorTable.propTypes = {
     'success',
     'info',
     'rose',
-    'gray'
+    'gray',
   ]),
   tableHead: PropTypes.arrayOf(PropTypes.string),
-  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
 };
 
 export default withStyles(tableStyle)(AllInvestorTable);

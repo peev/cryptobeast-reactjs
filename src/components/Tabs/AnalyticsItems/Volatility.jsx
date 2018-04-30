@@ -8,7 +8,7 @@ import SelectPeriod from '../../Selectors/SelectPeriod';
 import VolatilityColumnChart from '../../HighCharts/VolatilityDevSkew';
 // import InvestorPieChart from "../../HighCharts/InvestorPie";
 import VolatilityAndRisk from '../../HighCharts/VolatilityAndRisk';
-import './TabStyles/Volatility.css';
+import './AnalyticsStyles/Volatility.css';
 import VolatilityTable from '../../CustomTables/VolatilityTable';
 import VolatilitySpider from '../../HighCharts/VolatilitySpider';
 

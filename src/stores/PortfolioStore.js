@@ -189,6 +189,25 @@ class PortfolioStore {
   // #endregion
 
   @computed
+  get currentMarketSummaryPercentageChange() {
+    if (this.selectedPortfolio &&
+      MarketStore.baseCurrencies.length > 0) {
+      const marketSummary = MarketStore.marketSummaries;
+
+      return Object.keys(marketSummary)
+        .filter(el => el.includes('BTC-') || el.includes('USDT-BTC'))
+        .map((el) => {
+          const index = marketSummary[el].MarketName.indexOf('-');
+          const name = marketSummary[el].MarketName.slice(index + 1);
+          const elemCost = +(((marketSummary[el].Last - marketSummary[el].PrevDay) / marketSummary[el].PrevDay) * 100).toFixed(2);
+          return [name, elemCost, 42];
+        })
+        .sort((a, b) => b[1] - a[1]);
+    }
+
+    return [];
+  }
+
   get summaryAssetsBreakdown() {
     return this.summaryPortfolioAssets.map((el) => {
       return { y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` };
@@ -197,9 +216,11 @@ class PortfolioStore {
 
   @computed
   get currentSelectedPortfolioCost() {
-    // FIXME: Portfolio cost is calculated here,
+    // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
-    if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0) {
+    if (this.selectedPortfolio &&
+      MarketStore.baseCurrencies.length > 0 &&
+      this.currentPortfolioAssets.length > 0) {
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       return this.currentPortfolioAssets.reduce((array, el) => {
         let assetBTCValue;

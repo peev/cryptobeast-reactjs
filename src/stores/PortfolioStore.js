@@ -252,6 +252,11 @@ class PortfolioStore {
   // Portfolio -> Create, Update, Delete
   // #region Portfolio
   @action
+  addTransaction(transactionData) {
+    this.currentPortfolioTransactions.push(transactionData);
+  }
+
+  @action
   createPortfolio(portfolioName) {
     requester.Portfolio.create(portfolioName)
       .then(() => {

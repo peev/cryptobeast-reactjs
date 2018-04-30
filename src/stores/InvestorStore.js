@@ -418,8 +418,7 @@ class InvestorStore {
 
     requester.Investor.addDeposit(deposit)
       .then((result) => {
-        PortfolioStore.currentPortfolioTransactions.push(result.data);
-
+        PortfolioStore.addTransaction(result.data);
         PortfolioStore.getPortfolios().then(() => {
           this.selectInvestor(result.data.investorId);
         })

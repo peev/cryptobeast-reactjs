@@ -33,7 +33,7 @@ const styles = () => ({
   },
 });
 
-@inject('MarketStore', 'PortfolioStore', 'NotificationStore')
+@inject('AssetStore', 'PortfolioStore', 'NotificationStore')
 @observer
 class AssetInput extends React.Component {
   constructor(props) {
@@ -50,29 +50,29 @@ class AssetInput extends React.Component {
     event.preventDefault();
     const inputValue = event.target.value;
 
-    this.props.MarketStore.setBasicAssetInputValue(inputValue);
+    this.props.AssetStore.setBasicAssetInputValue(inputValue);
   }
 
   handleSave = () => {
     const portfolioId = this.props.PortfolioStore.selectedPortfolioId;
 
     if (portfolioId !== null) {
-      this.props.MarketStore.createBasicAsset(portfolioId);
+      this.props.AssetStore.createBasicAsset(portfolioId);
       this.props.NotificationStore.addMessage('successMessages', 'Transaction recorded successfully');
-      this.props.MarketStore.resetAsset();
+      this.props.AssetStore.resetAsset();
     }
   }
 
   handleExchangeBasicInput = (value) => {
-    this.props.MarketStore.selectExchangeBasicInput(value);
+    this.props.AssetStore.selectExchangeBasicInput(value);
   }
 
   handleFromAllCurrenciesBasicAsset = (value) => {
-    this.props.MarketStore.selectCurrencyBasicAsset(value);
+    this.props.AssetStore.selectCurrencyBasicAsset(value);
   }
 
   render() {
-    const { classes, MarketStore } = this.props;
+    const { classes, AssetStore } = this.props;
 
     return (
       <Grid container >
@@ -82,14 +82,14 @@ class AssetInput extends React.Component {
           <Grid container className={classes.containerItems}>
             <Grid item xs={4} sm={3} md={3}>
               <SelectAllCurrency
-                value={MarketStore.selectedCurrencyBasicAsset}
+                value={AssetStore.selectedCurrencyBasicAsset}
                 handleChange={this.handleFromAllCurrenciesBasicAsset}
               />
 
               <Input
                 type="number"
                 placeholder="Quantity..."
-                value={MarketStore.assetInputValue}
+                value={AssetStore.assetInputValue}
                 onChange={e => this.handleRequest(e)}
                 className={classes.input}
               />
@@ -98,7 +98,7 @@ class AssetInput extends React.Component {
             <Grid item xs={4} sm={3} md={3}>
               <SelectExchange
                 floatingLabelText="Frequency"
-                value={MarketStore.selectedExchangeBasicInput}
+                value={AssetStore.selectedExchangeBasicInput}
                 handleChange={this.handleExchangeBasicInput}
               />
             </Grid>

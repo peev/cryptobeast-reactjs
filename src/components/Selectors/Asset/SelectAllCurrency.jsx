@@ -2,97 +2,98 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, MenuItem, AutoComplete } from 'material-ui';
-// import Typography from 'material-ui/Typography';
+import Typography from 'material-ui/Typography';
 import Input from 'material-ui/Input';
-// import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown';
-// import CancelIcon from 'material-ui-icons/Cancel';
-// import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp';
-// import ClearIcon from 'material-ui-icons/Clear';
-// import Chip from 'material-ui/Chip';
-// import Select from 'react-select';
+import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown';
+import CancelIcon from 'material-ui-icons/Cancel';
+import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp';
+import ClearIcon from 'material-ui-icons/Clear';
+import Chip from 'material-ui/Chip';
+import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import { inject, observer } from 'mobx-react';
 
-import SelectWrapped from './SelectWrapped';
-// class Option extends Component {
-//   handleClick = (event) => {
-//     this.props.onSelect(this.props.option, event);
-//   };
+// import SelectWrapped from './SelectWrapped';
 
-//   render() {
-//     const { children, isFocused, isSelected, onFocus } = this.props;
+class Option extends Component {
+  handleClick = (event) => {
+    this.props.onSelect(this.props.option, event);
+  };
 
-//     return (
-//       <MenuItem
-//         onFocus={onFocus}
-//         selected={isFocused}
-//         onClick={this.handleClick}
-//         component="div"
-//         style={{
-//           fontWeight: isSelected ? 500 : 400,
-//         }}
-//       >
-//         {children}
-//       </MenuItem>
-//     );
-//   }
-// }
+  render() {
+    const { children, isFocused, isSelected, onFocus } = this.props;
 
-// @inject('MarketStore')
-// @observer
-// // eslint-disable-next-line react/no-multi-comp
-// class SelectWrapped extends Component {
-//   render() {
-//     const { classes, MarketStore, value, ...other } = this.props;
-//     console.log(value);
-//     return (
-//       <Select
-//         optionComponent={Option}
-//         noResultsText={<Typography>{'No results found'}</Typography>}
-//         arrowRenderer={(arrowProps) => {
-//           return arrowProps.isOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />;
-//         }}
-//         clearRenderer={() => <ClearIcon />}
-//         valueComponent={(valueProps) => {
-//           const { value, children, onRemove } = valueProps;
+    return (
+      <MenuItem
+        onFocus={onFocus}
+        selected={isFocused}
+        onClick={this.handleClick}
+        component="div"
+        style={{
+          fontWeight: isSelected ? 500 : 400,
+        }}
+      >
+        {children}
+      </MenuItem>
+    );
+  }
+}
 
-//           const onDelete = (event) => {
-//             event.preventDefault();
-//             event.stopPropagation();
-//             onRemove(value);
-//           };
+@inject('MarketStore')
+@observer
+// eslint-disable-next-line react/no-multi-comp
+class SelectWrapped extends Component {
+  render() {
+    const { classes, MarketStore, value, ...other } = this.props;
+    console.log(value);
+    return (
+      <Select
+        optionComponent={Option}
+        noResultsText={<Typography>{'No results found'}</Typography>}
+        arrowRenderer={(arrowProps) => {
+          return arrowProps.isOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />;
+        }}
+        clearRenderer={() => <ClearIcon />}
+        valueComponent={(valueProps) => {
+          const { value, children, onRemove } = valueProps;
 
-//           if (onRemove) {
-//             return (
-//               <Chip
-//                 tabIndex={-1}
-//                 label={children}
-//                 className={classes.chip}
-//                 deleteIcon={<CancelIcon onTouchEnd={onDelete} />}
-//                 onDelete={onDelete}
-//               />
-//             );
-//           }
+          const onDelete = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onRemove(value);
+          };
 
-//           return <div className="Select-value">{value}</div>;
-//         }}
-//         {...other}
-//       />
-//     );
-//   }
-// }
+          if (onRemove) {
+            return (
+              <Chip
+                tabIndex={-1}
+                label={children}
+                className={classes.chip}
+                deleteIcon={<CancelIcon onTouchEnd={onDelete} />}
+                onDelete={onDelete}
+              />
+            );
+          }
+
+          return <div className="Select-value">{value}</div>;
+        }}
+        {...other}
+      />
+    );
+  }
+}
 
 const ITEM_HEIGHT = 48;
 
 const styles = theme => ({
-  // root: {
-  //   flexGrow: 1,
-  //   marginTop: '16px',
-  //   // height: 250,
-  // },
-  // chip: {
-  //   margin: theme.spacing.unit / 4,
-  // },
+  root: {
+    flexGrow: 1,
+    marginTop: '16px',
+    // height: 250,
+  },
+  chip: {
+    margin: theme.spacing.unit / 4,
+  },
   // We had to use a lot of global selectors in order to style react-select.
   // We are waiting on https://github.com/JedWatson/react-select/issues/1679
   // to provide a much better implementation.

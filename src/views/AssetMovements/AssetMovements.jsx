@@ -12,30 +12,28 @@ class AssetMovements extends React.Component {
 
   render() {
     return (
-      <div>
-        <Grid container>
-          <Grid item xs={12} sm={12} md={12}>
-            <AssetInput />
-          </Grid>
-          <Grid item xs={12} sm={12} md={12}>
-            <AssetAllocation />
-          </Grid>
-          <Grid item xs={12} sm={12} md={12}>
-            <PortfolioSummaryTable
-              tableHead={[
-                'Ticker',
-                'Holdings',
-                'Price(BTC)',
-                'Price(USD)',
-                'Total Value(USD)',
-                'Asset Weight',
-                '24H Change',
-                '7D Change',
-              ]}
-            />
-          </Grid>
+      <Grid container>
+        <Grid item xs={12} sm={12} md={12}>
+          <AssetInput />
         </Grid>
-      </div>
+        <Grid item xs={12} sm={12} md={12}>
+          <AssetAllocation />
+        </Grid>
+        <Grid item xs={12} sm={12} md={12}>
+          <PortfolioSummaryTable
+            tableHead={[
+              'Ticker',
+              'Holdings',
+              'Price(BTC)',
+              'Price(USD)',
+              'Total Value(USD)',
+              'Asset Weight',
+              '24H Change',
+              '7D Change',
+            ]}
+          />
+        </Grid>
+      </Grid>
     );
   }
 }

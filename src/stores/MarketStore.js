@@ -1,7 +1,5 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action } from 'mobx';
 import requester from '../services/requester';
-
-import PortfolioStore from './PortfolioStore';
 
 
 class MarketStore {
@@ -11,14 +9,6 @@ class MarketStore {
   @observable allTickers;
   @observable baseCurrencyInUSD;
   @observable selectedBaseCurrency;
-  @observable selectedExchangeBasicInput;
-  @observable selectedExchangeCreateAccount;
-  @observable selectedExchangeAssetAllocation;
-  @observable selectedCurrencyBasicAsset;
-  @observable selectedCurrencyFromAssetAllocation;
-  @observable selectedCurrencyToAssetAllocation;
-  @observable assetInputValue;
-  @observable selectedDate;
 
   constructor() {
     this.marketSummaries = {};
@@ -27,14 +17,6 @@ class MarketStore {
     this.allTickers = [];
     this.baseCurrencyInUSD = null;
     this.selectedBaseCurrency = null;
-    this.selectedExchangeBasicInput = '';
-    this.selectedExchangeCreateAccount = '';
-    this.selectedExchangeAssetAllocation = '';
-    this.selectedCurrencyBasicAsset = '';
-    this.selectedCurrencyFromAssetAllocation = '';
-    this.selectedCurrencyToAssetAllocation = '';
-    this.assetInputValue = '';
-    this.selectedDate = '';
   }
 
   init() {
@@ -115,113 +97,10 @@ class MarketStore {
   selectBaseCurrency(index) {
     this.selectedBaseCurrency = this.baseCurrencies[index];
   }
-  // start: select from all currencies
-  @action.bound
-  selectCurrencyBasicAsset(value) {
-    this.selectedCurrencyBasicAsset = value;
-  }
-
-  @action.bound
-  selectCurrencyFromAssetAllocation(value) {
-    this.selectedCurrencyFromAssetAllocation = value;
-  }
-
-  @action.bound
-  selectCurrencyToAssetAllocation(value) {
-    this.selectedCurrencyToAssetAllocation = value;
-  }
-  // end: select from all currencies
-
-  // start: select exchange
-  @action.bound
-  selectExchangeBasicInput(value) {
-    this.selectedExchangeBasicInput = value;
-  }
-
-  @action.bound
-  selectExchangeAssetAllocation(value) {
-    this.selectedExchangeAssetAllocation = value;
-  }
-
-  @action.bound
-  selectExchangeCreateAccount(value) {
-    this.selectedExchangeCreateAccount = value;
-  }
-  // end: select exchange
 
   @action.bound
   resetMarket() {
     this.selectedBaseCurrency = null;
-  }
-
-  @action
-  setBasicAssetInputValue(value) {
-    if (value < 0) {
-      return;
-    }
-
-    this.assetInputValue = value;
-  }
-
-  @action
-  setAssetAllocationValue(type, value) {
-    this[type] = value;
-    console.log(this[type])
-  }
-
-  @action
-  createBasicAsset(id) {
-    if (this.selectedCurrencyBasicAsset === null || this.selectedCurrencyBasicAsset === '') {
-      return;
-    }
-
-    const parsedAssetInputValue = parseInt(this.assetInputValue, 10);
-    if (!Number.isInteger(parsedAssetInputValue) || isNaN(parsedAssetInputValue)) {
-      return;
-    }
-
-    let selectedExchangeOrigin;
-    if (this.selectedExchangeBasicInput !== '') {
-      selectedExchangeOrigin = this.selectedExchangeBasicInput;
-    } else {
-      selectedExchangeOrigin = 'Manually Added';
-    }
-
-    const newBasicAsset = {
-      currency: this.selectedCurrencyBasicAsset,
-      balance: parsedAssetInputValue,
-      origin: selectedExchangeOrigin,
-      portfolioId: id,
-    };
-
-    requester.Asset.add(newBasicAsset)
-      .then(action((result) => {
-        // TODO: Something with result
-
-        PortfolioStore.currentPortfolioAssets.push(result.data);
-      }));
-  }
-
-  @action
-  createAssetAllocation() {
-    const newAssetAllocation = {
-      selectedExchange: this.selectedExchangeAssetAllocation,
-      selectedDate: '',
-      fromCurrency: this.selectedCurrencyFromAssetAllocation,
-      fromCurrencyAmount: '',
-      toCurrency: this.selectedCurrencyToAssetAllocation,
-      toCurrencyAmount: '',
-    }
-
-    console.log(newAssetAllocation);
-  }
-
-  @action.bound
-  resetAsset() {
-    this.selectedCurrencyBasicAsset = '';
-    this.assetInputValue = '';
-    this.selectedExchangeBasicInput = '';
-    this.selectedExchangeAssetAllocation = '';
   }
 }
 

@@ -2,15 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, InputLabel, MenuItem, FormControl } from 'material-ui';
 import Select from 'material-ui/Select';
-import constants from '../../../variables/constants.json';
+import { inject, observer } from 'mobx-react';
 
 const styles = theme => ({
+  button: {
+    display: 'block',
+    marginTop: theme.spacing.unit * 2
+  },
   formControl: {
+    margin: theme.spacing.unit,
     minWidth: '100%',
   }
 });
 
-class SelectExchange extends React.Component {
+@inject('PortfolioStore', 'AssetStore')
+@observer
+class SelectPortfolioCurrency extends React.Component {
   state = {
     open: false,
   };
@@ -25,19 +32,20 @@ class SelectExchange extends React.Component {
 
   handleChange = (event) => {
     const { value } = event.target;
-    this.props.handleChange(value);
+
+    this.props.AssetStore.selectCurrencyFromAssetAllocation(value);
   };
 
   render() {
-    const { classes, value } = this.props;
+    const { classes, PortfolioStore, AssetStore } = this.props;
 
-    const allExchanges = constants.services.map((name, i) => {
+    const allExchanges = PortfolioStore.currentPortfolioAssets.map((el, i) => {
       return (
         <MenuItem
           key={i}
-          value={name}
+          value={el.id}
         >
-          <em>{name}</em>
+          <em>{el.currency}</em>
         </MenuItem>
       );
     });
@@ -45,23 +53,23 @@ class SelectExchange extends React.Component {
     return (
       <form autoComplete="off">
 
-        <FormControl className={classes.formControl}>
+        <FormControl className={classes.formControl} style={{ margin: 0 }}>
           <InputLabel htmlFor="controlled-open-select">
-            Select Exchange
+            Paid or sent
           </InputLabel>
 
           <Select
             open={this.state.open}
-            value={value}
+            value={AssetStore.selectedCurrencyIdFromAssetAllocation}
             onClose={this.handleClose}
             onOpen={this.handleOpen}
             onChange={this.handleChange}
             inputProps={{
-              name: 'exchangeId',
+              name: 'portfolioCurrencyId',
               id: 'controlled-open-select',
             }}
           >
-            {allExchanges}
+            {allExchanges.length > 0 ? allExchanges : ''}
           </Select>
         </FormControl>
       </form>
@@ -69,10 +77,10 @@ class SelectExchange extends React.Component {
   }
 }
 
-SelectExchange.propTypes = {
-  classes: PropTypes.object.isRequire,
-  handleChange: PropTypes.func,
-  value: PropTypes.string,
+SelectPortfolioCurrency.propTypes = {
+  classes: PropTypes.object,
+  // handleChange: PropTypes.func,
+  // value: PropTypes.string,
 };
 
-export default withStyles(styles)(SelectExchange);
+export default withStyles(styles)(SelectPortfolioCurrency);

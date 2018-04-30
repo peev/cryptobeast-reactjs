@@ -9,36 +9,48 @@ import {
   Tabs,
   Tab,
 } from 'material-ui';
-import { BugReport, Code, Cloud } from 'material-ui-icons';
-
-import { Tasks } from 'components';
-
-import { bugs, website, server } from 'variables/general';
-
 import tasksCardStyle from 'variables/styles/tasksCardStyle';
+import Trending from '../Tabs/SummaryItems/Trending';
+import Portfolio from '../Tabs/SummaryItems/Portfolio';
+
+const styles = () => ({
+  container: {
+    marginTop: '20px',
+  },
+  navigation: {
+    backgroundColor: '#33435d',
+    color: '#FFF',
+  },
+  content: {
+    height: '350px',
+  },
+});
 
 class TasksCard extends React.Component {
   state = {
     value: 0,
   };
+
   handleChange = (event, value) => {
     this.setState({ value });
   };
+
   render() {
     const { classes } = this.props;
     return (
-      <Card className={classes.card}>
+      <Card className="summaryTrendingPortfolio">
         <CardHeader
           classes={{
             root: classes.cardHeader,
-            title: classes.cardTitle,
+            // title: classes.cardTitle,
             content: classes.cardHeaderContent,
           }}
-          title="Tasks:"
+          // title="Tasks:"
           action={
             <Tabs
               classes={{
                 flexContainer: classes.tabsContainer,
+                containerHeader: classes.containerHeader,
               }}
               value={this.state.value}
               onChange={this.handleChange}
@@ -48,61 +60,46 @@ class TasksCard extends React.Component {
               <Tab
                 classes={{
                   wrapper: classes.tabWrapper,
-                  rootLabelIcon: classes.labelIcon,
+                  // rootLabelIcon: classes.labelIcon,
                   label: classes.label,
                   rootInheritSelected: classes.rootInheritSelected,
                 }}
-                icon={<BugReport className={classes.tabIcon} />}
-                label="Bugs"
+                // icon={<BugReport className={classes.tabIcon} />}
+                label="Portfolio"
               />
+
               <Tab
                 classes={{
                   wrapper: classes.tabWrapper,
-                  rootLabelIcon: classes.labelIcon,
+                  // rootLabelIcon: classes.labelIcon,
                   label: classes.label,
                   rootInheritSelected: classes.rootInheritSelected,
                 }}
-                icon={<Code className={classes.tabIcon} />}
-                label="Website"
-              />
-              <Tab
-                classes={{
-                  wrapper: classes.tabWrapper,
-                  rootLabelIcon: classes.labelIcon,
-                  label: classes.label,
-                  rootInheritSelected: classes.rootInheritSelected,
-                }}
-                icon={<Cloud className={classes.tabIcon} />}
-                label="Server"
+                // icon={<Code className={classes.tabIcon} />}
+                label="Trending"
               />
             </Tabs>
           }
         />
+
         <CardContent>
           {this.state.value === 0 && (
             <Typography component="div">
-              <Tasks
-                checkedIndexes={[0, 3]}
-                tasksIndexes={[0, 1, 2, 3]}
-                tasks={bugs}
+              <Portfolio tableHead={[
+                'Name',
+                'Status',
+              ]}
               />
             </Typography>
           )}
+
           {this.state.value === 1 && (
             <Typography component="div">
-              <Tasks
-                checkedIndexes={[0]}
-                tasksIndexes={[0, 1]}
-                tasks={website}
-              />
-            </Typography>
-          )}
-          {this.state.value === 2 && (
-            <Typography component="div">
-              <Tasks
-                checkedIndexes={[1]}
-                tasksIndexes={[0, 1, 2]}
-                tasks={server}
+              <Trending tableHead={[
+                'Ticker',
+                '24H Change',
+                '7D Change',
+              ]}
               />
             </Typography>
           )}
@@ -116,4 +113,4 @@ TasksCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(tasksCardStyle)(TasksCard);
+export default withStyles(tasksCardStyle, styles)(TasksCard);

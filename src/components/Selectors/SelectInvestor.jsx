@@ -67,7 +67,9 @@ class SelectInvestor extends React.Component {
           {/* <InputLabel htmlFor="controlled-open-select">
             Investor
           </InputLabel> */}
-          <Select
+          <SelectValidator
+            name="investor"
+            label="select investor"
             open={this.state.open}
             value={this.state.selectedInvestorId}
             onClose={this.handleClose}
@@ -77,11 +79,14 @@ class SelectInvestor extends React.Component {
               name: 'selectedInvestorId',
               id: 'controlled-open-select',
             }}
+            validators={['required']}
+            errorMessages={['this field is required']}
           >
 
-            {investorsToShow.length > 0 ? investorsToShow : <MenuItem value={1}><em>None</em></MenuItem>}
+            {investorsToShow.length > 0 ? investorsToShow :
+            <MenuItem value={1}><em>None</em></MenuItem>}
 
-          </Select>
+          </SelectValidator>
         </FormControl>
       </div>
     );

@@ -4,6 +4,7 @@ const assetController = (repository) => {
   const createAsset = (req, res) => {
     return new Promise((resolve, reject) => {
       const asset = req.body;
+      // TODO: delete this check -> check the assets in the MarketStore
       const findAssetPromise = repository.findOne({
         modelName,
         options: {

@@ -39,7 +39,12 @@ const styles = theme => ({
     marginTop: '10px',
   },
   buttonsContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
     marginTop: '20px',
+  },
+  alignBtn: {
+    marginRight: '20px',
   },
 });
 
@@ -48,6 +53,7 @@ const styles = theme => ({
 class InvestorDeposit extends React.Component {
   state = {
     open: false,
+    submitted: false,
   };
 
   handleOpen = () => {
@@ -79,6 +85,9 @@ class InvestorDeposit extends React.Component {
   }
 
   handleDepositSave = () => {
+    this.setState({ submitted: true }, () => {
+      setTimeout(() => this.setState({ submitted: false }), 5000);
+    });
     const { InvestorStore } = this.props;
     const hasErrors = InvestorStore.handleDepositInvestorErrors();
 
@@ -89,7 +98,9 @@ class InvestorDeposit extends React.Component {
   }
 
   render() {
-    const { classes, InvestorStore, PortfolioStore, NotificationStore } = this.props;
+    const {
+      classes, InvestorStore, PortfolioStore, NotificationStore,
+    } = this.props;
 
     return (
       <Grid container>
@@ -127,47 +138,77 @@ class InvestorDeposit extends React.Component {
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <SelectInvestor />
-
-                <Input
-                  type="number"
-                  placeholder="Amount"
-                  onChange={this.handleDepositRequests('amount')}
-                  className={classes.alignInputAfter}
-                />
-
-                <Input
-                  placeholder="Share Price at Entry Date"
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <TextValidator
+                  name="date"
+                  type="date"
+                  // label="Transaction Date"
+                  onChange={this.handleDepositRequests('transactionDate')}
+                  value={InvestorStore.newDepositValues.transactionDate || ''}
                   className={classes.alignInput}
-                  value={PortfolioStore.currentPortfolioSharePrice || 1}
+                  validators={['required']}
+                  errorMessages={['this field is required']}
                 />
               </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <TextValidator
+                  name="amount"
+                  type="number"
+                  label="Amount"
+                  onChange={this.handleDepositRequests('amount')}
+                  value={InvestorStore.newDepositValues.amount || ''}
+                  // className={classes.alignInputAfter}
+                  validators={['required', 'isPositive']}
+                  errorMessages={['this field is required', 'value must be a positive number']}
+                />
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <SelectBaseCurrency />
+              </Grid>
+              {/* <Input
+                placeholder="Share Price at Entry Date"
+                className={classes.alignInput}
+                value={PortfolioStore.currentPortfolioSharePrice || ''}
+              /> */}
+            </Grid>
 
+            <Grid container>
+              {/* <Input
+                type="date"
+                placeholder="Transaction Date"
+                onChange={this.handleDepositRequests('transactionDate')}
+                className={classes.alignInput}
+              /> */}
+
+              {/* <SelectBaseCurrency /> */}
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input
-                  type="date"
-                  placeholder="Transaction Date"
-                  onChange={this.handleDepositRequests('transactionDate')}
-                  className={classes.alignInput}
+                  placeholder="Share Price at Entry Date"
+                  className={classes.alignInputAfter}
+                  value={PortfolioStore.currentPortfolioSharePrice || ''}
                 />
-
-                <SelectBaseCurrency />
-
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input
                   placeholder="Purchased Shares"
                   className={classes.alignInputAfter}
-                  value={InvestorStore.depositPurchasedShares}
+                  value={InvestorStore.depositPurchasedShares || ''}
                 />
               </Grid>
             </Grid>
 
             <Grid container className={classes.buttonsContainer}>
-              <Button
-                color="primary"
-                onClick={this.handleClose}
-              >
+              <div className={classes.alignBtn}>
+                <Button
+                  color="primary"
+                  onClick={this.handleClose}
+                >
                 Cancel
-              </Button>
-
+                </Button>
+              </div>
               <Button
                 type="submit"
                 color="primary"

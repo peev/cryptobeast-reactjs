@@ -6,7 +6,7 @@ import RegularButton from '../../CustomButtons/Button';
 import SelectBenchmark from '../../Selectors/SelectBenchmark';
 // import InvestorPieChart from "../../HighCharts/InvestorPie";
 import PerformanceTable from '../../CustomTables/PerformanceTable';
-import './TabStyles/Performance.css';
+import './AnalyticsStyles/Performance.css';
 import PerformanceChart from '../../HighCharts/PerformanceChart';
 
 

@@ -361,9 +361,7 @@ class InvestorStore {
     };
     requester.Investor.add(newInvestor)
       .then(action((result) => {
-        NotificationStore.addMessage('successMessages', 'New investor successfully added');
-        PortfolioStore.getPortfolios();
-        console.log(result);
+        PortfolioStore.currentPortfolioTransactions.push(result.data);
       }))
       .catch(err => console.log(err));
   }
@@ -419,10 +417,9 @@ class InvestorStore {
     };
 
     requester.Investor.addDeposit(deposit)
-      .then((result) => {
-        // TODO: Something with result
-        console.log(result);
-      })
+      .then(action((result) => {
+        PortfolioStore.currentPortfolioTransactions.push(result.data);
+      }))
       .catch(err => console.log(err));
   }
 
@@ -439,17 +436,16 @@ class InvestorStore {
         transactionDate: this.withdrawalValues.transactionDate,
         amountInUSD: this.withdrawalValues.amount,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
-        shares: parseFloat(this.withdrawalValues.purchasedShares) * (-1),
+        shares: parseFloat(this.withdrawalValues.purchasedShares),
         portfolioId: PortfolioStore.selectedPortfolioId,
         investorId: id,
       },
     };
 
     requester.Investor.withdrawal(withdrawal)
-      .then((result) => {
-        // TODO: Something with result
-        console.log(result);
-      })
+      .then(action((result) => {
+        PortfolioStore.currentPortfolioTransactions.push(result.data);
+      }))
       .catch(err => console.log(err));
   }
 
@@ -515,13 +511,13 @@ class InvestorStore {
 
     // Checks if Investor is selected
     if (this.selectedInvestor === null) {
-      NotificationStore.addMessage('errorMessages', 'Please select Investor');
+      // NotificationStore.addMessage('errorMessages', 'Please select Investor');
       noErrors = false;
     }
 
     // Checks if base currency is added
     if (baseCurrency === null) {
-      NotificationStore.addMessage('errorMessages', 'Please select currency');
+      // NotificationStore.addMessage('errorMessages', 'Please select currency');
       noErrors = false;
     }
 
@@ -529,11 +525,11 @@ class InvestorStore {
     // than adds a error massage to the array of errors
     Object.keys(currentDeposit).forEach((prop) => {
       if (currentDeposit[prop] === '' && prop === 'transactionDate') {
-        NotificationStore.addMessage('errorMessages', 'Entry date is required.');
+        // NotificationStore.addMessage('errorMessages', 'Entry date is required.');
         noErrors = false;
       }
       if (currentDeposit[prop] === '' && prop === 'amount') {
-        NotificationStore.addMessage('errorMessages', 'Amount is required.');
+        // NotificationStore.addMessage('errorMessages', 'Amount is required.');
         noErrors = false;
       }
     });
@@ -547,19 +543,19 @@ class InvestorStore {
 
     // Checks if Investor is selected
     if (this.selectedInvestor === null) {
-      NotificationStore.addMessage('errorMessages', 'Please select Investor');
+      // NotificationStore.addMessage('errorMessages', 'Please select Investor');
       noErrors = false;
     }
 
     // Checks if amount is entered
     if (this.withdrawalValues.amount === '') {
-      NotificationStore.addMessage('errorMessages', 'Withdrawal amount is required.');
+      // NotificationStore.addMessage('errorMessages', 'Withdrawal amount is required.');
       noErrors = false;
     }
 
     // Checks if date is entered
     if (this.withdrawalValues.transactionDate === '') {
-      NotificationStore.addMessage('errorMessages', 'Withdrawal date is required.');
+      // NotificationStore.addMessage('errorMessages', 'Withdrawal date is required.');
       noErrors = false;
     }
 
@@ -644,7 +640,7 @@ class InvestorStore {
     this.updateInvestorValues.telephone = '';
     this.updateInvestorValues.managementFee = '';
 
-    this.selectedInvestor = null;
+    this.selectedInvestor = '';
   }
 
   @action.bound
@@ -655,7 +651,7 @@ class InvestorStore {
     this.newDepositValues.sharePriceAtEntryDate = '';
     this.newDepositValues.purchasedShares = '';
 
-    this.selectedInvestor = null;
+    this.selectedInvestor = '';
   }
 
   @action.bound
@@ -668,7 +664,7 @@ class InvestorStore {
     this.withdrawalValues.purchasedShares = 0;
     this.withdrawalValues.managementFee = '';
 
-    this.selectedInvestor = null;
+    this.selectedInvestor = '';
   }
   // #endregion
 

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { withStyles, Grid } from 'material-ui';
 import { inject, observer } from 'mobx-react';
+import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import SelectInvestor from '../../Selectors/SelectInvestor';
+
 
 const styles = () => ({
   container: {
@@ -41,11 +43,15 @@ class IndividualSummary extends Component {
     direction: 'row',
   };
 
+  handleSave = () => { console.log('Submit'); };
+
   render() {
     const { classes, InvestorStore } = this.props;
 
     return (
-      <div>
+      <ValidatorForm
+        onSubmit={this.handleSave}
+      >
         <Grid container>
           <Grid container className={classes.container}>
             <Grid item xs={6} sm={6} md={3}>
@@ -103,7 +109,7 @@ class IndividualSummary extends Component {
             </Grid>
           </Grid>
         </Grid>
-      </div>
+      </ValidatorForm>
     );
   }
 }

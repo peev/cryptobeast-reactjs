@@ -4,6 +4,7 @@ import { withStyles, Grid, Input } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
+import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
@@ -94,7 +95,8 @@ class EditInvestor extends React.Component {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <div
+          <ValidatorForm
+            onSubmit={this.handleSave}
             style={getModalStyle()}
             className={classes.paper}
           >
@@ -118,39 +120,53 @@ class EditInvestor extends React.Component {
 
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <Input
+                <TextValidator
+                  name="name"
                   type="text"
-                  placeholder="Full name"
+                  label="Full name"
                   value={InvestorStore.updateInvestorValues.fullName}
                   onChange={this.handleEditRequests('fullName')}
                   className={classes.alignInputAfter}
                   autoFocus
                 />
-
-                <Input
-                  type="number"
-                  placeholder="Telephone"
-                  value={InvestorStore.updateInvestorValues.telephone}
-                  onChange={this.handleEditRequests('telephone')}
-                  className={classes.alignInput}
-                />
               </Grid>
-
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <Input
+                <TextValidator
+                  name="email"
                   type="email"
-                  placeholder="Email Address"
+                  label="Email Address"
                   value={InvestorStore.updateInvestorValues.email}
                   onChange={this.handleEditRequests('email')}
                   className={classes.alignInputAfter}
+                  validators={['isEmail']}
+                  errorMessages={['email is not valid']}
                 />
 
-                <Input
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <TextValidator
+                  name="phone"
                   type="number"
-                  placeholder="Management Fee %"
+                  label="Telephone"
+                  value={InvestorStore.updateInvestorValues.telephone}
+                  onChange={this.handleEditRequests('telephone')}
+                  className={classes.alignInput}
+                  validators={['isNumber']}
+                  errorMessages={['telephone is not valid']}
+                />
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <TextValidator
+                  name="fee"
+                  type="number"
+                  label="Management Fee %"
                   value={InvestorStore.updateInvestorValues.managementFee}
                   onChange={this.handleEditRequests('managementFee')}
                   className={classes.alignInput}
+                  validators={['isPositive', 'maxNumber:100']}
+                  errorMessages={['Fee must be a positive number', 'must be a number between 0 and 100']}
                 />
               </Grid>
             </Grid>
@@ -175,7 +191,7 @@ class EditInvestor extends React.Component {
                 Save
               </Button>
             </Grid>
-          </div>
+          </ValidatorForm>
         </Modal>
       </Grid>
     );

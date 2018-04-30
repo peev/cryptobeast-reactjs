@@ -16,7 +16,7 @@ import DownArrowIcon from '../CustomIcons/Summary/DownArrowIcon';
 
 const styles = () => ({
   paper: {
-    margin: '40px 30px 0',
+    margin: '0 30px',
     padding: '20px 25px',
   },
   tableHead: {
@@ -119,7 +119,7 @@ const PortfolioSummaryTable = inject('PortfolioStore')(observer(({ ...props }) =
                 {parseFloat(prop) > 0 ?
                   <UpArrowIcon className={classes.upArrow} /> :
                   <DownArrowIcon className={classes.downArrow} />}
-                <p className={classes.change}>{prop}</p>
+                <p className={classes.change}>{`${prop}%`}</p>
               </TableCell>
             );
           }

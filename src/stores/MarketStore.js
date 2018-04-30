@@ -148,19 +148,25 @@ class MarketStore {
       selectedExchangeOrigin = 'Manually Added';
     }
 
-    const newBasicAsset = {
-      currency: this.selectedCurrency,
-      balance: parsedAssetInputValue,
-      origin: selectedExchangeOrigin,
-      portfolioId: id,
-    };
-
-    requester.Asset.add(newBasicAsset)
-      .then(action((result) => {
-        // TODO: Something with result
-
-        PortfolioStore.currentPortfolioAssets.push(result.data);
-      }));
+    const existingAsset = PortfolioStore.currentPortfolioAssets
+      .find(a => a.currency === this.selectedCurrency &&
+        a.origin === selectedExchangeOrigin &&
+        a.portfolioId === id);
+    if (existingAsset) {
+      existingAsset.balance += parsedAssetInputValue;
+      requester.Asset.update(existingAsset);
+    } else {
+      const newBasicAsset = {
+        currency: this.selectedCurrency,
+        balance: parsedAssetInputValue,
+        origin: selectedExchangeOrigin,
+        portfolioId: id,
+      };
+      requester.Asset.add(newBasicAsset)
+        .then(action((result) => {
+          PortfolioStore.currentPortfolioAssets.push(result.data);
+        }));
+    }
   }
 
   @action.bound

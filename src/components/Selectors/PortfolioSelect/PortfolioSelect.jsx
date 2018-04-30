@@ -121,7 +121,6 @@ class PortfolioSelect extends React.Component {
 
     return (
       <form autoComplete="off" >
-        {PortfolioStore.selectedPortfolioId}
         <FormControl className={classes.formControl}>
           <Select
             className="headerListSelect"

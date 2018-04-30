@@ -421,9 +421,11 @@ class InvestorStore {
     requester.Investor.addDeposit(deposit)
       .then((result) => {
         // TODO: Something with result
-        this.selectInvestor(result.data.investorId);
-      })
-      .catch(err => console.log(err));
+        PortfolioStore.getPortfolios().then(() => {
+          this.selectInvestor(result.data.investorId);
+        })
+          .catch(err => console.log(err));
+      });
   }
 
   @action
@@ -674,7 +676,6 @@ class InvestorStore {
   @action
   selectInvestor(id) {
     this.selectedInvestorId = id;
-
     // selects the marked investor
     PortfolioStore.currentPortfolioInvestors.find((element) => {
       if (element.id === id) {

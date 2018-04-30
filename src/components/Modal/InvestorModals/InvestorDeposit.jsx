@@ -147,6 +147,7 @@ class InvestorDeposit extends React.Component {
                 <Input
                   type="date"
                   placeholder="Transaction Date"
+                  max="2018-04-30"
                   onChange={this.handleDepositRequests('transactionDate')}
                   className={classes.alignInput}
                 />

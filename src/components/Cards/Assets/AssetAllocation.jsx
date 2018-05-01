@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { withStyles, Grid, Input } from 'material-ui';
 import Paper from 'material-ui/Paper';
 import { inject, observer } from 'mobx-react';
+import Select from 'react-select';
 
 import RegularButton from '../../CustomButtons/Button';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
-import SelectAllCurrency from '../../Selectors/Asset/SelectAllCurrency';
 import SelectPortfolioCurrency from '../../Selectors/Asset/SelectPortfolioCurrency';
+import '../../Selectors/Asset/SelectAllCurrency';
 
 const styles = () => ({
   container: {
@@ -29,14 +30,15 @@ const styles = () => ({
   },
   alignInput: {
     width: '100%',
-    marginTop: '7px',
+    marginTop: '12px',
   },
   alignInputAfter: {
     width: '100%',
+    marginTop: '5px',
   },
 });
 
-@inject('AssetStore', 'NotificationStore')
+@inject('AssetStore', 'NotificationStore', 'MarketStore')
 @observer
 class AssetAllocation extends React.Component {
   constructor(props) {
@@ -72,16 +74,24 @@ class AssetAllocation extends React.Component {
     this.props.AssetStore.selectExchangeAssetAllocation(value);
   }
 
-  handleCurrencyToAssetAllocation = (value) => {
-    this.props.AssetStore.selectCurrencyToAssetAllocation(value);
+  handleCurrencyToAssetAllocation = (input) => {
+    if (input) {
+      this.props.AssetStore.selectCurrencyToAssetAllocation(input.value);
+    } else {
+      this.props.AssetStore.selectCurrencyToAssetAllocation('');
+    }
   }
 
-  handleCurrencyForTransactionFee = (value) => {
-    this.props.AssetStore.selectCurrencyForTransactionFee(value);
+  handleCurrencyForTransactionFee = (input) => {
+    if (input) {
+      this.props.AssetStore.selectCurrencyForTransactionFee(input.value);
+    } else {
+      this.props.AssetStore.selectCurrencyForTransactionFee('');
+    }
   }
 
   render() {
-    const { classes, AssetStore, NotificationStore } = this.props;
+    const { classes, AssetStore, NotificationStore, MarketStore } = this.props;
 
     return (
       <Grid container>
@@ -97,7 +107,9 @@ class AssetAllocation extends React.Component {
               <Input
                 type="date"
                 placeholder="Select Date"
-                className={classes.alignInputAfter}
+                className={AssetStore.selectedExchangeAssetAllocation === '' ?
+                  classes.alignInputAfter :
+                  classes.alignInput}
                 value={AssetStore.assetAllocationSelectedDate}
                 onChange={this.handleRequests('assetAllocationSelectedDate')}
               />
@@ -108,16 +120,26 @@ class AssetAllocation extends React.Component {
               <Input
                 type="number"
                 placeholder="Quantity..."
-                className={classes.alignInputAfter}
                 value={AssetStore.assetAllocationFromAmount}
+                className={AssetStore.selectedCurrencyFromAssetAllocation === '' ?
+                  classes.alignInputAfter :
+                  classes.alignInput}
                 onChange={this.handleRequests('assetAllocationFromAmount')}
               />
             </Grid>
 
             <Grid item xs={3}>
-              <SelectAllCurrency
+              <Select
+                name="currency-to-asset-allocation"
                 value={AssetStore.selectedCurrencyToAssetAllocation}
-                handleChange={this.handleCurrencyToAssetAllocation}
+                onChange={this.handleCurrencyToAssetAllocation}
+                options={MarketStore.allCurrencies}
+                className={classes.alignInput}
+                style={{
+                  border: 'none',
+                  borderRadius: 0,
+                  borderBottom: '1px solid #757575',
+                }}
               />
               <Input
                 type="number"
@@ -129,9 +151,17 @@ class AssetAllocation extends React.Component {
             </Grid>
 
             <Grid item xs={3}>
-              <SelectAllCurrency
+              <Select
+                name="currency-for-asset-fee"
                 value={AssetStore.selectedCurrencyForTransactionFee}
-                handleChange={this.handleCurrencyForTransactionFee}
+                onChange={this.handleCurrencyForTransactionFee}
+                options={MarketStore.allCurrencies}
+                className={classes.alignInput}
+                style={{
+                  border: 'none',
+                  borderRadius: 0,
+                  borderBottom: '1px solid #757575',
+                }}
               />
               <Input
                 type="number"
@@ -162,7 +192,9 @@ class AssetAllocation extends React.Component {
 
 AssetAllocation.propTypes = {
   classes: PropTypes.object.isRequired,
-  AssetStore: PropTypes.object,
+  AssetStore: PropTypes.any,
+  MarketStore: PropTypes.any,
+  NotificationStore: PropTypes.object,
 };
 
 export default withStyles(styles)(AssetAllocation);

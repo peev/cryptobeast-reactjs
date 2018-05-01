@@ -1,11 +1,14 @@
 import React from 'react';
+import Select from 'react-select';
+import PropTypes from 'prop-types';
 import { withStyles, Grid, Input } from 'material-ui';
 import Paper from 'material-ui/Paper';
 import { inject, observer } from 'mobx-react';
+
 import RegularButton from '../../CustomButtons/Button';
-import SelectAllCurrency from '../../Selectors/Asset/SelectAllCurrency';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
+import '../../Selectors/Asset/SelectAllCurrency';
 
 const styles = () => ({
   container: {
@@ -30,10 +33,11 @@ const styles = () => ({
   },
   input: {
     width: '100%',
+    marginTop: '12px',
   },
 });
 
-@inject('AssetStore', 'PortfolioStore', 'NotificationStore')
+@inject('AssetStore', 'MarketStore', 'PortfolioStore', 'NotificationStore')
 @observer
 class AssetInput extends React.Component {
   constructor(props) {
@@ -41,9 +45,6 @@ class AssetInput extends React.Component {
     this.state = {
       direction: 'row',
     };
-
-    // this.handleExchangeBasicInput = this.handleExchangeBasicInput.bind(this);
-    // this.handleFromAllCurrenciesBasicAsset = this.handleFromAllCurrenciesBasicAsset.bind(this);
   }
 
   handleRequest = (event) => {
@@ -67,12 +68,16 @@ class AssetInput extends React.Component {
     this.props.AssetStore.selectExchangeBasicInput(value);
   }
 
-  handleFromAllCurrenciesBasicAsset = (value) => {
-    this.props.AssetStore.selectCurrencyBasicAsset(value);
+  handleFromAllCurrenciesBasicAsset = (input) => {
+    if (input) {
+      this.props.AssetStore.selectCurrencyBasicAsset(input.value);
+    } else {
+      this.props.AssetStore.selectCurrencyBasicAsset('');
+    }
   }
 
   render() {
-    const { classes, AssetStore } = this.props;
+    const { classes, AssetStore, MarketStore } = this.props;
 
     return (
       <Grid container >
@@ -81,11 +86,18 @@ class AssetInput extends React.Component {
 
           <Grid container className={classes.containerItems}>
             <Grid item xs={4} sm={3} md={3}>
-              <SelectAllCurrency
-                value={AssetStore.selectedCurrencyBasicAsset}
-                handleChange={this.handleFromAllCurrenciesBasicAsset}
+              <Select
+                name="currency-to-asset-allocation"
+                value={AssetStore.selectedCurrencyBasicAsset || ''}
+                onChange={this.handleFromAllCurrenciesBasicAsset}
+                options={MarketStore.allCurrencies}
+                className={classes.input}
+                style={{
+                  border: 'none',
+                  borderRadius: 0,
+                  borderBottom: '1px solid #757575',
+                }}
               />
-
               <Input
                 type="number"
                 placeholder="Quantity..."
@@ -118,5 +130,13 @@ class AssetInput extends React.Component {
     );
   }
 }
+
+AssetInput.propTypes = {
+  classes: PropTypes.object.isRequired,
+  AssetStore: PropTypes.object,
+  MarketStore: PropTypes.object,
+  PortfolioStore: PropTypes.object,
+  NotificationStore: PropTypes.object,
+};
 
 export default withStyles(styles)(AssetInput);

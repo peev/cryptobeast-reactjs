@@ -1,49 +1,50 @@
 {
-    "env": {
-        "browser": true,
-        "commonjs": true,
-        "es6": true,
-        "jest": true
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "jest": true
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "experimentalDecorators": true,
+      "jsx": true
     },
-    "parserOptions": {
-        "ecmaFeatures": {
-            "experimentalDecorators": true,
-            "jsx": true
-        },
-        "sourceType": "module"
-    },
-    "rules": {
-        "no-const-assign": "warn",
-        "no-this-before-super": "warn",
-        "no-undef": "warn",
-        "no-continue": "off",
-        "no-unreachable": "warn",
-        "no-unused-vars": "warn",
-        "react/no-unused-state": "warn",
-        "arrow-parens": "warn",
-        "comma-dangle": "warn",
-        "constructor-super": "warn",
-        "object-shorthand": "warn",
-        "prefer-destructuring": "warn",
-        "valid-typeof": "warn",
-        "linebreak-style": "off",
-        "import/extensions": "off",
-        "import/no-unresolved": "off",
-        "import/no-extraneous-dependencies": "off",
-        "quotes": [
-            2,
-            "single"
-        ],
-        "semi": [
-            "warn",
-            "always"
-        ]
-    },
-    "parser": "babel-eslint",
-    "extends": "airbnb",
-    "plugins": [
-        "react",
-        "jsx-a11y",
-        "import"
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-const-assign": "warn",
+    "no-this-before-super": "warn",
+    "no-undef": "warn",
+    "no-continue": "off",
+    "no-unreachable": "warn",
+    "no-unused-vars": "warn",
+    "react/no-unused-state": "warn",
+    "react/forbid-prop-types": "off",
+    "arrow-parens": "warn",
+    "comma-dangle": "warn",
+    "constructor-super": "warn",
+    "object-shorthand": "warn",
+    "prefer-destructuring": "warn",
+    "valid-typeof": "warn",
+    "linebreak-style": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+    "import/no-extraneous-dependencies": "off",
+    "quotes": [
+      2,
+      "single"
+    ],
+    "semi": [
+      "warn",
+      "always"
     ]
+  },
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "plugins": [
+    "react",
+    "jsx-a11y",
+    "import"
+  ]
 }

@@ -145,7 +145,6 @@ class InvestorStore {
 
   @computed
   get withdrawPurchasedShares() {
-    const baseCurrency = MarketStore.selectedBaseCurrency;
     const {
       currentPortfolioSharePrice,
     } = PortfolioStore;
@@ -675,6 +674,7 @@ class InvestorStore {
     this.selectedInvestorId = id;
 
     // selects the marked investor
+    // eslint-disable-next-line array-callback-return
     PortfolioStore.currentPortfolioInvestors.find((element) => {
       if (element.id === id) {
         this.selectedInvestor = {

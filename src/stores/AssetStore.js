@@ -39,8 +39,8 @@ class AssetStore {
 
   // start: select from all currencies
   @action.bound
-  selectCurrencyBasicAsset(value) {
-    this.selectedCurrencyBasicAsset = value;
+  selectCurrencyBasicAsset(input) {
+    this.selectedCurrencyBasicAsset = input;
   }
 
   @action
@@ -118,13 +118,14 @@ class AssetStore {
         NotificationStore.addMessage('errorMessages', 'Add amount to covert from');
         return;
       }
-
       const currentFromQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyFromAssetAllocation.currency);
       const currentToQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyToAssetAllocation);
-      const maxQuantityToConvert = (this.assetAllocationFromAmount * currentFromQuantity) / currentToQuantity;
 
-      if (parseInt(value, 10) > maxQuantityToConvert) {
-        NotificationStore.addMessage('errorMessages', `Maximum ${this.selectedCurrencyToAssetAllocation} to convert for: ${maxQuantityToConvert}`);
+      const maxQuantityToConvert = (this.assetAllocationFromAmount * currentFromQuantity) / currentToQuantity;
+      const btcInputCheck = currentToQuantity === 1 ? (this.assetAllocationFromAmount * currentFromQuantity) : maxQuantityToConvert;
+
+      if (parseInt(value, 10) > btcInputCheck) {
+        NotificationStore.addMessage('errorMessages', `Maximum ${this.selectedCurrencyToAssetAllocation} to convert for: ${btcInputCheck}`);
         return;
       }
     }
@@ -201,8 +202,6 @@ class AssetStore {
 
     requester.Asset.add(newBasicAsset)
       .then(action((result) => {
-        // TODO: Something with result
-
         PortfolioStore.currentPortfolioAssets.push(result.data);
       }));
   }
@@ -225,8 +224,8 @@ class AssetStore {
       feeAmount: this.assetAllocationFee,
     };
 
-    // NOTE: conversion with update, create, even delete. If the
-    // currency to convert from is selected all the amount
+    // NOTE: conversion request has update, create, even delete.
+    // That why it returns the updated assets for the current portfolio
     requester.Asset.allocate(newAssetAllocation)
       .then(action((result) => {
         console.log(result);
@@ -263,7 +262,7 @@ class AssetStore {
     let foundCurrency;
     switch (currencyName) {
       case 'BTC':
-        foundCurrency = MarketStore.marketSummaries[`USDT-${currencyName}`].Last;
+        foundCurrency = 1;
         break;
       default:
         foundCurrency = MarketStore.marketSummaries[`BTC-${currencyName}`].Last;

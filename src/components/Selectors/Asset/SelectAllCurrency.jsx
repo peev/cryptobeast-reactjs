@@ -11,7 +11,6 @@ import ClearIcon from 'material-ui-icons/Clear';
 import Chip from 'material-ui/Chip';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
-import { inject, observer } from 'mobx-react';
 
 // import SelectWrapped from './SelectWrapped';
 
@@ -39,12 +38,11 @@ class Option extends Component {
   }
 }
 
-@inject('MarketStore')
-@observer
 // eslint-disable-next-line react/no-multi-comp
 class SelectWrapped extends Component {
+  state = {};
   render() {
-    const { classes, MarketStore, value, ...other } = this.props;
+    const { classes, value, ...other } = this.props;
     console.log(value);
     return (
       <Select
@@ -195,8 +193,6 @@ const styles = theme => ({
   },
 });
 
-@inject('MarketStore')
-@observer
 // eslint-disable-next-line react/no-multi-comp
 class SelectAllCurrency extends Component {
   state = {
@@ -209,7 +205,7 @@ class SelectAllCurrency extends Component {
   };
 
   render() {
-    const { classes, MarketStore, value } = this.props;
+    const { classes, value } = this.props;
 
     return (
       <div className={classes.root}>
@@ -225,7 +221,7 @@ class SelectAllCurrency extends Component {
             name: 'react-select-single',
             instanceId: 'react-select-single',
             simpleValue: true,
-            options: MarketStore.allCurrencies,
+            options: {},
           }}
         />
       </div>

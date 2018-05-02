@@ -7,6 +7,7 @@ import {
   withStyles,
   Grid,
 } from 'material-ui';
+
 import Portfolio from './SummaryItems/Portfolio';
 import Trending from './SummaryItems/Trending';
 
@@ -56,6 +57,8 @@ class SummaryTabs extends React.Component {
             className={classes.navigation}
             value={this.state.value}
             onChange={this.handleChange}
+            centered="true"
+            indicatorColor="#eb4562"
           >
             <Tab label="Portfolio" value={this.value} className={classes.tabItem} />
             <Tab label="Trending" className={classes.tabItem} />

@@ -45,14 +45,9 @@ const styles = theme => ({
 @inject('InvestorStore', 'PortfolioStore', 'MarketStore', 'NotificationStore')
 @observer
 class InvestorDeposit extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      open: false,
-    };
-  }
+  state = {
+    open: false,
+  };
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -93,7 +88,9 @@ class InvestorDeposit extends React.Component {
   }
 
   render() {
-    const { classes, InvestorStore, PortfolioStore, NotificationStore } = this.props;
+    const {
+ classes, InvestorStore, PortfolioStore, NotificationStore
+} = this.props;
 
     return (
       <Grid container>
@@ -191,7 +188,7 @@ class InvestorDeposit extends React.Component {
 InvestorDeposit.propTypes = {
   classes: PropTypes.object.isRequired,
   MarketStore: PropTypes.object,
-  InvestorStore: PropTypes.object
+  InvestorStore: PropTypes.object,
 };
 
 export default withStyles(styles)(InvestorDeposit);

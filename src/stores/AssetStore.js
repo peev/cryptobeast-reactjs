@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
@@ -29,12 +29,12 @@ class AssetStore {
     this.selectedCurrencyBasicAsset = '';
     this.selectedCurrencyFromAssetAllocation = '';
     this.selectedCurrencyToAssetAllocation = '';
-    this.selectedCurrencyForTransactionFee = '';
+    this.selectedCurrencyForTransactionFee = 'BTC';
     this.assetInputValue = '';
     this.assetAllocationSelectedDate = '';
     this.assetAllocationFromAmount = '';
     this.assetAllocationToAmount = '';
-    this.assetAllocationFee = '';
+    this.assetAllocationFee = '0';
   }
 
   // start: select from all currencies
@@ -111,21 +111,31 @@ class AssetStore {
      * currentToQuantity => current BTC or other crypto currencies quantity for output asset
      * maxQuantityToConvert => output asset threshold
      */
-    if (type === 'assetAllocationToAmount' &&
+    if (type === 'assetAllocationFromAmount' &&
       this.selectedCurrencyFromAssetAllocation !== '' &&
       this.selectedCurrencyToAssetAllocation !== '') {
-      if (this.assetAllocationFromAmount === '') {
-        NotificationStore.addMessage('errorMessages', 'Add amount to covert from');
+      const currentFromQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyFromAssetAllocation.currency);
+      if (currentFromQuantity === 0) {
+        this.assetAllocationToAmount = value;
         return;
       }
-      const currentFromQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyFromAssetAllocation.currency);
       const currentToQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyToAssetAllocation);
 
       const maxQuantityToConvert = (this.assetAllocationFromAmount * currentFromQuantity) / currentToQuantity;
       const btcInputCheck = currentToQuantity === 1 ? (this.assetAllocationFromAmount * currentFromQuantity) : maxQuantityToConvert;
 
       if (parseInt(value, 10) > btcInputCheck) {
-        NotificationStore.addMessage('errorMessages', `Maximum ${this.selectedCurrencyToAssetAllocation} to convert for: ${btcInputCheck}`);
+        this.assetAllocationToAmount = btcInputCheck;
+        // NotificationStore.addMessage('errorMessages', `Maximum ${this.selectedCurrencyToAssetAllocation} to convert for: ${btcInputCheck}`);
+        return;
+      }
+    }
+
+    if (type === 'assetAllocationToAmount' &&
+      this.selectedCurrencyFromAssetAllocation !== '' &&
+      this.selectedCurrencyToAssetAllocation !== '') {
+      if (this.assetAllocationFromAmount === '') {
+        NotificationStore.addMessage('errorMessages', 'Add amount to covert from');
         return;
       }
     }
@@ -248,11 +258,11 @@ class AssetStore {
     this.assetAllocationSelectedDate = '';
     this.assetAllocationFromAmount = '';
     this.assetAllocationToAmount = '';
-    this.assetAllocationFee = '';
+    this.assetAllocationFee = '0';
     this.selectedCurrencyBasicAsset = '';
     this.selectedCurrencyFromAssetAllocation = '';
     this.selectedCurrencyToAssetAllocation = '';
-    this.selectedCurrencyForTransactionFee = '';
+    this.selectedCurrencyForTransactionFee = 'BTC';
     this.selectedCurrencyIdFromAssetAllocation = '';
   }
 
@@ -263,6 +273,16 @@ class AssetStore {
     switch (currencyName) {
       case 'BTC':
         foundCurrency = 1;
+        break;
+      case 'ETH':
+        foundCurrency = MarketStore.marketSummaries[`ETH-${currencyName}`] ?
+          MarketStore.marketSummaries[`ETH-${currencyName}`] :
+          0;
+        break;
+      case 'USDT':
+        foundCurrency = MarketStore.marketSummaries[`USDT-${currencyName}`] ?
+          MarketStore.marketSummaries[`USDT-${currencyName}`].Last :
+          0;
         break;
       default:
         foundCurrency = MarketStore.marketSummaries[`BTC-${currencyName}`].Last;

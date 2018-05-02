@@ -46,12 +46,12 @@ class App extends React.Component {
     console.log(props.UserStore.data);
   }
 
-  componentDidMount() {
-    if (navigator.platform.indexOf('Win') > -1) {
-      // eslint-disable-next-line
-      const ps = new PerfectScrollbar(this.mainPanel);
-    }
-  }
+  // componentDidMount() {
+  //   if (navigator.platform.indexOf('Win') > -1) {
+  //     // eslint-disable-next-line
+  //     const ps = new PerfectScrollbar(this.mainPanel);
+  //   }
+  // }
 
   componentDidUpdate() {
     // this.mainPanel.scrollTop = 0;

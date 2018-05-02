@@ -23,13 +23,18 @@ class TotalFeePotential extends React.Component {
 
     return (
       <Grid container>
-        <InvestorCardButton >
+        <Grid item xs={12} sm={12} md={12}>
+          {/* <InvestorCardButton
+            // disabled="disabled"
+            notActive="notActive"
+            >
+          </InvestorCardButton> */}
           <InvestorCard
             className={classes.card}
             headerText={`$${InvestorStore.totalFeePotential}`}
             labelText="Total Fee Potential"
           />
-        </InvestorCardButton>
+        </Grid >
       </Grid >
     );
   }

@@ -42,7 +42,7 @@ const styles = () => ({
     },
   },
   value: {
-    backgroundColor: '#0eff00',
+    backgroundColor: '#3ab693',
     display: 'inline-block',
     height: '100%',
   },

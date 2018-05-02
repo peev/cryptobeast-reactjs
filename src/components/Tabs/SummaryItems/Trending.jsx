@@ -47,13 +47,13 @@ const styles = () => ({
   },
   titleBest: {
     marginTop: '0',
-    color: '#0eff00',
+    color: '#3ab693',
     textTransform: 'uppercase',
     fontSize: '12px',
   },
   titleWorst: {
     marginTop: '0',
-    color: '#ca3f58',
+    color: '#eb4562',
     textTransform: 'uppercase',
     fontSize: '12px',
   },

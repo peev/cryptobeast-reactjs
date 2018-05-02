@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles, Grid } from 'material-ui';
 import { inject, observer } from 'mobx-react';
-import SelectInvestor from '../../Selectors/SelectInvestor';
+import RegularButton from '../../CustomButtons/Button';
 
 const styles = () => ({
   container: {
@@ -32,9 +32,13 @@ const styles = () => ({
   profitStyle: {
     color: '#60bb9b',
   },
+  btnAdd: {
+    float: 'right',
+    margin: '100px',
+  },
 });
 
-@inject('InvestorStore')
+@inject('MarketStore')
 @observer
 class TransactionSimulator extends Component {
   state = {
@@ -42,12 +46,21 @@ class TransactionSimulator extends Component {
   };
 
   render() {
-    const { classes, InvestorStore } = this.props;
+    const { classes, MarketStore } = this.props;
 
     return (
       <div>
         <Grid container>
           TransactionSimulator
+
+          <Grid container className={classes.containerButton}>
+            <RegularButton
+              color="primary"
+              className="btnAdd"
+              onClick={this.handleSave}
+            >Add more lines
+            </RegularButton>
+          </Grid>
         </Grid>
       </div>
     );

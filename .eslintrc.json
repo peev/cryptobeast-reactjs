@@ -21,6 +21,7 @@
     "no-unused-vars": "warn",
     "react/no-unused-state": "warn",
     "react/forbid-prop-types": "off",
+    "react/require-default-props": "off",
     "arrow-parens": "warn",
     "comma-dangle": "warn",
     "constructor-super": "warn",

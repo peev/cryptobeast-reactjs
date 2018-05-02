@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
+import MarketStore from './MarketStore';
 
 class ApiAccountStore {
   @observable
@@ -54,10 +55,10 @@ class ApiAccountStore {
     this.values.isActive = !this.values.isActive;
   }
 
-  @action
-  selectApiName(value) {
-    this.values.apiServiceName = value;
-  }
+  // @action
+  // selectApiName(value) {
+  //   this.values.apiServiceName = value;
+  // }
 
   @action
   getCurrentInvestor() {
@@ -97,7 +98,7 @@ class ApiAccountStore {
   @action
   createNewAccount(id) {
     const newAccount = {
-      apiServiceName: this.values.apiServiceName,
+      apiServiceName: MarketStore.selectedExchangeCreateAccount,
       apiKey: this.values.apiKey,
       apiSecret: this.values.apiSecret,
       isActive: this.values.isActive,

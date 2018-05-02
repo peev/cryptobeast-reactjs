@@ -26,7 +26,7 @@ class InvestorStore {
       telephone: '',
       dateOfEntry: '',
       depositedAmount: '',
-      depositUsdEquiv: '',
+      // depositUsdEquiv: '',
       managementFee: '',
       sharePriceAtEntryDate: '',
       purchasedShares: '',
@@ -78,7 +78,7 @@ class InvestorStore {
     } = PortfolioStore;
     if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
       // TODO: To add Assets value below
-      const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / (currentPortfolioSharePrice || 1)).toFixed(2);
+      const calculatedPurchasedShares = (this.depositUsdEquiv / (currentPortfolioSharePrice || 1)).toFixed(2);
       this.newInvestorValues.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -110,7 +110,7 @@ class InvestorStore {
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
       // const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
-      const calculatedPurchasedShares = (this.newInvestorValues.depositUsdEquiv / (currentPortfolioSharePrice || 1)).toFixed(2);
+      const calculatedPurchasedShares = (this.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
       this.newDepositValues.purchasedShares = calculatedPurchasedShares;
 
       return calculatedPurchasedShares;
@@ -145,7 +145,6 @@ class InvestorStore {
 
   @computed
   get withdrawPurchasedShares() {
-    const baseCurrency = MarketStore.selectedBaseCurrency;
     const {
       currentPortfolioSharePrice,
     } = PortfolioStore;
@@ -353,7 +352,7 @@ class InvestorStore {
         investorName: this.newInvestorValues.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
         transactionDate: this.newInvestorValues.dateOfEntry,
-        amountInUSD: this.newInvestorValues.depositUsdEquiv,
+        amountInUSD: this.depositUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newInvestorValues.purchasedShares),
         portfolioId: id,
@@ -408,7 +407,7 @@ class InvestorStore {
         investorName: this.selectedInvestor.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
         transactionDate: this.newDepositValues.transactionDate,
-        amountInUSD: this.newInvestorValues.depositUsdEquiv,
+        amountInUSD: this.depositUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newDepositValues.purchasedShares),
         portfolioId: PortfolioStore.selectedPortfolioId,
@@ -629,7 +628,7 @@ class InvestorStore {
     this.newInvestorValues.telephone = '';
     this.newInvestorValues.dateOfEntry = '';
     this.newInvestorValues.depositedAmount = '';
-    this.newInvestorValues.depositUsdEquiv = '';
+    // this.newInvestorValues.depositUsdEquiv = '';
     this.newInvestorValues.managementFee = '';
     this.newInvestorValues.sharePriceAtEntryDate = '';
     this.newInvestorValues.purchasedShares = '';
@@ -676,6 +675,7 @@ class InvestorStore {
   selectInvestor(id) {
     this.selectedInvestorId = id;
     // selects the marked investor
+    // eslint-disable-next-line array-callback-return
     PortfolioStore.currentPortfolioInvestors.find((element) => {
       if (element.id === id) {
         this.selectedInvestor = {
@@ -693,8 +693,8 @@ class InvestorStore {
     }
   }
 
-  @action.bound
-  depositUsdEquiv() {
+  @computed
+  get depositUsdEquiv() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
     const currentAmount = this.newInvestorValues.depositedAmount || this.newDepositValues.amount;
     if (baseCurrency && currentAmount) {
@@ -715,7 +715,7 @@ class InvestorStore {
           console.log('The is no such currency');
           break;
       }
-      this.newInvestorValues.depositUsdEquiv = calculatedDepositUsdEquiv;
+
       return calculatedDepositUsdEquiv;
     }
 

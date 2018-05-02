@@ -73,7 +73,7 @@ class InvestorDeposit extends React.Component {
 
     // To calculate purchased shares ===================
     if (propertyType === 'amount') {
-      InvestorStore.depositUsdEquiv();
+      InvestorStore.depositUsdEquiv;
     }
   }
 

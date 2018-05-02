@@ -284,9 +284,12 @@ class InvestorStore {
   // eslint-disable-next-line class-methods-use-this
   get totalFeePotential() {
     if (PortfolioStore.selectedPortfolio) {
-      console.log(PortfolioStore.currentSelectedPortfolioCost, PortfolioStore.selectedPortfolio.shares);
-      // console.log(PortfolioStore.currentPortfolioInvestors);
-      return PortfolioStore.currentSelectedPortfolioCost * PortfolioStore.selectedPortfolio.shares
+      let totalFeeValue = 0;
+      PortfolioStore.currentPortfolioInvestors.forEach((el) => {
+        totalFeeValue += el.purchasedShares * (el.managementFee / 100) * PortfolioStore.currentPortfolioSharePrice;
+      });
+
+      return this.prettifyNumber(totalFeeValue);
     }
 
     return 0;
@@ -730,6 +733,30 @@ class InvestorStore {
     }
 
     return null;
+  }
+
+  @action.bound
+  // eslint-disable-next-line class-methods-use-this
+  prettifyNumber(value) {
+    const thousand = 1000;
+    const million = 1000000;
+    const billion = 1000000000;
+    const trillion = 1000000000000;
+
+    if (value < thousand) {
+      return (value).toFixed(1);
+    }
+    if (value >= thousand && value <= 1000000) {
+      return `${parseFloat(value / thousand).toFixed(1)}K`;
+    }
+    if (value >= million && value <= billion) {
+      return `${parseFloat(value / million).toFixed(1)}M`;
+    }
+    if (value >= billion && value <= trillion) {
+      return `${parseFloat(value / billion).toFixed(1)}B`;
+    }
+
+    return `${parseFloat(value / trillion).toFixed(1)}T`;
   }
   // #endregion
 }

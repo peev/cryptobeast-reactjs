@@ -66,7 +66,7 @@ class Trending extends Component {
 
   render() {
     const { classes, tableHead, PortfolioStore } = this.props;
-    const array = PortfolioStore.currentMarketSummaryPercentageChange;
+    const array = PortfolioStore.currentMarketSummaryPercentageChange || [];
     const fistItems = array.slice(0, 4);
     const lastItems = array.slice(array.length - 4).reverse();
 

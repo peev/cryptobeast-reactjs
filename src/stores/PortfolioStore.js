@@ -34,7 +34,8 @@ class PortfolioStore {
   @computed
   get summaryUsdEquivalent() {
     if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
-      const result = this.selectedPortfolio.cost * MarketStore.baseCurrencies[3].last; // NOTE: this if USD
+      const result =
+        this.selectedPortfolio.cost * MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       return result.toFixed(2);
     }
 
@@ -136,7 +137,8 @@ class PortfolioStore {
           }
           // 6. Asset Weight
           if (ind === 5) {
-            const ifPortfolioCost = this.currentSelectedPortfolioCost !== 0 ? this.currentSelectedPortfolioCost : 1;
+            const ifPortfolioCost = this.currentSelectedPortfolioCost !== 0 ?
+              this.currentSelectedPortfolioCost : 1;
             const percentOfItem = ((currentRow[4] / ifPortfolioCost) * 100).toFixed(0);
             currentRow.push(percentOfItem);
           }
@@ -156,12 +158,14 @@ class PortfolioStore {
                 break;
               case 'BTC':
                 yesterdayCost = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].PrevDay;
-                changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100).toFixed(2);
+                changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
+                  .toFixed(2);
                 break;
               default:
                 if (MarketStore.marketSummaries[`BTC-${currentRow[0]}`]) {
                   yesterdayCost = MarketStore.marketSummaries[`BTC-${currentRow[0]}`].PrevDay;
-                  changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100).toFixed(2);
+                  changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
+                    .toFixed(2);
                   break;
                 } else {
                   changeFromYesterday = 'n/a';
@@ -199,7 +203,10 @@ class PortfolioStore {
         .map((el) => {
           const index = marketSummary[el].MarketName.indexOf('-');
           const name = marketSummary[el].MarketName.slice(index + 1);
-          const elemCost = +(((marketSummary[el].Last - marketSummary[el].PrevDay) / marketSummary[el].PrevDay) * 100).toFixed(2);
+          const elemCost =
+            +(((marketSummary[el].Last - marketSummary[el].PrevDay) /
+              marketSummary[el].PrevDay) * 100)
+              .toFixed(2);
           return [name, elemCost, 42];
         })
         .sort((a, b) => b[1] - a[1]);
@@ -209,9 +216,7 @@ class PortfolioStore {
   }
 
   get summaryAssetsBreakdown() {
-    return this.summaryPortfolioAssets.map((el) => {
-      return { y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` };
-    });
+    return this.summaryPortfolioAssets.map((el) => ({ y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` }));
   }
 
   @computed

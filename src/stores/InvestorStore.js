@@ -145,7 +145,7 @@ class InvestorStore {
 
   @computed
   get withdrawPurchasedShares() {
-    const baseCurrency = MarketStore.selectedBaseCurrency;
+    // const baseCurrency = MarketStore.selectedBaseCurrency;
     const {
       currentPortfolioSharePrice,
     } = PortfolioStore;
@@ -380,7 +380,7 @@ class InvestorStore {
     }
 
     requester.Investor.update(investorId, finalResult)
-      .then(action((result) => {
+      .then(action(() => {
         const portfolioInvestors = PortfolioStore.currentPortfolioInvestors;
         // console.log(PortfolioStore.currentPortfolioInvestors, finalResult, investorId)
         portfolioInvestors.forEach((investor) => {
@@ -463,6 +463,7 @@ class InvestorStore {
     // Checks if portfolio is selected
     noErrors = this.handleIsPortfolioSelected();
 
+    noErrors = this.handleEmailValidation();
     // Checks if base currency is added
     if (baseCurrency === null) {
       // NotificationStore.addMessage('errorMessages', 'Please select currency');
@@ -470,7 +471,7 @@ class InvestorStore {
     }
 
     // Checks if email is valid - duplication only
-    noErrors = this.handleEmailValidation();
+    
 
     // Checks the currently entered values. If value is empty and it is required,
     // than adds a error massage to the array of errors

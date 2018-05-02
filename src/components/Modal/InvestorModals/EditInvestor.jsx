@@ -186,7 +186,6 @@ class EditInvestor extends React.Component {
               <Button
                 type="submit"
                 color="primary"
-                onClick={this.handleSave}
               >
                 Save
               </Button>

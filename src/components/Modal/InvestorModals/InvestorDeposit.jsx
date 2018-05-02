@@ -53,7 +53,6 @@ const styles = theme => ({
 class InvestorDeposit extends React.Component {
   state = {
     open: false,
-    submitted: false,
   };
 
   handleOpen = () => {
@@ -85,9 +84,6 @@ class InvestorDeposit extends React.Component {
   }
 
   handleDepositSave = () => {
-    this.setState({ submitted: true }, () => {
-      setTimeout(() => this.setState({ submitted: false }), 5000);
-    });
     const { InvestorStore } = this.props;
     const hasErrors = InvestorStore.handleDepositInvestorErrors();
 
@@ -212,7 +208,6 @@ class InvestorDeposit extends React.Component {
               <Button
                 type="submit"
                 color="primary"
-                onClick={this.handleDepositSave}
                 disabled={NotificationStore.getErrorsLength > 0}
               >
                 Save

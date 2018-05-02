@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Grid, Input, Snackbar } from 'material-ui';
+import { withStyles, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
@@ -57,7 +57,6 @@ const styles = theme => ({
 class InvestorWithdraw extends React.Component {
   state = {
     open: false,
-    submitted: false
   };
 
   handleOpen = () => {
@@ -87,9 +86,6 @@ class InvestorWithdraw extends React.Component {
   }
 
   handleWithdrawalInvestor = () => {
-    this.setState({ submitted: true }, () => {
-      setTimeout(() => this.setState({ submitted: false }), 5000);
-    });
     const { InvestorStore } = this.props;
     const hasErrors = InvestorStore.handleWithdrawalInvestorErrors();
 
@@ -259,7 +255,7 @@ class InvestorWithdraw extends React.Component {
               <Button
                 type="submit"
                 color="primary"
-                onClick={this.handleWithdrawalInvestor}
+                // onClick={this.handleWithdrawalInvestor}
                 disabled={NotificationStore.getErrorsLength > 0}
               >Save
               </Button>

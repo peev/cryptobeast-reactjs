@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Input, Snackbar, Grid } from 'material-ui';
+import { withStyles, Input, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
@@ -65,7 +65,6 @@ const styles = theme => ({
 class AddInvestor extends React.Component {
   state = {
     open: false,
-    submitted: false,
   };
 
   componentWillMount() {
@@ -100,9 +99,6 @@ class AddInvestor extends React.Component {
   };
 
   handleSave = () => {
-    this.setState({ submitted: true }, () => {
-      setTimeout(() => this.setState({ submitted: false }), 5000);
-    });
     const { PortfolioStore, InvestorStore, NotificationStore } = this.props;
 
     // FIXME: dont spam Save Button
@@ -348,8 +344,6 @@ class AddInvestor extends React.Component {
               <Button
                 type="submit"
                 color="primary"
-                onClick={this.handleSave}
-                // disabled={this.state.submitted}
                 disabled={NotificationStore.getErrorsLength > 0}
               >
                 Save

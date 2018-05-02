@@ -88,7 +88,6 @@ class AddInvestor extends React.Component {
     const inputValue = event.target.value;
     InvestorStore.setNewInvestorValues(propertyType, inputValue);
     if (propertyType === 'depositedAmount') {
-      console.log('>>> from handleRequests: ', propertyType);
       InvestorStore.depositUsdEquiv();
     }
   }
@@ -99,7 +98,7 @@ class AddInvestor extends React.Component {
   };
 
   handleSave = () => {
-    const { PortfolioStore, InvestorStore  } = this.props;
+    const { PortfolioStore, InvestorStore } = this.props;
 
     // FIXME: dont spam Save Button
     const hasErrors = InvestorStore.handleAddInvestorErrors();
@@ -128,7 +127,7 @@ class AddInvestor extends React.Component {
           open={this.state.open}
         >
           <ValidatorForm
-            ref="form"
+            // ref="form"
             onSubmit={this.handleSave}
             onError={errors => console.log(errors)}
             style={getModalStyle()}
@@ -359,6 +358,10 @@ class AddInvestor extends React.Component {
 }
 AddInvestor.propTypes = {
   classes: PropTypes.object.isRequired,
+  InvestorStore: PropTypes.object,
+  NotificationStore: PropTypes.object,
+  MarketStore: PropTypes.object,
+  PortfolioStore: PropTypes.object,
 };
 
 export default withStyles(styles, addInvestorModalStyle)(AddInvestor);

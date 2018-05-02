@@ -113,7 +113,7 @@ class InvestorDeposit extends React.Component {
           open={this.state.open}
         >
           <ValidatorForm
-            ref="form"
+            // ref="form"
             onSubmit={this.handleDepositSave}
             onError={errors => console.log(errors)}
             style={getModalStyle()}
@@ -224,6 +224,10 @@ class InvestorDeposit extends React.Component {
 
 InvestorDeposit.propTypes = {
   classes: PropTypes.object.isRequired,
+  InvestorStore: PropTypes.object,
+  NotificationStore: PropTypes.object,
+  PortfolioStore: PropTypes.object,
+  MarketStore: PropTypes.object,
 };
 
 export default withStyles(styles)(InvestorDeposit);

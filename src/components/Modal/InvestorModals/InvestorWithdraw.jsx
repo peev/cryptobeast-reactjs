@@ -271,6 +271,9 @@ class InvestorWithdraw extends React.Component {
 
 InvestorWithdraw.propTypes = {
   classes: PropTypes.object.isRequired,
+  InvestorStore: PropTypes.object,
+  NotificationStore: PropTypes.object,
+  PortfolioStore: PropTypes.object,
 };
 
 export default withStyles(styles)(InvestorWithdraw);

@@ -199,6 +199,7 @@ class EditInvestor extends React.Component {
 
 EditInvestor.propTypes = {
   classes: PropTypes.object.isRequired,
+  InvestorStore: PropTypes.object,
 };
 
 export default withStyles(styles)(EditInvestor);

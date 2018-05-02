@@ -7,14 +7,8 @@ import {
   XAxis,
   YAxis,
   Title,
-  Legend,
-  LineSeries,
-  Navigator,
-  RangeSelector,
-  SplineSeries,
-  AreaSeries,
   AreaRangeSeries,
-  Tooltip
+  Tooltip,
 } from "react-jsx-highstock";
 import addHighchartsMore from "highcharts/highcharts-more";
 
@@ -402,7 +396,7 @@ const ranges = [
   [1514422800000, -3.3, -1.4],
   [1514509200000, -1.5, -0.2],
   [1514595600000, -2.7, -1.0],
-  [1514682000000, -2.8, 0.3]
+  [1514682000000, -2.8, 0.3],
 ];
 
 class VolatilityAndRisk extends Component {

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Grid, Button, Snackbar } from 'material-ui';
-import { RegularCard, ItemGrid, Table } from 'components';
+import { RegularCard, ItemGrid } from 'components';
 import { inject, observer } from 'mobx-react';
 
-import UpdatePortfolioModal from '../../components/Modal/UpdatePortfolio';
+// import UpdatePortfolioModal from '../../components/Modal/UpdatePortfolio';
 import RegularButton from '../../components/CustomButtons/Button';
 import CreatePortfolio from '../../components/Modal/CreatePortfolio';
 import PortfoliosTable from '../../components/CustomTables/PortfoliosTable';

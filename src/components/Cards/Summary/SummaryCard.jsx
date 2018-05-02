@@ -56,7 +56,7 @@ function SummaryCard({ ...props }) {
     classes,
     title,
     description,
-    iconColor,
+    // iconColor,
   } = props;
 
   /**

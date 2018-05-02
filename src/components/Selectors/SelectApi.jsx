@@ -43,7 +43,7 @@ class SelectApi extends React.Component {
 
   render() {
     const apiNames = ['Bittrex', 'Kraken'];
-    const { classes, InvestorStore } = this.props;
+    const { classes } = this.props;
     const apis = apiNames.map((apiName, i) => {
       return (
         <MenuItem

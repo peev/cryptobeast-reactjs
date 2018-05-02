@@ -15,7 +15,7 @@ import { Close } from 'material-ui-icons';
 import IconButton from '../CustomButtons/IconButton';
 import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
 import tableStyle from '../../variables/styles/tableStyle';
-import RemovePortfolioWrapped from '../Modal/RemovePortfolio';
+// import RemovePortfolioWrapped from '../Modal/RemovePortfolio';
 
 // TODO add Inject PortfolioStore and Remake function to const = () =>{}
 @inject('PortfolioStore')
@@ -44,7 +44,6 @@ class PortfoliosTable extends React.Component {
     const {
       classes,
       tableHead,
-      tableData,
       tableHeaderColor,
       PortfolioStore,
     } = this.props;
@@ -65,7 +64,7 @@ class PortfoliosTable extends React.Component {
       </TableHead>
     );
 
-    const itemsToArray = Object.values(portfolios);
+    // const itemsToArray = Object.values(portfolios);
     const filteredItems = portfolios.map(obj => [
       obj.name,
       obj.shares,

@@ -1,19 +1,18 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "material-ui/styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
 import Table, {
   TableBody,
   TableCell,
   TableHead,
-  TableRow
-} from "material-ui/Table";
-import Paper from "material-ui/Paper";
+  TableRow,
+} from 'material-ui/Table';
+// import Paper from 'material-ui/Paper';
 
 const styles = theme => ({
- 
   table: {
-    minWidth: 700
-  }
+    minWidth: 700,
+  },
 });
 
 let id = 0;
@@ -24,7 +23,7 @@ function createData(
   portfolioReturn,
   benchmark,
   benchmarkReturn,
-  exessReturn
+  exessReturn,
 ) {
   id += 1;
   return {
@@ -35,14 +34,14 @@ function createData(
     portfolioReturn,
     benchmark,
     benchmarkReturn,
-    exessReturn
+    exessReturn,
   };
 }
 
 const data = [
-  createData("1", "31-12-2017", 1.0, "-", 1.0, "-", "-"),
-  createData("2", "01-01-2018", 1.12, `${12.0} %`, 1.06, `${6.0}%`, `${6.0}%`),
-  createData("3", "01-02-2018", 0.94, `${6.12}%`, 1.02, `${2.0}%`, `${8.12}%`)
+  createData('1', '31-12-2017', 1.0, '-', 1.0, '-', '-'),
+  createData('2', '01-01-2018', 1.12, `${12.0} %`, 1.06, `${6.0}%`, `${6.0}%`),
+  createData('3', '01-02-2018', 0.94, `${6.12}%`, 1.02, `${2.0}%`, `${8.12}%`),
 ];
 
 function PerformanceTable(props) {
@@ -79,7 +78,7 @@ function PerformanceTable(props) {
 }
 
 PerformanceTable.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(PerformanceTable);

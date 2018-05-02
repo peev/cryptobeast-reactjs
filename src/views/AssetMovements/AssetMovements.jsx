@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid } from 'material-ui';
 import AssetInput from '../../components/Cards/Assets/AssetInput';
 import AssetAllocation from '../../components/Cards/Assets/AssetAllocation';
-import AssetsTable from '../../components/CustomTables/AssetsTable';
+// import AssetsTable from '../../components/CustomTables/AssetsTable';
 import PortfolioSummaryTable from '../../components/CustomTables/PortfolioSummaryTable';
 
 class AssetMovements extends React.Component {

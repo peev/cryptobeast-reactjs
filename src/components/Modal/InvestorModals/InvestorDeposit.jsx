@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Input, Snackbar, Grid } from 'material-ui';
+import { withStyles, Input, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';

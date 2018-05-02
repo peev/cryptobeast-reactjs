@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles, Grid } from 'material-ui';
 import { inject, observer } from 'mobx-react';
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+import { ValidatorForm } from 'react-material-ui-form-validator';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 
 
@@ -40,7 +40,6 @@ const styles = () => ({
 @observer
 class IndividualSummary extends Component {
   state = {
-    direction: 'row',
   };
 
   handleSave = () => { console.log('Submit'); };

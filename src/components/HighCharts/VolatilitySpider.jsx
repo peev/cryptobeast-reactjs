@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import Highcharts from "highcharts/highstock";
+import React, { Component } from 'react';
+import Highcharts from 'highcharts/highstock';
 import {
   HighchartsStockChart,
   Chart,
@@ -9,15 +9,9 @@ import {
   Title,
   Legend,
   LineSeries,
-  Navigator,
-  RangeSelector,
-  SplineSeries,
-  AreaSeries,
-  AreaRangeSeries,
-  PolygonSeries,
-  Tooltip
-} from "react-jsx-highstock";
-import addHighchartsMore from "highcharts/highcharts-more";
+  Tooltip,
+} from 'react-jsx-highstock';
+import addHighchartsMore from 'highcharts/highcharts-more';
 // import { createRandomData } from "../utils/data-helpers";
 
 addHighchartsMore(Highcharts);
@@ -29,17 +23,17 @@ class VolatilitySpiderChart extends Component {
     return (
       <HighchartsStockChart className="test">
         <Chart type="line" polar />
-        <Tooltip shared  />
-        <Legend  />
+        <Tooltip shared />
+        <Legend />
         <Title>ASSETS BETAS (Absolute Values)</Title>
         <XAxis
           categories={[
-            "Global Equities",
-            "Tech Index",
-            "USBONDS",
-            "US Equity",
-            "Nat Gas",
-            "Mexico"
+            'Global Equities',
+            'Tech Index',
+            'USBONDS',
+            'US Equity',
+            'Nat Gas',
+            'Mexico',
           ]}
           tickerPlacement="on"
           lineWidth={0}

@@ -99,7 +99,7 @@ class AddInvestor extends React.Component {
   };
 
   handleSave = () => {
-    const { PortfolioStore, InvestorStore, NotificationStore } = this.props;
+    const { PortfolioStore, InvestorStore  } = this.props;
 
     // FIXME: dont spam Save Button
     const hasErrors = InvestorStore.handleAddInvestorErrors();

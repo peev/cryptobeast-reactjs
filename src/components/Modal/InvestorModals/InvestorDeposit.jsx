@@ -73,22 +73,24 @@ class InvestorDeposit extends React.Component {
 
     // To calculate purchased shares ===================
     if (propertyType === 'amount') {
-      InvestorStore.depositUsdEquiv();
+      InvestorStore.depositUsdEquiv;
     }
   }
 
   handleDepositSave = () => {
     const { InvestorStore } = this.props;
-    const hasErrors = InvestorStore.handleDepositInvestorErrors();
+    const noErrors = InvestorStore.handleDepositInvestorErrors();
 
-    if (hasErrors) {
+    if (noErrors) {
       InvestorStore.createNewDepositInvestor(InvestorStore.selectedInvestor.id);
       this.handleClose();
     }
   }
 
   render() {
-    const { classes, InvestorStore, PortfolioStore, NotificationStore } = this.props;
+    const {
+ classes, InvestorStore, PortfolioStore, NotificationStore
+} = this.props;
 
     return (
       <Grid container>
@@ -142,6 +144,7 @@ class InvestorDeposit extends React.Component {
                 <Input
                   type="date"
                   placeholder="Transaction Date"
+                  max="2018-04-30"
                   onChange={this.handleDepositRequests('transactionDate')}
                   className={classes.alignInput}
                 />
@@ -151,7 +154,7 @@ class InvestorDeposit extends React.Component {
                 <Input
                   placeholder="Purchased Shares"
                   className={classes.alignInputAfter}
-                  value={InvestorStore.depositPurchasedShares}
+                  value={InvestorStore.depositPurchasedShares || ''}
                 />
               </Grid>
             </Grid>
@@ -184,6 +187,8 @@ class InvestorDeposit extends React.Component {
 
 InvestorDeposit.propTypes = {
   classes: PropTypes.object.isRequired,
+  MarketStore: PropTypes.object,
+  InvestorStore: PropTypes.object,
 };
 
 export default withStyles(styles)(InvestorDeposit);

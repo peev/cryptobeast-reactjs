@@ -30,9 +30,8 @@ const Portfolio = {
     requests.post('/portfolio/getPortfolioSharePrice', id),
   update: requestParams =>
     requests.put('/portfolio/update', requestParams), // id + newName
-  delete: (id) => {
-    return requests.delete('/portfolio/delete/' + id)
-  }
+  delete: id =>
+    requests.delete(`/portfolio/delete/${id}`),
 };
 
 const Investor = {
@@ -81,6 +80,8 @@ const Asset = {
     requests.put('/asset/update', requestParams),
   delete: id =>
     requests.delete(`/asset/delete${id}`, id),
+  allocate: data =>
+    requests.post('/asset/allocate', data),
 };
 
 export default {

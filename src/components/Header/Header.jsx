@@ -26,16 +26,6 @@ class Header extends Component {
     this.state = {};
   }
 
-  componentDidMount() {
-    const { PortfolioStore } = this.props;
-
-    const portfoliosArray = PortfolioStore.portfolios;
-
-    if (portfoliosArray.length > 0) {
-      PortfolioStore.selectPortfolio(1);
-    }
-  }
-
   render() {
     const { classes, PortfolioStore } = this.props;
     const portfoliosArray = PortfolioStore.portfolios;
@@ -50,6 +40,7 @@ class Header extends Component {
 
 Header.propTypes = {
   classes: PropTypes.object.isRequired,
+  PortfolioStore: PropTypes.object,
   color: PropTypes.oneOf(['primary', 'info', 'success', 'warning', 'danger']),
   // handleDrawerToggle: PropTypes.func,
 };

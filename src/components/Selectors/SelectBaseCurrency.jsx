@@ -18,7 +18,7 @@ const styles = theme => ({
   },
 });
 
-@inject('MarketStore')
+@inject('MarketStore', 'InvestorStore')
 @observer
 class SelectBaseCurrency extends React.Component {
   state = {
@@ -37,6 +37,7 @@ class SelectBaseCurrency extends React.Component {
   handleChange = (event) => {
     const index = event.target.value;
     this.props.MarketStore.selectBaseCurrency(index);
+    this.props.InvestorStore.depositUsdEquiv();
 
     this.setState({ [event.target.name]: event.target.value });
   };

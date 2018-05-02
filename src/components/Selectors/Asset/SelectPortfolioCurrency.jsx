@@ -1,30 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
+import { withStyles, InputLabel, MenuItem, FormControl } from 'material-ui';
 import Select from 'material-ui/Select';
 import { inject, observer } from 'mobx-react';
 
 const styles = theme => ({
   button: {
     display: 'block',
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 2
   },
   formControl: {
     margin: theme.spacing.unit,
     minWidth: '100%',
-    width: '200px',
-  },
+  }
 });
 
-@inject('ApiAccountStore')
+@inject('PortfolioStore', 'AssetStore')
 @observer
-class SelectApi extends React.Component {
+class SelectPortfolioCurrency extends React.Component {
   state = {
     open: false,
-    baseCurrencyId: '',
   };
 
   handleOpen = () => {
@@ -36,53 +31,56 @@ class SelectApi extends React.Component {
   };
 
   handleChange = (event) => {
-    const value = event.target.value;
-    this.props.ApiAccountStore.selectApiName(value);
-    this.setState({ [event.target.name]: event.target.value });
+    const { value } = event.target;
+
+    this.props.AssetStore.selectCurrencyFromAssetAllocation(value);
   };
 
   render() {
-    const apiNames = ['Bittrex', 'Kraken'];
-    const { classes, InvestorStore } = this.props;
-    const apis = apiNames.map((apiName, i) => {
+    const { classes, PortfolioStore, AssetStore } = this.props;
+
+    const allExchanges = PortfolioStore.currentPortfolioAssets.map((el, i) => {
       return (
         <MenuItem
           key={i}
-          value={apiName}
+          value={el.id}
         >
-          <em>{apiName}</em>
+          <em>{el.currency}</em>
         </MenuItem>
       );
     });
 
     return (
-      <div autoComplete="off">
+      <form autoComplete="off">
+
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
           <InputLabel htmlFor="controlled-open-select">
-            Select Exchange
+            Paid or sent
           </InputLabel>
 
           <Select
             open={this.state.open}
-            value={this.state.baseCurrencyId}
-            onOpen={this.handleOpen}
+            value={AssetStore.selectedCurrencyFromAssetAllocation.id || ''}
             onClose={this.handleClose}
+            onOpen={this.handleOpen}
             onChange={this.handleChange}
             inputProps={{
-              name: 'baseCurrencyId',
+              name: 'portfolioCurrencyId',
               id: 'controlled-open-select',
             }}
           >
-            {apis}
+            {allExchanges.length > 0 ? allExchanges : ''}
           </Select>
         </FormControl>
-      </div>
+      </form>
     );
   }
 }
 
-SelectApi.propTypes = {
-  classes: PropTypes.object.isRequired,
+SelectPortfolioCurrency.propTypes = {
+  classes: PropTypes.object,
+  // handleChange: PropTypes.func,
+  // value: PropTypes.string,
 };
 
-export default withStyles(styles)(SelectApi);
+export default withStyles(styles)(SelectPortfolioCurrency);

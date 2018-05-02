@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextField } from 'material-ui';
-import { withStyles } from 'material-ui/styles';
+import { withStyles, TextField } from 'material-ui';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
 import Modal from 'material-ui/Modal';
@@ -10,7 +9,7 @@ import { inject, observer } from 'mobx-react';
 import Button from '../../CustomButtons/Button';
 import IconButton from '../../CustomButtons/IconButton';
 
-import SelectApi from '../../Selectors/SelectApi';
+import SelectExchange from '../../Selectors/Asset/SelectExchange';
 
 
 function getModalStyle() {
@@ -56,17 +55,22 @@ const styles = theme => ({
   }
 });
 
-@inject('ApiAccountStore', 'PortfolioStore')
+@inject('ApiAccountStore', 'PortfolioStore', 'MarketStore', 'AssetStore')
 @observer
 class AddApiAccount extends React.Component {
   constructor() {
     super();
+    this.state = {
+      open: false,
+    };
     this.name = null;
+
+    this.handleExchangeCreateAccount = this.handleExchangeCreateAccount.bind(this);
   }
 
-  state = {
-    open: false,
-  };
+  componentWillUnmount() {
+    this.props.AssetStore.resetAsset();
+  }
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -96,8 +100,12 @@ class AddApiAccount extends React.Component {
     this.setState({ open: false });
   };
 
+  handleExchangeCreateAccount = (value) => {
+    this.props.MarketStore.selectExchangeCreateAccount(value);
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, MarketStore } = this.props;
 
     return (
       <div className={classes.headerButtonContainer}>
@@ -137,29 +145,23 @@ class AddApiAccount extends React.Component {
               </div>
             </div>
             <div className={classes.container}>
-              {/* <TextField
-                placeholder="Api Service Name"
-                className={classes.inputWrapper}
-                onChange={(e) => this.handleInputValue('apiServiceName', e)}
-              // inputRef={el => (this.apiServiceName = el)}
-              /> */}
-
-              <SelectApi />
+              <div className={classes.inputWrapper}>
+                <SelectExchange
+                  value={MarketStore.selectedExchangeCreateAccount}
+                  handleChange={this.handleExchangeCreateAccount}
+                />
+              </div>
 
               <TextField
                 placeholder="Api Key"
                 className={classes.inputWrapper}
-                // onChange={this.handleInputValue}
                 onChange={(e) => this.handleInputValue('apiKey', e)}
-              // inputRef={el => (this.apiKey = el)}
               />
 
               <TextField
                 placeholder="Api Secret"
                 className={classes.inputWrapper}
-                // onChange={this.handleInputValue}
                 onChange={(e) => this.handleInputValue('apiSecret', e)}
-              // inputRef={el => (this.apiSecret = el)}
               />
             </div>
             <br />

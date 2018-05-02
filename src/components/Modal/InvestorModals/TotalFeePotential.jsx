@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, Grid, TextField } from 'material-ui';
-
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
+import { inject, observer } from 'mobx-react';
+
 import InvestorCard from '../../CustomElements/InvestorCard';
 import Button from '../../CustomButtons/Button';
-
 import InvestorCardButton from '../../CustomButtons/InvestorCardButton';
 
 
@@ -33,7 +33,9 @@ const styles = theme => ({
   },
 });
 
-class TotalUSDEquiv extends React.Component {
+@inject('InvestorStore')
+@observer
+class TotalFeePotential extends React.Component {
   state = {
     open: false,
   };
@@ -46,14 +48,14 @@ class TotalUSDEquiv extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, InvestorStore } = this.props;
 
     return (
       <Grid container>
         <InvestorCardButton onClick={this.handleOpen} >
           <InvestorCard
-            headerText="$3.1k"
-            labelText="Total USD Equivalent"
+            headerText={InvestorStore.totalFeePotential}
+            labelText="Total Fee Potential"
           />
         </InvestorCardButton>
 
@@ -112,8 +114,9 @@ class TotalUSDEquiv extends React.Component {
   }
 }
 
-TotalUSDEquiv.propTypes = {
+TotalFeePotential.propTypes = {
   classes: PropTypes.object.isRequired,
+  InvestorStore: PropTypes.object,
 };
 
-export default withStyles(styles)(TotalUSDEquiv);
+export default withStyles(styles)(TotalFeePotential);

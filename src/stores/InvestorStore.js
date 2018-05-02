@@ -280,6 +280,17 @@ class InvestorStore {
     return null;
   }
   // #endregion
+  @computed
+  // eslint-disable-next-line class-methods-use-this
+  get totalFeePotential() {
+    if (PortfolioStore.selectedPortfolio) {
+      console.log(PortfolioStore.currentSelectedPortfolioCost, PortfolioStore.selectedPortfolio.shares);
+      // console.log(PortfolioStore.currentPortfolioInvestors);
+      return PortfolioStore.currentSelectedPortfolioCost * PortfolioStore.selectedPortfolio.shares
+    }
+
+    return 0;
+  }
   // #endregion
 
   // ======= Action =======

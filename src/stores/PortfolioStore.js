@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, autorun } from 'mobx';
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
@@ -209,9 +209,7 @@ class PortfolioStore {
   }
 
   get summaryAssetsBreakdown() {
-    return this.summaryPortfolioAssets.map((el) => {
-      return { y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` };
-    });
+    return this.summaryPortfolioAssets.map((el) => ({ y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` }));
   }
 
   @computed
@@ -253,6 +251,11 @@ class PortfolioStore {
   // ======= Action =======
   // Portfolio -> Create, Update, Delete
   // #region Portfolio
+  @action
+  addTransaction(transactionData) {
+    this.currentPortfolioTransactions.push(transactionData);
+  }
+
   @action
   createPortfolio(portfolioName) {
     requester.Portfolio.create(portfolioName)
@@ -298,11 +301,20 @@ class PortfolioStore {
 
   @action
   getPortfolios() {
-    return requester.Portfolio.getAll()
-      .then(action((result) => {
-        this.portfolios = result.data;
-      }))
-      .catch(err => console.log(err));
+    return new Promise((resolve, reject) => {
+      requester.Portfolio.getAll()
+        .then(action((result) => {
+          this.portfolios = result.data;
+          if (this.selectedPortfolioId > 0) {
+            this.selectPortfolio(this.selectedPortfolioId);
+          }
+          resolve(true);
+        }))
+        .catch((err) => {
+          console.log(err);
+          reject(err);
+        });
+    });
   }
 }
 

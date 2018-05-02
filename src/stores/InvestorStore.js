@@ -416,10 +416,13 @@ class InvestorStore {
     };
 
     requester.Investor.addDeposit(deposit)
-      .then(action((result) => {
-        PortfolioStore.currentPortfolioTransactions.push(result.data);
-      }))
-      .catch(err => console.log(err));
+      .then((result) => {
+        PortfolioStore.addTransaction(result.data);
+        PortfolioStore.getPortfolios().then(() => {
+          this.selectInvestor(result.data.investorId);
+        })
+          .catch(err => console.log(err));
+      });
   }
 
   @action
@@ -644,7 +647,6 @@ class InvestorStore {
 
   @action.bound
   resetDeposit() {
-    console.log(this.newDepositValues);
     this.newDepositValues.amount = '';
     this.newDepositValues.transactionDate = '';
     this.newDepositValues.sharePriceAtEntryDate = '';
@@ -672,7 +674,6 @@ class InvestorStore {
   @action
   selectInvestor(id) {
     this.selectedInvestorId = id;
-
     // selects the marked investor
     // eslint-disable-next-line array-callback-return
     PortfolioStore.currentPortfolioInvestors.find((element) => {

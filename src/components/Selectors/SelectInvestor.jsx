@@ -22,25 +22,12 @@ const styles = theme => ({
 @inject('InvestorStore', 'PortfolioStore')
 @observer
 class SelectInvestor extends React.Component {
-  state = {
-    selectedInvestorId: '',
-    open: false,
-  };
 
   handleChange = (event) => {
     const { value } = event.target;
-
     this.props.InvestorStore.selectInvestor(value);
-    this.setState({ [event.target.name]: value });
   };
 
-  handleClose = () => {
-    this.setState({ open: false });
-  };
-
-  handleOpen = () => {
-    this.setState({ open: true });
-  };
 
   render() {
     const { classes, PortfolioStore } = this.props;
@@ -66,13 +53,9 @@ class SelectInvestor extends React.Component {
             Investor
           </InputLabel>
           <Select
-            open={this.state.open}
-            value={this.state.selectedInvestorId}
-            onClose={this.handleClose}
-            onOpen={this.handleOpen}
+            value={this.props.InvestorStore.selectedInvestorId || ''}
             onChange={this.handleChange}
             inputProps={{
-              name: 'selectedInvestorId',
               id: 'controlled-open-select',
             }}
           >
@@ -88,6 +71,7 @@ class SelectInvestor extends React.Component {
 
 SelectInvestor.propTypes = {
   classes: PropTypes.object.isRequired,
+  InvestorStore: PropTypes.object
 };
 
 export default withStyles(styles)(SelectInvestor);

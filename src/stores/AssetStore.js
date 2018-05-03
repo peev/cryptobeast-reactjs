@@ -55,6 +55,27 @@ class AssetStore {
   @action.bound
   selectCurrencyToAssetAllocation(value) {
     this.selectedCurrencyToAssetAllocation = value;
+
+    /**
+     * This checks if current available asset can be converted to desired output asset.
+     * If soo, suggest quantity to convert for.
+     * currentFromQuantity => current BTC or other crypto currencies quantity for available asset
+     * currentToQuantity => current BTC or other crypto currencies quantity for output asset
+     */
+    if (this.selectedCurrencyToAssetAllocation !== '') {
+      const currentFromQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyFromAssetAllocation.currency);
+      const currentToQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyToAssetAllocation);
+
+      switch (currentToQuantity) {
+        case 0:
+        case 1:
+          this.assetAllocationToAmount = this.assetAllocationFromAmount * currentFromQuantity;
+          break;
+        default:
+          this.assetAllocationToAmount = (this.assetAllocationFromAmount * currentFromQuantity) / currentToQuantity;
+          break;
+      }
+    }
   }
 
   @action.bound
@@ -100,33 +121,6 @@ class AssetStore {
       this.selectedCurrencyFromAssetAllocation !== '') {
       if (parseInt(value, 10) > this.selectedCurrencyFromAssetAllocation.balance) {
         NotificationStore.addMessage('errorMessages', 'Not enough balance');
-        return;
-      }
-    }
-
-    /**
-     * This checks if current available asset can be converted to desired output asset.
-     * Soo the output asset will not outgrow the available asset
-     * currentFromQuantity => current BTC or other crypto currencies quantity for available asset
-     * currentToQuantity => current BTC or other crypto currencies quantity for output asset
-     * maxQuantityToConvert => output asset threshold
-     */
-    if (type === 'assetAllocationFromAmount' &&
-      this.selectedCurrencyFromAssetAllocation !== '' &&
-      this.selectedCurrencyToAssetAllocation !== '') {
-      const currentFromQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyFromAssetAllocation.currency);
-      if (currentFromQuantity === 0) {
-        this.assetAllocationToAmount = value;
-        return;
-      }
-      const currentToQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyToAssetAllocation);
-
-      const maxQuantityToConvert = (this.assetAllocationFromAmount * currentFromQuantity) / currentToQuantity;
-      const btcInputCheck = currentToQuantity === 1 ? (this.assetAllocationFromAmount * currentFromQuantity) : maxQuantityToConvert;
-
-      if (parseInt(value, 10) > btcInputCheck) {
-        this.assetAllocationToAmount = btcInputCheck;
-        // NotificationStore.addMessage('errorMessages', `Maximum ${this.selectedCurrencyToAssetAllocation} to convert for: ${btcInputCheck}`);
         return;
       }
     }
@@ -276,7 +270,7 @@ class AssetStore {
         break;
       case 'ETH':
         foundCurrency = MarketStore.marketSummaries[`ETH-${currencyName}`] ?
-          MarketStore.marketSummaries[`ETH-${currencyName}`] :
+          MarketStore.marketSummaries[`ETH-${currencyName}`].Last :
           0;
         break;
       case 'USDT':
@@ -285,7 +279,9 @@ class AssetStore {
           0;
         break;
       default:
-        foundCurrency = MarketStore.marketSummaries[`BTC-${currencyName}`].Last;
+        foundCurrency = MarketStore.marketSummaries[`BTC-${currencyName}`] ?
+          MarketStore.marketSummaries[`BTC-${currencyName}`].Last :
+          0;
         break;
     }
 

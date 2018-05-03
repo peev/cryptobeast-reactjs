@@ -1,44 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Grid, } from 'material-ui';
+import { withStyles, Grid } from 'material-ui';
 import { inject, observer } from 'mobx-react';
-
-import InvestorCard from '../../CustomElements/InvestorCard';
-import InvestorCardButton from '../../CustomButtons/InvestorCardButton';
+import Paper from 'material-ui/Paper';
 
 
 const styles = () => ({
-  card: {
-    color: 'red'
+  paper: {
+    boxSizing: 'border-box',
+    width: '200px',
+    padding: '8px 20px',
+    margin: '2px auto',
+    backgroundColor: '#22252F',
+    textTransform: 'uppercase',
+    boxShadow: 'none',
+  },
+  title: {
+    fontSize: '16px',
   },
 });
 
-@inject('InvestorStore')
-@observer
-class TotalFeePotential extends React.Component {
-  state = {};
+const TotalFeePotential = inject('InvestorStore')(observer(({ ...props }) => {
+  const { classes, InvestorStore } = props;
 
-  render() {
-    const { classes, InvestorStore } = this.props;
-
-    return (
-      <Grid container>
-        <Grid item xs={12} sm={12} md={12}>
-          {/* <InvestorCardButton
-            // disabled="disabled"
-            notActive="notActive"
-            >
-          </InvestorCardButton> */}
-          <InvestorCard
-            className={classes.card}
-            headerText={`$${InvestorStore.totalFeePotential}`}
-            labelText="Total Fee Potential"
-          />
-        </Grid >
+  return (
+    <Grid container>
+      <Grid item xs={12} sm={12} md={12}>
+        <Paper className={classes.paper}>
+          <h4 className={`headingText ${classes.title}`}>{`$${InvestorStore.totalFeePotential}`}</h4>
+          <p className="labelText">Total Fee Potential</p>
+        </Paper>
       </Grid >
-    );
-  }
-}
+    </Grid >
+  );
+}));
 
 TotalFeePotential.propTypes = {
   classes: PropTypes.object.isRequired,

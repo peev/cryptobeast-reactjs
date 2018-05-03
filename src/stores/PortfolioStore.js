@@ -34,7 +34,7 @@ class PortfolioStore {
   @computed
   get summaryUsdEquivalent() {
     if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
-      const result = this.selectedPortfolio.cost * MarketStore.baseCurrencies[3].last; // NOTE: this if USD
+      const result = this.currentSelectedPortfolioCost * MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       return result.toFixed(2);
     }
 

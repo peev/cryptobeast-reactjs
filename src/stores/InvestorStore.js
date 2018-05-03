@@ -744,20 +744,26 @@ class InvestorStore {
     const billion = 1000000000;
     const trillion = 1000000000000;
 
-    if (value < thousand) {
-      return (value).toFixed(1);
-    }
-    if (value >= thousand && value <= 1000000) {
-      return `${parseFloat(value / thousand).toFixed(1)}K`;
-    }
-    if (value >= million && value <= billion) {
-      return `${parseFloat(value / million).toFixed(1)}M`;
-    }
-    if (value >= billion && value <= trillion) {
-      return `${parseFloat(value / billion).toFixed(1)}B`;
-    }
+    let endValue = 0;
 
-    return `${parseFloat(value / trillion).toFixed(1)}T`;
+    switch (true) {
+      case value < thousand:
+        endValue = (value).toFixed(1);
+        break;
+      case value >= thousand && value <= million:
+        endValue = `${parseFloat(value / thousand).toFixed(1)}K`;
+        break;
+      case value >= million && value <= billion:
+        endValue = `${parseFloat(value / million).toFixed(1)}M`;
+        break;
+      case value >= billion && value <= trillion:
+        endValue = `${parseFloat(value / billion).toFixed(1)}B`;
+        break;
+      default:
+        endValue = `${parseFloat(value / trillion).toFixed(1)}T`;
+        break;
+    }
+    return endValue;
   }
   // #endregion
 }

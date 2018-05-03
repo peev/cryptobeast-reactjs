@@ -11,8 +11,8 @@ import {
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 
-import { Edit } from 'material-ui-icons';
-import IconButton from '../../CustomButtons/IconButton';
+// import { Edit } from 'material-ui-icons';
+// import IconButton from '../../CustomButtons/IconButton';
 
 import tableStyle from '../../../variables/styles/tableStyle';
 
@@ -43,7 +43,7 @@ const AllInvestorTable = inject('PortfolioStore')(observer(({ ...props }) => {
             return (
               <TableRow key={key}>
                 {Object.keys(prop).map((el, key) => {
-                  if (6 >= key) {
+                  if (key <= 6) {
                     return (
                       <TableCell className={classes.tableCell} key={key}>
                         {prop[el]}
@@ -58,7 +58,7 @@ const AllInvestorTable = inject('PortfolioStore')(observer(({ ...props }) => {
       </Table>
     </div>
   );
-}))
+}));
 
 AllInvestorTable.defaultProps = {
   tableHeaderColor: 'gray',

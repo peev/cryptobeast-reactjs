@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles, InputLabel, MenuItem, FormControl } from 'material-ui';
 import Select from 'material-ui/Select';
 import { inject, observer } from 'mobx-react';
+import { SelectValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
 const styles = theme => ({
   button: {
@@ -51,28 +52,32 @@ class SelectPortfolioCurrency extends React.Component {
     });
 
     return (
-      <form autoComplete="off">
+      <div autoComplete="off">
 
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
-          <InputLabel htmlFor="controlled-open-select">
+          {/* <InputLabel htmlFor="controlled-open-select">
             Paid or sent
-          </InputLabel>
+          </InputLabel> */}
 
-          <Select
+          <SelectValidator
+            label="Paid or sent"
+            name="currency"
             open={this.state.open}
             value={AssetStore.selectedCurrencyFromAssetAllocation.id || ''}
             onClose={this.handleClose}
-            onOpen={this.handleOpen}
+            // onOpen={this.handleOpen}
             onChange={this.handleChange}
             inputProps={{
               name: 'portfolioCurrencyId',
               id: 'controlled-open-select',
             }}
+            validators={['required']}
+            errorMessages={['this field is required']}
           >
             {allExchanges.length > 0 ? allExchanges : ''}
-          </Select>
+          </SelectValidator>
         </FormControl>
-      </form>
+      </div>
     );
   }
 }

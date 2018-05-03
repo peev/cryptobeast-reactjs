@@ -1,12 +1,10 @@
 import { observable, action, computed } from 'mobx';
 
 class NotificationStore {
-  
   @observable errorMessages;
   @observable successMessages;
 
   constructor() {
-    
     this.errorMessages = [];
     this.successMessages = [];
   }

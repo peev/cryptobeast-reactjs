@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, Redirect } from 'react-router-dom';
 // creates a beautiful scrollbar
-import PerfectScrollbar from 'perfect-scrollbar';
+// import PerfectScrollbar from 'perfect-scrollbar';
 import 'perfect-scrollbar/css/perfect-scrollbar.css';
 import { withStyles } from 'material-ui';
 import { inject, observer } from 'mobx-react';
@@ -67,7 +67,7 @@ class App extends React.Component {
 
     return (
       <div>
-        {UserStore.data.selectedPortfolio !== undefined  ? (
+        {UserStore.data.selectedPortfolio !== undefined ? (
           <div className={classes.wrapper}>
             <Sidebar
               routes={appRoutes}

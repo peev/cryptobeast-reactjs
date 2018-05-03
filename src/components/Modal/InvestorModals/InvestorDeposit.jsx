@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, Input, Snackbar, Grid } from 'material-ui';
+import { withStyles, Input, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
+import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
@@ -38,7 +39,12 @@ const styles = theme => ({
     marginTop: '10px',
   },
   buttonsContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
     marginTop: '20px',
+  },
+  alignBtn: {
+    marginRight: '20px',
   },
 });
 
@@ -73,7 +79,7 @@ class InvestorDeposit extends React.Component {
 
     // To calculate purchased shares ===================
     if (propertyType === 'amount') {
-      InvestorStore.depositUsdEquiv;
+      InvestorStore.depositUsdEquiv();
     }
   }
 
@@ -89,8 +95,8 @@ class InvestorDeposit extends React.Component {
 
   render() {
     const {
- classes, InvestorStore, PortfolioStore, NotificationStore
-} = this.props;
+      classes, InvestorStore, PortfolioStore, NotificationStore,
+    } = this.props;
 
     return (
       <Grid container>
@@ -106,7 +112,10 @@ class InvestorDeposit extends React.Component {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <div
+          <ValidatorForm
+            // ref="form"
+            onSubmit={this.handleDepositSave}
+            onError={errors => console.log(errors)}
             style={getModalStyle()}
             className={classes.paper}
           >
@@ -125,32 +134,60 @@ class InvestorDeposit extends React.Component {
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <SelectInvestor />
-
-                <Input
-                  type="number"
-                  placeholder="Amount"
-                  onChange={this.handleDepositRequests('amount')}
-                  className={classes.alignInputAfter}
-                />
-
-                <Input
-                  placeholder="Share Price at Entry Date"
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <TextValidator
+                  name="date"
+                  type="date"
+                  // label="Transaction Date"
+                  onChange={this.handleDepositRequests('transactionDate')}
+                  value={InvestorStore.newDepositValues.transactionDate || ''}
                   className={classes.alignInput}
-                  value={PortfolioStore.currentPortfolioSharePrice || 1}
+                  validators={['required']}
+                  errorMessages={['this field is required']}
                 />
               </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <TextValidator
+                  name="amount"
+                  type="number"
+                  label="Amount"
+                  onChange={this.handleDepositRequests('amount')}
+                  value={InvestorStore.newDepositValues.amount || ''}
+                  // className={classes.alignInputAfter}
+                  validators={['required', 'isPositive']}
+                  errorMessages={['this field is required', 'value must be a positive number']}
+                />
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <SelectBaseCurrency />
+              </Grid>
+              {/* <Input
+                placeholder="Share Price at Entry Date"
+                className={classes.alignInput}
+                value={PortfolioStore.currentPortfolioSharePrice || ''}
+              /> */}
+            </Grid>
 
+            <Grid container>
+              {/* <Input
+                type="date"
+                placeholder="Transaction Date"
+                onChange={this.handleDepositRequests('transactionDate')}
+                className={classes.alignInput}
+              /> */}
+
+              {/* <SelectBaseCurrency /> */}
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input
-                  type="date"
-                  placeholder="Transaction Date"
-                  max="2018-04-30"
-                  onChange={this.handleDepositRequests('transactionDate')}
-                  className={classes.alignInput}
+                  placeholder="Share Price at Entry Date"
+                  className={classes.alignInputAfter}
+                  value={PortfolioStore.currentPortfolioSharePrice || ''}
                 />
-
-                <SelectBaseCurrency />
-
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input
                   placeholder="Purchased Shares"
                   className={classes.alignInputAfter}
@@ -160,23 +197,23 @@ class InvestorDeposit extends React.Component {
             </Grid>
 
             <Grid container className={classes.buttonsContainer}>
-              <Button
-                color="primary"
-                onClick={this.handleClose}
-              >
+              <div className={classes.alignBtn}>
+                <Button
+                  color="primary"
+                  onClick={this.handleClose}
+                >
                 Cancel
-              </Button>
-
+                </Button>
+              </div>
               <Button
                 type="submit"
                 color="primary"
-                onClick={this.handleDepositSave}
                 disabled={NotificationStore.getErrorsLength > 0}
               >
                 Save
               </Button>
             </Grid>
-          </div>
+          </ValidatorForm>
         </Modal>
         {/* {errorMessagesArray} */}
         <NotificationSnackbar />
@@ -187,8 +224,10 @@ class InvestorDeposit extends React.Component {
 
 InvestorDeposit.propTypes = {
   classes: PropTypes.object.isRequired,
-  MarketStore: PropTypes.object,
   InvestorStore: PropTypes.object,
+  NotificationStore: PropTypes.object,
+  PortfolioStore: PropTypes.object,
+  MarketStore: PropTypes.object,
 };
 
 export default withStyles(styles)(InvestorDeposit);

@@ -74,16 +74,14 @@ const PortfolioSummaryTable = inject('PortfolioStore')(observer(({ ...props }) =
   const tableHeadContent = (
     <TableHead className={classes.tableHead}>
       <TableRow>
-        {tableHead.map((prop, key) => {
-          return (
-            <TableCell
-              className={`${classes.tableCell} ${classes.tableHeadCell}`}
-              key={key}
-            >
-              {prop}
-            </TableCell>
-          );
-        })}
+        {tableHead.map((prop, key) => (
+          <TableCell
+            className={`${classes.tableCell} ${classes.tableHeadCell}`}
+            key={key}
+          >
+            {prop}
+          </TableCell>
+          ))}
       </TableRow>
     </TableHead>
   );
@@ -92,10 +90,9 @@ const PortfolioSummaryTable = inject('PortfolioStore')(observer(({ ...props }) =
     PortfolioStore.summaryPortfolioAssets :
     [[' ', 0, 0, 0, 0, 0, 0, 0]];
 
-  const tableBodyContent = currentDisplayAssets.map((el, key) => {
-    return (
-      <TableRow key={key}>
-        {el.map((prop, i) => {
+  const tableBodyContent = currentDisplayAssets.map((el, key) => (
+    <TableRow key={key}>
+      {el.map((prop, i) => {
           if (i === 5) {
             return (
               <TableCell className={classes.tableCell} key={i}>
@@ -131,9 +128,8 @@ const PortfolioSummaryTable = inject('PortfolioStore')(observer(({ ...props }) =
             </TableCell>
           );
         })}
-      </TableRow >
-    );
-  });
+    </TableRow >
+  ));
 
   return (
     <Paper className={classes.paper}>
@@ -145,10 +141,10 @@ const PortfolioSummaryTable = inject('PortfolioStore')(observer(({ ...props }) =
       </Table>
     </Paper >
   );
-}))
+}));
 
 PortfolioSummaryTable.defaultProps = {
-  tableHeaderColor: 'gray'
+  tableHeaderColor: 'gray',
 };
 
 PortfolioSummaryTable.propTypes = {
@@ -160,10 +156,10 @@ PortfolioSummaryTable.propTypes = {
     'success',
     'info',
     'rose',
-    'gray'
+    'gray',
   ]),
   tableHead: PropTypes.arrayOf(PropTypes.string),
-  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
+  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
 };
 
 export default withStyles(styles, tableStyle)(PortfolioSummaryTable);

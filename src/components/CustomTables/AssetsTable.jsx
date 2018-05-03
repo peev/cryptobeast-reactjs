@@ -9,15 +9,15 @@ import {
   Grid,
 } from 'material-ui';
 
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import Paper from 'material-ui/Paper';
 
 import { inject, observer } from 'mobx-react';
 import { Close } from 'material-ui-icons';
 import IconButton from '../CustomButtons/IconButton';
 import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
-import tableStyle from '../../variables/styles/tableStyle';
-import RemovePortfolioWrapped from '../Modal/RemovePortfolio';
+// import tableStyle from '../../variables/styles/tableStyle';
+// import RemovePortfolioWrapped from '../Modal/RemovePortfolio';
 
 
 const styles = () => ({
@@ -34,14 +34,12 @@ const styles = () => ({
 @observer
 class AssetsTable extends React.Component {
   state = {
-    direction: 'row',
   };
 
   render() {
     const {
       classes,
       tableHead,
-      tableData,
       tableHeaderColor,
       PortfolioStore,
     } = this.props;

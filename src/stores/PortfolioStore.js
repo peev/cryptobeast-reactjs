@@ -1,4 +1,9 @@
-import { observable, action, computed, autorun } from 'mobx';
+import {
+  observable,
+  action,
+  computed,
+  autorun
+} from 'mobx';
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
@@ -10,6 +15,7 @@ class PortfolioStore {
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
+  @observable newPortfolioName;
 
   constructor() {
     this.portfolios = [];
@@ -18,6 +24,7 @@ class PortfolioStore {
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
+    this.newPortfolioName = '';
 
 
     // eslint-disable-next-line no-unused-expressions
@@ -136,7 +143,8 @@ class PortfolioStore {
           }
           // 6. Asset Weight
           if (ind === 5) {
-            const ifPortfolioCost = this.currentSelectedPortfolioCost !== 0 ? this.currentSelectedPortfolioCost : 1;
+            const ifPortfolioCost = this.currentSelectedPortfolioCost !== 0 ?
+              this.currentSelectedPortfolioCost : 1;
             const percentOfItem = ((currentRow[4] / ifPortfolioCost) * 100).toFixed(0);
             currentRow.push(percentOfItem);
           }
@@ -156,12 +164,14 @@ class PortfolioStore {
                 break;
               case 'BTC':
                 yesterdayCost = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].PrevDay;
-                changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100).toFixed(2);
+                changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
+                  .toFixed(2);
                 break;
               default:
                 if (MarketStore.marketSummaries[`BTC-${currentRow[0]}`]) {
                   yesterdayCost = MarketStore.marketSummaries[`BTC-${currentRow[0]}`].PrevDay;
-                  changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100).toFixed(2);
+                  changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
+                    .toFixed(2);
                   break;
                 } else {
                   changeFromYesterday = 'n/a';
@@ -199,7 +209,9 @@ class PortfolioStore {
         .map((el) => {
           const index = marketSummary[el].MarketName.indexOf('-');
           const name = marketSummary[el].MarketName.slice(index + 1);
-          const elemCost = +(((marketSummary[el].Last - marketSummary[el].PrevDay) / marketSummary[el].PrevDay) * 100).toFixed(2);
+          const elemCost = +(((marketSummary[el].Last - marketSummary[el].PrevDay) /
+              marketSummary[el].PrevDay) * 100)
+            .toFixed(2);
           return [name, elemCost, 42];
         })
         .sort((a, b) => b[1] - a[1]);
@@ -209,7 +221,10 @@ class PortfolioStore {
   }
 
   get summaryAssetsBreakdown() {
-    return this.summaryPortfolioAssets.map((el) => ({ y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` }));
+    return this.summaryPortfolioAssets.map((el) => ({
+      y: parseInt(el[5], 10),
+      name: `${el[0]} (${el[5]}%)`
+    }));
   }
 
   @computed
@@ -256,9 +271,17 @@ class PortfolioStore {
     this.currentPortfolioTransactions.push(transactionData);
   }
 
-  @action
-  createPortfolio(portfolioName) {
-    requester.Portfolio.create(portfolioName)
+  @action.bound
+  setNewPortfolioName(newValue) {
+    this.newPortfolioName = newValue;
+  }
+
+  @action.bound
+  createPortfolio() {
+    const newPortfolio = {
+      name: this.newPortfolioName,
+    };
+    requester.Portfolio.create(newPortfolio)
       .then(() => {
         this.getPortfolios(); // gets new portfolios
       })
@@ -291,7 +314,8 @@ class PortfolioStore {
     this.portfolios.forEach((el) => {
       // Returns only needed values from selected portfolio
       if (el.id === id) {
-        this.selectedPortfolio = { ...el };
+        this.selectedPortfolio = { ...el
+        };
         this.currentPortfolioAssets = el.assets;
         this.currentPortfolioInvestors = el.investors;
         this.currentPortfolioTransactions = el.transactions;
@@ -315,6 +339,11 @@ class PortfolioStore {
           reject(err);
         });
     });
+  }
+
+  @action.bound
+  resetPortfolio() {
+    this.newPortfolioName = '';
   }
 }
 

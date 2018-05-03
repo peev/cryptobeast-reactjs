@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import { InputLabel } from 'material-ui/Input';
+// import { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
-import Select from 'material-ui/Select';
+// import Select from 'material-ui/Select';
+import { SelectValidator } from 'react-material-ui-form-validator';
+
 
 import { inject, observer } from 'mobx-react';
 
@@ -49,20 +51,28 @@ class SelectInvestor extends React.Component {
     return (
       <div autoComplete="off" >
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
-          <InputLabel htmlFor="controlled-open-select">
+          {/* <InputLabel htmlFor="controlled-open-select">
             Investor
-          </InputLabel>
-          <Select
+          </InputLabel> */}
+          <SelectValidator
+            name="investor"
+            label="select investor"
+            // open={this.state.open}
             value={this.props.InvestorStore.selectedInvestorId || ''}
+            onClose={this.handleClose}
+            // onOpen={this.handleOpen}
             onChange={this.handleChange}
             inputProps={{
               id: 'controlled-open-select',
             }}
+            validators={['required']}
+            errorMessages={['this field is required']}
           >
 
-            {investorsToShow.length > 0 ? investorsToShow : <MenuItem value={1}><em>None</em></MenuItem>}
+            {investorsToShow.length > 0 ? investorsToShow :
+            <MenuItem value={1}><em>None</em></MenuItem>}
 
-          </Select>
+          </SelectValidator>
         </FormControl>
       </div>
     );
@@ -71,7 +81,7 @@ class SelectInvestor extends React.Component {
 
 SelectInvestor.propTypes = {
   classes: PropTypes.object.isRequired,
-  InvestorStore: PropTypes.object
+  InvestorStore: PropTypes.object,
 };
 
 export default withStyles(styles)(SelectInvestor);

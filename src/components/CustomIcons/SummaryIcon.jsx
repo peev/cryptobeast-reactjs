@@ -1,5 +1,5 @@
 import React from 'react';
-import pure from 'recompose/pure';
+// import pure from 'recompose/pure';
 import SvgIcon from 'material-ui/SvgIcon';
 import './icon.css';
 

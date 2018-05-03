@@ -49,7 +49,7 @@ class SummaryTabs extends React.Component {
   };
   render() {
     const { classes } = this.props;
-
+    const centered = true;
     return (
       <Grid container className={classes.container}>
         <Grid item xs={12} sm={12} md={12} className={classes.removePaddingBottom}>
@@ -57,7 +57,7 @@ class SummaryTabs extends React.Component {
             className={classes.navigation}
             value={this.state.value}
             onChange={this.handleChange}
-            centered="true"
+            centered={centered}
             indicatorColor="#eb4562"
           >
             <Tab label="Portfolio" value={this.value} className={classes.tabItem} />

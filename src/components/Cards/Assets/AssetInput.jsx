@@ -4,11 +4,15 @@ import PropTypes from 'prop-types';
 import { withStyles, Grid, Input } from 'material-ui';
 import Paper from 'material-ui/Paper';
 import { inject, observer } from 'mobx-react';
+import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+import { MenuItem } from 'material-ui/Menu';
+import SelectValidator from 'react-material-ui-form-validator/lib/SelectValidator';
 
 import RegularButton from '../../CustomButtons/Button';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 import '../../Selectors/Asset/SelectAllCurrency';
+
 
 const styles = () => ({
   container: {
@@ -33,7 +37,7 @@ const styles = () => ({
   },
   input: {
     width: '100%',
-    marginTop: '12px',
+    // marginTop: '12px',
   },
 });
 
@@ -70,7 +74,7 @@ class AssetInput extends React.Component {
 
   handleFromAllCurrenciesBasicAsset = (input) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyBasicAsset(input.value);
+      this.props.AssetStore.selectCurrencyBasicAsset(input.target.value);
     } else {
       this.props.AssetStore.selectCurrencyBasicAsset('');
     }
@@ -78,52 +82,72 @@ class AssetInput extends React.Component {
 
   render() {
     const { classes, AssetStore, MarketStore } = this.props;
+    const options = MarketStore.allCurrencies;
+    const optionsToShow = [];
 
+    options.forEach((element, i) => {
+      optionsToShow.push((
+        <MenuItem
+          key={element.value}
+          value={element.value}
+          index={i}
+        >
+          <em>{element.label}</em>
+        </MenuItem>
+      ));
+    });
     return (
       <Grid container >
         <Paper className={classes.container}>
           <h4 className={classes.containerTitle}>Basic asset input</h4>
 
-          <Grid container className={classes.containerItems}>
-            <Grid item xs={4} sm={3} md={3}>
-              <Select
-                name="currency-to-asset-allocation"
-                value={AssetStore.selectedCurrencyBasicAsset || ''}
-                onChange={this.handleFromAllCurrenciesBasicAsset}
-                options={MarketStore.allCurrencies}
-                className={classes.input}
-                style={{
-                  border: 'none',
-                  borderRadius: 0,
-                  borderBottom: '1px solid #757575',
-                }}
-              />
-              <Input
-                type="number"
-                placeholder="Quantity..."
-                value={AssetStore.assetInputValue}
-                onChange={e => this.handleRequest(e)}
-                className={classes.input}
-              />
+          <ValidatorForm
+            onSubmit={this.handleSave}
+          >
+            <Grid container className={classes.containerItems}>
+              <Grid item xs={4} sm={3} md={3}>
+                <SelectValidator
+                  label="Select Currency"
+                  name="currency-to-asset-allocation"
+                  value={AssetStore.selectedCurrencyBasicAsset}
+                  onChange={this.handleFromAllCurrenciesBasicAsset}
+                  className={classes.input}
+                  validators={['required']}
+                  errorMessages={['this field is required']}
+                >
+                  {optionsToShow}
+                </SelectValidator>
+                <TextValidator
+                  name="Quantity"
+                  type="number"
+                  label="Quantity..."
+                  value={AssetStore.assetInputValue}
+                  onChange={e => this.handleRequest(e)}
+                  // className={classes.input}
+                  validators={['required', 'isPositive']}
+                  errorMessages={['this field is required', 'value must be a positive number']}
+                />
+              </Grid>
+
+              <Grid item xs={4} sm={3} md={3}>
+                <SelectExchange
+                  label="Select Exchange (optional)"
+                  value={AssetStore.selectedExchangeBasicInput}
+                  handleChange={this.handleExchangeBasicInput}
+                />
+              </Grid>
             </Grid>
 
-            <Grid item xs={4} sm={3} md={3}>
-              <SelectExchange
-                floatingLabelText="Frequency"
-                value={AssetStore.selectedExchangeBasicInput}
-                handleChange={this.handleExchangeBasicInput}
-              />
+            <Grid container className={classes.containerButton}>
+              <RegularButton
+                type="submit"
+                color="primary"
+                className="btnAdd"
+                // onClick={this.handleSave}
+              >ADD
+              </RegularButton>
             </Grid>
-          </Grid>
-
-          <Grid container className={classes.containerButton}>
-            <RegularButton
-              color="primary"
-              className="btnAdd"
-              onClick={this.handleSave}
-            >ADD
-            </RegularButton>
-          </Grid>
+          </ValidatorForm>
         </Paper>
         <NotificationSnackbar />
       </Grid>

@@ -393,7 +393,7 @@ class InvestorStore {
     }
 
     requester.Investor.update(investorId, finalResult)
-      .then(action((result) => {
+      .then(action(() => {
         const portfolioInvestors = PortfolioStore.currentPortfolioInvestors;
         // console.log(PortfolioStore.currentPortfolioInvestors, finalResult, investorId)
         portfolioInvestors.forEach((investor) => {
@@ -479,36 +479,37 @@ class InvestorStore {
     // Checks if portfolio is selected
     noErrors = this.handleIsPortfolioSelected();
 
+    noErrors = this.handleEmailValidation();
     // Checks if base currency is added
     if (baseCurrency === null) {
-      NotificationStore.addMessage('errorMessages', 'Please select currency');
+      // NotificationStore.addMessage('errorMessages', 'Please select currency');
       noErrors = false;
     }
 
     // Checks if email is valid - duplication only
-    noErrors = this.handleEmailValidation();
+    
 
     // Checks the currently entered values. If value is empty and it is required,
     // than adds a error massage to the array of errors
     Object.keys(currentInvestor).forEach((prop) => {
       if (currentInvestor[prop] === '' && prop === 'dateOfEntry') {
-        NotificationStore.addMessage('errorMessages', 'Entry date is required.');
+        // NotificationStore.addMessage('errorMessages', 'Entry date is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'depositedAmount') {
-        NotificationStore.addMessage('errorMessages', 'Deposited amount is required.');
+        // NotificationStore.addMessage('errorMessages', 'Deposited amount is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'email') {
-        NotificationStore.addMessage('errorMessages', 'Email is required.');
+        // NotificationStore.addMessage('errorMessages', 'Email is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'fullName') {
-        NotificationStore.addMessage('errorMessages', 'Full name is required.');
+        // NotificationStore.addMessage('errorMessages', 'Full name is required.');
         noErrors = false;
       }
       if (currentInvestor[prop] === '' && prop === 'managementFee') {
-        NotificationStore.addMessage('errorMessages', 'Management Fee is required.');
+        // NotificationStore.addMessage('errorMessages', 'Management Fee is required.');
         noErrors = false;
       }
     });
@@ -527,13 +528,13 @@ class InvestorStore {
 
     // Checks if Investor is selected
     if (this.selectedInvestor === null) {
-      NotificationStore.addMessage('errorMessages', 'Please select Investor');
+      // NotificationStore.addMessage('errorMessages', 'Please select Investor');
       noErrors = false;
     }
 
     // Checks if base currency is added
     if (baseCurrency === null) {
-      NotificationStore.addMessage('errorMessages', 'Please select currency');
+      // NotificationStore.addMessage('errorMessages', 'Please select currency');
       noErrors = false;
     }
 
@@ -541,11 +542,11 @@ class InvestorStore {
     // than adds a error massage to the array of errors
     Object.keys(currentDeposit).forEach((prop) => {
       if (currentDeposit[prop] === '' && prop === 'transactionDate') {
-        NotificationStore.addMessage('errorMessages', 'Entry date is required.');
+        // NotificationStore.addMessage('errorMessages', 'Entry date is required.');
         noErrors = false;
       }
       if (currentDeposit[prop] === '' && prop === 'amount') {
-        NotificationStore.addMessage('errorMessages', 'Amount is required.');
+        // NotificationStore.addMessage('errorMessages', 'Amount is required.');
         noErrors = false;
       }
     });
@@ -559,19 +560,19 @@ class InvestorStore {
 
     // Checks if Investor is selected
     if (this.selectedInvestor === null) {
-      NotificationStore.addMessage('errorMessages', 'Please select Investor');
+      // NotificationStore.addMessage('errorMessages', 'Please select Investor');
       noErrors = false;
     }
 
     // Checks if amount is entered
     if (this.withdrawalValues.amount === '') {
-      NotificationStore.addMessage('errorMessages', 'Withdrawal amount is required.');
+      // NotificationStore.addMessage('errorMessages', 'Withdrawal amount is required.');
       noErrors = false;
     }
 
     // Checks if date is entered
     if (this.withdrawalValues.transactionDate === '') {
-      NotificationStore.addMessage('errorMessages', 'Withdrawal date is required.');
+      // NotificationStore.addMessage('errorMessages', 'Withdrawal date is required.');
       noErrors = false;
     }
 
@@ -606,18 +607,18 @@ class InvestorStore {
   handleEmailValidation() {
     const currentEmail = this.newInvestorValues.email;
     const currentInvestors = PortfolioStore.currentPortfolioInvestors;
-    let hasDuplicate = true;
+    let hasNoDuplicate = true;
 
     if (currentInvestors) {
       const result = currentInvestors.filter(x => x.email === currentEmail);
 
       if (result.length > 0) {
         NotificationStore.addMessage('errorMessages', 'Email already exists in this Portfolio');
-        hasDuplicate = false;
+        hasNoDuplicate = false;
       }
     }
 
-    return hasDuplicate;
+    return hasNoDuplicate;
   }
 
   @action

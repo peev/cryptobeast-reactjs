@@ -279,6 +279,20 @@ class InvestorStore {
     return null;
   }
   // #endregion
+  @computed
+  // eslint-disable-next-line class-methods-use-this
+  get totalFeePotential() {
+    if (PortfolioStore.selectedPortfolio) {
+      let totalFeeValue = 0;
+      PortfolioStore.currentPortfolioInvestors.forEach((el) => {
+        totalFeeValue += el.purchasedShares * (el.managementFee / 100) * PortfolioStore.currentPortfolioSharePrice;
+      });
+
+      return this.prettifyNumber(totalFeeValue);
+    }
+
+    return 0;
+  }
   // #endregion
 
   // ======= Action =======
@@ -721,6 +735,36 @@ class InvestorStore {
     }
 
     return null;
+  }
+
+  @action.bound
+  // eslint-disable-next-line class-methods-use-this
+  prettifyNumber(value) {
+    const thousand = 1000;
+    const million = 1000000;
+    const billion = 1000000000;
+    const trillion = 1000000000000;
+
+    let endValue = 0;
+
+    switch (true) {
+      case value < thousand:
+        endValue = (value).toFixed(1);
+        break;
+      case value >= thousand && value <= million:
+        endValue = `${parseFloat(value / thousand).toFixed(1)}K`;
+        break;
+      case value >= million && value <= billion:
+        endValue = `${parseFloat(value / million).toFixed(1)}M`;
+        break;
+      case value >= billion && value <= trillion:
+        endValue = `${parseFloat(value / billion).toFixed(1)}B`;
+        break;
+      default:
+        endValue = `${parseFloat(value / trillion).toFixed(1)}T`;
+        break;
+    }
+    return endValue;
   }
   // #endregion
 }

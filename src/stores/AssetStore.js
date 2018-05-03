@@ -279,8 +279,6 @@ class AssetStore {
           0;
         break;
       default:
-        console.log(MarketStore.marketSummaries[`BTC-${currencyName}`])
-        // foundCurrency = MarketStore.marketSummaries[`BTC-${currencyName}`].Last;
         foundCurrency = MarketStore.marketSummaries[`BTC-${currencyName}`] ?
           MarketStore.marketSummaries[`BTC-${currencyName}`].Last :
           0;

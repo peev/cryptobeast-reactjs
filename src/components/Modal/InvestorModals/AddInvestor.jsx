@@ -226,7 +226,7 @@ class AddInvestor extends React.Component {
                   name="USD"
                   label="Deposited USD Equiv."
                   // className={classes.alignInputAfter}
-                  value={InvestorStore.newInvestorValues.depositUsdEquiv || ''}
+                  value={InvestorStore.depositUsdEquiv || ''}
                 />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>

@@ -1,52 +1,49 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { TextField } from "material-ui";
-import { withStyles } from "material-ui/styles";
-import Typography from "material-ui/Typography";
-import Modal from "material-ui/Modal";
-import IconButton from "../CustomButtons/IconButton";
-import { Add } from "material-ui-icons";
-import { inject, observer } from "mobx-react";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from 'material-ui/styles';
+import Typography from 'material-ui/Typography';
+import Modal from 'material-ui/Modal';
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
-import Button from "../CustomButtons/Button";
+import { Add } from 'material-ui-icons';
+import { inject, observer } from 'mobx-react';
+import IconButton from '../CustomButtons/IconButton';
+
+
+import Button from '../CustomButtons/Button';
 
 function getModalStyle() {
   const top = 45;
   const left = 41;
   return {
     top: `${top}%`,
-    left: `${left}%`
+    left: `${left}%`,
   };
 }
 
 const styles = theme => ({
   paper: {
-    position: "absolute",
-    minWidth: "300px",
+    position: 'absolute',
+    minWidth: '300px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing.unit * 4,
   },
   headerButtonContainer: {
-    float: "right",
-    marginTop: "-35px",
-    marginRight: "40px"
+    float: 'right',
+    marginTop: '-35px',
+    marginRight: '40px',
   },
   modalTitle: {
-    fontSize: "18px",
-    fontWeight: "400",
-    textAlign: "center"
+    fontSize: '18px',
+    fontWeight: '400',
+    textAlign: 'center',
   },
 });
 
-@inject("PortfolioStore")
+@inject('PortfolioStore')
 @observer
 class CreatePortfolio extends React.Component {
-  constructor() {
-    super();
-    this.name = null;
-  }
-
   state = {
     open: false,
   };
@@ -59,16 +56,22 @@ class CreatePortfolio extends React.Component {
     this.setState({ open: false });
   };
 
-  handleSave = () => {
-    const inputName = { name: this.name.value };
+  handleInputValue = (event) => {
+    event.preventDefault();
+    const inputValue = event.target.value;
+    console.log(inputValue);
+    this.props.PortfolioStore.setNewPortfolioName(inputValue);
+  }
 
-    this.props.PortfolioStore.createPortfolio(inputName);
+  handleSave = () => {
+    this.props.PortfolioStore.createPortfolio();
+    this.props.PortfolioStore.resetPortfolio();
 
     this.setState({ open: false });
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, PortfolioStore } = this.props;
 
     return (
       <div className={classes.headerButtonContainer}>
@@ -84,10 +87,12 @@ class CreatePortfolio extends React.Component {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <form
+          <ValidatorForm
+            // ref="form"
+            onSubmit={this.handleSave}
+            onError={errors => console.log(errors)}
             style={getModalStyle()}
             className={classes.paper}
-            onSubmit={() => this.handleSave}
           >
             <Typography
               variant="title"
@@ -97,36 +102,39 @@ class CreatePortfolio extends React.Component {
               Create new Portfolio
             </Typography>
 
-            <TextField
-              placeholder="Portfolio name"
-              style={{ width: "100%" }}
-              // onChange={this.handleInputValue}
-              inputRef={el => (this.name = el)}
+            <TextValidator
+              name="Portfolio Name"
+              label="Portfolio name"
+              style={{ width: '100%' }}
+              onChange={this.handleInputValue}
+              value={PortfolioStore.newPortfolioName}
+              validators={['required']}
+              errorMessages={['this field is required']}
             />
 
             <br />
 
             {/* Cancel BUTTON */}
             <Button
-              style={{ display: "inline-flex", marginRight: '50px', float:'left' }}
+              style={{ display: 'inline-flex', marginRight: '50px', float: 'left' }}
               onClick={this.handleClose}
               color="primary"
             >
-              {" "}
+              {' '}
               Cancel
             </Button>
 
             {/* SAVE BUTTON */}
             <Button
-              style={{ display: "inline-flex", float:'right' }}
-              onClick={this.handleSave}
+              style={{ display: 'inline-flex', float: 'right' }}
+              // onClick={this.handleSave}
               color="primary"
               type="submit"
             >
-              {" "}
+              {' '}
               Save
             </Button>
-          </form>
+          </ValidatorForm>
         </Modal>
       </div>
     );
@@ -134,7 +142,7 @@ class CreatePortfolio extends React.Component {
 }
 
 CreatePortfolio.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 // We need an intermediary variable for handling the recursive nesting.

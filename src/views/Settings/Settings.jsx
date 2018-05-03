@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Grid, Button, Snackbar } from 'material-ui';
 import { RegularCard, ItemGrid } from 'components';
 import { inject, observer } from 'mobx-react';
+import PropTypes from 'prop-types';
+
 
 // import UpdatePortfolioModal from '../../components/Modal/UpdatePortfolio';
 import RegularButton from '../../components/CustomButtons/Button';
@@ -105,5 +107,9 @@ class Settings extends Component {
     );
   }
 }
+
+Settings.propTypes = {
+  MarketStore: PropTypes.object,
+};
 
 export default Settings;

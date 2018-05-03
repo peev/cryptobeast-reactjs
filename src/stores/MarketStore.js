@@ -1,8 +1,6 @@
 import { observable, action } from 'mobx';
 import requester from '../services/requester';
 
-import PortfolioStore from './PortfolioStore';
-
 
 class MarketStore {
   @observable marketSummaries;
@@ -11,9 +9,6 @@ class MarketStore {
   @observable allTickers;
   @observable baseCurrencyInUSD;
   @observable selectedBaseCurrency;
-  @observable selectedExchange;
-  @observable selectedCurrency;
-  @observable assetInputValue;
 
   constructor() {
     this.marketSummaries = {};
@@ -22,9 +17,6 @@ class MarketStore {
     this.allTickers = [];
     this.baseCurrencyInUSD = null;
     this.selectedBaseCurrency = null;
-    this.selectedExchange = '';
-    this.selectedCurrency = '';
-    this.assetInputValue = '';
   }
 
   init() {
@@ -101,79 +93,14 @@ class MarketStore {
     this.marketSummaries = result;
   }
 
-  @action
+  @action.bound
   selectBaseCurrency(index) {
     this.selectedBaseCurrency = this.baseCurrencies[index];
-  }
-
-  @action
-  selectCurrencyFromAllCurrencies(value) {
-    this.selectedCurrency = value;
-  }
-
-  @action
-  selectExchange(value) {
-    this.selectedExchange = value;
   }
 
   @action.bound
   resetMarket() {
     this.selectedBaseCurrency = null;
-  }
-
-  @action
-  setBasicAssetInputValue(value) {
-    if (value < 0) {
-      return;
-    }
-
-    this.assetInputValue = value;
-  }
-
-  @action
-  createBasicAsset(id) {
-    if (this.selectedCurrency === null || this.selectedCurrency === '') {
-      return;
-    }
-
-    const parsedAssetInputValue = parseInt(this.assetInputValue, 10);
-    if (!Number.isInteger(parsedAssetInputValue) || isNaN(parsedAssetInputValue)) {
-      return;
-    }
-
-    let selectedExchangeOrigin;
-    if (this.selectedExchange !== '') {
-      selectedExchangeOrigin = this.selectedExchange;
-    } else {
-      selectedExchangeOrigin = 'Manually Added';
-    }
-
-    const existingAsset = PortfolioStore.currentPortfolioAssets
-      .find(a => a.currency === this.selectedCurrency &&
-        a.origin === selectedExchangeOrigin &&
-        a.portfolioId === id);
-    if (existingAsset) {
-      existingAsset.balance += parsedAssetInputValue;
-      requester.Asset.update(existingAsset);
-    } else {
-      const newBasicAsset = {
-        currency: this.selectedCurrency,
-        balance: parsedAssetInputValue,
-        origin: selectedExchangeOrigin,
-        portfolioId: id,
-      };
-      requester.Asset.add(newBasicAsset)
-        .then(action((result) => {
-          PortfolioStore.currentPortfolioAssets.push(result.data);
-        }));
-    }
-  }
-
-  @action.bound
-  resetAsset() {
-    this.selectedCurrency = '';
-    this.assetInputValue = '';
-    this.selectedExchange = '';
   }
 }
 

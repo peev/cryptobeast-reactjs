@@ -85,9 +85,9 @@ class InvestorDeposit extends React.Component {
 
   handleDepositSave = () => {
     const { InvestorStore } = this.props;
-    const hasErrors = InvestorStore.handleDepositInvestorErrors();
+    const noErrors = InvestorStore.handleDepositInvestorErrors();
 
-    if (hasErrors) {
+    if (noErrors) {
       InvestorStore.createNewDepositInvestor(InvestorStore.selectedInvestor.id);
       this.handleClose();
     }

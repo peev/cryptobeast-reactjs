@@ -21,24 +21,11 @@ import tableStyle from '../../variables/styles/tableStyle';
 @inject('PortfolioStore')
 @observer
 class PortfoliosTable extends React.Component {
-  state = {
-    open: false,
-  };
-
-  // handleDelete = () => {
-  //   this.props.PortfolioStore.deletePortfolio();
-  // };
-  handleOpen = (id) => {
-    //    this.props.PortfolioStore.removePortfolio(id);
-    this.props.PortfolioStore.selectPortfolio(id);
-    console.log(id);
-  };
 
   handleRemove = (id) => {
     this.props.PortfolioStore.removePortfolio(id);
     console.log(id);
   }
-
 
   render() {
     const {

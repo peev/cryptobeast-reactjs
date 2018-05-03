@@ -1,4 +1,9 @@
-import { observable, action, computed } from 'mobx';
+import {
+  observable,
+  action,
+  computed,
+  autorun
+} from 'mobx';
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
@@ -10,6 +15,7 @@ class PortfolioStore {
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
+  @observable newPortfolioName;
 
   constructor() {
     this.portfolios = [];
@@ -18,6 +24,7 @@ class PortfolioStore {
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
+    this.newPortfolioName = '';
 
 
     // eslint-disable-next-line no-unused-expressions
@@ -203,10 +210,9 @@ class PortfolioStore {
         .map((el) => {
           const index = marketSummary[el].MarketName.indexOf('-');
           const name = marketSummary[el].MarketName.slice(index + 1);
-          const elemCost =
-            +(((marketSummary[el].Last - marketSummary[el].PrevDay) /
+          const elemCost = +(((marketSummary[el].Last - marketSummary[el].PrevDay) /
               marketSummary[el].PrevDay) * 100)
-              .toFixed(2);
+            .toFixed(2);
           return [name, elemCost, 42];
         })
         .sort((a, b) => b[1] - a[1]);
@@ -216,7 +222,10 @@ class PortfolioStore {
   }
 
   get summaryAssetsBreakdown() {
-    return this.summaryPortfolioAssets.map((el) => ({ y: parseInt(el[5], 10), name: `${el[0]} (${el[5]}%)` }));
+    return this.summaryPortfolioAssets.map((el) => ({
+      y: parseInt(el[5], 10),
+      name: `${el[0]} (${el[5]}%)`
+    }));
   }
 
   @computed
@@ -259,8 +268,21 @@ class PortfolioStore {
   // Portfolio -> Create, Update, Delete
   // #region Portfolio
   @action
-  createPortfolio(portfolioName) {
-    requester.Portfolio.create(portfolioName)
+  addTransaction(transactionData) {
+    this.currentPortfolioTransactions.push(transactionData);
+  }
+
+  @action.bound
+  setNewPortfolioName(newValue) {
+    this.newPortfolioName = newValue;
+  }
+
+  @action.bound
+  createPortfolio() {
+    const newPortfolio = {
+      name: this.newPortfolioName,
+    };
+    requester.Portfolio.create(newPortfolio)
       .then(() => {
         this.getPortfolios(); // gets new portfolios
       })
@@ -293,7 +315,8 @@ class PortfolioStore {
     this.portfolios.forEach((el) => {
       // Returns only needed values from selected portfolio
       if (el.id === id) {
-        this.selectedPortfolio = { ...el };
+        this.selectedPortfolio = { ...el
+        };
         this.currentPortfolioAssets = el.assets;
         this.currentPortfolioInvestors = el.investors;
         this.currentPortfolioTransactions = el.transactions;
@@ -303,11 +326,25 @@ class PortfolioStore {
 
   @action
   getPortfolios() {
-    return requester.Portfolio.getAll()
-      .then(action((result) => {
-        this.portfolios = result.data;
-      }))
-      .catch(err => console.log(err));
+    return new Promise((resolve, reject) => {
+      requester.Portfolio.getAll()
+        .then(action((result) => {
+          this.portfolios = result.data;
+          if (this.selectedPortfolioId > 0) {
+            this.selectPortfolio(this.selectedPortfolioId);
+          }
+          resolve(true);
+        }))
+        .catch((err) => {
+          console.log(err);
+          reject(err);
+        });
+    });
+  }
+
+  @action.bound
+  resetPortfolio() {
+    this.newPortfolioName = '';
   }
 }
 

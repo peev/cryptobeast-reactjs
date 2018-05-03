@@ -24,25 +24,12 @@ const styles = theme => ({
 @inject('InvestorStore', 'PortfolioStore')
 @observer
 class SelectInvestor extends React.Component {
-  state = {
-    selectedInvestorId: '',
-    open: false,
-  };
 
   handleChange = (event) => {
     const { value } = event.target;
-
     this.props.InvestorStore.selectInvestor(value);
-    this.setState({ [event.target.name]: value });
   };
 
-  handleClose = () => {
-    this.setState({ open: false });
-  };
-
-  handleOpen = () => {
-    this.setState({ open: true });
-  };
 
   render() {
     const { classes, PortfolioStore } = this.props;
@@ -70,13 +57,12 @@ class SelectInvestor extends React.Component {
           <SelectValidator
             name="investor"
             label="select investor"
-            open={this.state.open}
-            value={this.state.selectedInvestorId}
+            // open={this.state.open}
+            value={this.props.InvestorStore.selectedInvestorId || ''}
             onClose={this.handleClose}
             // onOpen={this.handleOpen}
             onChange={this.handleChange}
             inputProps={{
-              name: 'selectedInvestorId',
               id: 'controlled-open-select',
             }}
             validators={['required']}
@@ -95,6 +81,7 @@ class SelectInvestor extends React.Component {
 
 SelectInvestor.propTypes = {
   classes: PropTypes.object.isRequired,
+  InvestorStore: PropTypes.object,
 };
 
 export default withStyles(styles)(SelectInvestor);

@@ -1,16 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextField } from 'material-ui';
-import { withStyles } from 'material-ui/styles';
+import { withStyles, TextField } from 'material-ui';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
 import Modal from 'material-ui/Modal';
 import { Add } from 'material-ui-icons';
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import { inject, observer } from 'mobx-react';
 import Button from '../../CustomButtons/Button';
 import IconButton from '../../CustomButtons/IconButton';
 
-import SelectApi from '../../Selectors/SelectApi';
+import SelectExchange from '../../Selectors/Asset/SelectExchange';
+import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 
 
 function getModalStyle() {
@@ -18,7 +19,7 @@ function getModalStyle() {
   const left = 41;
   return {
     top: `${top}%`,
-    left: `${left}%`
+    left: `${left}%`,
   };
 }
 
@@ -28,20 +29,20 @@ const styles = theme => ({
     minWidth: '200px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing.unit * 4,
   },
   headerButtonContainer: {
     float: 'right',
     marginTop: '-35px',
-    marginRight: '40px'
+    marginRight: '40px',
   },
   modalTitle: {
     fontSize: '18px',
     fontWeight: '400',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   inputWrapper: {
-    width: '200px'
+    width: '200px',
   },
   container: {
     display: 'flex',
@@ -53,20 +54,25 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-  }
+  },
 });
 
-@inject('ApiAccountStore', 'PortfolioStore')
+@inject('ApiAccountStore', 'PortfolioStore', 'MarketStore', 'AssetStore')
 @observer
 class AddApiAccount extends React.Component {
   constructor() {
     super();
+    this.state = {
+      open: false,
+    };
     this.name = null;
+
+    this.handleExchangeCreateAccount = this.handleExchangeCreateAccount.bind(this);
   }
 
-  state = {
-    open: false,
-  };
+  componentWillUnmount() {
+    this.props.AssetStore.resetAsset();
+  }
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -91,14 +97,18 @@ class AddApiAccount extends React.Component {
 
     if (PortfolioStore.selectedPortfolioId !== null) {
       ApiAccountStore.createNewAccount(PortfolioStore.selectedPortfolioId);
+      this.props.NotificationStore.addMessage('successMessages', 'Successfully added API');
     }
 
     this.setState({ open: false });
   };
 
-  render() {
-    const { classes } = this.props;
+  handleExchangeCreateAccount = (value) => {
+    this.props.AssetStore.selectExchangeCreateAccount(value);
+  }
 
+  render() {
+    const { classes, MarketStore, AssetStore } = this.props;
     return (
       <div className={classes.headerButtonContainer}>
         <IconButton
@@ -113,10 +123,12 @@ class AddApiAccount extends React.Component {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <form
+          <ValidatorForm
+            // ref="form"
+            onSubmit={this.handleSave}
+            onError={errors => console.log(errors)}
             style={getModalStyle()}
             className={classes.paper}
-            onSubmit={() => this.handleSave}
           >
             <div>
               <Typography
@@ -137,29 +149,32 @@ class AddApiAccount extends React.Component {
               </div>
             </div>
             <div className={classes.container}>
-              {/* <TextField
-                placeholder="Api Service Name"
-                className={classes.inputWrapper}
-                onChange={(e) => this.handleInputValue('apiServiceName', e)}
-              // inputRef={el => (this.apiServiceName = el)}
-              /> */}
+              <div className={classes.inputWrapper}>
+                <SelectExchange
+                  label="Select Exchange"
+                  value={AssetStore.selectedExchangeCreateAccount}
+                  handleChange={this.handleExchangeCreateAccount}
+                  validators={['required']}
+                  errorMessages={['this field is required']}
+                />
+              </div>
 
-              <SelectApi />
-
-              <TextField
-                placeholder="Api Key"
+              <TextValidator
+                name="Api Key"
+                label="Api Key"
                 className={classes.inputWrapper}
-                // onChange={this.handleInputValue}
-                onChange={(e) => this.handleInputValue('apiKey', e)}
-              // inputRef={el => (this.apiKey = el)}
+                onChange={e => this.handleInputValue('apiKey', e)}
+                validators={['required']}
+                errorMessages={['this field is required']}
               />
 
-              <TextField
-                placeholder="Api Secret"
+              <TextValidator
+                name="Api Secret"
+                label="Api Secret"
                 className={classes.inputWrapper}
-                // onChange={this.handleInputValue}
-                onChange={(e) => this.handleInputValue('apiSecret', e)}
-              // inputRef={el => (this.apiSecret = el)}
+                onChange={e => this.handleInputValue('apiSecret', e)}
+                validators={['required']}
+                errorMessages={['this field is required']}
               />
             </div>
             <br />
@@ -177,22 +192,28 @@ class AddApiAccount extends React.Component {
             {/* SAVE BUTTON */}
             <Button
               style={{ display: 'inline-flex', float: 'right' }}
-              onClick={this.handleSave}
+              // onClick={this.handleSave}
               color="primary"
               type="submit"
             >
               {' '}
               Save
             </Button>
-          </form>
+          </ValidatorForm>
         </Modal>
+        <NotificationSnackbar />
       </div>
     );
   }
 }
 
 AddApiAccount.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  MarketStore: PropTypes.object,
+  PortfolioStore: PropTypes.object,
+  AssetStore: PropTypes.object,
+  ApiAccountStore: PropTypes.object,
+  NotificationStore: PropTypes.object,
 };
 
 // We need an intermediary variable for handling the recursive nesting.

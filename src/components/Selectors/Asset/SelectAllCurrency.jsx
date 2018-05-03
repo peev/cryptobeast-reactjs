@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, MenuItem } from 'material-ui';
+import { withStyles, MenuItem, AutoComplete } from 'material-ui';
 import Typography from 'material-ui/Typography';
 import Input from 'material-ui/Input';
 import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown';
@@ -11,7 +11,8 @@ import ClearIcon from 'material-ui-icons/Clear';
 import Chip from 'material-ui/Chip';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
-import { inject, observer } from 'mobx-react';
+
+// import SelectWrapped from './SelectWrapped';
 
 class Option extends Component {
   handleClick = (event) => {
@@ -37,13 +38,12 @@ class Option extends Component {
   }
 }
 
-@inject('MarketStore')
-@observer
 // eslint-disable-next-line react/no-multi-comp
 class SelectWrapped extends Component {
+  state = {};
   render() {
-    const { classes, MarketStore, ...other } = this.props;
-
+    const { classes, value, ...other } = this.props;
+    console.log(value);
     return (
       <Select
         optionComponent={Option}
@@ -73,7 +73,7 @@ class SelectWrapped extends Component {
             );
           }
 
-          return <div className="Select-value">{MarketStore.selectedCurrency}</div>;
+          return <div className="Select-value">{value}</div>;
         }}
         {...other}
       />
@@ -193,8 +193,6 @@ const styles = theme => ({
   },
 });
 
-@inject('MarketStore')
-@observer
 // eslint-disable-next-line react/no-multi-comp
 class SelectAllCurrency extends Component {
   state = {
@@ -202,20 +200,20 @@ class SelectAllCurrency extends Component {
   };
 
   handleChange = (value) => {
-    this.props.MarketStore.selectCurrencyFromAllCurrencies(value);
+    this.props.handleChange(value);
     this.setState({ single: value });
   };
 
   render() {
-    const { classes, MarketStore } = this.props;
+    const { classes, value } = this.props;
 
     return (
       <div className={classes.root}>
         <Input
           fullWidth
           inputComponent={SelectWrapped}
-          value={MarketStore.selectedCurrency}
-          onChange={e => this.handleChange(e)}
+          value={value}
+          onChange={this.handleChange}
           placeholder="Search currency"
           id="react-select-single"
           inputProps={{
@@ -223,7 +221,7 @@ class SelectAllCurrency extends Component {
             name: 'react-select-single',
             instanceId: 'react-select-single',
             simpleValue: true,
-            options: MarketStore.allCurrencies,
+            options: {},
           }}
         />
       </div>

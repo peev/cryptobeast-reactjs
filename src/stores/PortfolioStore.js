@@ -246,6 +246,15 @@ class PortfolioStore {
     }
     return 1;
   }
+
+  @computed
+  get currentPortfolioInvestorsCount() {
+    if (this.selectedPortfolio) {
+      return this.currentPortfolioInvestors.length;
+    }
+
+    return 0;
+  }
   // #endregion
 
   // ======= Action =======

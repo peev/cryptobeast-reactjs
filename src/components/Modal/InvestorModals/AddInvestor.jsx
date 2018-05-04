@@ -87,9 +87,6 @@ class AddInvestor extends React.Component {
     const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     InvestorStore.setNewInvestorValues(propertyType, inputValue);
-    if (propertyType === 'depositedAmount') {
-      InvestorStore.depositUsdEquiv();
-    }
   }
 
   handleFounder = name => (event) => {
@@ -226,7 +223,7 @@ class AddInvestor extends React.Component {
                   name="USD"
                   label="Deposited USD Equiv."
                   // className={classes.alignInputAfter}
-                  value={InvestorStore.depositUsdEquiv || ''}
+                  value={InvestorStore.convertedtUsdEquiv || ''}
                 />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
@@ -284,7 +281,7 @@ class AddInvestor extends React.Component {
             {/* <Input
                   placeholder="Deposited USD Equiv."
                   className={classes.alignInput}
-                  value={InvestorStore.newInvestorValues.depositUsdEquiv || ''}
+                  value={InvestorStore.newInvestorValues.convertedUsdEquiv || ''}
                 /> */}
 
             {/* <Input

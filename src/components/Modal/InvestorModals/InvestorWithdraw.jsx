@@ -75,14 +75,8 @@ class InvestorWithdraw extends React.Component {
   handleWithdrawRequests = propertyType => (event) => {
     event.preventDefault();
 
-    const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     this.props.InvestorStore.setWithdrawInvestorValues(propertyType, inputValue);
-
-    // To calculate purchased shares ===================
-    if (propertyType === 'amount') {
-      InvestorStore.depositUsdEquiv;
-    }
   }
 
   handleWithdrawalInvestor = () => {
@@ -99,6 +93,8 @@ class InvestorWithdraw extends React.Component {
     const {
       classes, InvestorStore, PortfolioStore, NotificationStore,
     } = this.props;
+
+    const currenciesToWithdraw = ['JPY', 'EUR', 'USD'];
 
     return (
       <Grid container>
@@ -159,7 +155,7 @@ class InvestorWithdraw extends React.Component {
                 />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <SelectBaseCurrency />
+                <SelectBaseCurrency currencies={currenciesToWithdraw} />
               </Grid>
             </Grid>
             <Grid container>

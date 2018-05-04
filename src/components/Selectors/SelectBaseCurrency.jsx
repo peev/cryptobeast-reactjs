@@ -37,21 +37,24 @@ class SelectBaseCurrency extends React.Component {
   handleChange = (event) => {
     const index = event.target.value;
     this.props.MarketStore.selectBaseCurrency(index);
-    this.props.InvestorStore.depositUsdEquiv();
+    this.props.InvestorStore.convertedUsdEquiv;
 
     this.setState({ [event.target.name]: event.target.value });
   };
 
   render() {
-    const { classes, MarketStore } = this.props;
-    const baseCurrencies = MarketStore.baseCurrencies.map((currency, i) => (
-      <MenuItem
-        key={i}
-        value={i}
-      >
-        <em>{MarketStore.baseCurrencies[i].pair}</em>
-      </MenuItem>
-    ));
+    const { classes, MarketStore, currencies = [] } = this.props;
+    const baseCurrencies = MarketStore.baseCurrencies.map((currency, i) =>
+      ((currencies.length === 0 || currencies.includes(MarketStore.baseCurrencies[i].pair)) ?
+        (
+          <MenuItem
+            key={i}
+            value={i}
+          >
+            <em>{MarketStore.baseCurrencies[i].pair}</em>
+          </MenuItem>
+        ) : ''
+      ));
 
     return (
       <div autoComplete="off">
@@ -85,6 +88,7 @@ class SelectBaseCurrency extends React.Component {
 
 SelectBaseCurrency.propTypes = {
   classes: PropTypes.object.isRequired,
+  currencies: PropTypes.array,
 };
 
 export default withStyles(styles)(SelectBaseCurrency);

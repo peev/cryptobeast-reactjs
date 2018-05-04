@@ -26,7 +26,6 @@ class InvestorStore {
       telephone: '',
       dateOfEntry: '',
       depositedAmount: '',
-      // depositUsdEquiv: '',
       managementFee: '',
       sharePriceAtEntryDate: '',
       purchasedShares: '',
@@ -78,7 +77,7 @@ class InvestorStore {
     } = PortfolioStore;
     if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
       // TODO: To add Assets value below
-      const calculatedPurchasedShares = (this.depositUsdEquiv / (currentPortfolioSharePrice || 1)).toFixed(2);
+      const calculatedPurchasedShares = (this.convertedUsdEquiv / (currentPortfolioSharePrice || 1)).toFixed(2);
       this.newInvestorValues.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -110,7 +109,7 @@ class InvestorStore {
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
       // const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
-      const calculatedPurchasedShares = (this.depositUsdEquiv / currentPortfolioSharePrice).toFixed(2);
+      const calculatedPurchasedShares = (this.convertedUsdEquiv / currentPortfolioSharePrice).toFixed(2);
       this.newDepositValues.purchasedShares = calculatedPurchasedShares;
 
       return calculatedPurchasedShares;
@@ -151,7 +150,8 @@ class InvestorStore {
 
     if (this.selectedInvestor && this.withdrawalValues.amount) {
       // const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / 1.75).toFixed(2);
-      const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / currentPortfolioSharePrice).toFixed(2);
+
+      const calculatedWithdrawPurchasedShares = (this.convertedUsdEquiv / currentPortfolioSharePrice).toFixed(2);
       this.withdrawalValues.purchasedShares = calculatedWithdrawPurchasedShares;
       return calculatedWithdrawPurchasedShares;
     }
@@ -366,7 +366,7 @@ class InvestorStore {
         investorName: this.newInvestorValues.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
         transactionDate: this.newInvestorValues.dateOfEntry,
-        amountInUSD: this.depositUsdEquiv,
+        amountInUSD: this.convertedUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newInvestorValues.purchasedShares),
         portfolioId: id,
@@ -421,7 +421,7 @@ class InvestorStore {
         investorName: this.selectedInvestor.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
         transactionDate: this.newDepositValues.transactionDate,
-        amountInUSD: this.depositUsdEquiv,
+        amountInUSD: this.convertedUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newDepositValues.purchasedShares),
         portfolioId: PortfolioStore.selectedPortfolioId,
@@ -460,7 +460,10 @@ class InvestorStore {
 
     requester.Investor.withdrawal(withdrawal)
       .then(action((result) => {
-        PortfolioStore.currentPortfolioTransactions.push(result.data);
+        PortfolioStore.addTransaction(result.data);
+        PortfolioStore.getPortfolios().then(() => {
+          this.selectInvestor(result.data.investorId);
+        })
       }))
       .catch(err => console.log(err));
   }
@@ -487,7 +490,7 @@ class InvestorStore {
     }
 
     // Checks if email is valid - duplication only
-    
+
 
     // Checks the currently entered values. If value is empty and it is required,
     // than adds a error massage to the array of errors
@@ -636,14 +639,12 @@ class InvestorStore {
   // #region Resets
   @action
   reset() {
-    console.log(this.newInvestorValues);
     this.newInvestorValues.isFounder = false;
     this.newInvestorValues.fullName = '';
     this.newInvestorValues.email = '';
     this.newInvestorValues.telephone = '';
     this.newInvestorValues.dateOfEntry = '';
     this.newInvestorValues.depositedAmount = '';
-    // this.newInvestorValues.depositUsdEquiv = '';
     this.newInvestorValues.managementFee = '';
     this.newInvestorValues.sharePriceAtEntryDate = '';
     this.newInvestorValues.purchasedShares = '';
@@ -651,7 +652,6 @@ class InvestorStore {
 
   @action
   resetUpdate() {
-    console.log(this.updateInvestorValues);
     this.updateInvestorValues.fullName = '';
     this.updateInvestorValues.email = '';
     this.updateInvestorValues.telephone = '';
@@ -672,7 +672,6 @@ class InvestorStore {
 
   @action.bound
   resetWithdrawal() {
-    console.log(this.withdrawalValues);
     this.withdrawalValues.amount = '';
     this.withdrawalValues.transactionDate = '';
     this.withdrawalValues.sharePriceAtEntryDate = '';
@@ -709,29 +708,29 @@ class InvestorStore {
   }
 
   @computed
-  get depositUsdEquiv() {
+  get convertedUsdEquiv() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const currentAmount = this.newInvestorValues.depositedAmount || this.newDepositValues.amount;
+
+    const currentAmount = this.newInvestorValues.depositedAmount || this.newDepositValues.amount || this.withdrawalValues.amount;
     if (baseCurrency && currentAmount) {
-      let calculatedDepositUsdEquiv;
+      let calculatedUsdEquiv;
       switch (baseCurrency.pair) {
         case 'JPY':
         case 'EUR':
         case 'USD':
-          calculatedDepositUsdEquiv = (currentAmount / baseCurrency.last) * MarketStore.baseCurrencyInUSD.last;
+          calculatedUsdEquiv = (currentAmount / baseCurrency.last) * MarketStore.baseCurrencyInUSD.last;
           break;
         case 'ETH':
-          calculatedDepositUsdEquiv = currentAmount * baseCurrency.last * MarketStore.baseCurrencyInUSD.last;
+          calculatedUsdEquiv = currentAmount * baseCurrency.last * MarketStore.baseCurrencyInUSD.last;
           break;
         case 'BTC':
-          calculatedDepositUsdEquiv = currentAmount * MarketStore.baseCurrencyInUSD.last;
+          calculatedUsdEquiv = currentAmount * MarketStore.baseCurrencyInUSD.last;
           break;
         default:
           console.log('The is no such currency');
           break;
       }
-
-      return calculatedDepositUsdEquiv;
+      return calculatedUsdEquiv;
     }
 
     return null;

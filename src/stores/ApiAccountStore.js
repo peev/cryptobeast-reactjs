@@ -187,7 +187,7 @@ class ApiAccountStore {
     this.values.telephone = '';
     this.values.dateOfEntry = '';
     this.values.depositedAmount = '';
-    this.values.depositUsdEquiv = '';
+    this.values.convertedUsdEquiv = '';
     this.values.managementFee = '';
     this.values.sharePriceAtEntryDate = '';
     this.values.purchasedShares = '';

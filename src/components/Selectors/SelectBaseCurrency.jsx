@@ -37,7 +37,7 @@ class SelectBaseCurrency extends React.Component {
   handleChange = (event) => {
     const index = event.target.value;
     this.props.MarketStore.selectBaseCurrency(index);
-    this.props.InvestorStore.depositUsdEquiv();
+    this.props.InvestorStore.convertedUsdEquiv;
 
     this.setState({ [event.target.name]: event.target.value });
   };

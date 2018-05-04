@@ -76,11 +76,6 @@ class InvestorDeposit extends React.Component {
     const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     this.props.InvestorStore.setNewDepositInvestorValues(propertyType, inputValue);
-
-    // To calculate purchased shares ===================
-    if (propertyType === 'amount') {
-      InvestorStore.depositUsdEquiv();
-    }
   }
 
   handleDepositSave = () => {

@@ -75,7 +75,6 @@ class InvestorWithdraw extends React.Component {
   handleWithdrawRequests = propertyType => (event) => {
     event.preventDefault();
 
-    const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     this.props.InvestorStore.setWithdrawInvestorValues(propertyType, inputValue);
   }

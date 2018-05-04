@@ -639,7 +639,6 @@ class InvestorStore {
   // #region Resets
   @action
   reset() {
-    console.log(this.newInvestorValues);
     this.newInvestorValues.isFounder = false;
     this.newInvestorValues.fullName = '';
     this.newInvestorValues.email = '';
@@ -653,7 +652,6 @@ class InvestorStore {
 
   @action
   resetUpdate() {
-    console.log(this.updateInvestorValues);
     this.updateInvestorValues.fullName = '';
     this.updateInvestorValues.email = '';
     this.updateInvestorValues.telephone = '';
@@ -674,7 +672,6 @@ class InvestorStore {
 
   @action.bound
   resetWithdrawal() {
-    console.log(this.withdrawalValues);
     this.withdrawalValues.amount = '';
     this.withdrawalValues.transactionDate = '';
     this.withdrawalValues.sharePriceAtEntryDate = '';

@@ -73,7 +73,6 @@ class InvestorDeposit extends React.Component {
   handleDepositRequests = propertyType => (event) => {
     event.preventDefault();
 
-    const { InvestorStore } = this.props;
     const inputValue = event.target.value;
     this.props.InvestorStore.setNewDepositInvestorValues(propertyType, inputValue);
   }

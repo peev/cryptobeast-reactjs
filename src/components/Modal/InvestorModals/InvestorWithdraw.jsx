@@ -95,6 +95,8 @@ class InvestorWithdraw extends React.Component {
       classes, InvestorStore, PortfolioStore, NotificationStore,
     } = this.props;
 
+    const currenciesToWithdraw = ['JPY', 'EUR', 'USD'];
+
     return (
       <Grid container>
         <Button onClick={this.handleOpen} color="primary">
@@ -154,7 +156,7 @@ class InvestorWithdraw extends React.Component {
                 />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <SelectBaseCurrency />
+                <SelectBaseCurrency currencies={currenciesToWithdraw} />
               </Grid>
             </Grid>
             <Grid container>

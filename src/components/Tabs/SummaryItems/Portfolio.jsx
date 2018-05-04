@@ -1,57 +1,39 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  withStyles,
-  Grid,
-  Table,
-  TableHead,
-  TableRow,
-  TableBody,
-  TableCell,
-} from 'material-ui';
+import { withStyles, Grid } from 'material-ui';
+import PerformanceChart from '../../HighCharts/PerformanceChart';
 
 const styles = () => ({
   container: {
+    margin: '0',
+    height: '100%',
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+  },
+  gridItem: {
+    width: '100%',
+    height: '100%',
+    margin: '0',
+    padding: '0 !important',
   },
 });
 
-class Portfolio extends Component {
-  state = {};
+const Portfolio = (props) => {
+  const { classes } = props;
 
-  render() {
-    const { classes, tableHead } = this.props;
-
-    const tableHeader = (
-      <TableHead>
-        <TableRow>
-          {tableHead.map((prop, key) => (
-            <TableCell
-              className={`${classes.tableCell} ${classes.tableHeadCell}`}
-              key={key}
-            >
-              {prop}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-    );
-
-    return (
-      <Grid container>
-        <Table className={classes.table}>
-          {tableHead !== undefined ? tableHeader : null}
-          {/* <TableBody>{tableInfo}</TableBody> */}
-        </Table>
+  return (
+    <Grid container className={classes.container}>
+      <Grid item xs={12} sm={12} md={12} className={classes.gridItem}>
+        <PerformanceChart />
       </Grid>
-    );
-  }
-}
+    </Grid >
+  );
+};
 
 Portfolio.propTypes = {
   classes: PropTypes.object.isRequired,
-  tableHead: PropTypes.array.isRequired,
 };
 
 export default withStyles(styles)(Portfolio);

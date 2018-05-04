@@ -25,6 +25,9 @@ const styles = () => ({
   content: {
     height: '314px',
     minHeight: '314px',
+    '&>div': {
+      height: '100%',
+    },
     '&::-webkit-scrollbar': {
       display: 'none',
     },
@@ -41,7 +44,7 @@ const styles = () => ({
 
 class SummaryTabs extends React.Component {
   state = {
-    value: null,
+    value: 0,
   };
 
   handleChange = (event, value) => {
@@ -58,7 +61,7 @@ class SummaryTabs extends React.Component {
             value={this.state.value}
             onChange={this.handleChange}
             centered={centered}
-            indicatorColor="#eb4562"
+            indicatorColor="white"
           >
             <Tab label="Portfolio" value={this.value} className={classes.tabItem} />
             <Tab label="Trending" className={classes.tabItem} />
@@ -69,11 +72,7 @@ class SummaryTabs extends React.Component {
             onChange={this.handleChange}
             className={classes.content}
           >
-            <Portfolio tableHead={[
-              'Name',
-              'Status',
-            ]}
-            />
+            <Portfolio />
 
             <Trending tableHead={[
               'Ticker',

@@ -27,7 +27,7 @@ const styles = () => ({
 
 class AnalyticsTabs extends React.Component {
   state = {
-    value: null,
+    value: 0,
   };
 
   handleChange = (event, value) => {
@@ -42,6 +42,7 @@ class AnalyticsTabs extends React.Component {
           className={classes.navigation}
           value={this.state.value}
           onChange={this.handleChange}
+          indicatorColor="white"
         >
           <Tab label="Performance" value={this.value} />
           <Tab label="Volatility/Risk" />

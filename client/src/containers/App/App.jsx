@@ -49,6 +49,8 @@ class App extends React.Component<Props> {
     const { classes, PortfolioStore, UserStore, ...rest } = this.props;
     const { portfolios } = PortfolioStore;
 
+    const loadingScreen = <p style={{ textAlign: 'center' }}> loading...</p >;
+
     return (
       <div>
         <div className={classes.wrapper}>
@@ -83,7 +85,7 @@ class App extends React.Component<Props> {
                   </div>
                 )}
             </div>
-          ) : 'loading...'}
+          ) : loadingScreen}
         </div>
       </div>
     );

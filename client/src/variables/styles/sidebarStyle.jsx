@@ -52,6 +52,19 @@ const sidebarStyle = theme => ({
       ...transition,
     },
   },
+  disableOverlay: {
+    '&:after': {
+      content: '""',
+      color: 'green',
+      position: 'absolute',
+      top: '0',
+      left: '0',
+      right: '0',
+      bottom: '0',
+      zIndex: '10',
+      background: 'rgba(0,0,0,0.3)',
+    },
+  },
   logo: {
     position: 'relative',
     padding: '15px 15px',

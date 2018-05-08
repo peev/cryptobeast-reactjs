@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Views/Summary.jsx should render without crashing 1`] = `
+ShallowWrapper {
+  "length": 1,
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <WithStyles(inject-Summary-with-PortfolioStore) />,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "class",
+    "props": Object {
+      "classes": Object {
+        "container": "inject-Summary-with-PortfolioStore-container-1",
+        "containerHeader": "inject-Summary-with-PortfolioStore-containerHeader-2",
+        "containerMiddle": "inject-Summary-with-PortfolioStore-containerMiddle-3",
+        "removePaddingBottom": "inject-Summary-with-PortfolioStore-removePaddingBottom-5",
+        "warningText": "inject-Summary-with-PortfolioStore-warningText-4",
+      },
+    },
+    "ref": null,
+    "rendered": null,
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "classes": Object {
+          "container": "inject-Summary-with-PortfolioStore-container-1",
+          "containerHeader": "inject-Summary-with-PortfolioStore-containerHeader-2",
+          "containerMiddle": "inject-Summary-with-PortfolioStore-containerMiddle-3",
+          "removePaddingBottom": "inject-Summary-with-PortfolioStore-removePaddingBottom-5",
+          "warningText": "inject-Summary-with-PortfolioStore-warningText-4",
+        },
+      },
+      "ref": null,
+      "rendered": null,
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+    "disableLifecycleMethods": true,
+  },
+}
+`;

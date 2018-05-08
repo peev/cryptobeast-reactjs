@@ -51,15 +51,16 @@ class App extends React.Component<Props> {
 
     return (
       <div>
-        {UserStore.data.selectedPortfolio !== undefined ? (
-          <div className={classes.wrapper}>
-            <Sidebar
-              routes={appRoutes}
-              handleDrawerToggle={this.handleDrawerToggle}
-              open={this.state.mobileOpen}
-              {...rest}
-            />
+        <div className={classes.wrapper}>
+          <Sidebar
+            routes={appRoutes}
+            handleDrawerToggle={this.handleDrawerToggle}
+            open={this.state.mobileOpen}
+            disabled={UserStore.data.selectedPortfolio === undefined}
+            {...rest}
+          />
 
+          {UserStore.data.selectedPortfolio !== undefined ? (
             <div className={classes.mainPanel}>
               <Header
                 routes={appRoutes}
@@ -74,20 +75,16 @@ class App extends React.Component<Props> {
               */}
               {portfolios.length > 0 ? (
                 <div className={classes.content}>
-                  <div className={classes.container}>
-                    {switchRoutes}
-                  </div>
+                  <div className={classes.container}>{switchRoutes}</div>
                 </div>
               ) : (
-                <div className={classes.content}>
-                  <div className={classes.container}>
-                    {switchCreatePortfolioRoutes}
+                  <div className={classes.content}>
+                    <div className={classes.container}>{switchCreatePortfolioRoutes}</div>
                   </div>
-                </div>
                 )}
             </div>
-          </div>
-        ) : 'loading...'}
+          ) : 'loading...'}
+        </div>
       </div>
     );
   }

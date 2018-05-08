@@ -4,6 +4,12 @@
 /client/node_modules
 /server/node_modules
 
+# lockFiles
+/client/package-lock.json
+/client/yarn.lock
+/server/package-lock.json
+/server/yarn.lock
+
 # testing
 /coverage
 

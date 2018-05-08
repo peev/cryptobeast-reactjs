@@ -3,6 +3,7 @@
   "extends": "airbnb",
   "plugins": ["flowtype"],
   "rules": {
+    "linebreak-style": [0],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "camelcase": [0, { "properties": "never" }],
     "import/prefer-default-export": [0, {}],

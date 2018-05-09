@@ -1,9 +1,10 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, MenuItem, FormControl } from 'material-ui';
+import { withStyles, MenuItem, FormControl, FormHelperText } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 import uuid from 'uuid/v4';
 import { SelectValidator } from 'react-material-ui-form-validator';
+import { InputLabel } from 'material-ui/Input';
 
 const styles = (theme: Object) => ({
   button: {
@@ -85,6 +86,7 @@ class SelectPortfolioCurrency extends React.Component<Props, State> {
           >
             {allExchanges.length > 0 ? allExchanges : ''}
           </SelectValidator>
+          <FormHelperText>Some important helper text</FormHelperText>
         </FormControl>
       </div>
     );

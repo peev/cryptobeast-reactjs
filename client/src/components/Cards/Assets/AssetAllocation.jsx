@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid, FormHelperText } from 'material-ui';
 import Paper from 'material-ui/Paper';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm, SelectValidator } from 'react-material-ui-form-validator';
@@ -43,6 +43,12 @@ const styles = () => ({
   },
   alignInputWidth: {
     width: '100%',
+  },
+  required: {
+    color: '#eb4562',
+  },
+  hidden: {
+    visibility: 'hidden',
   },
 });
 
@@ -145,6 +151,7 @@ class AssetAllocation extends React.Component<Props> {
                   validators={['required']}
                   errorMessages={['this field is required']}
                 />
+                <FormHelperText className={AssetStore.assetAllocationSelectedDate === '' ? classes.required : classes.hidden}>Required*</FormHelperText>
               </Grid>
 
               <Grid item xs={3}>

@@ -1,16 +1,18 @@
 // @flow
 import * as React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid, FormHelperText } from 'material-ui';
 import Paper from 'material-ui/Paper';
+import Select from 'react-select';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { MenuItem } from 'material-ui/Menu';
+import { toJS } from 'mobx';
 import SelectValidator from 'react-material-ui-form-validator/lib/SelectValidator';
 
 import RegularButton from '../../CustomButtons/Button';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
-import '../../Selectors/Asset/SelectAllCurrency';
+import SelectAllCurrency from '../../Selectors/Asset/SelectAllCurrency';
 
 
 const styles = () => ({
@@ -36,7 +38,13 @@ const styles = () => ({
   },
   input: {
     width: '100%',
-    // marginTop: '12px',
+    marginTop: '12px',
+  },
+  required: {
+    color: '#eb4562',
+  },
+  hidden: {
+    visibility: 'hidden',
   },
 });
 
@@ -74,7 +82,7 @@ class AssetInput extends React.Component<Props> {
 
   handleFromAllCurrenciesBasicAsset = (event: SyntheticInputEvent) => {
     if (event) {
-      this.props.AssetStore.selectCurrencyBasicAsset(event.target.value);
+      this.props.AssetStore.selectCurrencyBasicAsset(event.value);
     } else {
       this.props.AssetStore.selectCurrencyBasicAsset('');
     }
@@ -83,19 +91,20 @@ class AssetInput extends React.Component<Props> {
   render() {
     const { classes, AssetStore, MarketStore } = this.props;
     const options = MarketStore.allCurrencies;
-    const optionsToShow = [];
+    const optionsToShow = toJS(options);
+    // const optionsToShow = [];
 
-    options.forEach((element: Object, i: number) => {
-      optionsToShow.push((
-        <MenuItem
-          key={element.value}
-          value={element.value}
-          index={i}
-        >
-          <em>{element.label}</em>
-        </MenuItem>
-      ));
-    });
+    // options.forEach((element: Object, i: number) => {
+    //   optionsToShow.push((
+    //     <MenuItem
+    //       key={element.value}
+    //       value={element.value}
+    //       index={i}
+    //     >
+    //       <em>{element.label}</em>
+    //     </MenuItem>
+    //   ));
+    // });
     return (
       <Grid container >
         <Paper className={classes.container}>
@@ -106,7 +115,7 @@ class AssetInput extends React.Component<Props> {
           >
             <Grid container className={classes.containerItems}>
               <Grid item xs={4} sm={3} md={3}>
-                <SelectValidator
+                {/* <SelectValidator
                   label="Select Currency"
                   name="currency-to-asset-allocation"
                   value={AssetStore.selectedCurrencyBasicAsset}
@@ -116,7 +125,27 @@ class AssetInput extends React.Component<Props> {
                   errorMessages={['this field is required']}
                 >
                   {optionsToShow}
-                </SelectValidator>
+                </SelectValidator> */}
+
+                {/* <SelectAllCurrency
+                  value={AssetStore.selectedCurrencyBasicAsset}
+                  onChange={this.handleFromAllCurrenciesBasicAsset}
+                /> */}
+
+                <Select
+                  name="currency-to-asset-allocation"
+                  value={AssetStore.selectedCurrencyBasicAsset || ''}
+                  onChange={this.handleFromAllCurrenciesBasicAsset}
+                  onClear={this.handleFromAllCurrenciesBasicAsset}
+                  options={optionsToShow}
+                  className={classes.input}
+                  style={{
+                  border: 'none',
+                  borderRadius: 0,
+                  borderBottom: '1px solid #757575',
+                }}
+                />
+                <FormHelperText className={AssetStore.selectedCurrencyBasicAsset === '' ? classes.required : classes.hidden}>Required*</FormHelperText>
                 <TextValidator
                   name="Quantity"
                   type="number"
@@ -127,6 +156,7 @@ class AssetInput extends React.Component<Props> {
                   validators={['required', 'isPositive']}
                   errorMessages={['this field is required', 'value must be a positive number']}
                 />
+                <FormHelperText className={AssetStore.assetInputValue === '' ? classes.required : classes.hidden}>Required*</FormHelperText>
               </Grid>
 
               <Grid item xs={4} sm={3} md={3}>
@@ -143,7 +173,8 @@ class AssetInput extends React.Component<Props> {
                 type="submit"
                 color="primary"
                 className="btnAdd"
-                // onClick={this.handleSave}
+              // onClick={this.handleSave}
+                disabled={AssetStore.assetInputValue === '' || AssetStore.selectedCurrencyBasicAsset === ''}
               >ADD
               </RegularButton>
             </Grid>

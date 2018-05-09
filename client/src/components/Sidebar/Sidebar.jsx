@@ -73,7 +73,7 @@ const Sidebar = ({ ...props }: Props) => {
     <div>
       <Hidden mdUp>
         <Drawer
-          type="temporary"
+          variant="temporary"
           anchor="left"
           open={props.open}
           classes={{
@@ -98,7 +98,7 @@ const Sidebar = ({ ...props }: Props) => {
       <Hidden smDown>
         <Drawer
           anchor="left"
-          type="permanent"
+          variant="permanent"
           open
           classes={{
             paper: classes.drawerPaper,

@@ -79,7 +79,7 @@ const portfolioService = (repository) => {
   const createSaveClosingSharePriceJob = async (portfolioId) => {
     const { userId } = await repository.findById({ modelName, id: portfolioId });
     const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
-    const [hours, minutes] = closingTime.value.split(':');
+    const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
     const job = new CronJob(`${minutes} ${hours} * * *`, async () => {
       // Load assets from pf here to get current values
       await updatePortfolioBTCEquivalent(portfolioId);
@@ -97,7 +97,7 @@ const portfolioService = (repository) => {
   const createSaveOpeningSharePriceJob = async (portfolioId) => {
     const { userId } = await repository.findById({ modelName, id: portfolioId });
     const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
-    const [hours, minutes] = closingTime.value.split(':');
+    const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
     const job = new CronJob(`1 ${minutes} ${hours} * * *`, async () => { // 1 second after closing time
       // Load assets from pf here to get current values
       await updatePortfolioBTCEquivalent(portfolioId);
@@ -115,7 +115,7 @@ const portfolioService = (repository) => {
   const createSaveClosingPortfolioCostJob = async (portfolioId) => {
     const { userId } = await repository.findById({ modelName, id: portfolioId });
     const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
-    const [hours, minutes] = closingTime.value.split(':');
+    const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
     const job = new CronJob(`${minutes} ${hours} * * *`, async () => {
       // Load assets from pf here to get current values
       await updatePortfolioBTCEquivalent(portfolioId);

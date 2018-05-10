@@ -376,7 +376,8 @@ class InvestorStore {
     };
     requester.Investor.add(newInvestor)
       .then(action((result) => {
-        PortfolioStore.currentPortfolioTransactions.push(result.data);
+        PortfolioStore.currentPortfolioTransactions.push(result.data.transaction);
+        PortfolioStore.currentPortfolioInvestors.push(result.data.investor);
       }))
       .catch(err => console.log(err));
   }

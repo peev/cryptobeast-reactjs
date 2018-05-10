@@ -3,11 +3,11 @@ const { responseHandler } = require('../utilities/response-handler');
 
 const modelName = 'Portfolio';
 
-const portfolioController = (repository) => {
+const portfolioController = (repository, jobs) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
-  let closingSharePriceJobs;
-  let openingSharePriceJobs;
-  let closingPortfolioCostJobs;
+  const { closingSharePriceJobs, openingSharePriceJobs, closingPortfolioCostJobs } = jobs;
+  // const printSharePriceJobs = () => console.log('>>> controller jobs: ', jobs);
+  // setInterval(printSharePriceJobs, 5000);
 
   const createPortfolio = (req, res) => {
     const portfolio = req.body;
@@ -16,13 +16,10 @@ const portfolioController = (repository) => {
         // async only this part and not the whole controller
         (async () => {
           closingSharePriceJobs[newPortfolio.id] = await portfolioService.createSaveClosingSharePriceJob(newPortfolio.id);
-        })();
-        (async () => {
           openingSharePriceJobs[newPortfolio.id] = await portfolioService.createSaveOpeningSharePriceJob(newPortfolio.id);
-        })();
-        (async () => {
           closingPortfolioCostJobs[newPortfolio.id] = await portfolioService.createSaveClosingPortfolioCostJob(newPortfolio.id);
         })();
+
         return newPortfolio;
       })
       .then((response) => {
@@ -104,21 +101,6 @@ const portfolioController = (repository) => {
         res.json(error);
       });
   };
-
-  // Initialize sharePriceJobs
-  (async () => {
-    closingSharePriceJobs = await portfolioService.initializeAllJobs(portfolioService.createSaveClosingSharePriceJob);
-  })();
-
-  (async () => {
-    openingSharePriceJobs = await portfolioService.initializeAllJobs(portfolioService.createSaveOpeningSharePriceJob);
-  })();
-
-  (async () => {
-    closingPortfolioCostJobs = await portfolioService.initializeAllJobs(portfolioService.createSaveClosingPortfolioCostJob);
-  })();
-  // const printSharePriceJobs = () => console.log('>>> closingPortfolioCostJobs: ', closingPortfolioCostJobs);
-  // setTimeout(printSharePriceJobs, 10000);
 
   return {
     getById,

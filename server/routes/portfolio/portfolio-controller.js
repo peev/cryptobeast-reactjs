@@ -105,6 +105,24 @@ const portfolioController = (repository) => {
       });
   };
 
+  const getSharePriceHistory = (req, res) => {
+    repository.find({
+      modelName: 'SharePrice',
+      options: {
+        where: {
+          portfolioId: req.body.portfolioId,
+          isClosingPrice: req.body.isClosingPrice,
+        }
+      },
+    })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   // Initialize sharePriceJobs
   (async () => {
     closingSharePriceJobs = await portfolioService.initializeAllJobs(portfolioService.createSaveClosingSharePriceJob);
@@ -129,6 +147,7 @@ const portfolioController = (repository) => {
 
     updatePortfolioBTCEquivalentOnRequest,
     getPortfolioSharePrice,
+    getSharePriceHistory,
   };
 };
 

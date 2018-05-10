@@ -13,7 +13,6 @@ import {
   Navigator,
   SplineSeries,
   RangeSelector,
-  AreaSplineSeries,
 } from 'react-jsx-highstock';
 import Highcharts from 'highcharts/highstock';
 import { inject, observer } from 'mobx-react';
@@ -48,13 +47,14 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
+  PortfolioStore: Object,
 };
 
 type State = {
   open: boolean,
 };
 
-@inject('MarketStore')
+@inject('PortfolioStore')
 @observer
 class CurrentSharePrice extends React.Component<Props, State> {
   state = {
@@ -63,53 +63,24 @@ class CurrentSharePrice extends React.Component<Props, State> {
 
   handleOpen = () => {
     this.setState({ open: true });
+
+    this.props.PortfolioStore.getClosingSharePriceHistory();
   };
+
   handleClose = () => {
     this.setState({ open: false });
   };
 
   render() {
-    const { classes } = this.props;
-    const data1 = [
-      [1483232400000, 1.4, 4.7],
-      [1483318800000, -1.3, 1.9],
-      [1483405200000, -0.7, 4.3],
-      [1483491600000, -5.5, 3.2],
-      [1483578000000, -9.9, -6.6],
-      [1483664400000, -9.6, 0.1],
-      [1483750800000, -0.9, 4.0],
-      [1483837200000, -2.2, 2.9],
-      [1483923600000, 1.3, 2.3],
-      [1484010000000, -0.3, 2.9],
-      [1484096400000, 1.1, 3.8],
-      [1484182800000, 0.6, 2.1],
-      [1484269200000, -3.4, 2.5],
-    ];
-
-    const data2 = [
-      [1483232400000, 1.4, 4.7],
-      [1483318800000, -1.3, 1.9],
-      [1483405200000, -0.7, 4.3],
-      [1483491600000, -5.5, 3.2],
-      [1483578000000, -9.9, -6.6],
-      [1483664400000, -9.6, 0.1],
-      [1483750800000, -0.9, 4.0],
-      [1483837200000, -2.2, 2.9],
-      [1483923600000, 1.3, 2.3],
-      [1484010000000, -0.3, 2.9],
-      [1484096400000, 1.1, 3.8],
-      [1484182800000, 0.6, 2.1],
-      [1484269200000, -3.4, 2.5],
-    ];
-
-    // console.log(data1[0][0], Date.now());
+    const { classes, PortfolioStore } = this.props;
+    const loadingScreen = (<p>loading</p>);
 
     return (
       <Grid container>
         <InvestorCardButton
           onClick={this.handleOpen}
         >
-          <InvestorCard headerText="$2.65" labelText="Current Share Price" />
+          <InvestorCard headerText={`$${PortfolioStore.currentPortfolioSharePrice.toFixed(2)}`} labelText="Current Share Price" />
         </InvestorCardButton>
 
         <Modal
@@ -122,7 +93,7 @@ class CurrentSharePrice extends React.Component<Props, State> {
             className={classes.paper}
           >
             <Grid container>
-              <Grid item xs={12} sm={12} md={12} className={classes.containerParagraph}>
+              <Grid item xs={12} sm={12} md={12}>
                 <Typography
                   variant="title"
                   id="modal-title"
@@ -132,48 +103,54 @@ class CurrentSharePrice extends React.Component<Props, State> {
                 </Typography>
               </Grid>
 
-              <Grid item xs={12} sm={12} md={12} className={classes.containerParagraph}>
-                <HighchartsStockChart>
-                  <Chart zoomType="x" />
-                  <Legend>
-                    {/* <Legend.Title>Key</Legend.Title> */}
-                  </Legend>
+              <Grid item xs={12} sm={12} md={12}>
+                {PortfolioStore.currentPortfolioClosingSharePricesBreackdown.length > 0 ?
+                  <HighchartsStockChart>
+                    <Chart zoomType="x" />
+                    <Legend>
+                      {/* <Legend.Title>Key</Legend.Title> */}
+                    </Legend>
 
-                  <RangeSelector>
-                    <RangeSelector.Button count={1} type="day">1d</RangeSelector.Button>
-                    <RangeSelector.Button count={7} type="day">7d</RangeSelector.Button>
-                    <RangeSelector.Button count={1} type="month">1m</RangeSelector.Button>
-                    <RangeSelector.Button type="all">All</RangeSelector.Button>
-                    <RangeSelector.Input />
-                  </RangeSelector>
+                    <RangeSelector>
+                      <RangeSelector.Button count={1} type="day">1d</RangeSelector.Button>
+                      <RangeSelector.Button count={7} type="day">7d</RangeSelector.Button>
+                      <RangeSelector.Button count={1} type="month">1m</RangeSelector.Button>
+                      <RangeSelector.Button type="all">All</RangeSelector.Button>
+                      <RangeSelector.Input />
+                    </RangeSelector>
 
-                  <Tooltip />
+                    <Tooltip />
 
-                  <XAxis>
-                    {/* <XAxis.Title>Time</XAxis.Title> */}
-                  </XAxis>
+                    <XAxis>
+                      <XAxis.Title>Time Interval</XAxis.Title>
+                    </XAxis>
 
-                  <YAxis id="price">
-                    {/* <YAxis.Title>Price difference</YAxis.Title> */}
-                    <AreaSplineSeries id="profit" name="Closing" data={data1} />
-                  </YAxis>
+                    {/* <YAxis id="price">
+                      <YAxis.Title>USD</YAxis.Title>
+                      <AreaSplineSeries id="profit" name="Opening Time" data={PortfolioStore.currentPortfolioClosingSharePricesBreackdown} />
+                    </YAxis> */}
 
-                  <YAxis id="social" opposite>
-                    {/* <YAxis.Title>Present</YAxis.Title> */}
-                    <SplineSeries id="twitter" name="Opening" data={data2} />
-                  </YAxis>
+                    <YAxis id="social" opposite>
+                      <YAxis.Title>USD</YAxis.Title>
+                      <SplineSeries
+                        id="twitter"
+                        name="Closing Time"
+                        data={PortfolioStore.currentPortfolioClosingSharePricesBreackdown}
+                      />
+                    </YAxis>
 
-                  <Navigator>
-                    <Navigator.Series seriesId="profit" />
-                    <Navigator.Series seriesId="twitter" />
-                  </Navigator>
-                </HighchartsStockChart>
+                    <Navigator>
+                      <Navigator.Series seriesId="profit" />
+                      <Navigator.Series seriesId="twitter" />
+                    </Navigator>
+                  </HighchartsStockChart>
+                  : loadingScreen}
               </Grid>
 
-              <Grid item xs={12} sm={12} md={12} className={classes.containerParagraph}>
+              <Grid item xs={12} sm={12} md={12}>
                 <Button
-                  className={classes.button}
                   color="primary"
+                  className={classes.button}
                   onClick={this.handleClose}
                 >
                   Cancel

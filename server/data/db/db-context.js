@@ -31,7 +31,18 @@ const init = ({ dbName, dbUser, dbPassword }) => new Promise((resolve, reject) =
       db.Ticker = sequelize.import(path.join(__dirname, '/models/ticker.js'));
       db.Currency = sequelize.import(path.join(__dirname, '/models/currency.js'));
       db.Transaction = sequelize.import(path.join(__dirname, '/models/transaction.js'));
+      db.SharePrice = sequelize.import(path.join(__dirname, '/models/sharePrice.js'));
+      db.PortfolioPrice = sequelize.import(path.join(__dirname, '/models/portfolioPrice.js'));
+      db.User = sequelize.import(path.join(__dirname, '/models/user.js'));
+      db.Setting = sequelize.import(path.join(__dirname, '/models/setting.js'));
       // TODO: Configure model connections here (one-to-one/one-to-many etc.)
+
+      db.User.hasMany(db.Portfolio);
+      db.Portfolio.belongsTo(db.User);
+
+      db.User.hasMany(db.Setting);
+      db.Setting.belongsTo(db.User);
+
       db.Portfolio.hasMany(db.Account);
       db.Account.belongsTo(db.Portfolio);
 
@@ -39,14 +50,18 @@ const init = ({ dbName, dbUser, dbPassword }) => new Promise((resolve, reject) =
       db.Asset.belongsTo(db.Portfolio);
 
       db.Portfolio.hasMany(db.Investor);
-      // db.todo.belongsTo(db.user);
-      // db.user.hasMany(db.todo);
 
       db.Portfolio.hasMany(db.Transaction);
       db.Transaction.belongsTo(db.Portfolio);
 
       db.Investor.hasMany(db.Transaction);
       db.Transaction.belongsTo(db.Investor);
+
+      db.Portfolio.hasMany(db.SharePrice);
+      db.SharePrice.belongsTo(db.Portfolio);
+
+      db.Portfolio.hasMany(db.PortfolioPrice);
+      db.PortfolioPrice.belongsTo(db.Portfolio);
 
       db.Sequelize = Sequelize;
       db.sequelize = sequelize;

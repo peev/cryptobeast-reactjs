@@ -1,18 +1,15 @@
 // @flow
 import * as React from 'react';
-import { withStyles, Grid, FormHelperText } from 'material-ui';
+import { withStyles, Grid } from 'material-ui';
 import Paper from 'material-ui/Paper';
 import Select from 'react-select';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { MenuItem } from 'material-ui/Menu';
 import { toJS } from 'mobx';
-import SelectValidator from 'react-material-ui-form-validator/lib/SelectValidator';
 
 import RegularButton from '../../CustomButtons/Button';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
-import SelectAllCurrency from '../../Selectors/Asset/SelectAllCurrency';
 
 
 const styles = () => ({
@@ -37,14 +34,8 @@ const styles = () => ({
     margin: '0',
   },
   input: {
-    width: '100%',
+    width: '95%',
     marginTop: '12px',
-  },
-  required: {
-    color: '#eb4562',
-  },
-  hidden: {
-    visibility: 'hidden',
   },
 });
 
@@ -133,10 +124,10 @@ class AssetInput extends React.Component<Props> {
                 /> */}
 
                 <Select
+                  placeholder="Select currency*"
                   name="currency-to-asset-allocation"
                   value={AssetStore.selectedCurrencyBasicAsset || ''}
                   onChange={this.handleFromAllCurrenciesBasicAsset}
-                  onClear={this.handleFromAllCurrenciesBasicAsset}
                   options={optionsToShow}
                   className={classes.input}
                   style={{
@@ -145,18 +136,17 @@ class AssetInput extends React.Component<Props> {
                   borderBottom: '1px solid #757575',
                 }}
                 />
-                <FormHelperText className={AssetStore.selectedCurrencyBasicAsset === '' ? classes.required : classes.hidden}>Required*</FormHelperText>
                 <TextValidator
                   name="Quantity"
                   type="number"
-                  label="Quantity..."
+                  label="Quantity*"
                   value={AssetStore.assetInputValue}
                   onChange={(e: SyntheticInputEvent) => this.handleRequest(e)}
                   // className={classes.input}
                   validators={['required', 'isPositive']}
                   errorMessages={['this field is required', 'value must be a positive number']}
+                  style={{ width: '95%' }}
                 />
-                <FormHelperText className={AssetStore.assetInputValue === '' ? classes.required : classes.hidden}>Required*</FormHelperText>
               </Grid>
 
               <Grid item xs={4} sm={3} md={3}>

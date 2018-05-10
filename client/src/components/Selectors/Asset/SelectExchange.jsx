@@ -74,6 +74,7 @@ class SelectExchange extends React.Component<Props, State> {
             }}
             validators={validators}
             errorMessages={errorMessages}
+            style={{ width: '95%' }}
           >
             {allExchanges}
           </SelectValidator>

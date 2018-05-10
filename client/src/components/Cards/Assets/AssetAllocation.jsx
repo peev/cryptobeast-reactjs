@@ -86,7 +86,6 @@ class AssetAllocation extends React.Component<Props> {
 
   handleCurrencyToAssetAllocation = (input: Object) => {
     if (input) {
-      console.log(input);
       this.props.AssetStore.selectCurrencyToAssetAllocation(input.value);
     } else {
       this.props.AssetStore.selectCurrencyToAssetAllocation('');

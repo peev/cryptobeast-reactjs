@@ -4,7 +4,7 @@ import { withStyles, Grid } from 'material-ui';
 
 import TotalInvestorsWrapped from '../../components/Modal/InvestorModals/TotalInvestors';
 import SharesInCirculationWrapped from '../../components/Modal/InvestorModals/SharesInCirculation';
-import CurrentSharePriceWrapped from '../../components/Modal/InvestorModals/CurrentSharePrice';
+import CurrentSharePrice from '../../components/Modal/InvestorModals/CurrentSharePrice';
 import TotalFeePotential from '../../components/Modal/InvestorModals/TotalFeePotential';
 
 import AddInvestorWrapped from '../../components/Modal/InvestorModals/AddInvestor';
@@ -57,7 +57,7 @@ const Investors = ({ classes }: Object) => (
         <SharesInCirculationWrapped />
       </Grid>
       <Grid item xs={3} sm={3} md={3} className={classes.herderTopButton}>
-        <CurrentSharePriceWrapped />
+        <CurrentSharePrice />
       </Grid>
       <Grid item xs={3} sm={3} md={3} className={classes.herderTopButton}>
         <TotalFeePotential />

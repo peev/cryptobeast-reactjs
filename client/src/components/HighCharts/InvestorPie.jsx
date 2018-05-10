@@ -3,7 +3,6 @@ import Highcharts from 'highcharts';
 import {
   HighchartsChart,
   withHighcharts,
-  YAxis,
   Legend,
   Tooltip,
   PieSeries,
@@ -35,20 +34,20 @@ class InvestorPieChart extends Component {
     return (
       <HighchartsChart>
         <Legend layout="vertical" align="right" verticalAlign="middle" />
-        <Tooltip animation pointFormat={pieData.y} />
-        <YAxis id="number">
-          <PieSeries
-            type="Pie"
-            id="total-consumption"
-            name="Total Shares"
-            data={pieData}
-            center={[300, 120]}
-            size={255}
-            tooltip={{ valueSuffix: '%' }}
-            showInLegend
-            dataLabels={{ enabled: true }}
-          />
-        </YAxis>
+
+        <Tooltip />
+
+        <PieSeries
+          type="Pie"
+          id="total-consumption"
+          name="Total Shares"
+          data={pieData}
+          center={[300, 120]}
+          size={255}
+          tooltip={{ valueSuffix: '%' }}
+          showInLegend
+          dataLabels={{ enabled: true }}
+        />
       </HighchartsChart>
     );
   }

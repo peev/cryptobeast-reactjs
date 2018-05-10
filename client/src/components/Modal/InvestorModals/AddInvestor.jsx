@@ -256,7 +256,7 @@ class AddInvestor extends React.Component<Props, State> {
                 name="share price"
                 label="Share Price at Entry Date (usd)"
                 className={classes.alignInputAfter}
-                value={PortfolioStore.currentPortfolioSharePrice.toFixed(2) || ''}
+                value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
                 style={{ width: '95%' }}
               />
               </Grid>

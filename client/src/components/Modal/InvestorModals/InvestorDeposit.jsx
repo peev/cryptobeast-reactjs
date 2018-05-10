@@ -83,6 +83,7 @@ class InvestorDeposit extends React.Component<Props, State> {
   handleClose = () => {
     this.props.InvestorStore.resetDeposit();
     this.props.MarketStore.resetMarket();
+    this.props.InvestorStore.resetSelectedInvestor();
 
     this.setState({ open: false });
   };

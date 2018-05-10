@@ -683,6 +683,11 @@ class InvestorStore {
 
     this.selectedInvestor = '';
   }
+
+  @action.bound
+  resetSelectedInvestor() {
+    this.selectedInvestorId = null;
+  }
   // #endregion
 
   // Others

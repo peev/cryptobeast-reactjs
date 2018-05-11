@@ -311,9 +311,16 @@ class PortfolioStore {
       name: this.newPortfolioName,
     };
     requester.Portfolio.create(newPortfolio)
-      .then(() => {
+      .then(action((result) => {
         this.getPortfolios(); // gets new portfolios
-      })
+
+        // Create deafault investor
+        InvestorStore.newInvestorValues.fullName = 'default';
+        InvestorStore.newInvestorValues.email = 'default';
+        InvestorStore.newInvestorValues.dateOfEntry = Date.now();
+        
+        InvestorStore.createNewInvestor(result.data.id);
+      }))
       .catch(err => console.log(err));
   }
 

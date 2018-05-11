@@ -46,7 +46,6 @@ type Props = {
   classes: Object,
   InvestorStore: Object,
   NotificationStore: Object,
-  MarketStore: Object,
   PortfolioStore: Object,
 };
 
@@ -54,7 +53,7 @@ type State = {
   open: boolean,
 };
 
-@inject('InvestorStore', 'PortfolioStore', 'MarketStore', 'NotificationStore')
+@inject('InvestorStore', 'PortfolioStore', 'NotificationStore')
 @observer
 class CreatePortfolio extends React.Component<Props, State> {
   state = {
@@ -66,6 +65,9 @@ class CreatePortfolio extends React.Component<Props, State> {
   };
 
   handleClose = () => {
+    this.props.PortfolioStore.resetPortfolio();
+    this.props.InvestorStore.reset();
+
     this.setState({ open: false });
   };
 
@@ -84,10 +86,10 @@ class CreatePortfolio extends React.Component<Props, State> {
   }
 
   handleSave = () => {
+    
     this.props.PortfolioStore.createPortfolio();
-    this.props.PortfolioStore.resetPortfolio();
 
-    this.setState({ open: false });
+    this.handleClose();
   };
 
   render() {
@@ -136,9 +138,8 @@ class CreatePortfolio extends React.Component<Props, State> {
 
             <SelectBaseCurrency
               label="Select currency"
+              validators={['isPositive']}
             />
-
-
 
             <TextValidator
               label="Portfolio investment (optional)"
@@ -149,15 +150,6 @@ class CreatePortfolio extends React.Component<Props, State> {
               validators={['isPositive']}
               errorMessages={['this field is required', 'value must be a positive number']}
             />
-
-            <br />
-
-
-
-
-
-
-
             <br />
 
             {/* Cancel BUTTON */}
@@ -176,7 +168,7 @@ class CreatePortfolio extends React.Component<Props, State> {
               // onClick={this.handleSave}
               color="primary"
               disabled={NotificationStore.getErrorsLength > 0}
-              
+
               type="submit"
             >
               {' '}

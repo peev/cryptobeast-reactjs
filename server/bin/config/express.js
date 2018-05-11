@@ -47,13 +47,9 @@ const init = async (repository) => {
     marketService.syncTickersFromKraken();
   }
   // Market jobs
-  // marketService.createMarketJob(marketService.syncCurrenciesFromApi, { hour: 23, minute: 59, second: '*' });
-  // marketService.createMarketJob(marketService.syncSummaries, { minute: 0, second: '*' }); // sync every hour
-  // marketService.createMarketJob(marketService.syncTickersFromKraken, { minute: 0, second: '*' }); // sync every hour
-
-  // Test db impact
-  marketService.createMarketJob(marketService.syncSummaries); // sync every minute
-  marketService.createMarketJob(marketService.syncTickersFromKraken); // sync every minute
+  marketService.createMarketJob(marketService.syncCurrenciesFromApi, { hour: 23, minute: 59, second: '*' });
+  marketService.createMarketJob(marketService.syncSummaries, { minute: 0, second: '*' }); // sync every hour
+  marketService.createMarketJob(marketService.syncTickersFromKraken, { minute: 0, second: '*' }); // sync every hour
 
   // Initialize all portfolio jobs and pass them to portfolio-controller
   let jobs = {
@@ -61,7 +57,7 @@ const init = async (repository) => {
     openingSharePriceJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveOpeningSharePriceJob),
     closingPortfolioCostJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveClosingPortfolioCostJob),
   };
-  // Test jobs singleton
+  // Test if jobs is singleton
   // const printSharePriceJobs = () => console.log('>>> express jobs: ', jobs);
   // setInterval(printSharePriceJobs, 5000);
   // #endregion

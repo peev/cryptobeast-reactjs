@@ -40,7 +40,7 @@ const marketService = (repository) => {
     return repository.createMany({ modelName: 'Currency', newObjects: currencies });
   }
 
-  const createMarketJob = (marketFunction, time = { second: 0 }) => {
+  const createMarketJob = (marketFunction, time) => {
     // const time = { second: 1 } // every first second of each minute
     const { hour = '*', minute = '*', second = '*' } = time;
     const job = new CronJob(`${second} ${minute} ${hour} * * *`, () => {

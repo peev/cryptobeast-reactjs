@@ -262,7 +262,7 @@ class PortfolioStore {
   @computed
   get currentPortfolioSharePrice() {
     if (this.selectedPortfolio) {
-      return this.currentSelectedPortfolioCost / (this.selectedPortfolio.shares || 1);
+      return (this.currentSelectedPortfolioCost || 1) / (this.selectedPortfolio.shares || 1);
     }
     return 1;
   }

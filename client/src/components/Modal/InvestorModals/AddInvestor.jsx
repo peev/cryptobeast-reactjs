@@ -235,7 +235,7 @@ class AddInvestor extends React.Component<Props, State> {
                   name="USD"
                   label="Deposited USD Equiv."
                   // className={classes.alignInputAfter}
-                  value={InvestorStore.convertedtUsdEquiv || ''}
+                  value={Math.round(InvestorStore.convertedUsdEquiv * 100) / 100 || ''}
                 />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
@@ -252,11 +252,13 @@ class AddInvestor extends React.Component<Props, State> {
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <Input
-                  placeholder="Share price at entry Date"
-                  className={classes.alignInput}
-                  value={PortfolioStore.currentPortfolioSharePrice || ''}
-                />
+              <TextValidator
+                name="share price"
+                label="Share Price at Entry Date (usd)"
+                className={classes.alignInputAfter}
+                value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
+                style={{ width: '95%' }}
+              />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <Input

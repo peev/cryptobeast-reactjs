@@ -1,6 +1,6 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, Input, Grid } from 'material-ui';
+import { withStyles, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
@@ -51,7 +51,6 @@ const styles = (theme: Object) => ({
 type Props = {
   classes: Object,
   InvestorStore: Object,
-  NotificationStore: Object,
   PortfolioStore: Object,
   MarketStore: Object,
 };
@@ -67,6 +66,16 @@ class InvestorDeposit extends React.Component<Props, State> {
     open: false,
   };
 
+  componentWillMount() {
+    // custom rule will have name 'isPasswordMatch'
+    ValidatorForm.addValidationRule('isDateValid', (value: string) => {
+      if (new Date(value) > Date.now()) {
+        return false;
+      }
+      return true;
+    });
+  }
+
   handleOpen = () => {
     this.setState({ open: true });
   };
@@ -74,6 +83,7 @@ class InvestorDeposit extends React.Component<Props, State> {
   handleClose = () => {
     this.props.InvestorStore.resetDeposit();
     this.props.MarketStore.resetMarket();
+    this.props.InvestorStore.resetSelectedInvestor();
 
     this.setState({ open: false });
   };
@@ -84,7 +94,6 @@ class InvestorDeposit extends React.Component<Props, State> {
 
   handleDepositRequests = (propertyType: string) => (event: SyntheticEvent) => {
     event.preventDefault();
-
     const inputValue = event.target.value;
     this.props.InvestorStore.setNewDepositInvestorValues(propertyType, inputValue);
   }
@@ -101,7 +110,7 @@ class InvestorDeposit extends React.Component<Props, State> {
 
   render() {
     const {
-      classes, InvestorStore, PortfolioStore, NotificationStore,
+      classes, InvestorStore, PortfolioStore, MarketStore,
     } = this.props;
 
     return (
@@ -149,8 +158,8 @@ class InvestorDeposit extends React.Component<Props, State> {
                   onChange={this.handleDepositRequests('transactionDate')}
                   value={InvestorStore.newDepositValues.transactionDate || ''}
                   className={classes.alignInput}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
+                  validators={['required', 'isDateValid']}
+                  errorMessages={['this field is required', 'Date must be before today']}
                 />
               </Grid>
             </Grid>
@@ -159,9 +168,10 @@ class InvestorDeposit extends React.Component<Props, State> {
                 <TextValidator
                   name="amount"
                   type="number"
-                  label="Amount"
+                  label="Amount*"
                   onChange={this.handleDepositRequests('amount')}
                   value={InvestorStore.newDepositValues.amount || ''}
+                  style={{ width: '95%' }}
                   // className={classes.alignInputAfter}
                   validators={['required', 'isPositive']}
                   errorMessages={['this field is required', 'value must be a positive number']}
@@ -187,16 +197,19 @@ class InvestorDeposit extends React.Component<Props, State> {
 
               {/* <SelectBaseCurrency /> */}
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <Input
-                  placeholder="Share Price at Entry Date"
+                <TextValidator
+                  name="share price"
+                  label="Share Price at Entry Date (usd)"
                   className={classes.alignInputAfter}
-                  value={PortfolioStore.currentPortfolioSharePrice || ''}
+                  value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
+                  style={{ width: '95%' }}
                 />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <Input
+                <TextValidator
+                  name="purchased shares"
                   placeholder="Purchased Shares"
-                  className={classes.alignInputAfter}
+                  style={{ marginTop: '26px' }}
                   value={InvestorStore.depositPurchasedShares || ''}
                 />
               </Grid>
@@ -214,14 +227,14 @@ class InvestorDeposit extends React.Component<Props, State> {
               <Button
                 type="submit"
                 color="primary"
-                disabled={NotificationStore.getErrorsLength > 0}
+                disabled={InvestorStore.newDepositValues.amount === '' || InvestorStore.newDepositValues.transactionDate === '' ||
+                MarketStore.selectedBaseCurrency == null || InvestorStore.selectedInvestorId === ''}
               >
                 Save
               </Button>
             </Grid>
           </ValidatorForm>
         </Modal>
-        {/* {errorMessagesArray} */}
         <NotificationSnackbar />
       </Grid >
     );

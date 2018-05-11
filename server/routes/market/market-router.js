@@ -6,7 +6,7 @@ const attachTo = (app, data) => {
 
   router
     .get('/syncSummaries', (req, res) => {
-      return marketController.syncSummaries(req, res);
+      return marketController.syncSummariesOnRequest(req, res);
     })
     .get('/summaries', (req, res) => {
       return marketController.getSummaries(req, res);
@@ -18,13 +18,13 @@ const attachTo = (app, data) => {
       return marketController.syncTickersFromApi(req, res);
     })
     .post('/syncBaseTickers', (req, res) => {
-      return marketController.syncTickersFromKraken(req, res); // Kraken
+      return marketController.syncTickersFromKrakenOnRequest(req, res); // Kraken
     })
     .get('/allTickers', (req, res) => {
       return marketController.getAllTickers(req, res);
     })
     .get('/syncCurrencies', (req, res) => {
-      return marketController.syncCurrenciesFromApi(req, res);
+      return marketController.syncCurrenciesFromApiOnRequest(req, res);
     })
     .get('/allCurrencies', (req, res) => {
       return marketController.getAllCurrencies(req, res);

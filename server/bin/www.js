@@ -9,8 +9,8 @@ require('./../data/db/db-context')
   .then((dbContext) => {
     return require('./../data/repository').init(dbContext);
   })
-  .then((data) => {
-    return require('./config/express').init(data);
+  .then((repository) => {
+    return require('./config/express').init(repository);
   })
   .then((app) => {
     const port = normalizePort(process.env.PORT || constants.port);

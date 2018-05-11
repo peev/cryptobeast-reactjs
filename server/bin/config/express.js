@@ -7,7 +7,11 @@ const cors = require('cors');
 const path = require('path');
 
 
-const init = (data) => {
+
+const init = async (repository) => {
+  const portfolioService = require('../../services/portfolio-service')(repository);
+  const marketService = require('../../services/market-service')(repository);
+
   const app = express();
 
   app.use(cors());
@@ -31,25 +35,49 @@ const init = (data) => {
     next();
   });
 
+  // #region Middleware
   // TODO: Here you can add new middleware
   // require('./passport').applyTo(app, data);
 
+  // Initialize market summaries, base tickers and their sync jobs
+  const currencies = await repository.find({ modelName: 'Currency' });
+  if (!currencies) {
+    marketService.syncCurrenciesFromApi();
+    marketService.syncSummaries();
+    marketService.syncTickersFromKraken();
+  }
+  // Market jobs
+  marketService.createMarketJob(marketService.syncCurrenciesFromApi, { hour: 23, minute: 59, second: '*' });
+  marketService.createMarketJob(marketService.syncSummaries, { minute: 0, second: '*' }); // sync every hour
+  marketService.createMarketJob(marketService.syncTickersFromKraken, { minute: 0, second: '*' }); // sync every hour
+
+  // Initialize all portfolio jobs and pass them to portfolio-controller
+  let jobs = {
+    closingSharePriceJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveClosingSharePriceJob),
+    openingSharePriceJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveOpeningSharePriceJob),
+    closingPortfolioCostJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveClosingPortfolioCostJob),
+  };
+  // Test if jobs is singleton
+  // const printSharePriceJobs = () => console.log('>>> express jobs: ', jobs);
+  // setInterval(printSharePriceJobs, 5000);
+  // #endregion
+
   // TODO: Create router for every new model and add it here
-  require('./../../routes/portfolio/portfolio-router').attachTo(app, data);
-  require('./../../routes/asset/asset-router').attachTo(app, data);
-  require('./../../routes/market/market-router').attachTo(app, data);
-  require('./../../routes/account/account-router').attachTo(app, data);
-  require('./../../routes/investor/investor-router').attachTo(app, data);
+  require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
+  require('./../../routes/asset/asset-router').attachTo(app, repository);
+  require('./../../routes/market/market-router').attachTo(app, repository);
+  require('./../../routes/account/account-router').attachTo(app, repository);
+  require('./../../routes/investor/investor-router').attachTo(app, repository);
 
 
   /// Handle Errors
   // catch 404 and forward to error handler
-  app.use(function(req, res, next) {
+  app.use(function (req, res, next) {
     next(createError(404));
   });
 
   // error handler
-  app.use(function(err, req, res, next) {
+  app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};

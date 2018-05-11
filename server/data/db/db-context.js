@@ -28,7 +28,9 @@ const init = ({ dbName, dbUser, dbPassword }) => new Promise((resolve, reject) =
       db.Asset = sequelize.import(path.join(__dirname, '/models/asset.js'));
       db.Investor = sequelize.import(path.join(__dirname, '/models/investor.js'));
       db.MarketSummary = sequelize.import(path.join(__dirname, '/models/marketSummary.js'));
+      db.MarketSummaryHistory = sequelize.import(path.join(__dirname, '/models/marketSummaryHistory.js'));
       db.Ticker = sequelize.import(path.join(__dirname, '/models/ticker.js'));
+      db.TickerHistory = sequelize.import(path.join(__dirname, '/models/tickerHistory.js'));
       db.Currency = sequelize.import(path.join(__dirname, '/models/currency.js'));
       db.Transaction = sequelize.import(path.join(__dirname, '/models/transaction.js'));
       db.SharePrice = sequelize.import(path.join(__dirname, '/models/sharePrice.js'));

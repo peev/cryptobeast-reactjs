@@ -22,6 +22,7 @@ type Props = {
   routes: Array<string>,
   handleDrawerToggle: Function,
   open: boolean,
+  disabled: boolean,
 };
 
 const Sidebar = ({ ...props }: Props) => {
@@ -29,10 +30,8 @@ const Sidebar = ({ ...props }: Props) => {
   function activeRoute(routeName: string) {
     return props.location.pathname.indexOf(routeName) > -1;
   }
-  const {
-    classes, color, image, routes,
-    // logo, logoText,
-  } = props;
+  const { classes, color, image, routes, disabled } = props;
+
   const links = (
     <List className={classes.list}>
       {routes.map((prop: Object) => {
@@ -73,7 +72,7 @@ const Sidebar = ({ ...props }: Props) => {
     <div>
       <Hidden mdUp>
         <Drawer
-          type="temporary"
+          variant="temporary"
           anchor="left"
           open={props.open}
           classes={{
@@ -95,13 +94,14 @@ const Sidebar = ({ ...props }: Props) => {
           ) : null}
         </Drawer>
       </Hidden>
+
       <Hidden smDown>
         <Drawer
           anchor="left"
-          type="permanent"
+          variant="permanent"
           open
           classes={{
-            paper: classes.drawerPaper,
+            paper: `${classes.drawerPaper} ${(disabled ? classes.disableOverlay : '')}`,
           }}
         >
           <div className={classes.sidebarWrapper}>{links}</div>

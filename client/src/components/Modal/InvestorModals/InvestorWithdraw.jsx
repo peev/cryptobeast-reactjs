@@ -170,17 +170,17 @@ class InvestorWithdraw extends React.Component<Props, State> {
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <TextValidator
-                  name="shares"
-                  type="number"
-                  label="Share Price at Entry Date"
-                  className={classes.alignInput}
-                  value={PortfolioStore.currentPortfolioSharePrice || ''}
-                />
+              <TextValidator
+                name="share price"
+                label="Share Price at Entry Date (usd)"
+                className={classes.alignInputAfter}
+                value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
+                style={{ width: '95%' }}
+              />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
-                  name="shares"
+                  name="shares2"
                   type="number"
                   label="Purchased Shares"
                   value={InvestorStore.withdrawPurchasedShares || ''}

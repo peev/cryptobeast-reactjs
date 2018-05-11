@@ -79,7 +79,7 @@ class SelectBaseCurrency extends React.Component<Props, State> {
 
           <SelectValidator
             name="currency"
-            label="Select Base Currency"
+            label="Select Base Currency*"
             open={this.state.open}
             value={this.state.baseCurrencyId}
             // onOpen={this.handleOpen}

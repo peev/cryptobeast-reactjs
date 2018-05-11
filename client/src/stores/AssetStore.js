@@ -58,7 +58,7 @@ class AssetStore {
 
     /**
      * This checks if current available asset can be converted to desired output asset.
-     * If soo, suggest quantity to convert for.
+     * If so, suggest quantity to convert for.
      * currentFromQuantity => current BTC or other crypto currencies quantity for available asset
      * currentToQuantity => current BTC or other crypto currencies quantity for output asset
      */
@@ -103,20 +103,11 @@ class AssetStore {
 
   @action
   setBasicAssetInputValue(value) {
-    if (value < 0) {
-      return;
-    }
-
     this.assetInputValue = value;
   }
 
   @action.bound
   setAssetAllocationValue(type, value) {
-    if (parseInt(value, 10) < 0) {
-      NotificationStore.addMessage('errorMessages', 'No negative values.');
-      return;
-    }
-
     if (type === 'assetAllocationFromAmount' &&
       this.selectedCurrencyFromAssetAllocation !== '') {
       if (parseInt(value, 10) > this.selectedCurrencyFromAssetAllocation.balance) {
@@ -143,43 +134,6 @@ class AssetStore {
     }
 
     this[type] = value;
-  }
-
-  @action.bound
-  handleAssetAllocationErrors() {
-    let noErrors = true;
-
-    // Checks if date is entered
-    if (this.assetAllocationSelectedDate === '') {
-      NotificationStore.addMessage('errorMessages', 'Date of allocation is required.');
-      noErrors = false;
-    }
-    if (this.selectedCurrencyFromAssetAllocation === '') {
-      NotificationStore.addMessage('errorMessages', 'Type of currency for paid or sent asset is required');
-      noErrors = false;
-    }
-    if (this.assetAllocationFromAmount === '') {
-      NotificationStore.addMessage('errorMessages', 'Amount of bought or received asset is required.');
-      noErrors = false;
-    }
-    if (this.selectedCurrencyToAssetAllocation === '') {
-      NotificationStore.addMessage('errorMessages', 'Type of currency for bought or received asset is required.');
-      noErrors = false;
-    }
-    if (this.assetAllocationToAmount === '') {
-      NotificationStore.addMessage('errorMessages', 'Amount of bought or received asset is required.');
-      noErrors = false;
-    }
-    if (this.selectedCurrencyForTransactionFee === '') {
-      NotificationStore.addMessage('errorMessages', 'Type of currency for asset fee is required.');
-      noErrors = false;
-    }
-    if (this.assetAllocationFee === '') {
-      NotificationStore.addMessage('errorMessages', 'Amount of asset fee is required.');
-      noErrors = false;
-    }
-
-    return noErrors;
   }
 
   @action
@@ -287,6 +241,10 @@ class AssetStore {
     }
 
     return foundCurrency;
+  }
+  @action.bound
+  resetCurrency() {
+    this.selectedCurrencyFromAssetAllocation = '';
   }
 }
 

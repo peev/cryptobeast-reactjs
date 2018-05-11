@@ -67,7 +67,7 @@ const investorController = (repository) => {
         updateShares(transaction);
         repository.create({ modelName: 'Transaction', newObject: transaction })
           .then((response) => {
-            res.status(200).send(response);
+            res.status(200).send({ investor: newInvestor, transaction: response });
           })
           .catch(error => res.json(error));
       })

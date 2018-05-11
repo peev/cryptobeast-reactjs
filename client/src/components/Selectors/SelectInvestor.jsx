@@ -62,12 +62,13 @@ class SelectInvestor extends React.Component<Props> {
           </InputLabel> */}
           <SelectValidator
             name="investor"
-            label="select investor"
+            label="Select investor*"
             // open={this.state.open}
             value={this.props.InvestorStore.selectedInvestorId || ''}
             onClose={this.handleClose}
             // onOpen={this.handleOpen}
             onChange={this.handleChange}
+            style={{ width: '95%' }}
             inputProps={{
               id: 'controlled-open-select',
             }}

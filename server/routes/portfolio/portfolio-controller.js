@@ -1,11 +1,30 @@
+const { CronJob } = require('cron');
 const { responseHandler } = require('../utilities/response-handler');
 
 const modelName = 'Portfolio';
 
 const portfolioController = (repository) => {
+  const portfolioService = require('../../services/portfolio-service')(repository);
+  let closingSharePriceJobs;
+  let openingSharePriceJobs;
+  let closingPortfolioCostJobs;
+
   const createPortfolio = (req, res) => {
     const portfolio = req.body;
     repository.create({ modelName, newObject: portfolio })
+      .then((newPortfolio) => {
+        // async only this part and not the whole controller
+        (async () => {
+          closingSharePriceJobs[newPortfolio.id] = await portfolioService.createSaveClosingSharePriceJob(newPortfolio.id);
+        })();
+        (async () => {
+          openingSharePriceJobs[newPortfolio.id] = await portfolioService.createSaveOpeningSharePriceJob(newPortfolio.id);
+        })();
+        (async () => {
+          closingPortfolioCostJobs[newPortfolio.id] = await portfolioService.createSaveClosingPortfolioCostJob(newPortfolio.id);
+        })();
+        return newPortfolio;
+      })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -50,6 +69,12 @@ const portfolioController = (repository) => {
 
   const removePortfolio = (req, res) => {
     const { id } = req.params;
+    closingSharePriceJobs[id].stop();
+    delete closingSharePriceJobs[id];
+    openingSharePriceJobs[id].stop();
+    delete openingSharePriceJobs[id];
+    closingPortfolioCostJobs[id].stop();
+    delete closingPortfolioCostJobs[id];
     repository.remove({ modelName, id })
       .then(result => responseHandler(res, result))
       .catch((error) => {
@@ -58,71 +83,9 @@ const portfolioController = (repository) => {
   };
 
   // TODO: Calculate prices in the front end
-  const updateAssetBTCEquivalent = (asset) => {
-    return new Promise((resolve, reject) => {
-      let assetPair;
-      let lastBTCEquivalent;
-      let updatedRecord;
-
-      switch (asset.currency) {
-        case 'BTC':
-          lastBTCEquivalent = asset.balance;
-          resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-          repository.update({ modelName: 'Asset', updatedRecord });
-          break;
-        case 'USDT':
-          assetPair = `${asset.currency}-BTC`;
-          repository.findById({ modelName: 'Ticker', id: assetPair })
-            .then((foundTickers) => {
-              lastBTCEquivalent = asset.balance / foundTickers.last;
-              resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-              repository.update({ modelName: 'Asset', updatedRecord });
-            });
-          break;
-        case 'USD':
-        case 'JPY':
-        case 'EUR':
-          assetPair = asset.currency;
-          repository.findById({ modelName: 'Ticker', id: assetPair })
-            .then((foundTickers) => {
-              lastBTCEquivalent = asset.balance / foundTickers.last;
-              resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-              repository.update({ modelName: 'Asset', updatedRecord });
-            });
-          break;
-        default:
-          assetPair = `BTC-${asset.currency}`;
-          repository.findById({ modelName: 'Ticker', id: assetPair })
-            .then((foundTickers) => {
-              lastBTCEquivalent = asset.balance * foundTickers.last;
-              resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-              repository.update({ modelName: 'Asset', updatedRecord });
-            });
-          break;
-      }
-    });
-  };
-
-  const updatePortfolioBTCEquivalent = (req, res) => {
-    repository.find({
-      modelName,
-      options: {
-        where: { id: req.body.id },
-        include: [{ all: true }],
-      },
-    })
-      .then((foundPortfolios) => {
-        if (foundPortfolios[0].assets !== 0) {
-          return Promise.all(foundPortfolios[0].assets.map((asset) => {
-            return updateAssetBTCEquivalent(asset);
-          }))
-            .then((r) => {
-              const cost = r.reduce((acc, b) => acc + b.lastBTCEquivalent, 0);
-              const updatedRecord = { id: foundPortfolios[0].id, cost };
-              return repository.update({ modelName, updatedRecord });
-            });
-        }
-      })
+  const updatePortfolioBTCEquivalentOnRequest = (req, res) => {
+    const portfolioId = req.body.id;
+    portfolioService.updatePortfolioBTCEquivalent(portfolioId)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -132,13 +95,8 @@ const portfolioController = (repository) => {
   };
 
   const getPortfolioSharePrice = (req, res) => {
-    const findPortfolio = repository.findById({ modelName: 'Portfolio', id: req.body.id });
-    const findUSDTicker = repository.findOne({ modelName: 'Ticker', options: { where: { pair: 'USD' } } });
-
-    Promise.all([findPortfolio, findUSDTicker])
-      .then(([pf, usdTicker]) => {
-        return pf.shares === 0 ? 1 : ((pf.cost * usdTicker.last) / pf.shares);
-      })
+    const portfolioId = req.body.id;
+    portfolioService.calcSharePrice(portfolioId)
       .then((sharePrice) => {
         res.status(200).send({ sharePrice });
       })
@@ -147,6 +105,39 @@ const portfolioController = (repository) => {
       });
   };
 
+  const getSharePriceHistory = (req, res) => {
+    repository.find({
+      modelName: 'SharePrice',
+      options: {
+        where: {
+          portfolioId: req.body.portfolioId,
+          isClosingPrice: req.body.isClosingPrice,
+        }
+      },
+    })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  // Initialize sharePriceJobs
+  (async () => {
+    closingSharePriceJobs = await portfolioService.initializeAllJobs(portfolioService.createSaveClosingSharePriceJob);
+  })();
+
+  (async () => {
+    openingSharePriceJobs = await portfolioService.initializeAllJobs(portfolioService.createSaveOpeningSharePriceJob);
+  })();
+
+  (async () => {
+    closingPortfolioCostJobs = await portfolioService.initializeAllJobs(portfolioService.createSaveClosingPortfolioCostJob);
+  })();
+  // const printSharePriceJobs = () => console.log('>>> closingPortfolioCostJobs: ', closingPortfolioCostJobs);
+  // setTimeout(printSharePriceJobs, 10000);
+
   return {
     getById,
     getAllPortfolios,
@@ -154,9 +145,9 @@ const portfolioController = (repository) => {
     updatePortfolio,
     removePortfolio,
 
-    updateAssetBTCEquivalent,
-    updatePortfolioBTCEquivalent,
+    updatePortfolioBTCEquivalentOnRequest,
     getPortfolioSharePrice,
+    getSharePriceHistory,
   };
 };
 

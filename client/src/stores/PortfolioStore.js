@@ -18,6 +18,7 @@ class PortfolioStore {
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
+  @observable currentPortfolioClosingSharePrices;
   @observable newPortfolioName;
 
   constructor() {
@@ -27,6 +28,7 @@ class PortfolioStore {
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
+    this.currentPortfolioClosingSharePrices = [];
     this.newPortfolioName = '';
 
 
@@ -213,7 +215,7 @@ class PortfolioStore {
           const index = marketSummary[el].MarketName.indexOf('-');
           const name = marketSummary[el].MarketName.slice(index + 1);
           const elemCost = +(((marketSummary[el].Last - marketSummary[el].PrevDay) /
-              marketSummary[el].PrevDay) * 100)
+            marketSummary[el].PrevDay) * 100)
             .toFixed(2);
           return [name, elemCost, 42];
         })
@@ -273,6 +275,21 @@ class PortfolioStore {
 
     return 0;
   }
+
+  @computed
+  get currentPortfolioClosingSharePricesBreackdown() {
+    if (this.selectedPortfolio && this.currentPortfolioClosingSharePrices.length > 0) {
+      return this.currentPortfolioClosingSharePrices
+        .filter(el => el.isClosingPrice === true)
+        .map((el) => {
+          const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
+          return [timeOfCreation, el.price, null];
+        });
+    }
+
+    return [];
+  }
+
   // #endregion
 
   // ======= Action =======
@@ -350,6 +367,19 @@ class PortfolioStore {
           reject(err);
         });
     });
+  }
+
+  @action.bound
+  getClosingSharePriceHistory() {
+    const searchedHistoryItems = {
+      portfolioId: this.selectedPortfolioId,
+      isClosingPrice: true,
+    };
+
+    requester.Portfolio.getSharePriceHistory(searchedHistoryItems)
+      .then(action((result) => {
+        this.currentPortfolioClosingSharePrices = result.data;
+      }));
   }
 
   @action.bound

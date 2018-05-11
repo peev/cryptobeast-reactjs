@@ -12,6 +12,7 @@ const attachTo = (app, repository, jobs) => {
     .delete('/delete/:id', (req, res) => portfolioController.removePortfolio(req, res))
     .post('/updatePortfolioCost', (req, res) => portfolioController.updatePortfolioBTCEquivalentOnRequest(req, res))
     .post('/getPortfolioSharePrice', (req, res) => portfolioController.getPortfolioSharePrice(req, res))
+    .post('/sharePriceHistory', (req, res) => portfolioController.getSharePriceHistory(req, res))
 
   app.use('/portfolio', router);
 };

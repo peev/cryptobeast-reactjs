@@ -3,8 +3,10 @@ import React from 'react';
 import { withStyles, Grid } from 'material-ui';
 import Paper from 'material-ui/Paper';
 import { inject, observer } from 'mobx-react';
-import { TextValidator, ValidatorForm, SelectValidator } from 'react-material-ui-form-validator';
+import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { MenuItem } from 'material-ui/Menu';
+import { toJS } from 'mobx';
+import Select from 'react-select';
 
 import RegularButton from '../../CustomButtons/Button';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
@@ -30,19 +32,19 @@ const styles = () => ({
     margin: '0',
   },
   alignInput: {
-    width: '100%',
-    marginTop: '21px',
+    width: '95%',
+    marginTop: '25px',
   },
   alignInputAfter: {
-    width: '100%',
+    width: '95%',
     marginTop: '5px',
   },
   alignInputAfter2: {
-    width: '100%',
+    width: '95%',
     marginTop: '12px',
   },
   alignInputWidth: {
-    width: '100%',
+    width: '95%',
   },
 });
 
@@ -62,13 +64,13 @@ class AssetAllocation extends React.Component<Props> {
 
   handleSave = () => {
     const { AssetStore } = this.props;
-    const hasErrors = AssetStore.handleAssetAllocationErrors();
+    // const hasErrors = AssetStore.handleAssetAllocationErrors();
 
-    if (hasErrors) {
-      AssetStore.createAssetAllocation();
-      this.props.NotificationStore.addMessage('successMessages', 'Successful asset allocation');
-      AssetStore.resetAssetAllocation();
-    }
+    // if (hasErrors) {
+    AssetStore.createAssetAllocation();
+    this.props.NotificationStore.addMessage('successMessages', 'Successful asset allocation');
+    AssetStore.resetAssetAllocation();
+    // }
   }
 
   handleRequests = (type: *) => (event: SyntheticInputEvent) => {
@@ -84,7 +86,7 @@ class AssetAllocation extends React.Component<Props> {
 
   handleCurrencyToAssetAllocation = (input: Object) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyToAssetAllocation(input.target.value);
+      this.props.AssetStore.selectCurrencyToAssetAllocation(input.value);
     } else {
       this.props.AssetStore.selectCurrencyToAssetAllocation('');
     }
@@ -92,7 +94,7 @@ class AssetAllocation extends React.Component<Props> {
 
   handleCurrencyForTransactionFee = (input: Object) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyForTransactionFee(input.target.value);
+      this.props.AssetStore.selectCurrencyForTransactionFee(input.value);
     } else {
       this.props.AssetStore.selectCurrencyForTransactionFee('');
     }
@@ -102,12 +104,11 @@ class AssetAllocation extends React.Component<Props> {
     const {
       classes,
       AssetStore,
-      NotificationStore,
       MarketStore,
     } = this.props;
 
     const options = MarketStore.allCurrencies;
-    const optionsToShow = [];
+    const optionsToShow = toJS(options);
 
     options.forEach((element: Object, i: number) => {
       optionsToShow.push((
@@ -134,12 +135,12 @@ class AssetAllocation extends React.Component<Props> {
                   label="Select Exchange (optional)"
                   value={AssetStore.selectedExchangeAssetAllocation}
                   handleChange={this.handleExchangeAssetAllocation}
+
                 />
                 <TextValidator
                   name="date"
                   type="date"
-                  // label="Select Date"
-                  className={classes.alignInput}
+                  style={{ marginTop: '21px', width: '95%' }}
                   value={AssetStore.assetAllocationSelectedDate}
                   onChange={this.handleRequests('assetAllocationSelectedDate')}
                   validators={['required']}
@@ -152,7 +153,7 @@ class AssetAllocation extends React.Component<Props> {
                 <TextValidator
                   name="quantity2"
                   type="number"
-                  label="Quantity..."
+                  label="Quantity*"
                   value={AssetStore.assetAllocationFromAmount}
                   className={classes.alignInputAfter}
                   onChange={this.handleRequests('assetAllocationFromAmount')}
@@ -162,22 +163,23 @@ class AssetAllocation extends React.Component<Props> {
               </Grid>
 
               <Grid item xs={3}>
-                <SelectValidator
-                  label="Select Currency"
+                <Select
+                  placeholder="Bought or received*"
                   name="currency-to-asset-allocation"
                   value={AssetStore.selectedCurrencyToAssetAllocation}
                   onChange={this.handleCurrencyToAssetAllocation}
-                  options={MarketStore.allCurrencies}
-                  className={classes.alignInputWidth}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
-                >
-                  {optionsToShow}
-                </SelectValidator>
+                  options={optionsToShow}
+                  className={classes.alignInputAfter2}
+                  style={{
+                  border: 'none',
+                  borderRadius: 0,
+                  borderBottom: '1px solid #757575',
+                }}
+                />
                 <TextValidator
                   name="quantity3"
                   type="number"
-                  label="Quantity..."
+                  label="Quantity*"
                   className={classes.alignInputAfter}
                   value={AssetStore.assetAllocationToAmount}
                   onChange={this.handleRequests('assetAllocationToAmount')}
@@ -187,24 +189,25 @@ class AssetAllocation extends React.Component<Props> {
               </Grid>
 
               <Grid item xs={3}>
-                <SelectValidator
-                  label="Transaction Fee (optional)"
+                <Select
+                  placeholder="Transaction Fee (optional)"
                   name="currency-for-asset-fee"
                   value={AssetStore.selectedCurrencyForTransactionFee}
                   onChange={this.handleCurrencyForTransactionFee}
-                  // options={MarketStore.allCurrencies}
-                  className={classes.alignInputWidth}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
-                >
-                  {optionsToShow}
-                </SelectValidator>
+                  options={optionsToShow}
+                  className={classes.alignInputAfter2}
+                  style={{
+                  border: 'none',
+                  borderRadius: 0,
+                  borderBottom: '1px solid #757575',
+                }}
+                />
                 <TextValidator
                   name="fee"
                   label="Quantity"
                   type="number"
                   placeholder="Quantity..."
-                  className={classes.alignInputAfter2}
+                  className={classes.alignInputAfter}
                   value={AssetStore.assetAllocationFee}
                   onChange={this.handleRequests('assetAllocationFee')}
                   validators={['required', 'maxNumber:100']}
@@ -220,7 +223,9 @@ class AssetAllocation extends React.Component<Props> {
                   color="primary"
                   className={classes.btnAdd}
                   // onClick={this.handleSave}
-                  disabled={NotificationStore.getErrorsLength > 0}
+                  disabled={AssetStore.assetAllocationToAmount === '' || AssetStore.selectedCurrencyToAssetAllocation === '' ||
+                  AssetStore.assetAllocationFromAmount === '' || AssetStore.assetAllocationSelectedDate === '' ||
+                  AssetStore.selectedCurrencyFromAssetAllocation === ''}
                 >RECORD
                 </RegularButton>
               </Grid>

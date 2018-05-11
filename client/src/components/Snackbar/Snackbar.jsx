@@ -19,7 +19,7 @@ import snackbarContentStyle from './../../variables/styles/snackbarContentStyle'
 type Props = {
   classes: Object,
   message: string,
-  color: string,
+  color: (['info', 'success', 'warning', 'danger', 'primary']),
   close: any,
   icon: any,
   place: any,
@@ -65,7 +65,7 @@ function Snackbar({ ...props }: Props) {
         </div>
       }
       action={action}
-      SnackbarContentProps={{
+      ContentProps={{
         classes: {
           root: `${classes.root} ${classes[color]}`,
           message: classes.message,

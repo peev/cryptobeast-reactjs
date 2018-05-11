@@ -111,6 +111,7 @@ const portfolioController = (repository, jobs) => {
 
     updatePortfolioBTCEquivalentOnRequest,
     getPortfolioSharePrice,
+    getSharePriceHistory,
   };
 };
 

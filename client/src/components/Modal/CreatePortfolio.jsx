@@ -9,6 +9,7 @@ import { Add } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
 import IconButton from '../CustomButtons/IconButton';
 
+import SelectBaseCurrency from '../Selectors/SelectBaseCurrency';
 
 import Button from '../CustomButtons/Button';
 
@@ -43,6 +44,9 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
+  InvestorStore: Object,
+  NotificationStore: Object,
+  MarketStore: Object,
   PortfolioStore: Object,
 };
 
@@ -50,7 +54,7 @@ type State = {
   open: boolean,
 };
 
-@inject('PortfolioStore')
+@inject('InvestorStore', 'PortfolioStore', 'MarketStore', 'NotificationStore')
 @observer
 class CreatePortfolio extends React.Component<Props, State> {
   state = {
@@ -72,6 +76,13 @@ class CreatePortfolio extends React.Component<Props, State> {
     this.props.PortfolioStore.setNewPortfolioName(inputValue);
   }
 
+  handleRequests = (propertyType: string) => (event: SyntheticEvent) => {
+    event.preventDefault();
+    const { InvestorStore } = this.props;
+    const inputValue = event.target.value;
+    InvestorStore.setNewInvestorValues(propertyType, inputValue);
+  }
+
   handleSave = () => {
     this.props.PortfolioStore.createPortfolio();
     this.props.PortfolioStore.resetPortfolio();
@@ -80,7 +91,9 @@ class CreatePortfolio extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, PortfolioStore } = this.props;
+    const {
+      classes, InvestorStore, PortfolioStore, NotificationStore,
+    } = this.props;
 
     return (
       <div className={classes.headerButtonContainer}>
@@ -121,6 +134,30 @@ class CreatePortfolio extends React.Component<Props, State> {
               errorMessages={['this field is required']}
             />
 
+            <SelectBaseCurrency
+              label="Select currency"
+            />
+
+
+
+            <TextValidator
+              label="Portfolio investment (optional)"
+              style={{ width: '100%' }}
+              onChange={this.handleRequests('depositedAmount')}
+              name="depositedAmount"
+              value={InvestorStore.newInvestorValues.depositedAmount}
+              validators={['isPositive']}
+              errorMessages={['this field is required', 'value must be a positive number']}
+            />
+
+            <br />
+
+
+
+
+
+
+
             <br />
 
             {/* Cancel BUTTON */}
@@ -138,6 +175,8 @@ class CreatePortfolio extends React.Component<Props, State> {
               style={{ display: 'inline-flex', float: 'right' }}
               // onClick={this.handleSave}
               color="primary"
+              disabled={NotificationStore.getErrorsLength > 0}
+              
               type="submit"
             >
               {' '}

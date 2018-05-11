@@ -22,6 +22,8 @@ const styles = (theme: Object) => ({
 type Props = {
   classes: Object,
   currencies: Array<string>,
+  label: string,
+  validators: Array<any>,
   InvestorStore: Object,
   MarketStore: Object,
 };
@@ -57,7 +59,7 @@ class SelectBaseCurrency extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, MarketStore, currencies = [] } = this.props;
+    const { classes, label, validators, MarketStore, currencies = [] } = this.props;
     const baseCurrencies = MarketStore.baseCurrencies.map((el: Object, i: number) =>
       ((currencies.length === 0 || currencies.includes(MarketStore.baseCurrencies[i].pair)) ?
         (
@@ -79,13 +81,13 @@ class SelectBaseCurrency extends React.Component<Props, State> {
 
           <SelectValidator
             name="currency"
-            label="Select Base Currency*"
+            label={label || 'Select Base Currency*'}
             open={this.state.open}
             value={this.state.baseCurrencyId}
             // onOpen={this.handleOpen}
             onClose={this.handleClose}
             onChange={this.handleChange}
-            validators={['required']}
+            validators={validators || ['required']}
             errorMessages={['this field is required']}
             inputProps={{
               name: 'baseCurrencyId',

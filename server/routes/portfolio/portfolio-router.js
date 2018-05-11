@@ -1,8 +1,8 @@
 const { Router } = require('express');
 
-const attachTo = (app, repository) => {
+const attachTo = (app, repository, jobs) => {
   const router = new Router();
-  const portfolioController = require('./portfolio-controller')(repository);
+  const portfolioController = require('./portfolio-controller')(repository, jobs);
 
   router
     .post('/create', (req, res) => portfolioController.createPortfolio(req, res))

@@ -1,8 +1,8 @@
 const { Router } = require('express');
 
-const attachTo = (app, repository) => {
+const attachTo = (app, repository, jobs) => {
   const router = new Router();
-  const userController = require('./user-controller')(repository);
+  const userController = require('./user-controller')(repository, jobs);
 
   router
     .post('/updateClosingTime', (req, res) => userController.updateClosingTime(req, res))

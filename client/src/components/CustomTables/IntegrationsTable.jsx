@@ -35,7 +35,7 @@ function IntegrationsTable({ ...props }: Props) {
           >
             {prop}
           </TableCell>
-          ))}
+        ))}
       </TableRow>
     </TableHead>
   );
@@ -48,33 +48,25 @@ function IntegrationsTable({ ...props }: Props) {
           {tableData.map((rows: Array<Object>) => (
             <TableRow key={uuid()}>
               {rows.map((col: Object, key: number) => {
-                  if (key === 2) {
-                    return (
-                      <TableCell className={classes.tableCell} key={uuid()}>
-                        {col}
-                        {/* TODO: Replace modal with update api modal */}
-                        <UpdatePortfolioModal />
-                      </TableCell>
-                    );
-                  }
-                  if (key >= 3) {
-                    return (
-                      <TableCell className={classes.tableCell} key={uuid()}>
-                        {col}
-                        <IconButton color="primary" customClass="remove" >
-                          <Close />
-                        </IconButton>
-                      </TableCell>
-                    );
-                  }
+                if (key === 4) {
                   return (
                     <TableCell className={classes.tableCell} key={uuid()}>
                       {col}
+                      <UpdatePortfolioModal />
+                      <IconButton color="primary" customClass="remove" >
+                        <Close />
+                      </IconButton>
                     </TableCell>
                   );
-                })}
+                }
+                return (
+                  <TableCell className={classes.tableCell} key={uuid()}>
+                    {col}
+                  </TableCell>
+                );
+              })}
             </TableRow>
-            ))}
+          ))}
         </TableBody>
       </Table>
     </div>

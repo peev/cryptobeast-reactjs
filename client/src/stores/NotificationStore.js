@@ -3,10 +3,12 @@ import { observable, action, computed } from 'mobx';
 class NotificationStore {
   @observable errorMessages;
   @observable successMessages;
+  @observable infoMessages;
 
   constructor() {
     this.errorMessages = [];
     this.successMessages = [];
+    this.infoMessages = [];
   }
 
   @computed
@@ -16,6 +18,10 @@ class NotificationStore {
   @computed
   get getSuccessLength() {
     return this.successMessages.length;
+  }
+  @computed
+  get getInfoLength() {
+    return this.infoMessages.length;
   }
 
   @action.bound
@@ -27,6 +33,7 @@ class NotificationStore {
   resetMessages() {
     this.errorMessages = [];
     this.successMessages = [];
+    this.infoMessages = [];
   }
 }
 

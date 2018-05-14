@@ -2,7 +2,7 @@
 import React from 'react';
 import { withStyles } from 'material-ui';
 import { inject, observer } from 'mobx-react';
-import { Warning, Done } from '@material-ui/icons';
+import { Warning, Done, Info } from '@material-ui/icons';
 import { Snackbar } from './../../components';
 
 
@@ -34,7 +34,7 @@ class NotificationSnackbar extends React.Component<Props> {
   componentWillUpdate() {
     const { NotificationStore } = this.props;
 
-    if (NotificationStore.getErrorsLength > 0 || NotificationStore.getSuccessLength > 0) {
+    if (NotificationStore.getErrorsLength > 0 || NotificationStore.getSuccessLength > 0 || NotificationStore.getInfoLength > 0) {
       setTimeout(() => {
         NotificationStore.resetMessages();
       }, 6000);
@@ -46,10 +46,13 @@ class NotificationSnackbar extends React.Component<Props> {
     const place = 'tr';
     const dangerColor = 'danger';
     const successColor = 'success';
+    const infoColor = 'info';
     let errorMessage = '';
     let successMessage = '';
+    let infoMessage = '';
     NotificationStore.errorMessages.forEach((message: string) => errorMessage += `${message} \n`); // eslint-disable-line
     NotificationStore.successMessages.forEach((message: string) => successMessage += `${message} \n`); // eslint-disable-line
+    NotificationStore.infoMessages.forEach((message: string) => infoMessage += `${message} \n`); // eslint-disable-line
 
     return (
       <div>
@@ -68,6 +71,14 @@ class NotificationSnackbar extends React.Component<Props> {
           place={place}
           icon={Done}
           color={successColor}
+        />
+        <Snackbar
+          message={infoMessage}
+          open={NotificationStore.getInfoLength > 0}
+          className={classes.layout}
+          place={place}
+          icon={Info}
+          color={infoColor}
         />
       </div>
     );

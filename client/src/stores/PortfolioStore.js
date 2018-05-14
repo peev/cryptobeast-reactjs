@@ -44,17 +44,7 @@ class PortfolioStore {
   // #region Computed
   // #region Summary Page
   @computed
-  get summaryUsdEquivalent() {
-    if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
-      const result = this.currentSelectedPortfolioCost * MarketStore.baseCurrencies[3].last; // NOTE: this if USD
-      return result.toFixed(2);
-    }
-
-    return 0;
-  }
-
-  @computed
-  get summaryTotalInvestment() {
+  get summaryTotalInvestmentInUSD() {
     if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
       let totalAmount = 0;
       this.selectedPortfolio.transactions.forEach((el) => {
@@ -74,7 +64,7 @@ class PortfolioStore {
   @computed
   get summaryTotalProfitLoss() {
     if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
-      const result = ((this.summaryUsdEquivalent - this.summaryTotalInvestment) / this.summaryTotalInvestment) * 100;
+      const result = ((this.currentPortfolioCostInUSD - this.summaryTotalInvestmentInUSD) / this.summaryTotalInvestmentInUSD) * 100;
       return result.toFixed(2);
     }
 
@@ -148,8 +138,8 @@ class PortfolioStore {
           }
           // 6. Asset Weight
           if (ind === 5) {
-            const ifPortfolioCost = this.currentSelectedPortfolioCost !== 0 ?
-              this.currentSelectedPortfolioCost : 1;
+            const ifPortfolioCost = this.currentPortfolioCostInUSD !== 0 ?
+              this.currentPortfolioCostInUSD : 1;
             const percentOfItem = ((currentRow[4] / ifPortfolioCost) * 100).toFixed(0);
             currentRow.push(percentOfItem);
           }
@@ -233,7 +223,7 @@ class PortfolioStore {
   }
 
   @computed
-  get currentSelectedPortfolioCost() {
+  get currentPortfolioCostInUSD() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
     if (this.selectedPortfolio &&
@@ -262,7 +252,7 @@ class PortfolioStore {
   @computed
   get currentPortfolioSharePrice() {
     if (this.selectedPortfolio) {
-      return (this.currentSelectedPortfolioCost || 1) / (this.selectedPortfolio.shares || 1);
+      return (this.currentPortfolioCostInUSD || 1) / (this.selectedPortfolio.shares || 1);
     }
     return 1;
   }

@@ -305,7 +305,7 @@ class InvestorStore {
     this.newInvestorValues.isFounder = !this.newInvestorValues.isFounder;
   }
 
-  @action
+  @action.bound
   setNewInvestorValues(propertyType, newValue) {
     const fieldsChecked = this.handleFieldValidations(propertyType, newValue);
 
@@ -378,6 +378,42 @@ class InvestorStore {
       .then(action((result) => {
         PortfolioStore.currentPortfolioTransactions.push(result.data.transaction);
         PortfolioStore.currentPortfolioInvestors.push(result.data.investor);
+      }))
+      .catch(err => console.log(err));
+  }
+
+  @action.bound
+  createDefaultInvestor(id) {
+    const newInvestor = {
+      currency: MarketStore.selectedBaseCurrency.pair,
+      balance: +this.newInvestorValues.depositedAmount,
+      portfolioId: id,
+      investor: {
+        isFounder: true,
+        fullName: 'default investor',
+        email: 'default@email.com',
+        telephone: '',
+        dateOfEntry: (new Date()).toLocaleString(),
+        managementFee: 0,
+        purchasedShares: this.convertedUsdEquiv,
+        portfolioId: id,
+      },
+      transaction: {
+        investorName: 'default investor',
+        dateOfEntry: (new Date()).toLocaleString(),
+        transactionDate: (new Date()).toLocaleString(),
+        amountInUSD: this.convertedUsdEquiv,
+        sharePrice: 1,
+        shares: parseFloat(this.convertedUsdEquiv),
+        portfolioId: id,
+      },
+    };
+
+    requester.Investor.add(newInvestor)
+      .then(action((result) => {
+        PortfolioStore.currentPortfolioTransactions.push(result.data.transaction);
+        PortfolioStore.currentPortfolioInvestors.push(result.data.investor);
+        this.reset();
       }))
       .catch(err => console.log(err));
   }

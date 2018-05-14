@@ -66,8 +66,6 @@ class CreatePortfolio extends React.Component<Props, State> {
 
   handleClose = () => {
     this.props.PortfolioStore.resetPortfolio();
-    this.props.InvestorStore.reset();
-
     this.setState({ open: false });
   };
 
@@ -86,9 +84,7 @@ class CreatePortfolio extends React.Component<Props, State> {
   }
 
   handleSave = () => {
-    
     this.props.PortfolioStore.createPortfolio();
-
     this.handleClose();
   };
 
@@ -123,7 +119,7 @@ class CreatePortfolio extends React.Component<Props, State> {
               id="modal-title"
               className={classes.modalTitle}
             >
-              Create new Portfolio
+              CREATE PORTFOLIO
             </Typography>
 
             <TextValidator

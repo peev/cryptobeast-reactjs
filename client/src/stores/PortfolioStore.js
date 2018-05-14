@@ -309,17 +309,13 @@ class PortfolioStore {
   createPortfolio() {
     const newPortfolio = {
       name: this.newPortfolioName,
+      shares: InvestorStore.convertedUsdEquiv,
     };
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {
         this.getPortfolios(); // gets new portfolios
-
-        // Create deafault investor
-        InvestorStore.newInvestorValues.fullName = 'default';
-        InvestorStore.newInvestorValues.email = 'default';
-        InvestorStore.newInvestorValues.dateOfEntry = Date.now();
-        
-        InvestorStore.createNewInvestor(result.data.id);
+        this.selectedPortfolioId = result.data.id;
+        InvestorStore.createDefaultInvestor(result.data.id);
       }))
       .catch(err => console.log(err));
   }

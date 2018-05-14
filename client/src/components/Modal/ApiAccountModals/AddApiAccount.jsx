@@ -70,7 +70,7 @@ type State = {
   open: boolean,
 };
 
-@inject('ApiAccountStore', 'PortfolioStore', 'MarketStore', 'AssetStore')
+@inject('ApiAccountStore', 'PortfolioStore', 'MarketStore', 'AssetStore', 'NotificationStore')
 @observer
 class AddApiAccount extends React.Component<Props, State> {
   constructor() {
@@ -121,7 +121,7 @@ class AddApiAccount extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes, AssetStore } = this.props;
+    const { classes, AssetStore, ApiAccountStore } = this.props;
     return (
       <div className={classes.headerButtonContainer}>
         <IconButton
@@ -157,7 +157,7 @@ class AddApiAccount extends React.Component<Props, State> {
                 <Checkbox
                   onChange={() => this.handleActive('isActive')}
                   color="primary"
-                  checked={this.props.ApiAccountStore.values.isActive}
+                  checked={ApiAccountStore.values.isActive}
                 />
               </div>
             </div>
@@ -176,6 +176,7 @@ class AddApiAccount extends React.Component<Props, State> {
                 name="Api Key"
                 label="Api Key"
                 className={classes.inputWrapper}
+                value={ApiAccountStore.values.apiKey}
                 onChange={(e: SyntheticEvent) => this.handleInputValue('apiKey', e)}
                 validators={['required']}
                 errorMessages={['this field is required']}
@@ -185,6 +186,7 @@ class AddApiAccount extends React.Component<Props, State> {
                 name="Api Secret"
                 label="Api Secret"
                 className={classes.inputWrapper}
+                value={ApiAccountStore.values.apiSecret}
                 onChange={(e: SyntheticEvent) => this.handleInputValue('apiSecret', e)}
                 validators={['required']}
                 errorMessages={['this field is required']}

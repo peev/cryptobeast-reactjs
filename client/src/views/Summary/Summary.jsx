@@ -87,14 +87,14 @@ class Summary extends React.Component<Props> {
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            description={`$${PortfolioStore.currentSelectedPortfolioCost.toFixed(2) || ''}`}
+            description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
           />
 
           <SummaryCard
             icon={CoinIcon}
             iconColor="gray"
             title="Total investment"
-            description={`$${PortfolioStore.summaryTotalInvestment}`}
+            description={`$${PortfolioStore.summaryTotalInvestmentInUSD}`}
           />
 
           <SummaryCard

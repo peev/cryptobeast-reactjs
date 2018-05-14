@@ -4,6 +4,7 @@ import {
   observable,
   action,
   computed,
+  toJS,
 } from 'mobx';
 import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
@@ -185,6 +186,34 @@ class InvestorStore {
 
     return null;
   }
+
+  @action
+  widthdrawAllShares() {
+    if (MarketStore.selectedBaseCurrency && this.selectedInvestor) {
+      const allSharesInUsd = this.individualSharesHeld * PortfolioStore.currentPortfolioSharePrice; // number
+      const currency = MarketStore.selectedBaseCurrency; // obj{last... pair...}
+      let calculatedEquiv;
+      switch (currency.pair) {
+        case 'JPY':
+        case 'EUR':
+        case 'USD':
+          calculatedEquiv = (allSharesInUsd / MarketStore.baseCurrencyInUSD.last) * currency.last;
+          break;
+        case 'ETH':
+          calculatedEquiv = (allSharesInUsd / MarketStore.baseCurrencyInUSD.last) / currency.last;
+          break;
+        case 'BTC':
+          calculatedEquiv = allSharesInUsd / MarketStore.baseCurrencyInUSD.last;
+          break;
+        default:
+          console.log('There is no such currency');
+          break;
+      }
+      this.setWithdrawInvestorValues('amount', calculatedEquiv);
+    }
+    return null;
+  }
+
 
   @computed
   get individualWeightedEntryPrice() {
@@ -445,7 +474,7 @@ class InvestorStore {
   @action
   withdrawalInvestor(id) {
     const withdrawal = {
-      currency: 'USD',
+      currency: MarketStore.selectedBaseCurrency.pair,
       balance: +this.withdrawalValues.amount,
       portfolioId: PortfolioStore.selectedPortfolioId,
       investorId: id,
@@ -453,7 +482,7 @@ class InvestorStore {
         investorName: this.selectedInvestor.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
         transactionDate: this.withdrawalValues.transactionDate,
-        amountInUSD: this.withdrawalValues.amount,
+        amountInUSD: this.convertedUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.withdrawalValues.purchasedShares),
         portfolioId: PortfolioStore.selectedPortfolioId,
@@ -466,6 +495,7 @@ class InvestorStore {
         PortfolioStore.addTransaction(result.data);
         PortfolioStore.getPortfolios().then(() => {
           this.selectInvestor(result.data.investorId);
+          NotificationStore.addMessage('successMessages', 'Widthdraw completed successfuly');
         });
       }))
       .catch(err => console.log(err));
@@ -564,24 +594,6 @@ class InvestorStore {
   handleWithdrawalInvestorErrors() {
     let noErrors = true;
 
-    // Checks if Investor is selected
-    if (this.selectedInvestor === null) {
-      // NotificationStore.addMessage('errorMessages', 'Please select Investor');
-      noErrors = false;
-    }
-
-    // Checks if amount is entered
-    if (this.withdrawalValues.amount === '') {
-      // NotificationStore.addMessage('errorMessages', 'Withdrawal amount is required.');
-      noErrors = false;
-    }
-
-    // Checks if date is entered
-    if (this.withdrawalValues.transactionDate === '') {
-      // NotificationStore.addMessage('errorMessages', 'Withdrawal date is required.');
-      noErrors = false;
-    }
-
     const hasInputShares = this.selectedInvestor !== null ? this.selectedInvestor.purchasedShares : 0;
     const hasEnoughShares = hasInputShares >= this.withdrawalValues.purchasedShares;
     if (!hasEnoughShares) {
@@ -589,6 +601,8 @@ class InvestorStore {
       noErrors = false;
     }
 
+    const availableAssets = toJS(PortfolioStore.currentPortfolioAssets);
+    console.log(availableAssets);
     return noErrors;
   }
 

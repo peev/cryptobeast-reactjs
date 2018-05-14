@@ -4,12 +4,16 @@ import { withStyles, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
+import IconButton from 'material-ui/IconButton';
+import Input, { InputAdornment } from 'material-ui/Input';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
+import MarketStore from '../../../stores/MarketStore';
 
 
 const getModalStyle = () => {
@@ -71,12 +75,22 @@ class InvestorWithdraw extends React.Component<Props, State> {
     open: false,
   };
 
+  componentWillMount() {
+    ValidatorForm.addValidationRule('isDateValid', (value: string) => {
+      if (new Date(value) > Date.now()) {
+        return false;
+      }
+      return true;
+    });
+  }
+
   handleOpen = () => {
     this.setState({ open: true });
   };
 
   handleClose = () => {
     this.props.InvestorStore.resetWithdrawal();
+    this.props.InvestorStore.resetSelectedInvestor();
     this.setState({ open: false });
   };
 
@@ -86,9 +100,14 @@ class InvestorWithdraw extends React.Component<Props, State> {
 
   handleWithdrawRequests = (propertyType: string) => (event: SyntheticEvent) => {
     event.preventDefault();
-
     const inputValue = event.target.value;
     this.props.InvestorStore.setWithdrawInvestorValues(propertyType, inputValue);
+  }
+
+  handleWithdrawAllShares = () => {
+    if (MarketStore.selectedBaseCurrency != null) {
+      this.props.InvestorStore.widthdrawAllShares();
+    }
   }
 
   handleWithdrawalInvestor = () => {
@@ -105,7 +124,6 @@ class InvestorWithdraw extends React.Component<Props, State> {
     const {
       classes, InvestorStore, PortfolioStore, NotificationStore,
     } = this.props;
-
     return (
       <Grid container>
         <Button onClick={this.handleOpen} color="primary">
@@ -146,34 +164,43 @@ class InvestorWithdraw extends React.Component<Props, State> {
                   onChange={this.handleWithdrawRequests('transactionDate')}
                   value={InvestorStore.withdrawalValues.transactionDate || ''}
                   className={classes.alignInput}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
+                  validators={['required', 'isDateValid']}
+                  errorMessages={['this field is required', 'Date must be before today']}
                 />
               </Grid>
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <TextValidator
-                  name="amount"
-                  type="number"
-                  label="Amount"
-                  onChange={this.handleWithdrawRequests('amount')}
-                  value={InvestorStore.withdrawalValues.amount || ''}
-                  // className={classes.alignInput}
-                  validators={['required', 'isPositive']}
-                  errorMessages={['this field is required', 'value must be a positive number']}
-                />
+                  <SelectBaseCurrency />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <SelectBaseCurrency />
+                <Input
+                  name="amount"
+                  type="number"
+                  placeholder="Amount*"
+                  onChange={this.handleWithdrawRequests('amount')}
+                  value={InvestorStore.withdrawalValues.amount || ''}
+                  className={classes.alignInput}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="Toggle password visibility"
+                        onClick={this.handleWithdrawAllShares}
+                      >
+                        {<KeyboardArrowUp />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
               </Grid>
+
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
               <TextValidator
                 name="share price"
-                label="Share Price at Entry Date (usd)"
-                className={classes.alignInputAfter}
+                label="Share Price at Entry Date (USD)"
+                className={classes.alignInput}
                 value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
                 style={{ width: '95%' }}
               />
@@ -182,7 +209,7 @@ class InvestorWithdraw extends React.Component<Props, State> {
                 <TextValidator
                   name="shares2"
                   type="number"
-                  label="Purchased Shares"
+                  label="Shares"
                   value={InvestorStore.withdrawPurchasedShares || ''}
                   className={classes.alignInput}
                 />
@@ -201,55 +228,6 @@ class InvestorWithdraw extends React.Component<Props, State> {
               </Grid>
             </Grid>
 
-            {/* <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <SelectInvestor />
-
-                <Input
-                  type="number"
-                  placeholder="Amount"
-                  onChange={this.handleWithdrawRequests('amount')}
-                  className={classes.alignInputAfter}
-                />
-
-                <Input
-                  type="number"
-                  placeholder="Share Price at Entry Date"
-                  className={classes.alignInput}
-                  value={PortfolioStore.currentPortfolioSharePrice || ''}
-                />
-              </Grid>
-
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <Input
-                  type="date"
-                  placeholder="Transaction Date"
-                  onChange={this.handleWithdrawRequests('transactionDate')}
-                  className={classes.alignInput}
-                />
-
-                <Input
-                  type="number"
-                  placeholder="USD"
-                  className={classes.alignInput}
-                />
-
-                <Input
-                  type="number"
-                  placeholder="Purchased Shares"
-                  value={InvestorStore.withdrawPurchasedShares || ''}
-                  className={classes.alignInput}
-                />
-
-                <Input
-                  type="number"
-                  placeholder="Management Fee"
-                  value={InvestorStore.withdrawManagementFee || ''}
-                  className={classes.alignInput}
-                />
-              </Grid>
-            </Grid> */}
-
             <Grid container className={classes.buttonsContainer}>
               <div className={classes.alignBtn}>
                 <Button
@@ -261,8 +239,8 @@ class InvestorWithdraw extends React.Component<Props, State> {
               <Button
                 type="submit"
                 color="primary"
-                // onClick={this.handleWithdrawalInvestor}
-                disabled={NotificationStore.getErrorsLength > 0}
+                disabled={NotificationStore.getErrorsLength > 0 || InvestorStore.withdrawalValues.amount === '' ||
+                InvestorStore.withdrawalValues.transactionDate === '' || InvestorStore.selectedInvestorId === null}
               >Save
               </Button>
             </Grid>

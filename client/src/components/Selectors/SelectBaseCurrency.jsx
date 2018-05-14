@@ -85,6 +85,7 @@ class SelectBaseCurrency extends React.Component<Props, State> {
             // onOpen={this.handleOpen}
             onClose={this.handleClose}
             onChange={this.handleChange}
+            style={{ width: '95%' }}
             validators={['required']}
             errorMessages={['this field is required']}
             inputProps={{

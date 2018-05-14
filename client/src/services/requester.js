@@ -51,10 +51,15 @@ const Asset = {
   allocate: data => requests.post('/asset/allocate', data),
 };
 
+const User = {
+  updateClosingTime: data => requests.post('/user/updateClosingTime', data),
+};
+
 export default {
   Portfolio,
   Investor,
   Market,
   ApiAccount,
   Asset,
+  User,
 };

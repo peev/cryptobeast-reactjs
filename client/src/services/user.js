@@ -3,6 +3,11 @@ const initUserData = {
 };
 
 const User = {
+  checkUserID: () => {
+    const userData = JSON.parse(window.localStorage.getItem('cb_user')); //eslint-disable-line
+    return userData !== null;
+  },
+
   getUserData: () => new Promise((resolve) => {
     setTimeout(() => {
       const userData = JSON.parse(window.localStorage.getItem('cb_user')); //eslint-disable-line

@@ -299,11 +299,14 @@ class PortfolioStore {
   createPortfolio() {
     const newPortfolio = {
       name: this.newPortfolioName,
+      shares: InvestorStore.convertedUsdEquiv,
     };
     requester.Portfolio.create(newPortfolio)
-      .then(() => {
+      .then(action((result) => {
         this.getPortfolios(); // gets new portfolios
-      })
+        this.selectedPortfolioId = result.data.id;
+        InvestorStore.createDefaultInvestor(result.data.id);
+      }))
       .catch(err => console.log(err));
   }
 

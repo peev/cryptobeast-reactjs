@@ -10,6 +10,7 @@ import PortfoliosTable from './../../components/CustomTables/PortfoliosTable';
 import TimeSettings from '../../components/Cards/TimeSettings';
 import IntegrationsTable from './../../components/CustomTables/IntegrationsTable';
 import AddApiAccount from './../../components/Modal/ApiAccountModals/AddApiAccount';
+import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
 
 
 type Props = {
@@ -82,10 +83,12 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
       </ItemGrid>
 
       <ItemGrid xs={12} sm={3} md={3}>
-        <RegularButton color="primary" onClick={getMarketSummaries()}>
+        <RegularButton color="primary" onClick={() => getMarketSummaries()}>
           Get Markets
         </RegularButton>
       </ItemGrid>
+
+      <NotificationSnackbar />
     </Grid>
   );
 }));

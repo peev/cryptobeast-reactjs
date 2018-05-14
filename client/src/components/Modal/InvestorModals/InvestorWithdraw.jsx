@@ -75,7 +75,7 @@ class InvestorWithdraw extends React.Component<Props, State> {
     open: false,
   };
 
-  componentWillMount() {
+  componentDidMount() {
     ValidatorForm.addValidationRule('isDateValid', (value: string) => {
       if (new Date(value) > Date.now()) {
         return false;

@@ -4,8 +4,7 @@ var http = require('http');
 const constants = require('./config/constants');
 const dbConfig = require('./config/db');
 
-require('./../data/db/db-context')
-  .init(dbConfig)
+require('./../data/db/db-context').init(dbConfig)
   .then((dbContext) => {
     return require('./../data/repository').init(dbContext);
   })

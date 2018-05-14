@@ -31,25 +31,21 @@ const switchCreatePortfolioRoutes = (
 type Props = {
   classes: Object,
   PortfolioStore: Object,
-  UserStore: Object
+  UserStore: Object,
 };
 
 @inject('PortfolioStore', 'UserStore')
 @observer
 class App extends React.Component<Props> {
-  state = {
-    mobileOpen: false,
-  };
+  state = { mobileOpen: false };
 
-  handleDrawerToggle = () => {
-    this.setState({ mobileOpen: !this.state.mobileOpen });
-  };
+  handleDrawerToggle = () => this.setState({ mobileOpen: !this.state.mobileOpen });
 
   render() {
     const { classes, PortfolioStore, UserStore, ...rest } = this.props;
     const { portfolios } = PortfolioStore;
 
-    const loadingScreen = <p style={{ textAlign: 'center' }}> loading...</p >;
+    const loadingScreen = <p style={{ textAlign: 'center' }}> loading...</p>;
 
     return (
       <div>
@@ -75,15 +71,17 @@ class App extends React.Component<Props> {
                   Checks if there are portfolios.
                   If there are none, makes routing array with only summary tabs
               */}
-              {portfolios.length > 0 ? (
-                <div className={classes.content}>
-                  <div className={classes.container}>{switchRoutes}</div>
-                </div>
-              ) : (
+              {portfolios.length > 0 ?
+                (
+                  <div className={classes.content}>
+                    <div className={classes.container}>{switchRoutes}</div>
+                  </div>
+                ) : (
                   <div className={classes.content}>
                     <div className={classes.container}>{switchCreatePortfolioRoutes}</div>
                   </div>
-                )}
+                )
+              }
             </div>
           ) : loadingScreen}
         </div>

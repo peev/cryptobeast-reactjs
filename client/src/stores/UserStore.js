@@ -2,6 +2,7 @@ import { observable, action, reaction } from 'mobx';
 import userApi from '../services/user';
 
 import PortfolioStore from './PortfolioStore';
+import NotificationStore from './NotificationStore';
 import requester from '../services/requester';
 
 class UserStore {
@@ -69,6 +70,9 @@ class UserStore {
       name: 'Closing time',
       userId: 1,
     };
+
+
+    NotificationStore.addMessage('successMessages', 'Closing time successfully set');
 
     requester.User.updateClosingTime(newClosingTime)
       .then((result) => {

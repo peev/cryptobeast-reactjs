@@ -493,10 +493,10 @@ class InvestorStore {
     requester.Investor.withdrawal(withdrawal)
       .then(action((result) => {
         PortfolioStore.addTransaction(result.data);
-        PortfolioStore.getPortfolios().then(() => {
+        PortfolioStore.getPortfolios().then(action(() => {
           this.selectInvestor(result.data.investorId);
           NotificationStore.addMessage('successMessages', 'Widthdraw completed successfuly');
-        });
+        }));
       }))
       .catch(err => console.log(err));
   }
@@ -602,7 +602,17 @@ class InvestorStore {
     }
 
     const availableAssets = toJS(PortfolioStore.currentPortfolioAssets);
-    console.log(availableAssets);
+    const wantedAsset = availableAssets.filter(asset => asset.currency === MarketStore.selectedBaseCurrency.pair);
+    if (wantedAsset.length === 0) {
+      NotificationStore.addMessage('infoMessages', `You need to allocate 
+      ${this.withdrawalValues.amount} ${MarketStore.selectedBaseCurrency.pair}`);
+      noErrors = false;
+    }
+    if (wantedAsset.length > 0 && wantedAsset[0].balance < this.withdrawalValues.amount) {
+      NotificationStore.addMessage('infoMessages', `You need to allocate 
+      ${this.withdrawalValues.amount - wantedAsset[0].balance} ${MarketStore.selectedBaseCurrency.pair}`);
+      noErrors = false;
+    }
     return noErrors;
   }
 

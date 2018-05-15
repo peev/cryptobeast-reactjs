@@ -5,6 +5,7 @@ import requester from '../services/requester';
 
 class MarketStore {
   @observable marketSummaries;
+  @observable marketPriceHistory;
   @observable baseCurrencies;
   @observable allCurrencies;
   @observable allTickers;
@@ -13,6 +14,7 @@ class MarketStore {
 
   constructor() {
     this.marketSummaries = {};
+    this.marketPriceHistory = {};
     this.baseCurrencies = [];
     this.allCurrencies = [];
     this.allTickers = [];
@@ -44,6 +46,11 @@ class MarketStore {
     // get the summary to the market for the past 24h
     requester.Market.getSummaries()
       .then(this.convertMarketSummaries)
+      .catch(err => console.log(err));
+
+    // syncs and gets the price history to the market for the past 1h, 24h and 7d
+    requester.Market.getSyncedMarketPriceHistory()
+      .then(this.convertMarketPriceHistory)
       .catch(err => console.log(err));
   }
 
@@ -90,6 +97,14 @@ class MarketStore {
     // eslint-disable-next-line no-return-assign
     response.data.forEach(el => result[el.MarketName] = el);
     this.marketSummaries = result;
+  }
+
+  @action.bound
+  convertMarketPriceHistory(response) {
+    const result = {};
+    // eslint-disable-next-line no-return-assign
+    response.data.forEach(el => result[el.currency] = el);
+    this.marketPriceHistory = result;
   }
 
   @action.bound

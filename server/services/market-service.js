@@ -1,6 +1,7 @@
 const { CronJob } = require('cron');
 const { krakenServices } = require('../integrations/kraken-services');
 const { bittrexServices } = require('../integrations/bittrex-services');
+const { coinMarketCapServices } = require('../integrations/coinMarketCap-services');
 
 const marketService = (repository) => {
   const syncSummaries = async () => {
@@ -33,6 +34,13 @@ const marketService = (repository) => {
     return repository.createMany({ modelName: 'Ticker', newObjects: currentTickerPairs });
   }
 
+  const syncTickersFromCoinMarketCap = async (currenciesToGet) => {
+    const tickers = await coinMarketCapServices().getTickers();
+
+    await repository.removeAll({ modelName: 'MarketPriceHistory' });
+    return repository.createMany({ modelName: 'MarketPriceHistory', newObjects: tickers });
+  }
+
   const syncCurrenciesFromApi = async () => {
     await repository.removeAll({ modelName: 'Currency' });
     const currencies = await bittrexServices().getCurrencies();
@@ -57,6 +65,7 @@ const marketService = (repository) => {
   return {
     syncSummaries,
     syncTickersFromKraken,
+    syncTickersFromCoinMarketCap,
     syncCurrenciesFromApi,
     createMarketJob,
   };

@@ -36,6 +36,7 @@ const Market = {
   syncCurrencies: () => requests.get('/market/syncCurrencies'),
   getAllCurrencies: () => requests.get('/market/allCurrencies'),
   getBaseTickers: searchedCurrencies => requests.post('/market/syncBaseTickers', searchedCurrencies),
+  getSyncedMarketPriceHistory: () => requests.get('/market/syncMarketPriceHistoryTickers'),
 };
 
 const ApiAccount = {

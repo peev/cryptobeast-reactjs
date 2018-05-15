@@ -21,19 +21,15 @@ const switchRoutes = (
 type Props = {
   classes: Object,
   PortfolioStore: Object,
-  UserStore: Object
+  UserStore: Object,
 };
 
 @inject('PortfolioStore', 'UserStore')
 @observer
 class App extends React.Component<Props> {
-  state = {
-    mobileOpen: false,
-  };
+  state = { mobileOpen: false };
 
-  handleDrawerToggle = () => {
-    this.setState({ mobileOpen: !this.state.mobileOpen });
-  };
+  handleDrawerToggle = () => this.setState({ mobileOpen: !this.state.mobileOpen });
 
   render() {
     const { classes, PortfolioStore, UserStore, ...rest } = this.props;
@@ -75,9 +71,9 @@ class App extends React.Component<Props> {
                   {...rest}
                 />
 
-                (<div className={classes.content}>
+                <div className={classes.content}>
                   <div className={classes.container}>{switchRoutes}</div>
-                </div>)
+                </div>
               </div>
             ) : selectFromMultiplePortfolios}
           </div>

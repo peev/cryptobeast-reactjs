@@ -1,7 +1,11 @@
 const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const jwtAuthz = require('express-jwt-authz');
+const jwksRsa = require('jwks-rsa');
 const express = require('express');
+const jwt = require('express-jwt');
+
 const morgan = require('morgan');
 const cors = require('cors');
 const path = require('path');
@@ -62,6 +66,31 @@ const init = async (repository) => {
   // setInterval(printSharePriceJobs, 5000);
   // #endregion
 
+
+  // Middleware for checking the JWT
+  const checkJwt = jwt({
+    // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint
+    secret: jwksRsa.expressJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: `https://cryptobeast.eu.auth0.com/.well-known/jwks.json`
+    }),
+
+    // Validate the audience and the issuer
+    audience: 'ro3TfD3x5qWYVH7EhI7IlpoHPK330NeQ', //replace with your API's audience, available at Dashboard > APIs
+    issuer: 'https://cryptobeast.eu.auth0.com/',
+    algorithms: ['RS256']
+  });
+
+  // Create timesheets API endpoint
+  app.post('/timesheets', checkJwt, function(req, res){
+
+    res.status(201).send(req.user);
+  })
+
+  // app.use(checkJwt);
+
   // TODO: Create router for every new model and add it here
   require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
   require('./../../routes/user/user-router').attachTo(app, repository, jobs);
@@ -83,8 +112,7 @@ const init = async (repository) => {
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
     // render the error page
-    res.status(err.status || 500);
-    res.render('error');
+    res.status(err.status || 500).send(err);
   });
 
   return app;

@@ -44,17 +44,7 @@ class PortfolioStore {
   // #region Computed
   // #region Summary Page
   @computed
-  get summaryUsdEquivalent() {
-    if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
-      const result = this.currentSelectedPortfolioCost * MarketStore.baseCurrencies[3].last; // NOTE: this if USD
-      return result.toFixed(2);
-    }
-
-    return 0;
-  }
-
-  @computed
-  get summaryTotalInvestment() {
+  get summaryTotalInvestmentInUSD() {
     if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
       let totalAmount = 0;
       this.selectedPortfolio.transactions.forEach((el) => {
@@ -74,7 +64,7 @@ class PortfolioStore {
   @computed
   get summaryTotalProfitLoss() {
     if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
-      const result = ((this.summaryUsdEquivalent - this.summaryTotalInvestment) / this.summaryTotalInvestment) * 100;
+      const result = ((this.currentPortfolioCostInUSD - this.summaryTotalInvestmentInUSD) / this.summaryTotalInvestmentInUSD) * 100;
       return result.toFixed(2);
     }
 
@@ -148,8 +138,8 @@ class PortfolioStore {
           }
           // 6. Asset Weight
           if (ind === 5) {
-            const ifPortfolioCost = this.currentSelectedPortfolioCost !== 0 ?
-              this.currentSelectedPortfolioCost : 1;
+            const ifPortfolioCost = this.currentPortfolioCostInUSD !== 0 ?
+              this.currentPortfolioCostInUSD : 1;
             const percentOfItem = ((currentRow[4] / ifPortfolioCost) * 100).toFixed(0);
             currentRow.push(percentOfItem);
           }
@@ -233,26 +223,38 @@ class PortfolioStore {
   }
 
   @computed
-  get currentSelectedPortfolioCost() {
+  get currentPortfolioCostInUSD() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
     if (this.selectedPortfolio &&
       MarketStore.baseCurrencies.length > 0 &&
       this.currentPortfolioAssets.length > 0) {
-      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
-      return this.currentPortfolioAssets.reduce((array, el) => {
-        let assetBTCValue;
-        if (el.currency === 'BTC') {
-          assetBTCValue = MarketStore.marketSummaries[`USDT-${el.currency}`].Last * el.balance;
-        } else {
-          const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${el.currency}`] ?
-            (MarketStore.marketSummaries[`BTC-${el.currency}`].Last * el.balance) :
-            0;
-
-          assetBTCValue = assetBTCEquiv * valueOfUSD;
+      console.log(this.currentPortfolioAssets);
+      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this is USD
+      return this.currentPortfolioAssets.reduce((accumulator, el) => {
+        let assetUSDValue;
+        switch (el.currency) {
+          case 'JPY':
+          case 'EUR':
+          case 'USD': {
+            const wantedCurrency = MarketStore.baseCurrencies.filter(x => x.pair === el.currency)[0];
+            assetUSDValue = (el.balance / wantedCurrency.last) * valueOfUSD;
+            break;
+          }
+          case 'BTC': {
+            assetUSDValue = el.balance * valueOfUSD;
+            break;
+          }
+          default: {
+            const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${el.currency}`] ?
+              (MarketStore.marketSummaries[`BTC-${el.currency}`].Last * el.balance) :
+              0;
+            assetUSDValue = assetBTCEquiv * valueOfUSD;
+            break;
+          }
         }
-
-        return array + assetBTCValue;
+        console.log(accumulator + assetUSDValue);
+        return accumulator + assetUSDValue;
       }, 0);
     }
 
@@ -262,7 +264,7 @@ class PortfolioStore {
   @computed
   get currentPortfolioSharePrice() {
     if (this.selectedPortfolio) {
-      return (this.currentSelectedPortfolioCost || 1) / (this.selectedPortfolio.shares || 1);
+      return (this.currentPortfolioCostInUSD || 1) / (this.selectedPortfolio.shares || 1);
     }
     return 1;
   }
@@ -309,11 +311,14 @@ class PortfolioStore {
   createPortfolio() {
     const newPortfolio = {
       name: this.newPortfolioName,
+      // shares: InvestorStore.convertedUsdEquiv,
     };
     requester.Portfolio.create(newPortfolio)
-      .then(() => {
+      .then(action((result) => {
         this.getPortfolios(); // gets new portfolios
-      })
+        this.selectedPortfolioId = result.data.id;
+        InvestorStore.createDefaultInvestor(result.data.id);
+      }))
       .catch(err => console.log(err));
   }
 

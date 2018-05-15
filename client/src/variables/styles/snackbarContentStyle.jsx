@@ -26,8 +26,8 @@ const snackbarContentStyle = {
     whiteSpace: 'pre-line',
   },
   info: {
-    backgroundColor: '#00d3ee',
-    color: '#ffffff',
+    backgroundColor: '#ffffff',
+    color: '#95D6F0',
     ...infoBoxShadow,
   },
   success: {

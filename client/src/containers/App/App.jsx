@@ -18,16 +18,6 @@ const switchRoutes = (
   </Switch>
 );
 
-const switchCreatePortfolioRoutes = (
-  <Switch>
-    {appRoutes.map((prop: Object) => {
-      if (prop.redirect) { return <Redirect from={prop.path} to={prop.to} key={uuid()} />; }
-      return <Route path="/summary" component={appRoutes[0].component} key={uuid()} />;
-    })}
-  </Switch>
-);
-
-
 type Props = {
   classes: Object,
   PortfolioStore: Object,
@@ -43,48 +33,51 @@ class App extends React.Component<Props> {
 
   render() {
     const { classes, PortfolioStore, UserStore, ...rest } = this.props;
-    const { portfolios } = PortfolioStore;
 
-    const loadingScreen = <p style={{ textAlign: 'center' }}> loading...</p>;
+    const loadingScreen = <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p >;
+
+    // test view for select portfolio
+    const selectFromMultiplePortfolios = (
+      <div className={classes.mainPanel}>
+        <Header
+          {...rest}
+        />
+        <p style={{ textAlign: 'center', marginTop: '150px' }}>To start using CryptoBeast, please select a portfolio to analyze</p>
+      </div>
+    );
 
     return (
       <div>
-        <div className={classes.wrapper}>
-          <Sidebar
-            routes={appRoutes}
-            handleDrawerToggle={this.handleDrawerToggle}
-            open={this.state.mobileOpen}
-            disabled={UserStore.data.selectedPortfolio === undefined}
-            {...rest}
-          />
+        {PortfolioStore.portfolios !== undefined ? (
+          <div className={classes.wrapper}>
+            <Sidebar
+              routes={appRoutes}
+              handleDrawerToggle={this.handleDrawerToggle}
+              open={this.state.mobileOpen}
+              disabled={UserStore.data.selectedPortfolio === 0}
+              {...rest}
+            />
 
-          {UserStore.data.selectedPortfolio !== undefined ? (
-            <div className={classes.mainPanel}>
-              <Header
-                routes={appRoutes}
-                handleDrawerToggle={this.handleDrawerToggle}
+            {/*
+              Checks if there is selected portfolio id. More then 0, because 0 is
+              default value for Select element.
+            */}
+            {PortfolioStore.selectedPortfolioId > 0 ? (
+              <div className={classes.mainPanel}>
+                <Header
+                  routes={appRoutes}
+                  handleDrawerToggle={this.handleDrawerToggle}
 
-                {...rest}
-              />
+                  {...rest}
+                />
 
-              {/*
-                  Checks if there are portfolios.
-                  If there are none, makes routing array with only summary tabs
-              */}
-              {portfolios.length > 0 ?
-                (
-                  <div className={classes.content}>
-                    <div className={classes.container}>{switchRoutes}</div>
-                  </div>
-                ) : (
-                  <div className={classes.content}>
-                    <div className={classes.container}>{switchCreatePortfolioRoutes}</div>
-                  </div>
-                )
-              }
-            </div>
-          ) : loadingScreen}
-        </div>
+                <div className={classes.content}>
+                  <div className={classes.container}>{switchRoutes}</div>
+                </div>
+              </div>
+            ) : selectFromMultiplePortfolios}
+          </div>
+        ) : loadingScreen}
       </div>
     );
   }

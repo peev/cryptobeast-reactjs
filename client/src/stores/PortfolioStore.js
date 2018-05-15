@@ -229,20 +229,32 @@ class PortfolioStore {
     if (this.selectedPortfolio &&
       MarketStore.baseCurrencies.length > 0 &&
       this.currentPortfolioAssets.length > 0) {
-      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
-      return this.currentPortfolioAssets.reduce((array, el) => {
-        let assetBTCValue;
-        if (el.currency === 'BTC') {
-          assetBTCValue = MarketStore.marketSummaries[`USDT-${el.currency}`].Last * el.balance;
-        } else {
-          const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${el.currency}`] ?
-            (MarketStore.marketSummaries[`BTC-${el.currency}`].Last * el.balance) :
-            0;
-
-          assetBTCValue = assetBTCEquiv * valueOfUSD;
+      console.log(this.currentPortfolioAssets);
+      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this is USD
+      return this.currentPortfolioAssets.reduce((accumulator, el) => {
+        let assetUSDValue;
+        switch (el.currency) {
+          case 'JPY':
+          case 'EUR':
+          case 'USD': {
+            const wantedCurrency = MarketStore.baseCurrencies.filter(x => x.pair === el.currency)[0];
+            assetUSDValue = (el.balance / wantedCurrency.last) * valueOfUSD;
+            break;
+          }
+          case 'BTC': {
+            assetUSDValue = el.balance * valueOfUSD;
+            break;
+          }
+          default: {
+            const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${el.currency}`] ?
+              (MarketStore.marketSummaries[`BTC-${el.currency}`].Last * el.balance) :
+              0;
+            assetUSDValue = assetBTCEquiv * valueOfUSD;
+            break;
+          }
         }
-
-        return array + assetBTCValue;
+        console.log(accumulator + assetUSDValue);
+        return accumulator + assetUSDValue;
       }, 0);
     }
 
@@ -299,7 +311,7 @@ class PortfolioStore {
   createPortfolio() {
     const newPortfolio = {
       name: this.newPortfolioName,
-      shares: InvestorStore.convertedUsdEquiv,
+      // shares: InvestorStore.convertedUsdEquiv,
     };
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {

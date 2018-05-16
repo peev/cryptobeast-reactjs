@@ -21,8 +21,8 @@ const styles = () => ({
     zIndex: 1,
     top: '100px',
   },
-  navbtn: {
-    marginLeft: '20px',
+  view: {
+    marginTop: '15px',
   },
 });
 
@@ -60,11 +60,10 @@ class AnalyticsTabs extends React.Component<Props, State> {
           <Tab label="Correlation matrix" />
         </Tabs>
 
-        <br />
-
         <SwipeableViews
           index={this.state.value}
           onChange={this.handleChange}
+          className={classes.view}
         >
           <Performance />
 

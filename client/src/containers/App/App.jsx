@@ -75,9 +75,9 @@ class App extends React.Component<Props> {
                   {...rest}
                 />
 
-                (<div className={classes.content}>
+                <div className={classes.content}>
                   <div className={classes.container}>{switchRoutes}</div>
-                </div>)
+                </div>
               </div>
             ) : selectFromMultiplePortfolios}
           </div>

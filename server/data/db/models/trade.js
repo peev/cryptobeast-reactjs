@@ -18,13 +18,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    quantity: {
+    price: {
+      type: DataTypes.DOUBLE,
+    },
+    filled: {
+      type: DataTypes.DOUBLE,
+    },
+    fee: {
       type: DataTypes.DOUBLE,
     },
     totalPrice: {
-      type: DataTypes.DOUBLE,
-    },
-    commission: {
       type: DataTypes.DOUBLE,
     },
   });

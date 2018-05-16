@@ -57,6 +57,9 @@ const init = ({ dbName, dbUser, dbPassword }) => new Promise((resolve, reject) =
       db.Portfolio.hasMany(db.Transaction);
       db.Transaction.belongsTo(db.Portfolio);
 
+      db.Portfolio.hasMany(db.Trade);
+      db.Trade.belongsTo(db.Portfolio);
+
       db.Investor.hasMany(db.Transaction);
       db.Transaction.belongsTo(db.Investor);
 

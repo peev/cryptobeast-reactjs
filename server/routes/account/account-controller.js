@@ -65,11 +65,24 @@ const accountController = (repository) => {
       });
   };
 
+  // Trades ===============================================
+const getAllTrades = (req, res) => {
+  repository.find({modelName: 'Trade'})
+    .then((response) => {
+      res.status(200).send(response);
+    })
+    .catch((error) => {
+      res.json(error);
+    });
+};
+
   return {
     createAccount,
     updateAccount,
     removeAccount,
     getAccountBalance,
+
+    getAllTrades,
   };
 };
 

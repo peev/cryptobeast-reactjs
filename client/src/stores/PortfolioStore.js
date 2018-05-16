@@ -197,17 +197,15 @@ class PortfolioStore {
   get currentMarketSummaryPercentageChange() {
     if (this.selectedPortfolio &&
       MarketStore.baseCurrencies.length > 0) {
-      const marketSummary = MarketStore.marketSummaries;
+      const marketSummary = MarketStore.marketPriceHistory;
+      console.log(MarketStore.marketPriceHistory);
 
       return Object.keys(marketSummary)
-        .filter(el => el.includes('BTC-') || el.includes('USDT-BTC'))
         .map((el) => {
-          const index = marketSummary[el].MarketName.indexOf('-');
-          const name = marketSummary[el].MarketName.slice(index + 1);
-          const elemCost = +(((marketSummary[el].Last - marketSummary[el].PrevDay) /
-            marketSummary[el].PrevDay) * 100)
-            .toFixed(2);
-          return [name, elemCost, 42];
+          const name = marketSummary[el].currency;
+          const change24h = marketSummary[el].percentChangeFor24h;
+          const change7d = marketSummary[el].percentChangeFor7d;
+          return [name, change24h, change7d];
         })
         .sort((a, b) => b[1] - a[1]);
     }

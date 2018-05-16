@@ -48,8 +48,8 @@ class MarketStore {
       .then(this.convertMarketSummaries)
       .catch(err => console.log(err));
 
-    // syncs and gets the price history to the market for the past 1h, 24h and 7d
-    requester.Market.getSyncedMarketPriceHistory()
+    // get market price history from database (Coin Market Cap)
+    requester.Market.getMarketPriceHistory()
       .then(this.convertMarketPriceHistory)
       .catch(err => console.log(err));
   }
@@ -88,6 +88,16 @@ class MarketStore {
   getSyncedSummaries() {
     requester.Market.getSyncedSummaries()
       .then(this.convertMarketSummaries)
+      .catch(err => console.log(err));
+  }
+
+  @action
+  syncMarketPriceHistory() {
+    // syncs the price history to the market for the past 1h, 24h and 7d
+    // convertCurrency is given, so user can chose in what base currency
+    // information will be displayed
+    requester.Market.syncMarketPriceHistory({ convertCurrency: 'BTC' })
+      .then(this.convertMarketPriceHistory)
       .catch(err => console.log(err));
   }
 

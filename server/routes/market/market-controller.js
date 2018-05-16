@@ -46,7 +46,18 @@ const marketController = (repository) => {
   };
 
   const syncTickersFromCoinMarketCapOnRequest = (req, res) => {
-    marketService.syncTickersFromCoinMarketCap()
+    const { convertCurrency } = req.body;
+    marketService.syncTickersFromCoinMarketCap(convertCurrency)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const getAllMarketPriceHistory = (req, res) => {
+    repository.find({ modelName: 'MarketPriceHistory' })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -122,10 +133,10 @@ const marketController = (repository) => {
     getSummaries,
     getBaseCurrencies,
     syncTickersFromApi,
-    getMarketPriceHistory,
     getAllTickers,
     syncCurrenciesFromApiOnRequest,
     syncTickersFromCoinMarketCapOnRequest,
+    getAllMarketPriceHistory,
     getAllCurrencies,
     syncTickersFromKrakenOnRequest,
   };

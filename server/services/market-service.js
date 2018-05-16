@@ -34,8 +34,8 @@ const marketService = (repository) => {
     return repository.createMany({ modelName: 'Ticker', newObjects: currentTickerPairs });
   }
 
-  const syncTickersFromCoinMarketCap = async (currenciesToGet) => {
-    const tickers = await coinMarketCapServices().getTickers();
+  const syncTickersFromCoinMarketCap = async (convertCurrency) => {
+    const tickers = await coinMarketCapServices().getTickers(convertCurrency);
 
     await repository.removeAll({ modelName: 'MarketPriceHistory' });
     return repository.createMany({ modelName: 'MarketPriceHistory', newObjects: tickers });

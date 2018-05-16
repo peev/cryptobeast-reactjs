@@ -8,11 +8,15 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    convertCurrency: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     rank: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    priceInUSD: {
+    price: {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
@@ -20,22 +24,22 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    percentChangeFor1hInUSD: {
+    percentChangeFor1h: {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    percentChangeFor24hInUSD: {
+    percentChangeFor24h: {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
-    percentChangeFor7dInUSD: {
+    percentChangeFor7d: {
       type: DataTypes.DOUBLE,
       allowNull: true,
     },
   }, {
       timestamps: false,
-    }, {
       freezeTableName: true,
       tableName: 'market_price_history',
-    });
+    }
+  );
 };

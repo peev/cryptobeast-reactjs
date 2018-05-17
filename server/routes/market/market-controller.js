@@ -1,16 +1,11 @@
-const { krakenServices } = require('../../integrations/kraken-services');
-const { bittrexServices } = require('../../integrations/bittrex-services');
+// const { krakenServices } = require('../../integrations/kraken-services');
+// const { bittrexServices } = require('../../integrations/bittrex-services');
 
 const marketController = (repository) => {
-  const syncSummaries = (req, res) => {
-    const clearOldSummariesPromise = repository.removeAll({ modelName: 'MarketSummary' });
-    const getSummariesPromise = clearOldSummariesPromise
-      .then(() => bittrexServices().getSummaries());
+  const marketService = require('../../services/market-service')(repository);
 
-    Promise.resolve(getSummariesPromise)
-      .then((currencies) => {
-        return repository.createMany({ modelName: 'MarketSummary', newObjects: currencies });
-      })
+  const syncSummariesOnRequest = (req, res) => {
+    marketService.syncSummaries()
       .then((response) => {
         res.status(200).send(response);
       })
@@ -39,27 +34,30 @@ const marketController = (repository) => {
       });
   };
 
-  const syncTickersFromKraken = (req, res) => {
-    const currenciesToGet = req.body.currencies;
-    krakenServices().getTickers(currenciesToGet)
-      .then((tickers) => {
-        const currencyDictionary = {
-          XETHXXBT: 'ETH',
-          XXBTZEUR: 'EUR',
-          XXBTZJPY: 'JPY',
-          XXBTZUSD: 'USD',
-        };
-        const currentTickerPairs = [];
-
-        Object.keys(tickers).map((currency) => {
-          currentTickerPairs.push({
-            pair: currencyDictionary[currency],
-            last: tickers[currency].c[0],
-          });
-        });
-        return repository.createMany({ modelName: 'Ticker', newObjects: currentTickerPairs })
-          .then(result => result);
+  const syncTickersFromKrakenOnRequest = (req, res) => {
+    const { currencies } = req.body;
+    marketService.syncTickersFromKraken(currencies)
+      .then((response) => {
+        res.status(200).send(response);
       })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const syncTickersFromCoinMarketCapOnRequest = (req, res) => {
+    const { convertCurrency } = req.body;
+    marketService.syncTickersFromCoinMarketCap(convertCurrency)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const getAllMarketPriceHistory = (req, res) => {
+    repository.find({ modelName: 'MarketPriceHistory' })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -69,6 +67,9 @@ const marketController = (repository) => {
   };
 
   // Ticker services ======================================================
+  /**
+ * @deprecated too slow -> use market summary
+ */
   const syncTickersFromApi = (req, res) => {
     const clearOldTickersPromise = repository.removeAll({ modelName: 'Ticker' });
     const getTickersPromise = clearOldTickersPromise
@@ -107,15 +108,8 @@ const marketController = (repository) => {
       });
   };
 
-  const syncCurrenciesFromApi = (req, res) => {
-    const clearOldCurrenciesPromise = repository.removeAll({ modelName: 'Currency' });
-    const getCurrenciesPromise = clearOldCurrenciesPromise
-      .then(() => bittrexServices().getCurrencies());
-
-    Promise.resolve(getCurrenciesPromise)
-      .then((currencies) => {
-        return repository.createMany({ modelName: 'Currency', newObjects: currencies });
-      })
+  const syncCurrenciesFromApiOnRequest = (req, res) => {
+    marketService.syncCurrenciesFromApi()
       .then((response) => {
         res.status(200).send(response);
       })
@@ -135,14 +129,16 @@ const marketController = (repository) => {
   };
 
   return {
-    syncSummaries,
+    syncSummariesOnRequest,
     getSummaries,
     getBaseCurrencies,
     syncTickersFromApi,
     getAllTickers,
-    syncCurrenciesFromApi,
+    syncCurrenciesFromApiOnRequest,
+    syncTickersFromCoinMarketCapOnRequest,
+    getAllMarketPriceHistory,
     getAllCurrencies,
-    syncTickersFromKraken,
+    syncTickersFromKrakenOnRequest,
   };
 };
 

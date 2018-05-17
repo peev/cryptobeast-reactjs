@@ -1,6 +1,6 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, Input, Grid } from 'material-ui';
+import { withStyles, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
@@ -45,9 +45,11 @@ const styles = (theme: Object) => ({
     flexDirection: 'column',
   },
   alignInput: {
+    width: '95%',
     marginTop: '16px',
   },
   alignInputAfter: {
+    width: '95%',
     marginTop: '10px',
   },
   buttonsContainer: {
@@ -57,6 +59,9 @@ const styles = (theme: Object) => ({
   },
   alignBtn: {
     marginRight: '20px',
+  },
+  width: {
+    width: '95%',
   },
 });
 
@@ -172,9 +177,10 @@ class AddInvestor extends React.Component<Props, State> {
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
-                  label="Full Name"
+                  label="Full Name*"
                   onChange={this.handleRequests('fullName')}
                   name="name"
+                  className={classes.width}
                   value={InvestorStore.newInvestorValues.fullName}
                   validators={['required']}
                   errorMessages={['this field is required']}
@@ -182,7 +188,7 @@ class AddInvestor extends React.Component<Props, State> {
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
-                  label="Email"
+                  label="Email*"
                   onChange={this.handleRequests('email')}
                   name="email"
                   value={InvestorStore.newInvestorValues.email}
@@ -197,6 +203,7 @@ class AddInvestor extends React.Component<Props, State> {
                   label="Telephone"
                   onChange={this.handleRequests('telephone')}
                   name="telephone"
+                  className={classes.width}
                   value={InvestorStore.newInvestorValues.telephone}
                   validators={['isNumber']}
                   errorMessages={['telephone is not valid']}
@@ -216,8 +223,11 @@ class AddInvestor extends React.Component<Props, State> {
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                  <SelectBaseCurrency />
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
-                  label="Deposited Amount"
+                  label="Deposited Amount*"
                   onChange={this.handleRequests('depositedAmount')}
                   name="depositedAmount"
                   value={InvestorStore.newInvestorValues.depositedAmount}
@@ -225,23 +235,20 @@ class AddInvestor extends React.Component<Props, State> {
                   errorMessages={['this field is required', 'value must be a positive number']}
                 />
               </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <SelectBaseCurrency />
-              </Grid>
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
                   name="USD"
                   label="Deposited USD Equiv."
-                  // className={classes.alignInputAfter}
+                  className={classes.width}
                   value={Math.round(InvestorStore.convertedUsdEquiv * 100) / 100 || ''}
                 />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
                   type="number"
-                  label="Management Fee %"
+                  label="Management Fee %*"
                   onChange={this.handleRequests('managementFee')}
                   name="fee"
                   value={InvestorStore.newInvestorValues.managementFee || ''}
@@ -254,90 +261,22 @@ class AddInvestor extends React.Component<Props, State> {
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
               <TextValidator
                 name="share price"
-                label="Share Price at Entry Date (usd)"
+                label="Share Price at Entry Date (USD)"
                 className={classes.alignInputAfter}
                 value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
                 style={{ width: '95%' }}
               />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <Input
+                <TextValidator
+                  name="shares"
                   type="number"
                   value={InvestorStore.purchasedShares || ''}
-                  placeholder="Purchased Shares"
-                  className={classes.alignInput}
+                  label="Purchased Shares"
+                  className={classes.alignInputAfter}
                 />
               </Grid>
             </Grid>
-            {/* <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}> */}
-            {/* <Input
-                  placeholder="Full name"
-                  onChange={this.handleRequests('fullName')}
-                  className={classes.alignInput}
-                  autoFocus
-                /> */}
-
-            {/* <Input
-                  type="number"
-                  placeholder="Telephone"
-                  onChange={this.handleRequests('telephone')}
-                  className={classes.alignInput}
-                /> */}
-
-            {/* <Input
-                  type="number"
-                  placeholder="Deposited Amount"
-                  onChange={this.handleRequests('depositedAmount')}
-                  className={classes.alignInput}
-                /> */}
-
-            {/* <Input
-                  placeholder="Deposited USD Equiv."
-                  className={classes.alignInput}
-                  value={InvestorStore.newInvestorValues.convertedUsdEquiv || ''}
-                /> */}
-
-            {/* <Input
-                  placeholder="Share price at entry Date"
-                  className={classes.alignInput}
-                  value={PortfolioStore.currentPortfolioSharePrice || 1}
-                /> */}
-            {/* </Grid> */}
-
-            {/* <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}> */}
-            {/* <Input
-                  type="email"
-                  placeholder="Email Address"
-                  onChange={this.handleRequests('email')}
-                  className={classes.alignInput}
-                /> */}
-
-            {/* <Input
-                  type="date"
-                  placeholder="Date of Entry"
-                  onChange={this.handleRequests('dateOfEntry')}
-                  className={classes.alignInput}
-                /> */}
-
-            {/* <SelectBaseCurrency /> */}
-
-            {/* <Input
-                  type="number"
-                  placeholder="Management Fee %"
-                  value={InvestorStore.newInvestorValues.managementFee || ''}
-                  onChange={this.handleRequests('managementFee')}
-                  className={classes.alignInputAfter}
-                /> */}
-
-            {/* <Input
-                  type="number"
-                  value={InvestorStore.purchasedShares || ''}
-                  placeholder="Purchased Shares"
-                  className={classes.alignInput}
-                /> */}
-            {/* </Grid>
-            </Grid> */}
 
             <Grid container className={classes.buttonsContainer}>
               <div className={classes.alignBtn}>
@@ -354,7 +293,9 @@ class AddInvestor extends React.Component<Props, State> {
               <Button
                 type="submit"
                 color="primary"
-                disabled={NotificationStore.getErrorsLength > 0}
+                disabled={NotificationStore.getErrorsLength > 0 || InvestorStore.newInvestorValues.fullName === ''
+                  || InvestorStore.newInvestorValues.email === '' || InvestorStore.newInvestorValues.dateOfEntry === ''
+                  || InvestorStore.newInvestorValues.depositedAmount === '' || InvestorStore.newInvestorValues.managementFee === ''}
               >
                 Save
               </Button>

@@ -67,7 +67,6 @@ class InvestorDeposit extends React.Component<Props, State> {
   };
 
   componentWillMount() {
-    // custom rule will have name 'isPasswordMatch'
     ValidatorForm.addValidationRule('isDateValid', (value: string) => {
       if (new Date(value) > Date.now()) {
         return false;
@@ -104,6 +103,7 @@ class InvestorDeposit extends React.Component<Props, State> {
 
     if (noErrors) {
       InvestorStore.createNewDepositInvestor(InvestorStore.selectedInvestor.id);
+      this.props.InvestorStore.resetSelectedInvestor();
       this.handleClose();
     }
   }
@@ -199,7 +199,7 @@ class InvestorDeposit extends React.Component<Props, State> {
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
                   name="share price"
-                  label="Share Price at Entry Date (usd)"
+                  label="Share Price at Entry Date (USD)"
                   className={classes.alignInputAfter}
                   value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
                   style={{ width: '95%' }}
@@ -228,7 +228,7 @@ class InvestorDeposit extends React.Component<Props, State> {
                 type="submit"
                 color="primary"
                 disabled={InvestorStore.newDepositValues.amount === '' || InvestorStore.newDepositValues.transactionDate === '' ||
-                MarketStore.selectedBaseCurrency == null || InvestorStore.selectedInvestorId === ''}
+                MarketStore.selectedBaseCurrency == null || InvestorStore.selectedInvestorId === null}
               >
                 Save
               </Button>

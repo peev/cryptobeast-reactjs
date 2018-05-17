@@ -163,7 +163,7 @@ class AssetStore {
   createAssetAllocation() {
     const usedExchange = this.selectedExchangeAssetAllocation !== '' ?
       this.selectedExchangeAssetAllocation :
-      'manually added';
+      'Manual';
 
     const newAssetAllocation = {
       selectedExchange: usedExchange,
@@ -181,11 +181,51 @@ class AssetStore {
     // That why it returns the updated assets for the current portfolio
     requester.Asset.allocate(newAssetAllocation)
       .then(action((result) => {
-        // console.log(result);
         PortfolioStore.currentPortfolioAssets = result.data;
       }));
 
-    // console.log(newAssetAllocation);
+
+    let type = '';
+    let price = 0;
+    let filled = 0;
+    let market = '';
+    const tradingCoin = this.selectedCurrencyToAssetAllocation;
+    switch (tradingCoin) {
+      case 'BTC':
+      case 'ETH':
+      case 'USDT':
+        type = 'sell';
+        market = tradingCoin;
+        price = this.assetAllocationFromAmount / this.assetAllocationToAmount;
+        filled = this.assetAllocationFromAmount;
+        break;
+      default:
+        type = 'buy';
+        market = this.selectedCurrencyFromAssetAllocation.currency;
+        price = this.assetAllocationFromAmount / this.assetAllocationToAmount;
+        filled = this.assetAllocationToAmount;
+        break;
+    }
+
+    const trade = {
+      transactionDate: this.assetAllocationSelectedDate,
+      entryDate: (new Date()).toLocaleString(),
+      source: usedExchange,
+      pair: `${this.selectedCurrencyFromAssetAllocation.currency}-${this.selectedCurrencyToAssetAllocation}`,
+      type,
+      price,
+      filled,
+      fee: this.assetAllocationFee,
+      feeCurrency: this.selectedCurrencyForTransactionFee,
+      totalPrice: price * filled,
+      market,
+      portfolioId: PortfolioStore.selectedPortfolioId,
+    };
+
+    requester.Trade.addTrade(trade)
+      .then(action((result) => {
+        PortfolioStore.currentPortfolioTrades.push(result.data);
+      }));
   }
 
   @action.bound

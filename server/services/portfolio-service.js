@@ -17,9 +17,9 @@ const portfolioService = (repository) => {
           break;
         case 'USDT':
           assetPair = `${asset.currency}-BTC`;
-          repository.findById({ modelName: 'Ticker', id: assetPair })
-            .then((foundTickers) => {
-              lastBTCEquivalent = asset.balance / foundTickers.last;
+          repository.findOne({ modelName: 'MarketSummary', options:{where:{MarketName: assetPair }}})
+            .then((foundSummary) => {
+              lastBTCEquivalent = asset.balance / foundSummary.Last;
               resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
               repository.update({ modelName: 'Asset', updatedRecord });
             });
@@ -37,9 +37,9 @@ const portfolioService = (repository) => {
           break;
         default:
           assetPair = `BTC-${asset.currency}`;
-          repository.findById({ modelName: 'Ticker', id: assetPair })
-            .then((foundTickers) => {
-              lastBTCEquivalent = asset.balance * foundTickers.last;
+          repository.findOne({ modelName: 'MarketSummary', options:{where:{MarketName: assetPair }}})
+            .then((foundSummary) => {
+              lastBTCEquivalent = asset.balance * foundSummary.Last;
               resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
               repository.update({ modelName: 'Asset', updatedRecord });
             });

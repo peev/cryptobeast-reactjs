@@ -10,7 +10,6 @@ import TotalIcon from './../../components/CustomIcons/Summary/TotalIcon';
 import CoinIcon from './../../components/CustomIcons/Summary/CoinIcon';
 import DollarIcon from './../../components/CustomIcons/Summary/DollarIcon';
 import AscendantBarsIcon from './../../components/CustomIcons/Summary/AscendantBarsIcon';
-import CreatePortfolio from './../../components/Modal/CreatePortfolio';
 import SummaryCard from './../../components/Cards/Summary/SummaryCard';
 import AssetBreakdown from './../../components/Cards/Summary/AssetBreakdown';
 import SummaryTabs from './../../components/Tabs/SummaryTabs';
@@ -42,27 +41,11 @@ type Props = {
   PortfolioStore: Object,
 };
 
-@inject('PortfolioStore')
-@observer
-class Summary extends React.Component<Props> {
-  state = {};
+const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
+  const { classes, PortfolioStore } = props;
 
-  render() {
-    const { classes, PortfolioStore } = this.props;
-
-    const createPortfolio = (
-      <Grid container>
-        <Grid item xs={12} sm={12} md={12}>
-          <p className={classes.warningText}>
-            You currently have no portfolio to display. Please create a
-            portfolio to start
-          </p>
-          <CreatePortfolio />
-        </Grid>
-      </Grid>
-    );
-
-    const summaryContent = (
+  return (
+    <Grid container>
       <Grid container className={classes.container}>
         <Grid container spacing={8} className={classes.containerHeader}>
           <SummaryCard
@@ -87,14 +70,16 @@ class Summary extends React.Component<Props> {
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            description={`$${PortfolioStore.currentSelectedPortfolioCost.toFixed(2) || ''}`}
+            description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
           />
 
           <SummaryCard
             icon={CoinIcon}
             iconColor="gray"
             title="Total investment"
-            description={`$${PortfolioStore.summaryTotalInvestment}`}
+            description={`$${PortfolioStore.summaryTotalInvestmentInUSD}`}
+            hasInfo={PortfolioStore.summaryTotalInvestmentInUSD === 0}
+            infoMessage="Please add new investor or edit your personal investment amount"
           />
 
           <SummaryCard
@@ -104,6 +89,10 @@ class Summary extends React.Component<Props> {
             description={PortfolioStore.summaryTotalProfitLoss > 0 ?
               `+${PortfolioStore.summaryTotalProfitLoss}%` :
               `${PortfolioStore.summaryTotalProfitLoss}%`}
+            hasInfo={(PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0) ||
+              (PortfolioStore.summaryTotalInvestmentInUSD > 0 && PortfolioStore.currentPortfolioCostInUSD === 0)}
+            infoMessage={PortfolioStore.summaryTotalInvestmentInUSD === 0 ? 'Please add new investor or edit your personal investment amount'
+              : 'Please add assets to the portfolio to see total profit/loss.'}
           />
         </Grid>
 
@@ -133,16 +122,8 @@ class Summary extends React.Component<Props> {
           </Grid>
         </Grid>
       </Grid>
-    );
-
-    const portfoliosArray = PortfolioStore.portfolios;
-
-    return (
-      <Grid container>
-        {portfoliosArray.length > 0 ? summaryContent : createPortfolio}
-      </Grid>
-    );
-  }
-}
+    </Grid>
+  );
+}));
 
 export default withStyles(styles, summaryStyle)(Summary);

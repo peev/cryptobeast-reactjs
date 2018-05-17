@@ -227,7 +227,6 @@ class PortfolioStore {
     if (this.selectedPortfolio &&
       MarketStore.baseCurrencies.length > 0 &&
       this.currentPortfolioAssets.length > 0) {
-      console.log(this.currentPortfolioAssets);
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this is USD
       return this.currentPortfolioAssets.reduce((accumulator, el) => {
         let assetUSDValue;
@@ -251,7 +250,6 @@ class PortfolioStore {
             break;
           }
         }
-        console.log(accumulator + assetUSDValue);
         return accumulator + assetUSDValue;
       }, 0);
     }

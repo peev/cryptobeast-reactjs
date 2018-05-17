@@ -230,12 +230,9 @@ class InvestorStore {
   @computed
   get individualUSDEquivalent() {
     if (this.selectedInvestor) {
-      //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualUSDEquivalent = this.selectedInvestor.purchasedShares * 1;
-      this.individualSummaryValues.usdEquivalent = calculatedIndividualUSDEquivalent;
-      // this.individualSummaryValues.feePotential = calculatedIndividualUSDEquivalent * this.selectedInvestor.managementFee;
+      const calculatedIndividualUSDEquivalent = this.selectedInvestor.purchasedShares * PortfolioStore.currentPortfolioSharePrice;
 
-      return calculatedIndividualUSDEquivalent;
+      return Number(`${Math.round(`${calculatedIndividualUSDEquivalent}e2`)}e-2`);
     }
 
     return null;
@@ -244,11 +241,9 @@ class InvestorStore {
   @computed
   get individualBTCEquivalent() {
     if (this.selectedInvestor) {
-      //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualBTCEquivalent = (this.selectedInvestor.purchasedShares / MarketStore.baseCurrencies[4].last).toFixed(2);
-      this.individualSummaryValues.btcEquivalent = calculatedIndividualBTCEquivalent;
+      const calculatedIndividualBTCEquivalent = this.individualUSDEquivalent / MarketStore.baseCurrencies[3].last;
 
-      return calculatedIndividualBTCEquivalent;
+      return Number(`${Math.round(`${calculatedIndividualBTCEquivalent}e2`)}e-2`);
     }
 
     return null;
@@ -257,11 +252,9 @@ class InvestorStore {
   @computed
   get individualETHEquivalent() {
     if (this.selectedInvestor && MarketStore.baseCurrencies) {
-      //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualETHEquivalent = (this.selectedInvestor.purchasedShares / MarketStore.baseCurrencies[3].last).toFixed(2);
-      this.individualSummaryValues.ethEquivalent = calculatedIndividualETHEquivalent;
+      const calculatedIndividualETHEquivalent = this.individualBTCEquivalent / MarketStore.baseCurrencies[0].last;
 
-      return calculatedIndividualETHEquivalent;
+      return Number(`${Math.round(`${calculatedIndividualETHEquivalent}e2`)}e-2`);
     }
 
     return null;
@@ -301,7 +294,7 @@ class InvestorStore {
   get individualFeePotential() {
     if (this.selectedInvestor) {
       // TODO: USD is hard coded
-      const calculatedIndividualFeePotential = ((MarketStore.baseCurrencies[3].last * this.selectedInvestor.managementFee) / 100).toFixed(2);
+      const calculatedIndividualFeePotential = ((this.individualUSDEquivalent * this.selectedInvestor.managementFee) / 100).toFixed(2);
       this.individualSummaryValues.feePotential = calculatedIndividualFeePotential;
 
       return calculatedIndividualFeePotential;

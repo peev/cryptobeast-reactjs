@@ -177,7 +177,7 @@ class AddInvestor extends React.Component<Props, State> {
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
-                  label="Full Name"
+                  label="Full Name*"
                   onChange={this.handleRequests('fullName')}
                   name="name"
                   className={classes.width}
@@ -188,7 +188,7 @@ class AddInvestor extends React.Component<Props, State> {
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
-                  label="Email"
+                  label="Email*"
                   onChange={this.handleRequests('email')}
                   name="email"
                   value={InvestorStore.newInvestorValues.email}
@@ -227,7 +227,7 @@ class AddInvestor extends React.Component<Props, State> {
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
-                  label="Deposited Amount"
+                  label="Deposited Amount*"
                   onChange={this.handleRequests('depositedAmount')}
                   name="depositedAmount"
                   value={InvestorStore.newInvestorValues.depositedAmount}
@@ -248,7 +248,7 @@ class AddInvestor extends React.Component<Props, State> {
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
                   type="number"
-                  label="Management Fee %"
+                  label="Management Fee %*"
                   onChange={this.handleRequests('managementFee')}
                   name="fee"
                   value={InvestorStore.newInvestorValues.managementFee || ''}
@@ -293,7 +293,9 @@ class AddInvestor extends React.Component<Props, State> {
               <Button
                 type="submit"
                 color="primary"
-                disabled={NotificationStore.getErrorsLength > 0}
+                disabled={NotificationStore.getErrorsLength > 0 || InvestorStore.newInvestorValues.fullName === ''
+                  || InvestorStore.newInvestorValues.email === '' || InvestorStore.newInvestorValues.dateOfEntry === ''
+                  || InvestorStore.newInvestorValues.depositedAmount === '' || InvestorStore.newInvestorValues.managementFee === ''}
               >
                 Save
               </Button>

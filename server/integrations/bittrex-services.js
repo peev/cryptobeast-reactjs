@@ -78,17 +78,18 @@ const bittrexServices = () => {
       bittrex.getbalances((data, err) => {
         if (err) {
           reject(err);
+        } else {
+          resolve(data.result.map((c) => {
+            return {
+              currency: c.Currency,
+              balance: c.Balance,
+              available: c.Available,
+              pending: c.Pending,
+              cryptoAddress: c.CryptoAddress,
+              origin: 'Bittrex',
+            };
+          }));
         }
-        resolve(data.result.map((c) => {
-          return {
-            currency: c.Currency,
-            balance: c.Balance,
-            available: c.Available,
-            pending: c.Pending,
-            cryptoAddress: c.CryptoAddress,
-            origin: 'Bittrex',
-          };
-        }));
       });
     });
   };

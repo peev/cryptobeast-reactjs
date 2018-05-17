@@ -62,7 +62,7 @@ class App extends React.Component<Props> {
           </Grid>
         </Grid>
       );
-    } else if (PortfolioStore.portfolios.length === 1) {
+    } else {
       mainContent = (
         <div className={classes.mainPanel}>
           <Header
@@ -75,19 +75,17 @@ class App extends React.Component<Props> {
           </div>
         </div>
       );
-    } else {
-      mainContent = (
-        <div className={classes.mainPanel}>
-          <Header
-            routes={appRoutes}
-            handleDrawerToggle={this.handleDrawerToggle}
-            {...rest}
-          />
-          <p style={{ textAlign: 'center', marginTop: '150px' }}>To start using CryptoBeast, please select a portfolio to analyze</p>
-        </div>
-      );
     }
 
+    // TODO: needs fixing for multi select portfolio
+    // <div className={classes.mainPanel}>
+    //   <Header
+    //     routes={appRoutes}
+    //     handleDrawerToggle={this.handleDrawerToggle}
+    //     {...rest}
+    //   />
+    //   <p style={{ textAlign: 'center', marginTop: '150px' }}>To start using CryptoBeast, please select a portfolio to analyze</p>
+    // </div>
 
     return (
       <div>

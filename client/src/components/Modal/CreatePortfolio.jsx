@@ -124,7 +124,7 @@ class CreatePortfolio extends React.Component<Props, State> {
 
             <TextValidator
               name="Portfolio Name"
-              label="Portfolio name"
+              label="Portfolio name*"
               style={{ width: '100%' }}
               onChange={this.handleInputValue}
               value={PortfolioStore.newPortfolioName}
@@ -163,7 +163,7 @@ class CreatePortfolio extends React.Component<Props, State> {
               style={{ display: 'inline-flex', float: 'right' }}
               // onClick={this.handleSave}
               color="primary"
-              disabled={NotificationStore.getErrorsLength > 0}
+              disabled={NotificationStore.getErrorsLength > 0 || PortfolioStore.newPortfolioName === ''}
 
               type="submit"
             >

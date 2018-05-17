@@ -107,8 +107,9 @@ class AddApiAccount extends React.Component<Props, State> {
 
   handleSave = () => {
     const { ApiAccountStore, PortfolioStore } = this.props;
+    const hasErrors = ApiAccountStore.handleCreateNewAccountErrors(PortfolioStore.selectedPortfolioId);
 
-    if (PortfolioStore.selectedPortfolioId !== null) {
+    if (PortfolioStore.selectedPortfolioId !== null && !hasErrors) {
       ApiAccountStore.createNewAccount(PortfolioStore.selectedPortfolioId);
       this.props.NotificationStore.addMessage('successMessages', 'Successfully added API');
     }
@@ -121,7 +122,7 @@ class AddApiAccount extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes, AssetStore, ApiAccountStore } = this.props;
+    const { classes, AssetStore, ApiAccountStore, NotificationStore } = this.props;
     return (
       <div className={classes.headerButtonContainer}>
         <IconButton
@@ -164,7 +165,7 @@ class AddApiAccount extends React.Component<Props, State> {
             <div className={classes.container}>
               <div className={classes.inputWrapper}>
                 <SelectExchange
-                  label="Select Exchange"
+                  label="Select Exchange*"
                   value={AssetStore.selectedExchangeCreateAccount}
                   handleChange={this.handleExchangeCreateAccount}
                   validators={['required']}
@@ -174,7 +175,7 @@ class AddApiAccount extends React.Component<Props, State> {
 
               <TextValidator
                 name="Api Key"
-                label="Api Key"
+                label="Api Key*"
                 className={classes.inputWrapper}
                 value={ApiAccountStore.values.apiKey}
                 onChange={(e: SyntheticEvent) => this.handleInputValue('apiKey', e)}
@@ -184,7 +185,7 @@ class AddApiAccount extends React.Component<Props, State> {
 
               <TextValidator
                 name="Api Secret"
-                label="Api Secret"
+                label="Api Secret*"
                 className={classes.inputWrapper}
                 value={ApiAccountStore.values.apiSecret}
                 onChange={(e: SyntheticEvent) => this.handleInputValue('apiSecret', e)}
@@ -210,6 +211,8 @@ class AddApiAccount extends React.Component<Props, State> {
               // onClick={this.handleSave}
               color="primary"
               type="submit"
+              disabled={NotificationStore.getErrorsLength > 0 || AssetStore.selectedExchangeCreateAccount === ''
+                || ApiAccountStore.values.apiKey === '' || ApiAccountStore.values.apiSecret === ''}
             >
               {' '}
               Save

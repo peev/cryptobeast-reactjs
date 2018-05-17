@@ -38,21 +38,22 @@ const krakenServices = (key, secret) => {
       kraken.api('Balance', null, (err, data) => {
         if (err) {
           reject(err);
-        }
-        resolve(Object.keys(data.result).map((k) => {
-          let convertedCurrency = k;
-          if (k.length === 4 && (k[0] === 'X' || k[0] === 'Z')) {
-            convertedCurrency = k.substring(1);
-            if (convertedCurrency === 'XBT') {
-              convertedCurrency = 'BTC';
+        } else {
+          resolve(Object.keys(data.result).map((k) => {
+            let convertedCurrency = k;
+            if (k.length === 4 && (k[0] === 'X' || k[0] === 'Z')) {
+              convertedCurrency = k.substring(1);
+              if (convertedCurrency === 'XBT') {
+                convertedCurrency = 'BTC';
+              }
             }
-          }
-          return {
-            currency: convertedCurrency,
-            balance: data.result[k],
-            origin: 'Kraken',
-          };
-        }));
+            return {
+              currency: convertedCurrency,
+              balance: data.result[k],
+              origin: 'Kraken',
+            };
+          }));
+        }
       });
     });
   };

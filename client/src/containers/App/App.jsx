@@ -71,10 +71,8 @@ class App extends React.Component<Props> {
                 <Header
                   routes={appRoutes}
                   handleDrawerToggle={this.handleDrawerToggle}
-
                   {...rest}
                 />
-
                 <div className={classes.content}>
                   <div className={classes.container}>{switchRoutes}</div>
                 </div>

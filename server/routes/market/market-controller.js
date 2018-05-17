@@ -45,6 +45,27 @@ const marketController = (repository) => {
       });
   };
 
+  const syncTickersFromCoinMarketCapOnRequest = (req, res) => {
+    const { convertCurrency } = req.body;
+    marketService.syncTickersFromCoinMarketCap(convertCurrency)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const getAllMarketPriceHistory = (req, res) => {
+    repository.find({ modelName: 'MarketPriceHistory' })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   // Ticker services ======================================================
   /**
  * @deprecated too slow -> use market summary
@@ -114,6 +135,8 @@ const marketController = (repository) => {
     syncTickersFromApi,
     getAllTickers,
     syncCurrenciesFromApiOnRequest,
+    syncTickersFromCoinMarketCapOnRequest,
+    getAllMarketPriceHistory,
     getAllCurrencies,
     syncTickersFromKrakenOnRequest,
   };

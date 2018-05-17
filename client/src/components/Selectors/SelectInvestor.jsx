@@ -35,7 +35,6 @@ type Props = {
 class SelectInvestor extends React.Component<Props> {
   handleChange = (event: SyntheticEvent) => {
     if (event) {
-      console.log(event);
       this.props.handleChange(event.value);
     } else {
       this.props.handleChange('');

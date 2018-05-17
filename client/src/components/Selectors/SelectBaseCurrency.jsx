@@ -23,7 +23,6 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
-  currencies: Array<string>,
   label: string,
   InvestorStore: Object,
   MarketStore: Object,
@@ -65,7 +64,6 @@ class SelectBaseCurrency extends React.Component<Props, State> {
 
   render() {
     const { classes, label, MarketStore } = this.props;
-    console.log(MarketStore.baseCurrencies);
     const currenciesToShow = [];
     const baseCurrencies = MarketStore.baseCurrencies.map((currency: object) => ({ value: currency.pair, label: currency.pair }));
     baseCurrencies.forEach((currency: object) => {

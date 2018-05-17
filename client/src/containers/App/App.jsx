@@ -7,7 +7,7 @@ import uuid from 'uuid/v4';
 import { Header, Sidebar } from './../../components';
 import appRoutes from './../../routes/app';
 import appStyle from './../../variables/styles/appStyle';
-
+import history from '../../services/History';
 
 const switchRoutes = (
   <Switch>
@@ -20,6 +20,7 @@ const switchRoutes = (
 
 type Props = {
   classes: Object,
+  location: Object,
   PortfolioStore: Object,
   UserStore: Object
 };
@@ -30,6 +31,12 @@ class App extends React.Component<Props> {
   state = {
     mobileOpen: false,
   };
+
+  componentDidMount() {
+    if (this.props.location.pathname === '/') {
+      history.replace('/summary');
+    }
+  }
 
   handleDrawerToggle = () => {
     this.setState({ mobileOpen: !this.state.mobileOpen });
@@ -71,13 +78,11 @@ class App extends React.Component<Props> {
                 <Header
                   routes={appRoutes}
                   handleDrawerToggle={this.handleDrawerToggle}
-
                   {...rest}
                 />
-
-                (<div className={classes.content}>
+                <div className={classes.content}>
                   <div className={classes.container}>{switchRoutes}</div>
-                </div>)
+                </div>
               </div>
             ) : selectFromMultiplePortfolios}
           </div>

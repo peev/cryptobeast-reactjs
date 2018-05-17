@@ -1,12 +1,16 @@
 // @flow
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import {
   withStyles,
   Card,
   CardContent,
   CardHeader,
   Typography,
+  IconButton,
+  Popover,
 } from 'material-ui';
+import { Info } from '@material-ui/icons';
+
 
 import statsCardStyle from './../../../variables/styles/statsCardStyle';
 
@@ -49,51 +53,119 @@ const styles = () => ({
   input: {
     width: '100%',
   },
+  info: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  paper: {
+    padding: '20px',
+  },
+  popover: {
+    pointerEvents: 'none',
+  },
+  popperClose: {
+    pointerEvents: 'none',
+  },
+  hidden: {
+    visibility: 'hidden',
+  },
+  color: {
+    color: '#3BB3E4',
+  },
 });
 
 type Props = {
   classes: Object,
   title: string,
   description: string,
+  infoMessage: string,
+  hasInfo: boolean,
 };
 
 
-function SummaryCard({ ...props }: Props) {
-  const {
-    classes,
-    title,
-    description,
-    // iconColor,
-  } = props;
-
+class SummaryCard extends React.Component<Props> {
   /**
    * converts the given percent of profit/loss and makes it into number
    * depends if its positive or negative, return appropriate class name
    */
-  const totalProfitLoss = () => {
-    const result = parseFloat(description.slice(0, description.length - 1));
-
-    if (title === 'Total profit/loss' && result > 0) {
-      return classes.cardDescriptionPositive;
-    } else if (title === 'Total profit/loss' && result < 0) {
-      return classes.cardDescriptionNegative;
-    }
-
-    return classes.cardDescriptionNormal;
+  state = {
+    anchorEl: null,
   };
 
+  handlePopoverOpen = (event: SyntheticEvent) => {
+    this.setState({ anchorEl: event.target });
+  };
 
-  return (
+  handlePopoverClose = () => {
+    this.setState({ anchorEl: null });
+  };
+
+  render() {
+    const {
+      classes,
+      title,
+      description,
+      hasInfo,
+      infoMessage,
+    // iconColor,
+    } = this.props;
+    const { anchorEl } = this.state;
+    const open = !!anchorEl;
+    const totalProfitLoss = () => {
+      const result = parseFloat(description.slice(0, description.length - 1));
+
+      if (title === 'Total profit/loss' && result > 0) {
+        return classes.cardDescriptionPositive;
+      } else if (title === 'Total profit/loss' && result < 0) {
+        return classes.cardDescriptionNegative;
+      }
+
+      return classes.cardDescriptionNormal;
+    };
+
+    return (
     <Card className={classes.cardContainer}>
       <CardHeader
         className={classes.cardHeader}
-        avatar={<props.icon className={classes.icon} />}
+        avatar={<this.props.icon className={classes.icon} />}
       />
       <CardContent className={classes.cardContent}>
         <Typography component="p" className={classes.cardTitle}>
           {title}
         </Typography>
-
+        <div className={classes.info}>
+        <IconButton
+          className={hasInfo ? classes.color : classes.hidden}
+        >
+            <Info
+              fill="#3BB3E4"
+              onMouseOver={this.handlePopoverOpen}
+              onFocus={this.handlePopoverOpen}
+              onMouseOut={this.handlePopoverClose}
+              onBlur={this.handlePopoverClose}
+            />
+        </IconButton>
+        <Popover
+          className={classes.popover}
+          classes={{
+            paper: classes.paper,
+          }}
+          open={open}
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          onClose={this.handlePopoverClose}
+          disableRestoreFocus
+        >
+          <Typography>{infoMessage}</Typography>
+        </Popover>
         <Typography
           type="headline"
           component="h2"
@@ -101,9 +173,11 @@ function SummaryCard({ ...props }: Props) {
         >
           {description}
         </Typography>
+        </div>
       </CardContent>
     </Card>
-  );
+    );
+  }
 }
 
 export default withStyles(styles, statsCardStyle)(SummaryCard);

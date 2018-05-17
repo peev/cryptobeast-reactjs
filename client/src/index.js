@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createBrowserHistory } from 'history';
 import { Router, Route, Switch } from 'react-router-dom';
 import { configure } from 'mobx';
 import { Provider } from 'mobx-react';
@@ -8,6 +7,7 @@ import uuid from 'uuid/v4';
 
 import './assets/css/material-dashboard-react.css';
 import indexRoutes from './routes/index';
+import history from './services/History';
 
 import PortfolioStore from './stores/PortfolioStore';
 import AssetStore from './stores/AssetStore';
@@ -33,11 +33,9 @@ window._____APP_STATE_____ = stores; //eslint-disable-line
 
 configure({ enforceActions: true });
 
-const hist = createBrowserHistory();
-
 ReactDOM.render(
   <Provider {...stores}>
-    <Router history={hist}>
+    <Router history={history}>
       <Switch>
         {indexRoutes.map(route => <Route path={route.path} component={route.component} key={uuid()} />)}
       </Switch>

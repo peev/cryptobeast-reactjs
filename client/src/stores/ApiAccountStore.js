@@ -1,6 +1,7 @@
 import { observable, action } from 'mobx';
 import requester from '../services/requester';
 import AssetStore from './AssetStore';
+import NotificationStore from './NotificationStore';
 
 class ApiAccountStore {
   @observable
@@ -21,6 +22,27 @@ class ApiAccountStore {
   @action
   setIsActive() {
     this.values.isActive = !this.values.isActive;
+  }
+
+  @action
+  handleCreateNewAccountErrors(id) {
+    const newAccount = {
+      apiServiceName: AssetStore.selectedExchangeCreateAccount,
+      apiKey: this.values.apiKey,
+      apiSecret: this.values.apiSecret,
+      isActive: this.values.isActive,
+      portfolioId: id,
+    };
+    let noErrors = true;
+    requester.ApiAccount.getBalance(newAccount)
+      .then((data) => {
+        if (!data.success) {
+          NotificationStore.addMessage('errorMessages', 'Invalid API Key and API Secret combination');
+          noErrors = false;
+        }
+      });
+
+    return noErrors;
   }
 
   @action

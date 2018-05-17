@@ -36,12 +36,15 @@ const Market = {
   syncCurrencies: () => requests.get('/market/syncCurrencies'),
   getAllCurrencies: () => requests.get('/market/allCurrencies'),
   getBaseTickers: searchedCurrencies => requests.post('/market/syncBaseTickers', searchedCurrencies),
+  syncMarketPriceHistory: convertCurrency => requests.post('/market/syncMarketPriceHistory', convertCurrency),
+  getMarketPriceHistory: () => requests.get('/market/getMarketPriceHistory'),
 };
 
 const ApiAccount = {
   addAccount: data => requests.post('/account/add', data),
   update: requestParams => requests.put('/account/update', requestParams),
   delete: id => requests.delete(`/account/delete${id}`, id),
+  getBalance: data => requests.post('/account/getBalance', data),
 };
 
 const Trade = {

@@ -27,8 +27,14 @@ module.exports = (sequelize, DataTypes) => {
     fee: {
       type: DataTypes.DOUBLE,
     },
+    feeCurrency: {
+      type: DataTypes.STRING,
+    },
     totalPrice: {
       type: DataTypes.DOUBLE,
+    },
+    market: {
+      type: DataTypes.STRING,
     },
   });
 };

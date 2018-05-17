@@ -194,18 +194,21 @@ class AssetStore {
     let type = '';
     let price = 0;
     let filled = 0;
+    let market = '';
     const tradingCoin = this.selectedCurrencyToAssetAllocation;
     switch (tradingCoin) {
       case 'BTC':
       case 'ETH':
       case 'USDT':
         type = 'sell';
-        price = this.assetAllocationToAmount / this.assetAllocationFromAmount;
+        market = tradingCoin;
+        price = this.assetAllocationFromAmount / this.assetAllocationToAmount;
         filled = this.assetAllocationFromAmount;
         break;
       default:
         type = 'buy';
-        price = this.assetAllocationToAmount / this.assetAllocationFromAmount;
+        market = this.selectedCurrencyFromAssetAllocation.currency;
+        price = this.assetAllocationFromAmount / this.assetAllocationToAmount;
         filled = this.assetAllocationToAmount;
         break;
     }
@@ -219,14 +222,15 @@ class AssetStore {
       price,
       filled,
       fee: this.assetAllocationFee,
-      totalPrice: this.assetAllocationToAmount,
+      feeCurrency: this.selectedCurrencyForTransactionFee,
+      totalPrice: price * filled,
+      market,
       portfolioId: PortfolioStore.selectedPortfolioId,
     };
 
     requester.Trade.addTrade(trade)
       .then(action((result) => {
-        console.log('>>>>> requester.Trade.addTrade: ', result);
-        // PortfolioStore.currentPortfolioAssets = result.data;
+        PortfolioStore.currentPortfolioTrades.push(result.data);
       }));
   }
 

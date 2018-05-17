@@ -18,6 +18,7 @@ class PortfolioStore {
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
+  @observable currentPortfolioTrades;
   @observable currentPortfolioClosingSharePrices;
   @observable newPortfolioName;
 
@@ -28,6 +29,7 @@ class PortfolioStore {
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
+    this.currentPortfolioTrades = [];
     this.currentPortfolioClosingSharePrices = [];
     this.newPortfolioName = '';
 
@@ -352,6 +354,7 @@ class PortfolioStore {
         this.currentPortfolioAssets = el.assets;
         this.currentPortfolioInvestors = el.investors;
         this.currentPortfolioTransactions = el.transactions;
+        this.currentPortfolioTrades = el.trades;
       }
     });
   }

@@ -126,7 +126,13 @@ class AssetAllocation extends React.Component<Props> {
                   label="Select Exchange (optional)"
                   value={AssetStore.selectedExchangeAssetAllocation}
                   handleChange={this.handleExchangeAssetAllocation}
-
+                  style={{
+                    marginTop: '12px',
+                    width: '95%',
+                    border: 'none',
+                    borderRadius: 0,
+                    borderBottom: '1px solid #757575',
+                  }}
                 />
                 <TextValidator
                   name="date"

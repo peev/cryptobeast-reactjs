@@ -95,6 +95,8 @@ class Summary extends React.Component<Props> {
             iconColor="gray"
             title="Total investment"
             description={`$${PortfolioStore.summaryTotalInvestmentInUSD}`}
+            hasInfo={PortfolioStore.summaryTotalInvestmentInUSD === 0}
+            infoMessage="Please add new investor or edit your personal investment amount"
           />
 
           <SummaryCard
@@ -104,6 +106,10 @@ class Summary extends React.Component<Props> {
             description={PortfolioStore.summaryTotalProfitLoss > 0 ?
               `+${PortfolioStore.summaryTotalProfitLoss}%` :
               `${PortfolioStore.summaryTotalProfitLoss}%`}
+            hasInfo={(PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0) ||
+              (PortfolioStore.summaryTotalInvestmentInUSD > 0 && PortfolioStore.currentPortfolioCostInUSD === 0)}
+            infoMessage={PortfolioStore.summaryTotalInvestmentInUSD === 0 ? 'Please add new investor or edit your personal investment amount'
+            : 'Please add assets to the portfolio to see total profit/loss.'}
           />
         </Grid>
 

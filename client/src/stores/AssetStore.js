@@ -142,19 +142,13 @@ class AssetStore {
       return;
     }
 
-    const parsedAssetInputValue = parseInt(this.assetInputValue, 10);
-    // eslint-disable-next-line
-    if (!Number.isInteger(parsedAssetInputValue) || isNaN(parsedAssetInputValue)) {
-      return;
-    }
-
     const selectedExchangeOrigin = this.selectedExchangeBasicInput !== '' ?
       this.selectedExchangeBasicInput :
       'manually added';
 
     const newBasicAsset = {
       currency: this.selectedCurrencyBasicAsset,
-      balance: parsedAssetInputValue,
+      balance: this.assetInputValue,
       origin: selectedExchangeOrigin,
       portfolioId: id,
     };

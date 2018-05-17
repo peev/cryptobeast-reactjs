@@ -138,7 +138,6 @@ class AssetInput extends React.Component<Props> {
                 />
                 <TextValidator
                   name="Quantity"
-                  type="number"
                   label="Quantity*"
                   value={AssetStore.assetInputValue}
                   onChange={(e: SyntheticInputEvent) => this.handleRequest(e)}

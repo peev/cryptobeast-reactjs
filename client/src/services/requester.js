@@ -17,6 +17,8 @@ const Portfolio = {
   create: portfolioName => requests.post('/portfolio/create', portfolioName),
   getSharePrice: id => requests.post('/portfolio/getPortfolioSharePrice', id),
   getSharePriceHistory: requestParams => requests.post('/portfolio/sharePriceHistory', requestParams),
+  getPriceHistory: requestParams => requests.post('/portfolio/priceHistory', requestParams),
+  getPriceHistoryForPeriod: requestParams => requests.post('/portfolio/periodPriceHistory', requestParams),
   update: requestParams => requests.put('/portfolio/update', requestParams), // id + newName
   delete: id => requests.delete(`/portfolio/delete/${id}`),
 };

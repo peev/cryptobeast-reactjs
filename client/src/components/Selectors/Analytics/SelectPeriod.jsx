@@ -8,9 +8,6 @@ import Select from 'material-ui/Select';
 import { inject, observer } from 'mobx-react';
 
 const styles = () => ({
-  button: {
-    display: 'block',
-  },
   formControl: {
     margin: '0',
     minWidth: '100%',
@@ -19,6 +16,7 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
+  Analytics: Object,
 };
 
 type State = {
@@ -26,13 +24,11 @@ type State = {
   value: ?string,
 };
 
-// Does not appear to use anything in the store?
-@inject('InvestorStore')
+@inject('Analytics')
 @observer
 class SelectBenchmark extends React.Component<Props, State> {
   state = {
     open: false,
-    value: '',
   };
 
   handleOpen = () => {
@@ -43,29 +39,44 @@ class SelectBenchmark extends React.Component<Props, State> {
     this.setState({ open: false });
   };
 
+  handleChange = (event: SyntheticEvent) => {
+    const { value } = event.target;
+    this.props.Analytics.selectTimeInPerformance(value);
+  };
+
   render() {
-    const { classes } = this.props;
+    const { classes, Analytics } = this.props;
+    const data = ['1d', '1m', '1y'];
+
+    const display = data.map((el: Object, i: number) => {
+      return (
+        <MenuItem
+          key={i}
+          value={el}
+          index={i}
+        >
+          <em>{el}</em>
+        </MenuItem>
+      );
+    });
 
     return (
-      <div autoComplete="off">
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="controlled-open-select">
-            Select Period
-          </InputLabel>
+      <FormControl className={classes.formControl}>
+        <InputLabel htmlFor="controlled-open-select">
+          Select Period
+        </InputLabel>
 
-          <Select
-            value={this.state.value}
-            open={this.state.open}
-            onOpen={this.handleOpen}
-            onClose={this.handleClose}
-            inputProps={{ name: 'benchMark', id: 'controlled-open-select' }}
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-          </Select>
-        </FormControl>
-      </div>
+        <Select
+          value={Analytics.selectedTimeInPerformance}
+          open={this.state.open}
+          onOpen={this.handleOpen}
+          onClose={this.handleClose}
+          onChange={this.handleChange}
+          // inputProps={{ name: 'benchMark', id: 'controlled-open-select' }}
+        >
+          {display}
+        </Select>
+      </FormControl>
     );
   }
 }

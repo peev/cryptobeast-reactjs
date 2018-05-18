@@ -16,6 +16,7 @@ import MarketStore from './stores/MarketStore';
 import ApiAccountStore from './stores/ApiAccountStore';
 import UserStore from './stores/UserStore';
 import NotificationStore from './stores/NotificationStore';
+import Analytics from './stores/Analytics';
 
 const stores = {
   PortfolioStore,
@@ -25,6 +26,7 @@ const stores = {
   ApiAccountStore,
   UserStore,
   NotificationStore,
+  Analytics,
 };
 
 // For easier debugging

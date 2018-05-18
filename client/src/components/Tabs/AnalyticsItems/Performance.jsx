@@ -1,17 +1,25 @@
 // @flow
 import React from 'react';
-import Paper from 'material-ui/Paper';
 import { withStyles, Grid } from 'material-ui';
+import { inject, observer } from 'mobx-react';
 
 import Button from '../../CustomButtons/Button';
 import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 import SelectPeriod from '../../Selectors/Analytics/SelectPeriod';
-import PerformanceChart from '../../HighCharts/PerformanceChart';
+import TotalAssetsValue from '../../HighCharts/TotalAssetsValue';
+import PerformanceAssets from '../../HighCharts/PerformanceAssets';
 import SummaryPerformanceCard from '../../Cards/Analytics/SummaryPerformanceCard';
 
 const styles = () => ({
   marginTop: {
     marginTop: '40px',
+  },
+  marginRight: {
+    marginRight: '75px',
+  },
+  header: {
+    color: 'red',
+    margin: '20px 0',
   },
 });
 
@@ -19,26 +27,34 @@ type Props = {
   classes: Object,
 };
 
-const Performance = ({ ...props }: Props) => { // eslint-disable-line
-  const { classes } = props;
+const Performance = inject('Analytics')(observer(({ ...props }: Props) => {
+  const { classes, Analytics } = props;
+
+  const handleSelectTimePeriod = () => {
+    if (Analytics.selectedTimeInPerformance === '') {
+      console.log('selected period is needed');
+      return;
+    }
+
+    Analytics.getPortfolioPriceHistory();
+    Analytics.getPortfolioPriceHistoryForTimePeriod();
+  };
 
   return (
     <Grid container>
-      <Grid container spacing={24}>
-        <Grid item xs={2} sm={2} md={2}>
+      <Grid container className={classes.header}>
+        <Grid item xs={2} sm={2} md={2} className={classes.marginRight}>
           <SelectPeriod />
         </Grid>
 
         <Grid item xs={1} sm={1} md={1}>
-          <Button>Apply</Button>
+          <Button onClick={() => handleSelectTimePeriod()}>Apply</Button>
         </Grid>
       </Grid>
 
-      <Grid container spacing={24}>
-        <Grid item xs={9} sm={9} md={9}>
-          <Paper>
-            <PerformanceChart />
-          </Paper>
+      <Grid container>
+        <Grid item xs={8} sm={8} md={8} className={classes.marginRight}>
+          <TotalAssetsValue />
         </Grid>
 
         <Grid item xs={3} sm={3} md={3}>
@@ -46,8 +62,8 @@ const Performance = ({ ...props }: Props) => { // eslint-disable-line
         </Grid>
       </Grid>
 
-      <Grid container spacing={24}>
-        <Grid item xs={2} sm={2} md={2}>
+      <Grid container>
+        <Grid item xs={2} sm={2} md={2} className={classes.marginRight}>
           <SelectBenchmark />
         </Grid>
 
@@ -56,20 +72,15 @@ const Performance = ({ ...props }: Props) => { // eslint-disable-line
         </Grid>
       </Grid>
 
-      {/* Tests bellow */}
-      <Grid container className={classes.marginTop}>
+      <Grid container>
         <Grid item xs={12} sm={12} md={12}>
-          <PerformanceChart />
+          {/* test  */}
+          <PerformanceAssets />
         </Grid>
       </Grid>
 
-      <Grid container className={classes.marginTop}>
-        <Grid item xs={12} sm={12} md={12}>
-          <PerformanceChart />
-        </Grid>
-      </Grid>
     </Grid>
   );
-};
+}));
 
 export default withStyles(styles)(Performance);

@@ -25,42 +25,42 @@ type Props = {
   PortfolioStore: Object,
 };
 
-const SummaryPerformanceCard = inject('PortfolioStore')(observer(({ ...props }: Props) => {
-  const { classes } = props;
+const SummaryPerformanceCard = inject('Analytics')(observer(({ ...props }: Props) => {
+  const { classes, Analytics } = props;
 
   return (
     <Paper className={classes.container}>
       <div className={classes.item}>
         <p>min:</p>
-        <p>value</p>
+        <p>{`$${Number(`${Math.round(`${Analytics.performanceMin}e2`)}e-2`)}`}</p>
       </div>
       <div className={classes.item}>
         <p>max:</p>
-        <p>value</p>
+        <p>{`$${Number(`${Math.round(`${Analytics.performanceMax}e2`)}e-2`)}`}</p>
       </div>
       <div className={classes.item}>
         <p>ath:</p>
-        <p>value</p>
+        <p>{`$${Number(`${Math.round(`${Analytics.performanceATH}e2`)}e-2`)}`}</p>
       </div>
       <div className={classes.item}>
         <p>profit/loss:</p>
-        <p>value</p>
+        <p>{`${Number(`${Math.round(`${Analytics.performanceProfitLoss}e2`)}e-2`)}%`}</p>
       </div>
       <div className={classes.item}>
         <p>avg. change:</p>
-        <p>value</p>
+        <p>{`${Number(`${Math.round(`${Analytics.performanceAverageChange}e2`)}e-2`)}%`}</p>
       </div>
       <div className={classes.item}>
         <p>last 24h:</p>
-        <p>value</p>
+        <p>{`${Number(`${Math.round(`${Analytics.performanceLast24H}e2`)}e-2`)}%`}</p>
       </div>
       <div className={classes.item}>
         <p>last 7d:</p>
-        <p>value</p>
+        <p>{`${Number(`${Math.round(`${Analytics.performanceLast7D}e2`)}e-2`)}%`}</p>
       </div>
       <div className={classes.item}>
         <p>top performer:</p>
-        <p>value</p>
+        <p>{Analytics.performanceTopPerformer}</p>
       </div>
     </Paper>
   );

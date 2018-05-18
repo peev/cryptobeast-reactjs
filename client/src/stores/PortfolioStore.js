@@ -333,6 +333,7 @@ class PortfolioStore {
         this.currentPortfolioAssets = el.assets;
         this.currentPortfolioInvestors = el.investors;
         this.currentPortfolioTransactions = el.transactions;
+        this.currentPortfolioTrades = el.trades;
       }
     });
   }

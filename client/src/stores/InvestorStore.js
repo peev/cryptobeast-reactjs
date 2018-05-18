@@ -19,6 +19,7 @@ class InvestorStore {
   @observable individualSummaryValues;
   @observable selectedInvestor;
   @observable selectedInvestorId;
+  @observable selectedInvestorTransactions;
 
   constructor() {
     // #region Initialize Values
@@ -66,6 +67,7 @@ class InvestorStore {
 
     this.selectedInvestor = null;
     this.selectedInvestorId = null;
+    this.selectedInvestorTransactions = null;
     // #endregion
   }
 
@@ -214,12 +216,14 @@ class InvestorStore {
     return null;
   }
 
-
   @computed
   get individualWeightedEntryPrice() {
     if (this.selectedInvestor) {
-      const calculatedIndividualWeightedEntryPrice = this.selectedInvestor.purchasedShares;
-      this.individualSummaryValues.weightedEntryPrice = calculatedIndividualWeightedEntryPrice;
+      let calculatedIndividualWeightedEntryPrice = this.selectedInvestorTransactions.reduce((result, transaction) => {
+        result += (transaction.shares / this.selectedInvestor.purchasedShares) * transaction.sharePrice; // eslint-disable-line no-param-reassign
+        return result;
+      }, 0);
+      calculatedIndividualWeightedEntryPrice = Number(`${Math.round(`${calculatedIndividualWeightedEntryPrice}e2`)}e-2`);
 
       return calculatedIndividualWeightedEntryPrice;
     }
@@ -280,10 +284,8 @@ class InvestorStore {
   @computed
   get individualProfit() {
     if (this.selectedInvestor) {
-      const calculatedIndividualProfit = 1;
-      // (current share price - weighted entry price) / weighted entry price*
-      this.individualSummaryValues.profit = calculatedIndividualProfit;
-
+      let calculatedIndividualProfit = (PortfolioStore.currentPortfolioSharePrice - this.individualWeightedEntryPrice) / (this.individualWeightedEntryPrice || 1);
+      calculatedIndividualProfit = Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`)
       return calculatedIndividualProfit;
     }
 
@@ -691,7 +693,6 @@ class InvestorStore {
   }
   // #endregion
 
-  // Resets
   // #region Resets
   @action
   reset() {
@@ -741,23 +742,20 @@ class InvestorStore {
   @action.bound
   resetSelectedInvestor() {
     this.selectedInvestorId = null;
+    this.selectedInvestorTransactions = null;
   }
   // #endregion
 
-  // Others
   // #region Others
   @action
   selectInvestor(id) {
     this.selectedInvestorId = id;
-    // selects the marked investor
-    // eslint-disable-next-line array-callback-return
-    PortfolioStore.currentPortfolioInvestors.find((element) => {
-      if (element.id === id) {
-        this.selectedInvestor = {
-          ...element,
-        };
-      }
-    });
+    this.selectedInvestor = {
+      ...PortfolioStore.currentPortfolioInvestors
+        .find(element => element.id === id),
+    };
+    this.selectedInvestorTransactions = PortfolioStore.currentPortfolioTransactions
+      .filter(t => t.investorId === id);
 
     if (this.selectedInvestor) {
       // sets the editing values for the current investor

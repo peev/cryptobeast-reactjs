@@ -21,6 +21,7 @@ class InvestorStore {
   @observable selectedInvestorIndividualSummaryId;
   @observable selectedInvestor;
   @observable selectedInvestorId;
+  @observable selectedInvestorTransactions;
 
   constructor() {
     // #region Initialize Values
@@ -69,6 +70,7 @@ class InvestorStore {
     this.selectedInvestorIndividualSummaryId = null;
     this.selectedInvestor = null;
     this.selectedInvestorId = null;
+    this.selectedInvestorTransactions = null;
     // #endregion
   }
 
@@ -217,12 +219,14 @@ class InvestorStore {
     return null;
   }
 
-
   @computed
   get individualWeightedEntryPrice() {
-    if (this.selectedInvestorIndividualSummary) {
-      const calculatedIndividualWeightedEntryPrice = this.selectedInvestorIndividualSummary.purchasedShares;
-      this.individualSummaryValues.weightedEntryPrice = calculatedIndividualWeightedEntryPrice;
+    if (this.selectedInvestor) {
+      let calculatedIndividualWeightedEntryPrice = this.selectedInvestorTransactions.reduce((result, transaction) => {
+        result += (transaction.shares / this.selectedInvestor.purchasedShares) * transaction.sharePrice; // eslint-disable-line no-param-reassign
+        return result;
+      }, 0);
+      calculatedIndividualWeightedEntryPrice = Number(`${Math.round(`${calculatedIndividualWeightedEntryPrice}e2`)}e-2`);
 
       return calculatedIndividualWeightedEntryPrice;
     }
@@ -232,13 +236,10 @@ class InvestorStore {
 
   @computed
   get individualUSDEquivalent() {
-    if (this.selectedInvestorIndividualSummary) {
-      //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualUSDEquivalent = this.selectedInvestorIndividualSummary.purchasedShares * 1;
-      this.individualSummaryValues.usdEquivalent = calculatedIndividualUSDEquivalent;
-      // this.individualSummaryValues.feePotential = calculatedIndividualUSDEquivalent * this.selectedInvestor.managementFee;
+    if (this.selectedInvestor) {
+      const calculatedIndividualUSDEquivalent = this.selectedInvestor.purchasedShares * PortfolioStore.currentPortfolioSharePrice;
 
-      return calculatedIndividualUSDEquivalent;
+      return Number(`${Math.round(`${calculatedIndividualUSDEquivalent}e2`)}e-2`);
     }
 
     return null;
@@ -246,12 +247,10 @@ class InvestorStore {
 
   @computed
   get individualBTCEquivalent() {
-    if (this.selectedInvestorIndividualSummary) {
-      //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualBTCEquivalent = (this.selectedInvestorIndividualSummary.purchasedShares / MarketStore.baseCurrencies[4].last).toFixed(2);
-      this.individualSummaryValues.btcEquivalent = calculatedIndividualBTCEquivalent;
+    if (this.selectedInvestor) {
+      const calculatedIndividualBTCEquivalent = this.individualUSDEquivalent / MarketStore.baseCurrencies[3].last;
 
-      return calculatedIndividualBTCEquivalent;
+      return Number(`${Math.round(`${calculatedIndividualBTCEquivalent}e2`)}e-2`);
     }
 
     return null;
@@ -259,12 +258,10 @@ class InvestorStore {
 
   @computed
   get individualETHEquivalent() {
-    if (this.selectedInvestorIndividualSummary && MarketStore.baseCurrencies) {
-      //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualETHEquivalent = (this.selectedInvestorIndividualSummary.purchasedShares / MarketStore.baseCurrencies[3].last).toFixed(2);
-      this.individualSummaryValues.ethEquivalent = calculatedIndividualETHEquivalent;
+    if (this.selectedInvestor && MarketStore.baseCurrencies) {
+      const calculatedIndividualETHEquivalent = this.individualBTCEquivalent / MarketStore.baseCurrencies[0].last;
 
-      return calculatedIndividualETHEquivalent;
+      return Number(`${Math.round(`${calculatedIndividualETHEquivalent}e2`)}e-2`);
     }
 
     return null;
@@ -289,10 +286,9 @@ class InvestorStore {
 
   @computed
   get individualProfit() {
-    if (this.selectedInvestorIndividualSummary) {
-      const calculatedIndividualProfit = 1;
-      // (current share price - weighted entry price) / weighted entry price*
-      this.individualSummaryValues.profit = calculatedIndividualProfit;
+    if (this.selectedInvestor) {
+      let calculatedIndividualProfit = (PortfolioStore.currentPortfolioSharePrice - this.individualWeightedEntryPrice) / (this.individualWeightedEntryPrice || 1);
+      calculatedIndividualProfit = Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`)
 
       return calculatedIndividualProfit;
     }
@@ -304,8 +300,8 @@ class InvestorStore {
   get individualFeePotential() {
     if (this.selectedInvestorIndividualSummary) {
       // TODO: USD is hard coded
-      const calculatedIndividualFeePotential = ((MarketStore.baseCurrencies[3].last
-        * this.selectedInvestorIndividualSummary.managementFee) / 100).toFixed(2);
+      const calculatedIndividualFeePotential = ((this.individualUSDEquivalent * this.selectedInvestor.managementFee) / 100).toFixed(2);
+
       this.individualSummaryValues.feePotential = calculatedIndividualFeePotential;
 
       return calculatedIndividualFeePotential;
@@ -702,7 +698,6 @@ class InvestorStore {
   }
   // #endregion
 
-  // Resets
   // #region Resets
   @action
   reset() {
@@ -752,24 +747,21 @@ class InvestorStore {
   @action.bound
   resetSelectedInvestor() {
     this.selectedInvestorId = null;
-    this.selectedInvestor = null;
+    this.selectedInvestorTransactions = null;
+
   }
   // #endregion
 
-  // Others
   // #region Others
   @action
   selectInvestor(id) {
     this.selectedInvestorId = id;
-    // selects the marked investor
-    // eslint-disable-next-line array-callback-return
-    PortfolioStore.currentPortfolioInvestors.find((element) => {
-      if (element.id === id) {
-        this.selectedInvestor = {
-          ...element,
-        };
-      }
-    });
+    this.selectedInvestor = {
+      ...PortfolioStore.currentPortfolioInvestors
+        .find(element => element.id === id),
+    };
+    this.selectedInvestorTransactions = PortfolioStore.currentPortfolioTransactions
+      .filter(t => t.investorId === id);
 
     if (this.selectedInvestor) {
       // sets the editing values for the current investor

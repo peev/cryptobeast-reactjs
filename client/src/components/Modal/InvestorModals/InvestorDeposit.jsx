@@ -108,6 +108,10 @@ class InvestorDeposit extends React.Component<Props, State> {
     }
   }
 
+  handleSelectInvestor = (value: *) => {
+    this.props.InvestorStore.selectInvestor(value);
+  }
+
   render() {
     const {
       classes, InvestorStore, PortfolioStore, MarketStore,
@@ -128,9 +132,7 @@ class InvestorDeposit extends React.Component<Props, State> {
           open={this.state.open}
         >
           <ValidatorForm
-            // ref="form"
             onSubmit={this.handleDepositSave}
-            // onError={errors => console.log(errors)}
             style={getModalStyle()}
             className={classes.paper}
           >
@@ -148,7 +150,17 @@ class InvestorDeposit extends React.Component<Props, State> {
 
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <SelectInvestor />
+                <SelectInvestor
+                  value={InvestorStore.selectedInvestorId || ''}
+                  handleChange={this.handleSelectInvestor}
+                  style={{
+                    marginTop: '12px',
+                    width: '95%',
+                    border: 'none',
+                    borderRadius: 0,
+                    borderBottom: '1px solid #757575',
+                }}
+                />
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
@@ -180,22 +192,9 @@ class InvestorDeposit extends React.Component<Props, State> {
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <SelectBaseCurrency />
               </Grid>
-              {/* <Input
-                placeholder="Share Price at Entry Date"
-                className={classes.alignInput}
-                value={PortfolioStore.currentPortfolioSharePrice || ''}
-              /> */}
             </Grid>
 
             <Grid container>
-              {/* <Input
-                type="date"
-                placeholder="Transaction Date"
-                onChange={this.handleDepositRequests('transactionDate')}
-                className={classes.alignInput}
-              /> */}
-
-              {/* <SelectBaseCurrency /> */}
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
                   name="share price"

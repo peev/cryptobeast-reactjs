@@ -12,11 +12,13 @@ import MarketStore from './MarketStore';
 import NotificationStore from './NotificationStore';
 
 class InvestorStore {
-  @observable newInvestorValues
+  @observable newInvestorValues;
   @observable updateInvestorValues;
   @observable newDepositValues;
   @observable withdrawalValues;
   @observable individualSummaryValues;
+  @observable selectedInvestorIndividualSummary;
+  @observable selectedInvestorIndividualSummaryId;
   @observable selectedInvestor;
   @observable selectedInvestorId;
   @observable selectedInvestorTransactions;
@@ -64,7 +66,8 @@ class InvestorStore {
       profit: '',
       feePotential: '',
     };
-
+    this.selectedInvestorIndividualSummary = null;
+    this.selectedInvestorIndividualSummaryId = null;
     this.selectedInvestor = null;
     this.selectedInvestorId = null;
     this.selectedInvestorTransactions = null;
@@ -179,8 +182,8 @@ class InvestorStore {
   // #region Investor Individual Summary
   @computed
   get individualSharesHeld() {
-    if (this.selectedInvestor) {
-      const calculatedIndividualSharesHeld = this.selectedInvestor.purchasedShares;
+    if (this.selectedInvestorIndividualSummary) {
+      const calculatedIndividualSharesHeld = this.selectedInvestorIndividualSummary.purchasedShares;
       this.individualSummaryValues.sharesHeld = calculatedIndividualSharesHeld;
 
       return calculatedIndividualSharesHeld;
@@ -266,11 +269,11 @@ class InvestorStore {
 
   @computed
   get individualInvestmentPeriod() {
-    if (this.selectedInvestor) {
+    if (this.selectedInvestorIndividualSummary) {
       // Get 1 day in milliseconds
       const oneDay = 1000 * 60 * 60 * 24;
       const currentDate = new Date();
-      const dateOfEntryConverted = new Date(this.selectedInvestor.dateOfEntry);
+      const dateOfEntryConverted = new Date(this.selectedInvestorIndividualSummary.dateOfEntry);
 
       const calculatedIndividualInvestmentPeriod = Math.round((currentDate - dateOfEntryConverted) / oneDay);
       this.individualSummaryValues.investmentPeriod = calculatedIndividualInvestmentPeriod;
@@ -286,6 +289,7 @@ class InvestorStore {
     if (this.selectedInvestor) {
       let calculatedIndividualProfit = (PortfolioStore.currentPortfolioSharePrice - this.individualWeightedEntryPrice) / (this.individualWeightedEntryPrice || 1);
       calculatedIndividualProfit = Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`)
+
       return calculatedIndividualProfit;
     }
 
@@ -294,9 +298,10 @@ class InvestorStore {
 
   @computed
   get individualFeePotential() {
-    if (this.selectedInvestor) {
+    if (this.selectedInvestorIndividualSummary) {
       // TODO: USD is hard coded
       const calculatedIndividualFeePotential = ((this.individualUSDEquivalent * this.selectedInvestor.managementFee) / 100).toFixed(2);
+
       this.individualSummaryValues.feePotential = calculatedIndividualFeePotential;
 
       return calculatedIndividualFeePotential;
@@ -743,6 +748,7 @@ class InvestorStore {
   resetSelectedInvestor() {
     this.selectedInvestorId = null;
     this.selectedInvestorTransactions = null;
+
   }
   // #endregion
 
@@ -764,6 +770,28 @@ class InvestorStore {
       this.updateInvestorValues.telephone = this.selectedInvestor.telephone;
       this.updateInvestorValues.managementFee = this.selectedInvestor.managementFee;
     }
+  }
+
+  @action
+  selectInvestorIndividualSummary(id) {
+    this.selectedInvestorIndividualSummaryId = id;
+    // selects the marked investor
+    // eslint-disable-next-line array-callback-return
+    PortfolioStore.currentPortfolioInvestors.find((element) => {
+      if (element.id === id) {
+        this.selectedInvestorIndividualSummary = {
+          ...element,
+        };
+      }
+    });
+
+    // if (this.selectedInvestorIndividualSummary) {
+    //   // sets the editing values for the current investor
+    //   this.updateInvestorValues.fullName = this.selectedInvestorIndividualSummary.fullName;
+    //   this.updateInvestorValues.email = this.selectedInvestorIndividualSummary.email;
+    //   this.updateInvestorValues.telephone = this.selectedInvestorIndividualSummary.telephone;
+    //   this.updateInvestorValues.managementFee = this.selectedInvestorIndividualSummary.managementFee;
+    // }
   }
 
   @computed

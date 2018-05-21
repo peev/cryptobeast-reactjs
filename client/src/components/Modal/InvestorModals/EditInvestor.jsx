@@ -83,6 +83,10 @@ class EditInvestor extends React.Component<Props, State> {
     this.props.InvestorStore.setInvestorUpdateValues(propertyType, inputValue);
   }
 
+  handleSelectInvestor = (value: *) => {
+    this.props.InvestorStore.selectInvestor(value);
+  }
+
   handleSave = () => {
     const { InvestorStore } = this.props;
 
@@ -123,7 +127,17 @@ class EditInvestor extends React.Component<Props, State> {
 
             <Grid container >
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <SelectInvestor />
+                <SelectInvestor
+                  value={InvestorStore.selectedInvestorId || ''}
+                  handleChange={this.handleSelectInvestor}
+                  style={{
+                  marginTop: '12px',
+                  width: '95%',
+                  border: 'none',
+                  borderRadius: 0,
+                  borderBottom: '1px solid #757575',
+              }}
+                />
               </Grid>
             </Grid>
 

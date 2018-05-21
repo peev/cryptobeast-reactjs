@@ -5,7 +5,9 @@ const { coinMarketCapServices } = require('../integrations/coinMarketCap-service
 
 const marketService = (repository) => {
   const syncSummaries = async () => {
+    const newSummaries = await bittrexServices().getSummaries();    
     await repository.removeAll({ modelName: 'MarketSummary' });
+    
     return repository.createMany({ modelName: 'MarketSummary', newObjects: newSummaries });
   }
 

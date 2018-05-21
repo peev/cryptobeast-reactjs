@@ -90,7 +90,7 @@ const accountController = (repository) => {
   };
 
   const removeTrade = (req, res) => {
-    const { tradeId } = req.body;
+    const tradeId = req.params.id;
     repository.remove({ modelName:'Trade', id: tradeId })
       .then(result => responseHandler(res, result))
       .catch((error) => {

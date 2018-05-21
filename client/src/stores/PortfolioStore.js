@@ -74,6 +74,75 @@ class PortfolioStore {
   }
 
   @computed
+  get tradeHistory() {
+    const trades = this.currentPortfolioTrades;
+    console.log(trades)
+    const selectedPortfolioTrades = [];
+    trades.forEach((el) => {
+      console.log(el)
+      const currentRow = [];
+      Object.keys(el).forEach((prop, ind) => {
+        // 1. Transaction date
+        if (ind === 0) {
+          currentRow.push(el.transactionDate);
+        }
+        // 2. Entry Date
+        if (ind === 1) {
+          currentRow.push(el.entryDate);
+        }
+        // 3. Source
+        if (ind === 2) {
+          currentRow.push(el.source);
+        }
+        // 4. Pair
+        if (ind === 3) {
+          currentRow.push(el.pair);
+        }
+        // 5. Type
+        if (ind === 4) {
+          const { type } = el;
+          currentRow.push(type.toUpperCase());
+        }
+        // 6. Price
+        if (ind === 5) {
+          const price = Number(`${Math.round(`${el.price}e2`)}e-2`);
+          currentRow.push(price);
+        }
+        // 7. Filled
+        if (ind === 6) {
+          currentRow.push(el.filled);
+        }
+        // 8. Fee
+        if (ind === 7) {
+          currentRow.push(`${el.fee} ${el.feeCurrency}`);
+        }
+        // 9. Total
+        if (ind === 8) {
+          const totalPrice = Number(`${Math.round(`${el.totalPrice}e2`)}e-2`);
+          currentRow.push(`${totalPrice} ${el.market}`);
+        }
+        if (ind === 9) {
+          currentRow.push('');
+        }
+        if (ind === 10) {
+          currentRow.push('');
+        }
+      });
+      selectedPortfolioTrades.push(currentRow);
+    });
+    return selectedPortfolioTrades;
+  }
+
+  @action
+  removeTrade(id) {
+    requester.Trade.deleteTrade(id)
+      .then(action(() => {
+        this.currentPortfolioTrades = this.currentPortfolioTrades.filter(trade => trade.id !== id);
+      }))
+      .catch(err => console.log(err));
+  }
+
+  @computed
   get summaryPortfolioAssets() {
     // NOTE: all the conditions needs to be fulfilled in order to create
     // portfolio asset summary
@@ -200,7 +269,6 @@ class PortfolioStore {
     if (this.selectedPortfolio &&
       MarketStore.baseCurrencies.length > 0) {
       const marketSummary = MarketStore.marketPriceHistory;
-      console.log(MarketStore.marketPriceHistory);
 
       return Object.keys(marketSummary)
         .map((el) => {

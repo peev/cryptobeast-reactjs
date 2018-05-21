@@ -1,8 +1,7 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, MenuItem, FormControl } from 'material-ui';
-import uuid from 'uuid/v4';
-import { SelectValidator } from 'react-material-ui-form-validator';
+import { withStyles, FormControl } from 'material-ui';
+import Select from 'react-select';
 import constants from '../../../variables/constants.json';
 
 const styles = () => ({
@@ -16,8 +15,7 @@ type Props = {
   handleChange: PropTypes.func,
   value: string,
   label: string,
-  validators: Array<any>,
-  errorMessages: Array<any>,
+  style: Object,
 };
 
 type State = {
@@ -38,20 +36,16 @@ class SelectExchange extends React.Component<Props, State> {
   };
 
   handleChange = (event: SyntheticEvent) => {
-    const { value } = event.target;
-    this.props.handleChange(value);
+    if (event) {
+      this.props.handleChange(event.value);
+    } else {
+      this.props.handleChange('');
+    }
   };
 
   render() {
-    const { classes, value, label, validators, errorMessages } = this.props;
-    const allExchanges = constants.services.map((name: string) => (
-      <MenuItem
-        key={uuid()}
-        value={name}
-      >
-        <em>{name}</em>
-      </MenuItem>
-    ));
+    const { classes, value, label, style } = this.props;
+    const allExchanges = constants.services.map((name: string) => ({ value: name, label: name }));
 
     return (
       <div autoComplete="off">
@@ -61,9 +55,9 @@ class SelectExchange extends React.Component<Props, State> {
           Select Exchange
           </InputLabel> */}
 
-          <SelectValidator
+          <Select
             name="select exchange"
-            label={label}
+            placeholder={label}
             open={this.state.open}
             value={value}
             onClose={this.handleClose}
@@ -72,12 +66,9 @@ class SelectExchange extends React.Component<Props, State> {
               name: 'exchangeId',
               id: 'controlled-open-select',
             }}
-            validators={validators}
-            errorMessages={errorMessages}
-            style={{ width: '95%' }}
-          >
-            {allExchanges}
-          </SelectValidator>
+            options={allExchanges}
+            style={style}
+          />
         </FormControl>
       </div>
     );

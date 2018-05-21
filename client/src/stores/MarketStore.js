@@ -118,8 +118,12 @@ class MarketStore {
   }
 
   @action.bound
-  selectBaseCurrency(index) {
-    this.selectedBaseCurrency = this.baseCurrencies[index];
+  selectBaseCurrency(currency) {
+    if (currency !== '') {
+      [this.selectedBaseCurrency] = this.baseCurrencies.filter(item => item.pair === currency);
+    } else {
+      this.resetMarket();
+    }
   }
 
   @action.bound

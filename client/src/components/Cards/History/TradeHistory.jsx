@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import { withStyles } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 
-import IndividualSummary from './IndividualSummary';
+import {toJS} from 'mobx';
+
 import { RegularCard } from './../../../components';
 import AllInvestorTable from './../../CustomTables/Investors/AllInvestorTable';
 import ExportPdfButton from './../../CustomButtons/ExportPdfButton';
@@ -22,37 +23,38 @@ type Props = {
 
 @inject('InvestorStore', 'PortfolioStore')
 @observer
-class IndividualSummaryWrapper extends Component<Props> {
+class TradeHistory extends Component<Props> {
   render() {
     const { classes, InvestorStore, PortfolioStore } = this.props;
 
-    const data = InvestorStore.selectedInvestor ?
-      PortfolioStore.currentPortfolioTransactions
-        .filter((t: Object) => t.investorId === InvestorStore.selectedInvestor.id) :
-      PortfolioStore.currentPortfolioTransactions;
+    const data = InvestorStore.selectedInvestor
+      ? PortfolioStore.currentPortfolioTransactions
+        .filter((t: Object) => t.investorId === (InvestorStore.selectedInvestor ? InvestorStore.selectedInvestor.id : 1))
+      : PortfolioStore.currentPortfolioTransactions;   
+    console.log(toJS(data));
 
     const investorsTable = (
       <AllInvestorTable
         tableData={data}
         tableHead={[
-          'ID',
-          'Name',
-          'Date of Entry',
-          'Transaction date',
-          'Amount (USD)',
-          'Share price',
-          'Shares',
+          'Trade Date',
+          'Entry date',
+          'Source',
+          'Pair',
+          'Type',
+          'Qty',
+          'Total price BTC',
+          'Commission',
         ]}
       />
     );
 
     return (
       <RegularCard
-        cardTitle="INDIVIDUAL SUMMARY"
+        cardTitle="TRADE HISTORY"
         button={<ExportPdfButton />}
         content={
           <div>
-            <IndividualSummary />
             <div className={classes.tablePosition}>
               {investorsTable}
             </div>
@@ -63,4 +65,4 @@ class IndividualSummaryWrapper extends Component<Props> {
   }
 }
 
-export default withStyles(styles)(IndividualSummaryWrapper);
+export default withStyles(styles)(TradeHistory);

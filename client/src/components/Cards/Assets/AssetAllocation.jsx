@@ -4,7 +4,7 @@ import { withStyles, Grid } from 'material-ui';
 import Paper from 'material-ui/Paper';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { MenuItem } from 'material-ui/Menu';
+
 import { toJS } from 'mobx';
 import Select from 'react-select';
 
@@ -107,20 +107,11 @@ class AssetAllocation extends React.Component<Props> {
       MarketStore,
     } = this.props;
 
-    const options = MarketStore.allCurrencies;
-    const optionsToShow = toJS(options);
-
-    options.forEach((element: Object, i: number) => {
-      optionsToShow.push((
-        <MenuItem
-          key={element.value}
-          value={element.value}
-          index={i}
-        >
-          <em>{element.label}</em>
-        </MenuItem>
-      ));
-    });
+    const allCurrencies = toJS(MarketStore.allCurrencies);
+    const baseCurrencies = toJS(MarketStore.baseCurrencies)
+      .map((currency: object) => ({ value: currency.pair, label: currency.pair }))
+      .filter((x: object) => x.value !== 'BTC' && x.value !== 'ETH');
+    baseCurrencies.forEach((element: object) => allCurrencies.push(element));
 
     return (
       <Grid container>
@@ -135,7 +126,13 @@ class AssetAllocation extends React.Component<Props> {
                   label="Select Exchange (optional)"
                   value={AssetStore.selectedExchangeAssetAllocation}
                   handleChange={this.handleExchangeAssetAllocation}
-
+                  style={{
+                    marginTop: '12px',
+                    width: '95%',
+                    border: 'none',
+                    borderRadius: 0,
+                    borderBottom: '1px solid #757575',
+                  }}
                 />
                 <TextValidator
                   name="date"
@@ -168,7 +165,7 @@ class AssetAllocation extends React.Component<Props> {
                   name="currency-to-asset-allocation"
                   value={AssetStore.selectedCurrencyToAssetAllocation}
                   onChange={this.handleCurrencyToAssetAllocation}
-                  options={optionsToShow}
+                  options={allCurrencies}
                   className={classes.alignInputAfter2}
                   style={{
                   border: 'none',
@@ -194,7 +191,7 @@ class AssetAllocation extends React.Component<Props> {
                   name="currency-for-asset-fee"
                   value={AssetStore.selectedCurrencyForTransactionFee}
                   onChange={this.handleCurrencyForTransactionFee}
-                  options={optionsToShow}
+                  options={allCurrencies}
                   className={classes.alignInputAfter2}
                   style={{
                   border: 'none',

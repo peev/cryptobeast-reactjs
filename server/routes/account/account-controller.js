@@ -35,7 +35,7 @@ const accountController = (repository) => {
       });
   };
 
-  // Balances ===============================================
+  // #region Balances
   const getAccountBalance = (req, res) => {
     // req is account object with apiKey, apiSecret and foreign key portfolioId
     // TODO: switch between apis
@@ -64,12 +64,61 @@ const accountController = (repository) => {
         res.json(error);
       });
   };
+  // #endregion
+
+  // #region Trades
+  const createTrade = (req, res) => {
+    const trade = req.body;
+    repository.create({ modelName:'Trade', newObject: trade })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        return res.json(error);
+      });
+  };
+  
+  const updateTrade = (req, res) => {
+    const trade = req.body;
+    repository.update({ modelName:'Trade', updatedRecord: trade })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const removeTrade = (req, res) => {
+    const { tradeId } = req.body;
+    repository.remove({ modelName:'Trade', id: tradeId })
+      .then(result => responseHandler(res, result))
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const getAllTrades = (req, res) => {
+    repository.find({ modelName: 'Trade' })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+  // #endregion
 
   return {
     createAccount,
     updateAccount,
     removeAccount,
     getAccountBalance,
+
+    createTrade,
+    updateTrade,
+    removeTrade,
+    getAllTrades,
   };
 };
 

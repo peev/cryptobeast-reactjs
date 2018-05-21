@@ -68,11 +68,11 @@ const init = async (repository) => {
 
   // TODO: Create router for every new model and add it here
   require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
+  require('./../../routes/user/user-router').attachTo(app, repository, jobs);
   require('./../../routes/asset/asset-router').attachTo(app, repository);
   require('./../../routes/market/market-router').attachTo(app, repository);
   require('./../../routes/account/account-router').attachTo(app, repository);
   require('./../../routes/investor/investor-router').attachTo(app, repository);
-
 
   /// Handle Errors
   // catch 404 and forward to error handler

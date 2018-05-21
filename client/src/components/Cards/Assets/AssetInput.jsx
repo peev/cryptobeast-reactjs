@@ -81,21 +81,11 @@ class AssetInput extends React.Component<Props> {
 
   render() {
     const { classes, AssetStore, MarketStore } = this.props;
-    const options = MarketStore.allCurrencies;
-    const optionsToShow = toJS(options);
-    // const optionsToShow = [];
-
-    // options.forEach((element: Object, i: number) => {
-    //   optionsToShow.push((
-    //     <MenuItem
-    //       key={element.value}
-    //       value={element.value}
-    //       index={i}
-    //     >
-    //       <em>{element.label}</em>
-    //     </MenuItem>
-    //   ));
-    // });
+    const allCurrencies = toJS(MarketStore.allCurrencies);
+    const baseCurrencies = toJS(MarketStore.baseCurrencies)
+      .map((currency: object) => ({ value: currency.pair, label: currency.pair }))
+      .filter((x: object) => x.value !== 'BTC' && x.value !== 'ETH');
+    baseCurrencies.forEach((element: object) => allCurrencies.push(element));
     return (
       <Grid container >
         <Paper className={classes.container}>
@@ -106,29 +96,12 @@ class AssetInput extends React.Component<Props> {
           >
             <Grid container className={classes.containerItems}>
               <Grid item xs={4} sm={3} md={3}>
-                {/* <SelectValidator
-                  label="Select Currency"
-                  name="currency-to-asset-allocation"
-                  value={AssetStore.selectedCurrencyBasicAsset}
-                  onChange={this.handleFromAllCurrenciesBasicAsset}
-                  className={classes.input}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
-                >
-                  {optionsToShow}
-                </SelectValidator> */}
-
-                {/* <SelectAllCurrency
-                  value={AssetStore.selectedCurrencyBasicAsset}
-                  onChange={this.handleFromAllCurrenciesBasicAsset}
-                /> */}
-
                 <Select
                   placeholder="Select currency*"
                   name="currency-to-asset-allocation"
                   value={AssetStore.selectedCurrencyBasicAsset || ''}
                   onChange={this.handleFromAllCurrenciesBasicAsset}
-                  options={optionsToShow}
+                  options={allCurrencies}
                   className={classes.input}
                   style={{
                   border: 'none',
@@ -138,7 +111,6 @@ class AssetInput extends React.Component<Props> {
                 />
                 <TextValidator
                   name="Quantity"
-                  type="number"
                   label="Quantity*"
                   value={AssetStore.assetInputValue}
                   onChange={(e: SyntheticInputEvent) => this.handleRequest(e)}
@@ -154,6 +126,13 @@ class AssetInput extends React.Component<Props> {
                   label="Select Exchange (optional)"
                   value={AssetStore.selectedExchangeBasicInput}
                   handleChange={this.handleExchangeBasicInput}
+                  style={{
+                    marginTop: '12px',
+                    width: '95%',
+                    border: 'none',
+                    borderRadius: 0,
+                    borderBottom: '1px solid #757575',
+                  }}
                 />
               </Grid>
             </Grid>

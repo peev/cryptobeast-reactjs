@@ -1,11 +1,13 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import uuid from 'uuid/v4';
+
+import Select from 'react-select';
+
 import { withStyles } from 'material-ui/styles';
 // import { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
+
 import { FormControl } from 'material-ui/Form';
-import { SelectValidator } from 'react-material-ui-form-validator';
+
 import { inject, observer } from 'mobx-react';
 
 const styles = (theme: Object) => ({
@@ -21,14 +23,14 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
-  currencies: Array<string>,
+  label: string,
   InvestorStore: Object,
   MarketStore: Object,
 };
 
 type State = {
   open: boolean,
-  baseCurrencyId: ?string,
+  baseCurrency: ?string,
 };
 
 @inject('MarketStore', 'InvestorStore')
@@ -36,7 +38,7 @@ type State = {
 class SelectBaseCurrency extends React.Component<Props, State> {
   state = {
     open: false,
-    baseCurrencyId: '',
+    baseCurrency: '',
   };
 
   handleOpen = () => {
@@ -48,27 +50,37 @@ class SelectBaseCurrency extends React.Component<Props, State> {
   };
 
   handleChange = (event: SyntheticEvent) => {
-    const index = event.target.value;
-    this.props.MarketStore.selectBaseCurrency(index);
-    // What Does This Do?
+    if (event) {
+      this.props.MarketStore.selectBaseCurrency(event.value);
+      // What Does This Do?
     this.props.InvestorStore.convertedUsdEquiv; // eslint-disable-line
 
-    this.setState({ [event.target.name]: event.target.value });
+      this.setState({ baseCurrency: event.value });
+    } else {
+      this.props.MarketStore.selectBaseCurrency('');
+      this.setState({ baseCurrency: '' });
+    }
   };
 
   render() {
-    const { classes, MarketStore, currencies = [] } = this.props;
-    const baseCurrencies = MarketStore.baseCurrencies.map((el: Object, i: number) =>
-      ((currencies.length === 0 || currencies.includes(MarketStore.baseCurrencies[i].pair)) ?
-        (
-          <MenuItem
-            key={uuid()}
-            value={i}
-          >
-            <em>{MarketStore.baseCurrencies[i].pair}</em>
-          </MenuItem>
-        ) : ''
-      ));
+    const { classes, label, MarketStore } = this.props;
+    const currenciesToShow = [];
+    const baseCurrencies = MarketStore.baseCurrencies.map((currency: object) => ({ value: currency.pair, label: currency.pair }));
+    baseCurrencies.forEach((currency: object) => {
+      currenciesToShow.push(currency);
+    });
+
+    // const baseCurrencies = MarketStore.baseCurrencies.map((el: Object, i: number) =>
+    //   ((currencies.length === 0 || currencies.includes(MarketStore.baseCurrencies[i].pair)) ?
+    //     (
+    //       <MenuItem
+    //         key={uuid()}
+    //         value={i}
+    //       >
+    //         <em>{MarketStore.baseCurrencies[i].pair}</em>
+    //       </MenuItem>
+    //     ) : ''
+    //   ));
 
     return (
       <div autoComplete="off">
@@ -77,23 +89,27 @@ class SelectBaseCurrency extends React.Component<Props, State> {
             Select Currency
           </InputLabel> */}
 
-          <SelectValidator
+          <Select
             name="currency"
-            label="Select Base Currency"
+            placeholder={label || 'Select Base Currency*'}
             open={this.state.open}
-            value={this.state.baseCurrencyId}
+            value={this.state.baseCurrency}
             // onOpen={this.handleOpen}
+            options={currenciesToShow}
             onClose={this.handleClose}
             onChange={this.handleChange}
-            validators={['required']}
-            errorMessages={['this field is required']}
+            style={{
+              marginTop: '12px',
+              width: '95%',
+              border: 'none',
+              borderRadius: 0,
+              borderBottom: '1px solid #757575',
+            }}
             inputProps={{
               name: 'baseCurrencyId',
               id: 'controlled-open-select',
             }}
-          >
-            {baseCurrencies}
-          </SelectValidator>
+          />
         </FormControl>
       </div>
     );

@@ -5,6 +5,7 @@ import requester from '../services/requester';
 
 class MarketStore {
   @observable marketSummaries;
+  @observable marketPriceHistory;
   @observable baseCurrencies;
   @observable allCurrencies;
   @observable allTickers;
@@ -13,6 +14,7 @@ class MarketStore {
 
   constructor() {
     this.marketSummaries = {};
+    this.marketPriceHistory = {};
     this.baseCurrencies = [];
     this.allCurrencies = [];
     this.allTickers = [];
@@ -44,6 +46,11 @@ class MarketStore {
     // get the summary to the market for the past 24h
     requester.Market.getSummaries()
       .then(this.convertMarketSummaries)
+      .catch(err => console.log(err));
+
+    // get market price history from database (Coin Market Cap)
+    requester.Market.getMarketPriceHistory()
+      .then(this.convertMarketPriceHistory)
       .catch(err => console.log(err));
   }
 
@@ -84,6 +91,16 @@ class MarketStore {
       .catch(err => console.log(err));
   }
 
+  @action
+  syncMarketPriceHistory() {
+    // syncs the price history to the market for the past 1h, 24h and 7d
+    // convertCurrency is given, so user can chose in what base currency
+    // information will be displayed
+    requester.Market.syncMarketPriceHistory({ convertCurrency: 'BTC' })
+      .then(this.convertMarketPriceHistory)
+      .catch(err => console.log(err));
+  }
+
   @action.bound
   convertMarketSummaries(response) {
     const result = {};
@@ -93,8 +110,20 @@ class MarketStore {
   }
 
   @action.bound
-  selectBaseCurrency(index) {
-    this.selectedBaseCurrency = this.baseCurrencies[index];
+  convertMarketPriceHistory(response) {
+    const result = {};
+    // eslint-disable-next-line no-return-assign
+    response.data.forEach(el => result[el.currency] = el);
+    this.marketPriceHistory = result;
+  }
+
+  @action.bound
+  selectBaseCurrency(currency) {
+    if (currency !== '') {
+      [this.selectedBaseCurrency] = this.baseCurrencies.filter(item => item.pair === currency);
+    } else {
+      this.resetMarket();
+    }
   }
 
   @action.bound

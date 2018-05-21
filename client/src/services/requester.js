@@ -17,6 +17,8 @@ const Portfolio = {
   create: portfolioName => requests.post('/portfolio/create', portfolioName),
   getSharePrice: id => requests.post('/portfolio/getPortfolioSharePrice', id),
   getSharePriceHistory: requestParams => requests.post('/portfolio/sharePriceHistory', requestParams),
+  getPriceHistory: requestParams => requests.post('/portfolio/priceHistory', requestParams),
+  getPriceHistoryForPeriod: requestParams => requests.post('/portfolio/periodPriceHistory', requestParams),
   update: requestParams => requests.put('/portfolio/update', requestParams), // id + newName
   delete: id => requests.delete(`/portfolio/delete/${id}`),
 };
@@ -36,12 +38,22 @@ const Market = {
   syncCurrencies: () => requests.get('/market/syncCurrencies'),
   getAllCurrencies: () => requests.get('/market/allCurrencies'),
   getBaseTickers: searchedCurrencies => requests.post('/market/syncBaseTickers', searchedCurrencies),
+  syncMarketPriceHistory: convertCurrency => requests.post('/market/syncMarketPriceHistory', convertCurrency),
+  getMarketPriceHistory: () => requests.get('/market/getMarketPriceHistory'),
 };
 
 const ApiAccount = {
   addAccount: data => requests.post('/account/add', data),
   update: requestParams => requests.put('/account/update', requestParams),
   delete: id => requests.delete(`/account/delete${id}`, id),
+  getBalance: data => requests.post('/account/getBalance', data),
+};
+
+const Trade = {
+  addTrade: data => requests.post('/account/createTrade', data),
+  updateTrade: requestParams => requests.put('/account/updateTrade', requestParams),
+  deleteTrade: id => requests.delete(`/account/delete${id}`, id),
+  getAllTrades: () => requests.get('/account/allTrades'),
 };
 
 const Asset = {
@@ -51,10 +63,16 @@ const Asset = {
   allocate: data => requests.post('/asset/allocate', data),
 };
 
+const User = {
+  updateClosingTime: data => requests.post('/user/updateClosingTime', data),
+};
+
 export default {
   Portfolio,
   Investor,
   Market,
   ApiAccount,
+  Trade,
   Asset,
+  User,
 };

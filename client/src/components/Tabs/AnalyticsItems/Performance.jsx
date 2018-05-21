@@ -1,56 +1,86 @@
+// @flow
 import React from 'react';
-import Paper from 'material-ui/Paper';
-import { Grid } from 'material-ui';
+import { withStyles, Grid } from 'material-ui';
+import { inject, observer } from 'mobx-react';
 
-import RegularButton from '../../CustomButtons/Button';
-import SelectBenchmark from '../../Selectors/SelectBenchmark';
-// import InvestorPieChart from "../../HighCharts/InvestorPie";
-import PerformanceTable from '../../CustomTables/PerformanceTable';
-import './AnalyticsStyles/Performance.css';
-import PerformanceChart from '../../HighCharts/PerformanceChart';
+import Button from '../../CustomButtons/Button';
+import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
+import SelectPeriod from '../../Selectors/Analytics/SelectPeriod';
+import TotalAssetsValue from '../../HighCharts/TotalAssetsValue';
+import PerformanceAssets from '../../HighCharts/PerformanceAssets';
+import SummaryPerformanceCard from '../../Cards/Analytics/SummaryPerformanceCard';
 
+const styles = () => ({
+  marginTop: {
+    marginTop: '40px',
+  },
+  marginRight: {
+    marginRight: '75px',
+  },
+  header: {
+    color: 'red',
+    margin: '20px 0',
+  },
+});
 
-class Performance extends React.Component {
-  state = {
-    // open: false,
+type Props = {
+  classes: Object,
+};
+
+const Performance = inject('Analytics')(observer(({ ...props }: Props) => {
+  const { classes, Analytics } = props;
+
+  const handleSelectTimePeriod = () => {
+    if (Analytics.selectedTimeInPerformance === '') {
+      console.log('selected period is needed');
+      return;
+    }
+
+    Analytics.getPortfolioPriceHistory();
+    Analytics.getPortfolioPriceHistoryForTimePeriod();
   };
 
-  render() {
-    return (
-      <div className="hideOverflow">
-        <Grid container className="PerformanceGrid">
-          <Grid container>
-            <Grid item xs={3} className="align" >
-              <SelectBenchmark />
-            </Grid>
-
-            <Grid item xs={3}>
-              <RegularButton>Apply</RegularButton>
-            </Grid>
-          </Grid>
+  return (
+    <Grid container>
+      <Grid container className={classes.header}>
+        <Grid item xs={2} sm={2} md={2} className={classes.marginRight}>
+          <SelectPeriod />
         </Grid>
 
-        <br />
-        <Grid container className="PerformanceGrid">
-          <Grid item xs={12}>
-            <Paper className="PerformancePaper">
-              <PerformanceChart className="PerformancePaperChart" />
-            </Paper>
-          </Grid>
+        <Grid item xs={1} sm={1} md={1}>
+          <Button onClick={() => handleSelectTimePeriod()}>Apply</Button>
         </Grid>
-        <Grid container className="PerformanceGrid">
-          <Grid item xs={12}>
-            <Paper className="PerformancePaper">
-              <PerformanceTable />
-              <RegularButton>Export</RegularButton>
-              <br />
+      </Grid>
 
-            </Paper>
-          </Grid>
+      <Grid container>
+        <Grid item xs={8} sm={8} md={8} className={classes.marginRight}>
+          <TotalAssetsValue />
         </Grid>
-      </div>
-    );
-  }
-}
 
-export default Performance;
+        <Grid item xs={3} sm={3} md={3}>
+          <SummaryPerformanceCard />
+        </Grid>
+      </Grid>
+
+      <Grid container>
+        <Grid item xs={2} sm={2} md={2} className={classes.marginRight}>
+          <SelectBenchmark />
+        </Grid>
+
+        <Grid item xs={1} sm={1} md={1}>
+          <Button>Apply</Button>
+        </Grid>
+      </Grid>
+
+      <Grid container>
+        <Grid item xs={12} sm={12} md={12}>
+          {/* test  */}
+          <PerformanceAssets />
+        </Grid>
+      </Grid>
+
+    </Grid>
+  );
+}));
+
+export default withStyles(styles)(Performance);

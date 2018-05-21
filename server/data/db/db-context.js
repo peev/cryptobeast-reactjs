@@ -29,10 +29,12 @@ const init = ({ dbName, dbUser, dbPassword }) => new Promise((resolve, reject) =
       db.Investor = sequelize.import(path.join(__dirname, '/models/investor.js'));
       db.MarketSummary = sequelize.import(path.join(__dirname, '/models/marketSummary.js'));
       db.MarketSummaryHistory = sequelize.import(path.join(__dirname, '/models/marketSummaryHistory.js'));
+      db.MarketPriceHistory = sequelize.import(path.join(__dirname, '/models/marketPriceHistory.js'));
       db.Ticker = sequelize.import(path.join(__dirname, '/models/ticker.js'));
       db.TickerHistory = sequelize.import(path.join(__dirname, '/models/tickerHistory.js'));
       db.Currency = sequelize.import(path.join(__dirname, '/models/currency.js'));
       db.Transaction = sequelize.import(path.join(__dirname, '/models/transaction.js'));
+      db.Trade = sequelize.import(path.join(__dirname, '/models/trade.js'));
       db.SharePrice = sequelize.import(path.join(__dirname, '/models/sharePrice.js'));
       db.PortfolioPrice = sequelize.import(path.join(__dirname, '/models/portfolioPrice.js'));
       db.User = sequelize.import(path.join(__dirname, '/models/user.js'));
@@ -55,6 +57,9 @@ const init = ({ dbName, dbUser, dbPassword }) => new Promise((resolve, reject) =
 
       db.Portfolio.hasMany(db.Transaction);
       db.Transaction.belongsTo(db.Portfolio);
+
+      db.Portfolio.hasMany(db.Trade);
+      db.Trade.belongsTo(db.Portfolio);
 
       db.Investor.hasMany(db.Transaction);
       db.Transaction.belongsTo(db.Investor);

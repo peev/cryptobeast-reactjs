@@ -1,7 +1,9 @@
+// @flow
 import React from 'react';
 import { withStyles, Grid } from 'material-ui';
 
 import { ItemGrid } from './../../components';
+import TradeHistory from '../../components/Cards/History/TradeHistory';
 
 
 const style = {
@@ -24,14 +26,17 @@ const style = {
     width: '260px',
   },
 };
-function TransactionHistory() {
-  return (
-    <Grid container>
+const TransactionHistory = ({ classes }: Object) =>
+  (<Grid container>
       <ItemGrid xs={12} sm={12} md={12}>
-        <p>Transaction History is under construction...</p>
+        <p>FILTERS</p>
       </ItemGrid>
-    </Grid>
-  );
-}
+      <Grid container className={classes.itemsCardPosition}>
+      <Grid item xs={12} sm={12} md={12}>
+        <TradeHistory />
+      </Grid>
+      </Grid>
+   </Grid>);
+
 
 export default withStyles(style)(TransactionHistory);

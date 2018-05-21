@@ -49,6 +49,10 @@ class IndividualSummary extends React.Component<Props> {
     // console.log('Submit');
   };
 
+  handleSelectInvestorForSummary = (value: *) => {
+    this.props.InvestorStore.selectInvestorIndividualSummary(value);
+  }
+
   render() {
     const { classes, InvestorStore } = this.props;
 
@@ -59,7 +63,16 @@ class IndividualSummary extends React.Component<Props> {
         <Grid container>
           <Grid container className={classes.container}>
             <Grid item xs={6} sm={6} md={3}>
-              <SelectInvestor />
+              <SelectInvestor
+                value={InvestorStore.selectedInvestorIndividualSummaryId || ''}
+                handleChange={this.handleSelectInvestorForSummary}
+                style={{
+                  width: '95%',
+                  border: 'none',
+                  borderRadius: 0,
+                  borderBottom: '1px solid #757575',
+                }}
+              />
             </Grid>
           </Grid>
 

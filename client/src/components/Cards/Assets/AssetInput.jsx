@@ -111,7 +111,6 @@ class AssetInput extends React.Component<Props> {
                 />
                 <TextValidator
                   name="Quantity"
-                  type="number"
                   label="Quantity*"
                   value={AssetStore.assetInputValue}
                   onChange={(e: SyntheticInputEvent) => this.handleRequest(e)}
@@ -127,6 +126,13 @@ class AssetInput extends React.Component<Props> {
                   label="Select Exchange (optional)"
                   value={AssetStore.selectedExchangeBasicInput}
                   handleChange={this.handleExchangeBasicInput}
+                  style={{
+                    marginTop: '12px',
+                    width: '95%',
+                    border: 'none',
+                    borderRadius: 0,
+                    borderBottom: '1px solid #757575',
+                  }}
                 />
               </Grid>
             </Grid>

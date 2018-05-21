@@ -48,13 +48,14 @@ const styles = (theme: Object) => ({
 type Props = {
   classes: Object,
   PortfolioStore: Object,
+  Analytics: Object,
 };
 
 type State = {
   open: boolean,
 };
 
-@inject('PortfolioStore')
+@inject('PortfolioStore', 'Analytics')
 @observer
 class CurrentSharePrice extends React.Component<Props, State> {
   state = {
@@ -64,7 +65,7 @@ class CurrentSharePrice extends React.Component<Props, State> {
   handleOpen = () => {
     this.setState({ open: true });
 
-    this.props.PortfolioStore.getClosingSharePriceHistory();
+    this.props.Analytics.getClosingSharePriceHistory();
   };
 
   handleClose = () => {
@@ -72,8 +73,7 @@ class CurrentSharePrice extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, PortfolioStore } = this.props;
-    const loadingScreen = (<p>loading</p>);
+    const { classes, PortfolioStore, Analytics } = this.props;
 
     return (
       <Grid container>
@@ -104,47 +104,45 @@ class CurrentSharePrice extends React.Component<Props, State> {
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
-                {PortfolioStore.currentPortfolioClosingSharePricesBreackdown.length > 0 ?
-                  <HighchartsStockChart>
-                    <Chart zoomType="x" />
-                    <Legend>
-                      {/* <Legend.Title>Key</Legend.Title> */}
-                    </Legend>
+                <HighchartsStockChart>
+                  <Chart zoomType="x" />
+                  <Legend>
+                    {/* <Legend.Title>Key</Legend.Title> */}
+                  </Legend>
 
-                    <RangeSelector>
-                      <RangeSelector.Button count={1} type="day">1d</RangeSelector.Button>
-                      <RangeSelector.Button count={7} type="day">7d</RangeSelector.Button>
-                      <RangeSelector.Button count={1} type="month">1m</RangeSelector.Button>
-                      <RangeSelector.Button type="all">All</RangeSelector.Button>
-                      <RangeSelector.Input />
-                    </RangeSelector>
+                  <RangeSelector>
+                    <RangeSelector.Button count={1} type="day">1d</RangeSelector.Button>
+                    <RangeSelector.Button count={7} type="day">7d</RangeSelector.Button>
+                    <RangeSelector.Button count={1} type="month">1m</RangeSelector.Button>
+                    <RangeSelector.Button type="all">All</RangeSelector.Button>
+                    <RangeSelector.Input />
+                  </RangeSelector>
 
-                    <Tooltip />
+                  <Tooltip />
 
-                    <XAxis>
-                      <XAxis.Title>Time Interval</XAxis.Title>
-                    </XAxis>
+                  <XAxis>
+                    <XAxis.Title>Time Interval</XAxis.Title>
+                  </XAxis>
 
-                    {/* <YAxis id="price">
+                  {/* <YAxis id="price">
                       <YAxis.Title>USD</YAxis.Title>
                       <AreaSplineSeries id="profit" name="Opening Time" data={PortfolioStore.currentPortfolioClosingSharePricesBreackdown} />
                     </YAxis> */}
 
-                    <YAxis id="social" opposite>
-                      <YAxis.Title>USD</YAxis.Title>
-                      <SplineSeries
-                        id="twitter"
-                        name="Closing Time"
-                        data={PortfolioStore.currentPortfolioClosingSharePricesBreackdown}
-                      />
-                    </YAxis>
+                  <YAxis id="social" opposite>
+                    <YAxis.Title>USD</YAxis.Title>
+                    <SplineSeries
+                      id="twitter"
+                      name="Closing Time"
+                      data={Analytics.currentPortfolioClosingSharePricesBreakdown}
+                    />
+                  </YAxis>
 
-                    <Navigator>
-                      <Navigator.Series seriesId="profit" />
-                      <Navigator.Series seriesId="twitter" />
-                    </Navigator>
-                  </HighchartsStockChart>
-                  : loadingScreen}
+                  <Navigator>
+                    <Navigator.Series seriesId="profit" />
+                    <Navigator.Series seriesId="twitter" />
+                  </Navigator>
+                </HighchartsStockChart>
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>

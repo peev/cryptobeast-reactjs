@@ -18,8 +18,6 @@ class PortfolioStore {
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
-  @observable currentPortfolioTrades;
-  @observable currentPortfolioClosingSharePrices;
   @observable newPortfolioName;
 
   constructor() {
@@ -29,8 +27,6 @@ class PortfolioStore {
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
-    this.currentPortfolioTrades = [];
-    this.currentPortfolioClosingSharePrices = [];
     this.newPortfolioName = '';
 
 
@@ -344,19 +340,7 @@ class PortfolioStore {
     return 0;
   }
 
-  @computed
-  get currentPortfolioClosingSharePricesBreackdown() {
-    if (this.selectedPortfolio && this.currentPortfolioClosingSharePrices.length > 0) {
-      return this.currentPortfolioClosingSharePrices
-        .filter(el => el.isClosingPrice === true)
-        .map((el) => {
-          const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
-          return [timeOfCreation, el.price, null];
-        });
-    }
 
-    return [];
-  }
 
   // #endregion
 
@@ -441,18 +425,6 @@ class PortfolioStore {
     });
   }
 
-  @action.bound
-  getClosingSharePriceHistory() {
-    const searchedHistoryItems = {
-      portfolioId: this.selectedPortfolioId,
-      isClosingPrice: true,
-    };
-
-    requester.Portfolio.getSharePriceHistory(searchedHistoryItems)
-      .then(action((result) => {
-        this.currentPortfolioClosingSharePrices = result.data;
-      }));
-  }
 
   @action.bound
   resetPortfolio() {

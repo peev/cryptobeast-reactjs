@@ -12,13 +12,16 @@ import MarketStore from './MarketStore';
 import NotificationStore from './NotificationStore';
 
 class InvestorStore {
-  @observable newInvestorValues
+  @observable newInvestorValues;
   @observable updateInvestorValues;
   @observable newDepositValues;
   @observable withdrawalValues;
   @observable individualSummaryValues;
+  @observable selectedInvestorIndividualSummary;
+  @observable selectedInvestorIndividualSummaryId;
   @observable selectedInvestor;
   @observable selectedInvestorId;
+  @observable selectedInvestorTransactions;
 
   constructor() {
     // #region Initialize Values
@@ -63,9 +66,11 @@ class InvestorStore {
       profit: '',
       feePotential: '',
     };
-
+    this.selectedInvestorIndividualSummary = null;
+    this.selectedInvestorIndividualSummaryId = null;
     this.selectedInvestor = null;
     this.selectedInvestorId = null;
+    this.selectedInvestorTransactions = null;
     // #endregion
   }
 
@@ -177,8 +182,8 @@ class InvestorStore {
   // #region Investor Individual Summary
   @computed
   get individualSharesHeld() {
-    if (this.selectedInvestor) {
-      const calculatedIndividualSharesHeld = this.selectedInvestor.purchasedShares;
+    if (this.selectedInvestorIndividualSummary) {
+      const calculatedIndividualSharesHeld = this.selectedInvestorIndividualSummary.purchasedShares;
       this.individualSummaryValues.sharesHeld = calculatedIndividualSharesHeld;
 
       return calculatedIndividualSharesHeld;
@@ -214,12 +219,14 @@ class InvestorStore {
     return null;
   }
 
-
   @computed
   get individualWeightedEntryPrice() {
     if (this.selectedInvestor) {
-      const calculatedIndividualWeightedEntryPrice = this.selectedInvestor.purchasedShares;
-      this.individualSummaryValues.weightedEntryPrice = calculatedIndividualWeightedEntryPrice;
+      let calculatedIndividualWeightedEntryPrice = this.selectedInvestorTransactions.reduce((result, transaction) => {
+        result += (transaction.shares / this.selectedInvestor.purchasedShares) * transaction.sharePrice; // eslint-disable-line no-param-reassign
+        return result;
+      }, 0);
+      calculatedIndividualWeightedEntryPrice = Number(`${Math.round(`${calculatedIndividualWeightedEntryPrice}e2`)}e-2`);
 
       return calculatedIndividualWeightedEntryPrice;
     }
@@ -230,12 +237,9 @@ class InvestorStore {
   @computed
   get individualUSDEquivalent() {
     if (this.selectedInvestor) {
-      //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualUSDEquivalent = this.selectedInvestor.purchasedShares * 1;
-      this.individualSummaryValues.usdEquivalent = calculatedIndividualUSDEquivalent;
-      // this.individualSummaryValues.feePotential = calculatedIndividualUSDEquivalent * this.selectedInvestor.managementFee;
+      const calculatedIndividualUSDEquivalent = this.selectedInvestor.purchasedShares * PortfolioStore.currentPortfolioSharePrice;
 
-      return calculatedIndividualUSDEquivalent;
+      return Number(`${Math.round(`${calculatedIndividualUSDEquivalent}e2`)}e-2`);
     }
 
     return null;
@@ -244,11 +248,9 @@ class InvestorStore {
   @computed
   get individualBTCEquivalent() {
     if (this.selectedInvestor) {
-      //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualBTCEquivalent = (this.selectedInvestor.purchasedShares / MarketStore.baseCurrencies[4].last).toFixed(2);
-      this.individualSummaryValues.btcEquivalent = calculatedIndividualBTCEquivalent;
+      const calculatedIndividualBTCEquivalent = this.individualUSDEquivalent / MarketStore.baseCurrencies[3].last;
 
-      return calculatedIndividualBTCEquivalent;
+      return Number(`${Math.round(`${calculatedIndividualBTCEquivalent}e2`)}e-2`);
     }
 
     return null;
@@ -257,11 +259,9 @@ class InvestorStore {
   @computed
   get individualETHEquivalent() {
     if (this.selectedInvestor && MarketStore.baseCurrencies) {
-      //  TODO: add real share price from PortfolioStore
-      const calculatedIndividualETHEquivalent = (this.selectedInvestor.purchasedShares / MarketStore.baseCurrencies[3].last).toFixed(2);
-      this.individualSummaryValues.ethEquivalent = calculatedIndividualETHEquivalent;
+      const calculatedIndividualETHEquivalent = this.individualBTCEquivalent / MarketStore.baseCurrencies[0].last;
 
-      return calculatedIndividualETHEquivalent;
+      return Number(`${Math.round(`${calculatedIndividualETHEquivalent}e2`)}e-2`);
     }
 
     return null;
@@ -269,11 +269,11 @@ class InvestorStore {
 
   @computed
   get individualInvestmentPeriod() {
-    if (this.selectedInvestor) {
+    if (this.selectedInvestorIndividualSummary) {
       // Get 1 day in milliseconds
       const oneDay = 1000 * 60 * 60 * 24;
       const currentDate = new Date();
-      const dateOfEntryConverted = new Date(this.selectedInvestor.dateOfEntry);
+      const dateOfEntryConverted = new Date(this.selectedInvestorIndividualSummary.dateOfEntry);
 
       const calculatedIndividualInvestmentPeriod = Math.round((currentDate - dateOfEntryConverted) / oneDay);
       this.individualSummaryValues.investmentPeriod = calculatedIndividualInvestmentPeriod;
@@ -287,9 +287,8 @@ class InvestorStore {
   @computed
   get individualProfit() {
     if (this.selectedInvestor) {
-      const calculatedIndividualProfit = 1;
-      // (current share price - weighted entry price) / weighted entry price*
-      this.individualSummaryValues.profit = calculatedIndividualProfit;
+      let calculatedIndividualProfit = (PortfolioStore.currentPortfolioSharePrice - this.individualWeightedEntryPrice) / (this.individualWeightedEntryPrice || 1);
+      calculatedIndividualProfit = Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`)
 
       return calculatedIndividualProfit;
     }
@@ -299,9 +298,10 @@ class InvestorStore {
 
   @computed
   get individualFeePotential() {
-    if (this.selectedInvestor) {
+    if (this.selectedInvestorIndividualSummary) {
       // TODO: USD is hard coded
-      const calculatedIndividualFeePotential = ((MarketStore.baseCurrencies[3].last * this.selectedInvestor.managementFee) / 100).toFixed(2);
+      const calculatedIndividualFeePotential = ((this.individualUSDEquivalent * this.selectedInvestor.managementFee) / 100).toFixed(2);
+
       this.individualSummaryValues.feePotential = calculatedIndividualFeePotential;
 
       return calculatedIndividualFeePotential;
@@ -698,7 +698,6 @@ class InvestorStore {
   }
   // #endregion
 
-  // Resets
   // #region Resets
   @action
   reset() {
@@ -748,23 +747,21 @@ class InvestorStore {
   @action.bound
   resetSelectedInvestor() {
     this.selectedInvestorId = null;
+    this.selectedInvestorTransactions = null;
+
   }
   // #endregion
 
-  // Others
   // #region Others
   @action
   selectInvestor(id) {
     this.selectedInvestorId = id;
-    // selects the marked investor
-    // eslint-disable-next-line array-callback-return
-    PortfolioStore.currentPortfolioInvestors.find((element) => {
-      if (element.id === id) {
-        this.selectedInvestor = {
-          ...element,
-        };
-      }
-    });
+    this.selectedInvestor = {
+      ...PortfolioStore.currentPortfolioInvestors
+        .find(element => element.id === id),
+    };
+    this.selectedInvestorTransactions = PortfolioStore.currentPortfolioTransactions
+      .filter(t => t.investorId === id);
 
     if (this.selectedInvestor) {
       // sets the editing values for the current investor
@@ -773,6 +770,28 @@ class InvestorStore {
       this.updateInvestorValues.telephone = this.selectedInvestor.telephone;
       this.updateInvestorValues.managementFee = this.selectedInvestor.managementFee;
     }
+  }
+
+  @action
+  selectInvestorIndividualSummary(id) {
+    this.selectedInvestorIndividualSummaryId = id;
+    // selects the marked investor
+    // eslint-disable-next-line array-callback-return
+    PortfolioStore.currentPortfolioInvestors.find((element) => {
+      if (element.id === id) {
+        this.selectedInvestorIndividualSummary = {
+          ...element,
+        };
+      }
+    });
+
+    // if (this.selectedInvestorIndividualSummary) {
+    //   // sets the editing values for the current investor
+    //   this.updateInvestorValues.fullName = this.selectedInvestorIndividualSummary.fullName;
+    //   this.updateInvestorValues.email = this.selectedInvestorIndividualSummary.email;
+    //   this.updateInvestorValues.telephone = this.selectedInvestorIndividualSummary.telephone;
+    //   this.updateInvestorValues.managementFee = this.selectedInvestorIndividualSummary.managementFee;
+    // }
   }
 
   @computed

@@ -6,6 +6,7 @@ import {
   Tab,
   withStyles,
 } from 'material-ui';
+import { inject, observer } from 'mobx-react';
 import Volatility from './AnalyticsItems/Volatility';
 import Performance from './AnalyticsItems/Performance';
 
@@ -21,23 +22,30 @@ const styles = () => ({
     zIndex: 1,
     top: '100px',
   },
-  navbtn: {
-    marginLeft: '20px',
+  view: {
+    marginTop: '45px',
   },
 });
 
 type Props = {
   classes: Object,
+  Analytics: Object,
 };
 
 type State = {
   value: ?number,
 };
 
+@inject('Analytics')
+@observer
 class AnalyticsTabs extends React.Component<Props, State> {
   state = {
     value: 0,
   };
+
+  componentDidMount() {
+    this.props.Analytics.getPortfolioPriceHistory();
+  }
 
   handleChange = (event: SyntheticEvent, value: number) => {
     this.setState({ value });
@@ -60,11 +68,10 @@ class AnalyticsTabs extends React.Component<Props, State> {
           <Tab label="Correlation matrix" />
         </Tabs>
 
-        <br />
-
         <SwipeableViews
           index={this.state.value}
           onChange={this.handleChange}
+          className={classes.view}
         >
           <Performance />
 

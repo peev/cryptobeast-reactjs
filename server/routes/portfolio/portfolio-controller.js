@@ -120,6 +120,63 @@ const portfolioController = (repository, jobs) => {
       });
   };
 
+  const getPricesHistory = (req, res) => {
+    repository.find({
+      modelName: 'PortfolioPrice',
+      options: {
+        where: {
+          portfolioId: req.body.portfolioId,
+        }
+      },
+    })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const getPricesHistoryForPeriod = (req, res) => {
+    const id = req.body.portfolioId;
+    const time = req.body.selectedPeriod;
+    const currentDate = new Date();
+    let endDate;
+
+    switch (time) {
+      case '1d':
+        endDate = currentDate.getTime() - (24 * 60 * 60 * 1000);
+        break;
+      case '1m':
+        endDate = currentDate.getTime() - ((24 * 60 * 60 * 1000) * 31);
+        break;
+      case '1y':
+        endDate = currentDate.getTime() - ((24 * 60 * 60 * 1000) * 365);
+        break;
+      default:
+        console.log('No such time period');
+        break;
+    }
+
+    repository.find({
+      modelName: 'PortfolioPrice',
+      options: {
+        where: {
+          portfolioId: id,
+          createdAt: {
+            $gt: new Date(endDate),
+          }
+        }
+      },
+    })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   return {
     getById,
     getAllPortfolios,
@@ -130,6 +187,8 @@ const portfolioController = (repository, jobs) => {
     updatePortfolioBTCEquivalentOnRequest,
     getPortfolioSharePrice,
     getSharePriceHistory,
+    getPricesHistory,
+    getPricesHistoryForPeriod,
   };
 };
 

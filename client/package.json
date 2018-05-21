@@ -9,7 +9,7 @@
     "babel-plugin-styled-components": "^1.5.1",
     "classnames": "^2.2.5",
     "flow-bin": "^0.71.0",
-    "highcharts": "6.0.0",
+    "highcharts": "^6.0.0",
     "immutable": "^3.8.2",
     "material-ui": "^1.0.0-beta.45",
     "mobx": "^4.2.1",

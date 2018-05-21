@@ -21,8 +21,9 @@ const bittrexServices = () => {
       bittrex.getmarketsummaries((data, err) => {
         if (err) {
           reject(err);
+        } else {
+          resolve(data.result);
         }
-        resolve(data.result);
       });
     });
   };

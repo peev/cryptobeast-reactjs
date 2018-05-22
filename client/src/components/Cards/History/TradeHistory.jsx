@@ -7,6 +7,7 @@ import { RegularCard } from './../../../components';
 import HistoryTable from './../../CustomTables/HistoryTable';
 import ExportPdfButton from './../../CustomButtons/ExportPdfButton';
 
+
 const styles = () => ({
   tablePosition: {
     marginTop: '80px',
@@ -25,7 +26,6 @@ class TradeHistory extends Component<Props> {
     const { classes, PortfolioStore } = this.props;
 
     const data = PortfolioStore.tradeHistory;
-    console.log(data)
     const historyTable = (
       <HistoryTable
         tableData={data}

@@ -28,6 +28,38 @@ function getModalStyle() {
 }
 
 const styles = (theme: Object) => ({
+  container: {
+    width: '100%',
+    margin: '40px 40px 0',
+    padding: '20px 25px',
+  },
+  containerTitle: {
+    margin: '0',
+    fontSize: '16px',
+    textTransform: 'uppercase',
+  },
+  containerItems: {
+    marginTop: '1px',
+  },
+  btnAdd: {
+    float: 'right',
+    margin: '0',
+  },
+  alignInput: {
+    width: '95%',
+    marginTop: '25px',
+  },
+  alignInputAfter: {
+    width: '95%',
+    marginTop: '5px',
+  },
+  alignInputAfter2: {
+    width: '95%',
+    marginTop: '12px',
+  },
+  alignInputWidth: {
+    width: '95%',
+  },
   paper: {
     position: 'absolute',
     minWidth: '500px',
@@ -51,19 +83,21 @@ type Props = {
   AssetStore: Object,
   MarketStore: Object,
   NotificationStore: Object,
+  trade: Object,
 };
 
 type State = {
   open: boolean,
 };
 
-@inject('PortfolioStore', 'AssetStore', 'MarketStore')
+@inject('PortfolioStore', 'AssetStore', 'MarketStore', 'NotificationStore')
 @observer
 class UpdateTradeModal extends React.Component<Props, State> {
   name: ?React.Ref<any> = null;
   state = {
     open: false,
   };
+
   componentWillUnmount() {
     this.props.AssetStore.resetAsset();
   }
@@ -108,6 +142,15 @@ class UpdateTradeModal extends React.Component<Props, State> {
 
   handleOpen = () => {
     this.setState({ open: true });
+    const { trade } = this.props;
+    console.log(trade);
+    if (trade.source !== 'Manual') {
+      this.props.AssetStore.selectExchangeAssetAllocation(trade.source);
+    }
+    this.props.AssetStore.setAssetAllocationValue('assetAllocationSelectedDate', trade.transactionDate);
+    this.props.AssetStore.selectCurrencyFromAssetAllocation(trade.market);
+    console.log(this.props.PortfolioStore.currentPortfolioAssets);
+    this.props.AssetStore.setAssetAllocationValue('assetAllocationFromAmount', trade.filled);
   };
   handleClose = () => {
     this.setState({ open: false });
@@ -155,7 +198,13 @@ class UpdateTradeModal extends React.Component<Props, State> {
                   label="Select Exchange (optional)"
                   value={AssetStore.selectedExchangeAssetAllocation}
                   handleChange={this.handleExchangeAssetAllocation}
-
+                  style={{
+                   marginTop: '12px',
+                   width: '95%',
+                   border: 'none',
+                   borderRadius: 0,
+                   borderBottom: '1px solid #757575',
+                 }}
                 />
                 <TextValidator
                   name="date"
@@ -255,16 +304,19 @@ class UpdateTradeModal extends React.Component<Props, State> {
                 // onClick={this.handleSave}
                 color="primary"
                 type="submit"
+                disabled={AssetStore.assetAllocationToAmount === '' || AssetStore.selectedCurrencyToAssetAllocation === '' ||
+                  AssetStore.assetAllocationFromAmount === '' || AssetStore.assetAllocationSelectedDate === '' ||
+                  AssetStore.selectedCurrencyFromAssetAllocation === ''}
               >
                 {' '}
                 Save
               </Button>
-            </div>
+              </div>
               </Grid>
             </Grid>
           </ValidatorForm>
         </Paper>
-      </Grid>
+          </Grid>
         </Modal>
       </div>
     );

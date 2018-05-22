@@ -62,7 +62,7 @@ const HistoryTable = inject('PortfolioStore', 'AssetStore')(observer(({ ...props
                     return (
                       <TableCell className={classes.tableCellBuy} key={uuid()}>
                         {prop[el]}
-                        <UpdateTradeModal />
+                        <UpdateTradeModal trade={trades[i]} />
                       </TableCell>
                     );
                   } else if (ind === 9 && prop[2] !== 'Manual') {

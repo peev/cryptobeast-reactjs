@@ -18,6 +18,7 @@ class PortfolioStore {
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
+  @observable currentPortfolioTrades;
   @observable newPortfolioName;
 
   constructor() {
@@ -28,6 +29,7 @@ class PortfolioStore {
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
     this.newPortfolioName = '';
+    this.currentPortfolioTrades = [];
 
 
     // eslint-disable-next-line no-unused-expressions
@@ -72,10 +74,8 @@ class PortfolioStore {
   @computed
   get tradeHistory() {
     const trades = this.currentPortfolioTrades;
-    console.log(trades)
     const selectedPortfolioTrades = [];
     trades.forEach((el) => {
-      console.log(el)
       const currentRow = [];
       Object.keys(el).forEach((prop, ind) => {
         // 1. Transaction date

@@ -270,9 +270,6 @@ class PortfolioStore {
 
     return 0;
   }
-
-
-
   // #endregion
 
   // ======= Action =======
@@ -292,7 +289,7 @@ class PortfolioStore {
   createPortfolio() {
     const newPortfolio = {
       name: this.newPortfolioName,
-      // shares: InvestorStore.convertedUsdEquiv,
+      shares: InvestorStore.convertedUsdEquiv,
     };
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {

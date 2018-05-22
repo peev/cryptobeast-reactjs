@@ -287,8 +287,9 @@ class InvestorStore {
   @computed
   get individualProfit() {
     if (this.selectedInvestor) {
-      let calculatedIndividualProfit = (PortfolioStore.currentPortfolioSharePrice - this.individualWeightedEntryPrice) / (this.individualWeightedEntryPrice || 1);
-      calculatedIndividualProfit = Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`)
+      let calculatedIndividualProfit = (PortfolioStore.currentPortfolioSharePrice - this.individualWeightedEntryPrice) /
+      (this.individualWeightedEntryPrice || 1);
+      calculatedIndividualProfit = Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`);
 
       return calculatedIndividualProfit;
     }
@@ -748,7 +749,6 @@ class InvestorStore {
   resetSelectedInvestor() {
     this.selectedInvestorId = null;
     this.selectedInvestorTransactions = null;
-
   }
   // #endregion
 

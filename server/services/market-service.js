@@ -5,22 +5,26 @@ const { coinMarketCapServices } = require('../integrations/coinMarketCap-service
 
 const marketService = (repository) => {
   const syncSummaries = async () => {
-    const newSummaries = await bittrexServices().getSummaries();
-    repository.createMany({ modelName: 'MarketSummaryHistory', newObjects: newSummaries });
-
+    const newSummaries = await bittrexServices().getSummaries();    
     await repository.removeAll({ modelName: 'MarketSummary' });
+    
     return repository.createMany({ modelName: 'MarketSummary', newObjects: newSummaries });
   }
 
-  const syncTickersFromKraken = async (currenciesToGet) => {
+  const saveSummariesToHistory = async () => {
+    const newSummaries = await bittrexServices().getSummaries();
+    repository.createMany({ modelName: 'MarketSummaryHistory', newObjects: newSummaries });
+  }
+
+  const getTickersFromKraken = async (currenciesToGet) => {
     const baseCurrencies = currenciesToGet || 'XETHXXBT,XXBTZEUR,XXBTZJPY,XXBTZUSD';
-    const tickers = await krakenServices().getTickers(baseCurrencies);
     const currencyDictionary = {
       XETHXXBT: 'ETH',
       XXBTZEUR: 'EUR',
       XXBTZJPY: 'JPY',
       XXBTZUSD: 'USD',
     };
+    const tickers = await krakenServices().getTickers(baseCurrencies);
     const currentTickerPairs = [];
     Object.keys(tickers).map((currency) => {
       currentTickerPairs.push({
@@ -28,10 +32,21 @@ const marketService = (repository) => {
         last: tickers[currency].c[0],
       });
     });
-    repository.createMany({ modelName: 'TickerHistory', newObjects: currentTickerPairs });
 
+    return currentTickerPairs;
+  }
+
+  const syncTickersFromKraken = async (currenciesToGet) => {
+    const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
     await repository.removeAll({ modelName: 'Ticker' });
+ 
     return repository.createMany({ modelName: 'Ticker', newObjects: currentTickerPairs });
+  }
+
+  const saveTickersFromKrakenToHistory = async (currenciesToGet) => {
+    const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
+    
+    return repository.createMany({ modelName: 'TickerHistory', newObjects: currentTickerPairs });
   }
 
   const syncTickersFromCoinMarketCap = async (convertCurrency) => {
@@ -64,7 +79,9 @@ const marketService = (repository) => {
 
   return {
     syncSummaries,
+    saveSummariesToHistory,
     syncTickersFromKraken,
+    saveTickersFromKrakenToHistory,
     syncTickersFromCoinMarketCap,
     syncCurrenciesFromApi,
     createMarketJob,

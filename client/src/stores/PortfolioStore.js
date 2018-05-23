@@ -46,11 +46,7 @@ class PortfolioStore {
     if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
       let totalAmount = 0;
       this.selectedPortfolio.transactions.forEach((el) => {
-        if (el.shares > 0) {
-          totalAmount += el.amountInUSD;
-        } else {
-          totalAmount -= el.amountInUSD;
-        }
+        totalAmount += el.amountInUSD;
       });
 
       return totalAmount.toFixed(2);
@@ -270,9 +266,6 @@ class PortfolioStore {
 
     return 0;
   }
-
-
-
   // #endregion
 
   // ======= Action =======
@@ -292,7 +285,7 @@ class PortfolioStore {
   createPortfolio() {
     const newPortfolio = {
       name: this.newPortfolioName,
-      // shares: InvestorStore.convertedUsdEquiv,
+      shares: InvestorStore.convertedUsdEquiv,
     };
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {

@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import { withStyles } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 
-import {toJS} from 'mobx';
-
 import { RegularCard } from './../../../components';
 import AllInvestorTable from './../../CustomTables/Investors/AllInvestorTable';
 import ExportPdfButton from './../../CustomButtons/ExportPdfButton';
@@ -30,8 +28,8 @@ class TradeHistory extends Component<Props> {
     const data = InvestorStore.selectedInvestor
       ? PortfolioStore.currentPortfolioTransactions
         .filter((t: Object) => t.investorId === (InvestorStore.selectedInvestor ? InvestorStore.selectedInvestor.id : 1))
-      : PortfolioStore.currentPortfolioTransactions;   
-    console.log(toJS(data));
+      : PortfolioStore.currentPortfolioTransactions;
+
 
     const investorsTable = (
       <AllInvestorTable

@@ -1,8 +1,11 @@
 import axios from 'axios';
 
-const API_ROOT = 'http://localhost:3200';
-
-// const responseBody = res => res.body;
+let API_ROOT;
+if (process.env.NODE_ENV === 'development') {
+  API_ROOT = 'http://localhost:3200';
+} else {
+  API_ROOT = 'https://cryptobeast.motiontest.eu/api';
+}
 
 const requests = {
   get: url => axios.get(`${API_ROOT}${url}`),

@@ -1,11 +1,14 @@
-var debug = require('debug')('server:server');
-var http = require('http');
+const debug = require('debug')('server:server');
+const http = require('http');
+const env = require('dotenv').config();
+ 
+if (env.error) {
+  console.log(env.error);
+}
 
-const constants = require('./config/constants');
-const dbConfig = require('./config/db');
+const config = require('./config');
 
-require('./../data/db/db-context')
-  .init(dbConfig)
+require('./../data/db/db-context').init(config.database)
   .then((dbContext) => {
     return require('./../data/repository').init(dbContext);
   })
@@ -13,7 +16,7 @@ require('./../data/db/db-context')
     return require('./config/express').init(repository);
   })
   .then((app) => {
-    const port = normalizePort(process.env.PORT || constants.port);
+    const port = normalizePort(config.api.port);
     app.set('port', port);
 
     const server = http.createServer(app);

@@ -49,18 +49,16 @@ const ApiAccount = {
   getBalance: data => requests.post('/account/getBalance', data),
 };
 
-const Trade = {
-  addTrade: data => requests.post('/account/createTrade', data),
-  updateTrade: requestParams => requests.put('/account/updateTrade', requestParams),
-  deleteTrade: id => requests.delete(`/account/delete${id}`, id),
-  getAllTrades: () => requests.get('/account/allTrades'),
-};
-
 const Asset = {
   add: data => requests.post('/asset/add', data),
   update: requestParams => requests.put('/asset/update', requestParams),
   delete: id => requests.delete(`/asset/delete${id}`, id),
   allocate: data => requests.post('/asset/allocate', data),
+  // Trades
+  // addTrade: data => requests.post('/asset/createTrade', data),
+  updateTrade: requestParams => requests.put('/asset/updateTrade', requestParams),
+  deleteTrade: id => requests.delete(`/asset/delete${id}`, id),
+  getAllTrades: () => requests.get('/asset/allTrades'),
 };
 
 const User = {
@@ -72,7 +70,6 @@ export default {
   Investor,
   Market,
   ApiAccount,
-  Trade,
   Asset,
   User,
 };

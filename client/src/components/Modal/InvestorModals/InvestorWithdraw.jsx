@@ -212,6 +212,7 @@ class InvestorWithdraw extends React.Component<Props, State> {
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
               <TextValidator
+                disabled
                 name="share price"
                 label="Share Price at Entry Date (USD)"
                 className={classes.alignInput}
@@ -221,6 +222,7 @@ class InvestorWithdraw extends React.Component<Props, State> {
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
+                  disabled
                   name="shares2"
                   type="number"
                   label="Shares"
@@ -233,8 +235,8 @@ class InvestorWithdraw extends React.Component<Props, State> {
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection} />
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
+                  disabled
                   name="fee"
-                  type="number"
                   label="Management Fee"
                   value={InvestorStore.withdrawManagementFee || ''}
                   className={classes.alignInput}

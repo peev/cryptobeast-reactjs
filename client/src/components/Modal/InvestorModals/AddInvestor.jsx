@@ -239,6 +239,7 @@ class AddInvestor extends React.Component<Props, State> {
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
+                  disabled
                   name="USD"
                   label="Deposited USD Equiv."
                   className={classes.width}
@@ -260,6 +261,7 @@ class AddInvestor extends React.Component<Props, State> {
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
               <TextValidator
+                disabled
                 name="share price"
                 label="Share Price at Entry Date (USD)"
                 className={classes.alignInputAfter}
@@ -269,6 +271,7 @@ class AddInvestor extends React.Component<Props, State> {
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
+                  disabled
                   name="shares"
                   type="number"
                   value={InvestorStore.purchasedShares || ''}

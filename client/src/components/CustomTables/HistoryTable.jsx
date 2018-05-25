@@ -50,7 +50,7 @@ const HistoryTable = inject('PortfolioStore', 'AssetStore')(observer(({ ...props
           {tableData.map((prop: Object, i: number) => (
             <TableRow key={uuid()} >
                 {Object.keys(prop).map((el: Object, ind: number) => {
-                  if (ind === 10) {
+                  if (ind === 10 && prop[2] === 'Manually Added' && i === tableData.length - 1) {
                     return (
                       <TableCell className={classes.tableCellBuy} key={uuid()}>
                         {prop[el]}
@@ -58,14 +58,14 @@ const HistoryTable = inject('PortfolioStore', 'AssetStore')(observer(({ ...props
                       </TableCell>
                     );
                   }
-                  if (ind === 9 && prop[2] === 'Manual') {
+                  if (ind === 9 && prop[2] === 'Manually Added' && i === tableData.length - 1) {
                     return (
                       <TableCell className={classes.tableCellBuy} key={uuid()}>
                         {prop[el]}
                         <UpdateTradeModal trade={trades[i]} />
                       </TableCell>
                     );
-                  } else if (ind === 9 && prop[2] !== 'Manual') {
+                  } else if (ind === 9 && prop[2] !== 'Manually Added') {
                     return (
                       <TableCell className={classes.tableCellBuy} key={uuid()}>
                         {prop[el]}

@@ -91,7 +91,7 @@ const accountController = (repository) => {
 
   const removeTrade = (req, res) => {
     const tradeId = req.params.id;
-    repository.remove({ modelName:'Trade', id: tradeId })
+    repository.remove({ modelName: 'Trade', id: tradeId })
       .then(result => responseHandler(res, result))
       .catch((error) => {
         res.json(error);

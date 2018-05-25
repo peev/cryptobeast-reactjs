@@ -1,8 +1,11 @@
 import axios from 'axios';
 
-const API_ROOT = 'http://localhost:3200';
-
-// const responseBody = res => res.body;
+let API_ROOT;
+if (process.env.NODE_ENV === 'development') {
+  API_ROOT = 'http://localhost:3200';
+} else {
+  API_ROOT = 'https://cryptobeast.motiontest.eu/api';
+}
 
 const requests = {
   get: url => axios.get(`${API_ROOT}${url}`),
@@ -61,6 +64,11 @@ const Asset = {
   update: requestParams => requests.put('/asset/update', requestParams),
   delete: id => requests.delete(`/asset/delete/${id}`, id),
   allocate: data => requests.post('/asset/allocate', data),
+  // Trades
+  // addTrade: data => requests.post('/asset/createTrade', data),
+  updateTrade: requestParams => requests.put('/asset/updateTrade', requestParams),
+  deleteTrade: id => requests.delete(`/asset/delete${id}`, id),
+  getAllTrades: () => requests.get('/asset/allTrades'),
 };
 
 const User = {
@@ -72,7 +80,7 @@ export default {
   Investor,
   Market,
   ApiAccount,
-  Trade,
   Asset,
   User,
+  Trade,
 };

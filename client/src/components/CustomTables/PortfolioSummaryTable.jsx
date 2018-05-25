@@ -89,53 +89,49 @@ const PortfolioSummaryTable = inject('PortfolioStore')(observer(({ ...props }: P
           >
             {prop}
           </TableCell>
-          ))}
+        ))}
       </TableRow>
     </TableHead>
   );
-  const currentDisplayAssets = (PortfolioStore.selectedPortfolio &&
-    PortfolioStore.summaryPortfolioAssets.length > 0) ?
-    PortfolioStore.summaryPortfolioAssets :
-    [[' ', 0, 0, 0, 0, 0, 0, 0]];
 
-  const tableBodyContent = currentDisplayAssets.map((ROW: Array<Object>) => (
+  const tableBodyContent = PortfolioStore.summaryPortfolioAssets.map((ROW: Array<Object>) => (
     <TableRow key={uuid()}>
       {ROW.map((COL: Object, i: number) => {
-          if (i === 5) {
-            return (
-              <TableCell className={classes.tableCell} key={uuid()}>
-                <div className={classes.progressBar} data-label={`${COL}%`}>
-                  <span className={classes.value} style={{ width: `${COL}px` }} />
-                </div>
-              </TableCell>
-            );
-          }
-          if ((i === 6 || i === 7) && parseFloat(COL) !== 0 && COL !== undefined) {
-            if (COL === 'n/a') {
-              return (
-                <TableCell className={classes.tableCell} key={uuid()} >
-                  <p className={classes.changeNoIcon}>{COL}</p>
-                </TableCell>
-              );
-            }
-
+        if (i === 5) {
+          return (
+            <TableCell className={classes.tableCell} key={uuid()}>
+              <div className={classes.progressBar} data-label={`${COL}%`}>
+                <span className={classes.value} style={{ width: `${COL}px` }} />
+              </div>
+            </TableCell>
+          );
+        }
+        if ((i === 6 || i === 7) && parseFloat(COL) !== 0 && COL !== undefined) {
+          if (COL === 'n/a') {
             return (
               <TableCell className={classes.tableCell} key={uuid()} >
-                {/* sets the arrow based on the passed value */}
-                {parseFloat(COL) > 0 ?
-                  <UpArrowIcon className={classes.upArrow} /> :
-                  <DownArrowIcon className={classes.downArrow} />}
-                <p className={classes.change}>{COL}</p>
+                <p className={classes.changeNoIcon}>{COL}</p>
               </TableCell>
             );
           }
 
           return (
-            <TableCell className={classes.tableCell} key={uuid()}>
-              {COL}
+            <TableCell className={classes.tableCell} key={uuid()} >
+              {/* sets the arrow based on the passed value */}
+              {parseFloat(COL) > 0 ?
+                <UpArrowIcon className={classes.upArrow} /> :
+                <DownArrowIcon className={classes.downArrow} />}
+              <p className={classes.change}>{COL}</p>
             </TableCell>
           );
-        })}
+        }
+
+        return (
+          <TableCell className={classes.tableCell} key={uuid()}>
+            {COL}
+          </TableCell>
+        );
+      })}
     </TableRow >
   ));
 

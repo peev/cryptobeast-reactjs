@@ -114,7 +114,6 @@ const accountController = (repository) => {
     updateAccount,
     removeAccount,
     getAccountBalance,
-
     createTrade,
     updateTrade,
     removeTrade,

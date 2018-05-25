@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     entryDate: {
       type: DataTypes.DATEONLY,
+      defaultValue: DataTypes.NOW,
     },
     source: {
       type: DataTypes.STRING,
@@ -13,6 +14,28 @@ module.exports = (sequelize, DataTypes) => {
     pair: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    fromAssetId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    fromCurrency: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    fromAmount: {
+      type: DataTypes.DOUBLE,
+    },
+    toAssetId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    toCurrency: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    toAmount: {
+      type: DataTypes.DOUBLE,
     },
     type: {
       type: DataTypes.STRING,

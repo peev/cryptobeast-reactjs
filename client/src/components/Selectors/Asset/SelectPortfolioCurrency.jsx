@@ -3,7 +3,6 @@ import React from 'react';
 import { withStyles, FormControl } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 import Select from 'react-select';
-import { toJS } from 'mobx';
 
 const styles = (theme: Object) => ({
   button: {
@@ -52,7 +51,7 @@ class SelectPortfolioCurrency extends React.Component<Props, State> {
 
   render() {
     const { classes, PortfolioStore, AssetStore } = this.props;
-    const options = toJS(PortfolioStore.currentPortfolioAssets);
+    const options = PortfolioStore.currentPortfolioAssets;
     const optionsToShow = options.map((el: Object) => ({ value: el.id, label: el.currency }));
 
     return (

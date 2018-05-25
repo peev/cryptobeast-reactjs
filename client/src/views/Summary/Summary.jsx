@@ -43,7 +43,15 @@ type Props = {
 
 const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
   const { classes, PortfolioStore } = props;
-
+  const handleInfoMessage = () => {
+    if (PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0) {
+      return ('Please add new investor or edit your personal investment amount.');
+    } else if (PortfolioStore.summaryTotalInvestmentInUSD > 0 && PortfolioStore.currentPortfolioCostInUSD === 0) {
+      return ('Please add assets to the portfolio to see total profit/loss.');
+    } else {
+      return ('Please add new investor or edit your personal investment amount. Please add some assets to your portfolio.');
+    }
+  };
   return (
     <Grid container>
       <Grid container className={classes.container}>
@@ -90,9 +98,9 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
               `+${PortfolioStore.summaryTotalProfitLoss}%` :
               `${PortfolioStore.summaryTotalProfitLoss}%`}
             hasInfo={(PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0) ||
-              (PortfolioStore.summaryTotalInvestmentInUSD > 0 && PortfolioStore.currentPortfolioCostInUSD === 0)}
-            infoMessage={PortfolioStore.summaryTotalInvestmentInUSD === 0 ? 'Please add new investor or edit your personal investment amount'
-              : 'Please add assets to the portfolio to see total profit/loss.'}
+              (PortfolioStore.summaryTotalInvestmentInUSD > 0 && PortfolioStore.currentPortfolioCostInUSD === 0) ||
+            (PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD === 0)}
+            infoMessage={handleInfoMessage()}
           />
         </Grid>
 

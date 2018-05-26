@@ -42,7 +42,7 @@ node {
         out.println "Container: cryptobeast does not exist"
       }
       // #2 Build a new image
-      sh 'cd server && docker build -t cryptobeast .'
+      sh 'cd server && touch .env && docker build -t cryptobeast .'
       // #3 Run the new image
       sh 'docker run -d -p 3200:3200 --net="host" --restart unless-stopped --name cryptobeast cryptobeast'
     }

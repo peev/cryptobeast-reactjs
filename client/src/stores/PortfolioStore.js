@@ -67,6 +67,33 @@ class PortfolioStore {
   }
 
   @computed
+  get groupedCurrentPortfolioAssets() {
+    if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0 &&
+      MarketStore.baseCurrencies.length > 0 && MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
+      const groupedAssets = Object.values(this.currentPortfolioAssets.reduce((grouped, asset) => {
+        if (!grouped[asset.currency]) {
+          grouped[asset.currency] = Object.assign({}, asset); // eslint-disable-line no-param-reassign
+
+          return grouped;
+        }
+
+        if (grouped[asset.currency]) {
+          grouped[asset.currency].balance += Number(asset.balance); // eslint-disable-line no-param-reassign
+          grouped[asset.currency].lastBTCEquivalent += Number(asset.lastBTCEquivalent); // eslint-disable-line no-param-reassign
+
+          return grouped;
+        }
+
+        return grouped;
+      }, {}));
+
+      return groupedAssets;
+    }
+
+    return [];
+  }
+
+  @computed
   get summaryPortfolioAssets() {
     // NOTE: all the conditions needs to be fulfilled in order to create
     // portfolio asset summary
@@ -74,7 +101,7 @@ class PortfolioStore {
       this.currentPortfolioAssets.length > 0 &&
       MarketStore.baseCurrencies.length > 0 &&
       MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
-      const currentAssets = this.currentPortfolioAssets;
+      const currentAssets = this.groupedCurrentPortfolioAssets;
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       const selectedPortfolioSummary = [];
 

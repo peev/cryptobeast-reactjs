@@ -146,9 +146,20 @@ class AssetStore {
       this.selectedExchangeBasicInput :
       'Manually Added';
 
+    const existingAsset = PortfolioStore.currentPortfolioAssets
+      .find(asset =>
+        asset.currency === this.selectedCurrencyBasicAsset &&
+        asset.origin === selectedExchangeOrigin &&
+        asset.portfolioId === id);
+    if (existingAsset) {
+      existingAsset.balance += Number(this.assetInputValue);
+      requester.Asset.update(existingAsset);
+      return;
+    }
+
     const newBasicAsset = {
       currency: this.selectedCurrencyBasicAsset,
-      balance: this.assetInputValue,
+      balance: Number(this.assetInputValue),
       origin: selectedExchangeOrigin,
       portfolioId: id,
     };

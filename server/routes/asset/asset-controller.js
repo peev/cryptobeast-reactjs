@@ -1,8 +1,10 @@
+const { responseHandler } = require('../utilities/response-handler');
+
 const assetController = (repository) => {
   const modelName = 'Asset';
 
   const createAsset = (req, res) => {
-    return new Promise((resolve, reject) => {
+    new Promise((resolve) => {
       const asset = req.body;
       // TODO: delete this check -> check the assets in the MarketStore
       const findAssetPromise = repository.findOne({
@@ -35,7 +37,7 @@ const assetController = (repository) => {
         res.status(200).send(response);
       })
       .catch((error) => {
-        return res.json(error);
+        res.json(error);
       });
   };
 
@@ -46,7 +48,7 @@ const assetController = (repository) => {
         res.status(200).send(response);
       })
       .catch((error) => {
-        return res.json(error);
+        res.json(error);
       });
   };
 
@@ -55,7 +57,7 @@ const assetController = (repository) => {
     repository.remove({ modelName, id: assetId })
       .then(result => responseHandler(res, result))
       .catch((error) => {
-        return res.json(error);
+        res.json(error);
       });
   };
 
@@ -103,7 +105,7 @@ const assetController = (repository) => {
     };
 
     return repository.create({ modelName: 'Trade', newObject: trade });
-  }
+  };
 
   const allocateAsset = async (req, res) => {
     try {
@@ -128,7 +130,7 @@ const assetController = (repository) => {
             portfolioId: allocationParams.portfolioId,
           },
         },
-      })
+      });
 
       const currencyAmountFrom = +allocationParams.fromAmount;
       if (fromAsset.balance === currencyAmountFrom) {
@@ -169,8 +171,8 @@ const assetController = (repository) => {
       const trade = await recordTrade(allocationParams, fromAsset, toAsset);
       const assets = await repository.find({
         modelName,
-        options: { where: { portfolioId: allocationParams.portfolioId } }
-      })
+        options: { where: { portfolioId: allocationParams.portfolioId } },
+      });
 
       return res.status(200).send({
         trade,
@@ -190,7 +192,7 @@ const assetController = (repository) => {
         res.status(200).send(response);
       })
       .catch((error) => {
-        return res.json(error);
+        res.json(error);
       });
   };
 

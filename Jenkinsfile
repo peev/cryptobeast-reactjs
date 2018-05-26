@@ -37,6 +37,8 @@ node {
     stage('Deploy Back-End') {
       // #1 Remove old image
       try {
+        sh 'docker stop cryptobeast'
+        sh 'docker rm cryptobeast'
         sh 'docker rmi cryptobeast'
       } catch(imageError) {
         out.println "Container: cryptobeast does not exist"

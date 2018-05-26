@@ -20,7 +20,7 @@ const assetController = (repository) => {
         .then((assets) => {
           if (assets !== null) {
             const foundAsset = assets.dataValues;
-            foundAsset.balance += asset.balance;
+            foundAsset.balance += Number(asset.balance);
             repository.update({ modelName, updatedRecord: foundAsset })
               .then(() => {
                 findAssetPromise

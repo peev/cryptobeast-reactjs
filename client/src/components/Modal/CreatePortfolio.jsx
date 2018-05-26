@@ -72,7 +72,6 @@ class CreatePortfolio extends React.Component<Props, State> {
   handleInputValue = (event: SyntheticEvent) => {
     event.preventDefault();
     const inputValue = event.target.value;
-    // console.log(inputValue);
     this.props.PortfolioStore.setNewPortfolioName(inputValue);
   }
 
@@ -84,8 +83,11 @@ class CreatePortfolio extends React.Component<Props, State> {
   }
 
   handleSave = () => {
-    this.props.PortfolioStore.createPortfolio();
-    this.handleClose();
+    const hasErrors = this.props.PortfolioStore.handlePortfolioValidation();
+    if (!hasErrors) {
+      this.props.PortfolioStore.createPortfolio();
+      this.handleClose();
+    }
   };
 
   render() {

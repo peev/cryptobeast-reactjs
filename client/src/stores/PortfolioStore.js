@@ -10,6 +10,7 @@ import {
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
+import NotificationStore from './NotificationStore';
 
 class PortfolioStore {
   @observable portfolios;
@@ -296,6 +297,23 @@ class PortfolioStore {
       .catch(err => console.log(err));
   }
 
+  @action
+  // eslint-disable-next-line class-methods-use-this
+  handlePortfolioValidation() {
+    const { newPortfolioName } = this;
+    const { portfolios } = this;
+    let hasErrors = false;
+    if (portfolios) {
+      const result = this.portfolios.filter(x => x.name === newPortfolioName);
+
+      if (result.length > 0) {
+        NotificationStore.addMessage('errorMessages', 'Portfolio Name  already Exists');
+        hasErrors = true;
+      }
+    }
+
+    return hasErrors;
+  }
   @action
   updatePortfolio(portfolioName, id) {
     requester.Portfolio.update(portfolioName, id)

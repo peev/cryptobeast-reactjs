@@ -37,14 +37,14 @@ node {
     stage('Deploy Back-End') {
       // #1 Remove old image
       try {
-        sh 'docker rmi crb-server'
+        sh 'docker rmi cryptobeast'
       } catch(imageError) {
-        out.println "Container: crb-server does not exist"
+        out.println "Container: cryptobeast does not exist"
       }
       // #2 Build a new image
-      sh 'docker build -t crb-server .'
+      sh 'cd server && docker build -t cryptobeast .'
       // #3 Run the new image
-      sh 'docker run -d -p 3200:3200 --net="host" --restart unless-stopped --name crb-server crb-server'
+      sh 'docker run -d -p 3200:3200 --net="host" --restart unless-stopped --name cryptobeast cryptobeast'
     }
   } catch(e) {
     currentBuild.result = "FAILURE";

@@ -106,7 +106,7 @@ class AssetAllocation extends React.Component<Props> {
       AssetStore,
       MarketStore,
     } = this.props;
-
+    const today = new Date().toISOString().substring(0, 10);
     const allCurrencies = toJS(MarketStore.allCurrencies);
     const baseCurrencies = toJS(MarketStore.baseCurrencies)
       .map((currency: object) => ({ value: currency.pair, label: currency.pair }))
@@ -138,7 +138,7 @@ class AssetAllocation extends React.Component<Props> {
                   name="date"
                   type="date"
                   style={{ marginTop: '21px', width: '95%' }}
-                  value={AssetStore.assetAllocationSelectedDate}
+                  value={AssetStore.assetAllocationSelectedDate || today}
                   onChange={this.handleRequests('assetAllocationSelectedDate')}
                   validators={['required']}
                   errorMessages={['this field is required']}

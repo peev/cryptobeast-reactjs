@@ -10,6 +10,7 @@ import {
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
+import NotificationStore from './NotificationStore';
 
 class PortfolioStore {
   @observable portfolios;
@@ -135,6 +136,33 @@ class PortfolioStore {
   }
 
   @computed
+  get groupedCurrentPortfolioAssets() {
+    if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0 &&
+      MarketStore.baseCurrencies.length > 0 && MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
+      const groupedAssets = Object.values(this.currentPortfolioAssets.reduce((grouped, asset) => {
+        if (!grouped[asset.currency]) {
+          grouped[asset.currency] = Object.assign({}, asset); // eslint-disable-line no-param-reassign
+
+          return grouped;
+        }
+
+        if (grouped[asset.currency]) {
+          grouped[asset.currency].balance += Number(asset.balance); // eslint-disable-line no-param-reassign
+          grouped[asset.currency].lastBTCEquivalent += Number(asset.lastBTCEquivalent); // eslint-disable-line no-param-reassign
+
+          return grouped;
+        }
+
+        return grouped;
+      }, {}));
+
+      return groupedAssets;
+    }
+
+    return [];
+  }
+
+  @computed
   get summaryPortfolioAssets() {
     // NOTE: all the conditions needs to be fulfilled in order to create
     // portfolio asset summary
@@ -142,7 +170,7 @@ class PortfolioStore {
       this.currentPortfolioAssets.length > 0 &&
       MarketStore.baseCurrencies.length > 0 &&
       MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
-      const currentAssets = this.currentPortfolioAssets;
+      const currentAssets = this.groupedCurrentPortfolioAssets;
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       const selectedPortfolioSummary = [];
 
@@ -365,6 +393,23 @@ class PortfolioStore {
       .catch(err => console.log(err));
   }
 
+  @action
+  // eslint-disable-next-line class-methods-use-this
+  handlePortfolioValidation() {
+    const { newPortfolioName } = this;
+    const { portfolios } = this;
+    let hasErrors = false;
+    if (portfolios) {
+      const result = this.portfolios.filter(x => x.name === newPortfolioName);
+
+      if (result.length > 0) {
+        NotificationStore.addMessage('errorMessages', 'Portfolio Name  already Exists');
+        hasErrors = true;
+      }
+    }
+
+    return hasErrors;
+  }
   @action
   updatePortfolio(portfolioName, id) {
     requester.Portfolio.update(portfolioName, id)

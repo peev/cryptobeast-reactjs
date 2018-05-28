@@ -116,6 +116,7 @@ class InvestorDeposit extends React.Component<Props, State> {
     const {
       classes, InvestorStore, PortfolioStore, MarketStore,
     } = this.props;
+    const today = new Date().toISOString().substring(0, 10);
 
     return (
       <Grid container>
@@ -168,7 +169,7 @@ class InvestorDeposit extends React.Component<Props, State> {
                   type="date"
                   // label="Transaction Date"
                   onChange={this.handleDepositRequests('transactionDate')}
-                  value={InvestorStore.newDepositValues.transactionDate || ''}
+                  value={InvestorStore.newDepositValues.transactionDate || today}
                   className={classes.alignInput}
                   validators={['required', 'isDateValid']}
                   errorMessages={['this field is required', 'Date must be before today']}

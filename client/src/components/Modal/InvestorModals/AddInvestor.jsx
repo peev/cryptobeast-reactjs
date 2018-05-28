@@ -128,6 +128,7 @@ class AddInvestor extends React.Component<Props, State> {
     const {
       classes, InvestorStore, PortfolioStore, NotificationStore,
     } = this.props;
+    const today = new Date().toISOString().substring(0, 10);
 
     return (
       <Grid container>
@@ -214,7 +215,7 @@ class AddInvestor extends React.Component<Props, State> {
                   onChange={this.handleRequests('dateOfEntry')}
                   type="date"
                   name="date"
-                  value={InvestorStore.newInvestorValues.dateOfEntry || ''}
+                  value={InvestorStore.newInvestorValues.dateOfEntry || today}
                   validators={['required']}
                   errorMessages={['this field is required']}
                   className={classes.alignInput}

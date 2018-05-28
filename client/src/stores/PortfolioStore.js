@@ -34,9 +34,7 @@ class PortfolioStore {
     // eslint-disable-next-line no-unused-expressions
     // gets portfolios at app init
     this.getPortfolios().then(() => {
-      if (this.portfolios.length > 0) {
-        MarketStore.init();
-      }
+      MarketStore.init();
     });
   }
   // ======= Computed =======
@@ -313,11 +311,9 @@ class PortfolioStore {
   createPortfolio() {
     const newPortfolio = {
       name: this.newPortfolioName,
-      shares: InvestorStore.convertedUsdEquiv,
     };
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {
-        this.getPortfolios(); // gets new portfolios
         this.selectedPortfolioId = result.data.id;
         InvestorStore.createDefaultInvestor(result.data.id);
       }))

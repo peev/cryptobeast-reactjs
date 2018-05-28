@@ -24,8 +24,8 @@ type Props = {
 const HistoryTable = inject('PortfolioStore', 'AssetStore')(observer(({ ...props }: Props) => {
   const { classes, tableHead, tableData, tableHeaderColor, PortfolioStore } = props;
 
-  const handleRemove = (id: string) => {
-    PortfolioStore.removeTrade(id);
+  const handleRemove = (trade: Object) => {
+    PortfolioStore.deleteTrade(trade);
   };
   const trades = PortfolioStore.currentPortfolioTrades;
   console.log(PortfolioStore.currentPortfolioTrades);
@@ -54,7 +54,7 @@ const HistoryTable = inject('PortfolioStore', 'AssetStore')(observer(({ ...props
                     return (
                       <TableCell className={classes.tableCellBuy} key={uuid()}>
                         {prop[el]}
-                        <ConfirmationModal onSave={() => handleRemove(trades[i].id)} />
+                        <ConfirmationModal onSave={() => handleRemove(trades[i])} />
                       </TableCell>
                     );
                   }

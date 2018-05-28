@@ -11,6 +11,7 @@ import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
+import AssetStore from './AssetStore';
 
 class PortfolioStore {
   @observable portfolios;
@@ -127,9 +128,99 @@ class PortfolioStore {
   }
 
   @action
+  createTrade(fromAsset, toAsset) {
+    const selectedExchange = 'Manually Added';
+    // const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
+    //   this.selectedExchangeAssetAllocation :
+    //   'Manually Added';
+    const newAssetAllocation = {
+      selectedExchange,
+      selectedDate: AssetStore.assetAllocationSelectedDate,
+      fromCurrency: AssetStore.selectedCurrencyFromAssetAllocation.currency,
+      portfolioId: this.selectedPortfolioId,
+      fromAmount: AssetStore.assetAllocationFromAmount,
+      toCurrency: AssetStore.selectedCurrencyToAssetAllocation,
+      toAmount: AssetStore.assetAllocationToAmount,
+      feeCurrency: AssetStore.selectedCurrencyForTransactionFee,
+      feeAmount: AssetStore.assetAllocationFee,
+    };
+    let type = '';
+    let price = 0;
+    let filled = 0;
+    let market = '';
+    const tradingCoin = newAssetAllocation.toCurrency;
+    switch (tradingCoin) {
+      case 'BTC':
+      case 'ETH':
+      case 'USDT':
+        type = 'sell';
+        market = tradingCoin;
+        price = newAssetAllocation.fromAmount / newAssetAllocation.toAmount;
+        filled = newAssetAllocation.fromAmount;
+        break;
+      default:
+        type = 'buy';
+        market = newAssetAllocation.fromCurrency;
+        price = newAssetAllocation.fromAmount / newAssetAllocation.toAmount;
+        filled = newAssetAllocation.toAmount;
+        break;
+    }
+
+    const trade = {
+      transactionDate: newAssetAllocation.selectedDate,
+      source: newAssetAllocation.selectedExchange,
+      pair: `${newAssetAllocation.fromCurrency}-${newAssetAllocation.toCurrency}`,
+      fromAssetId: fromAsset.id,
+      fromCurrency: fromAsset.currency,
+      fromAmount: newAssetAllocation.fromAmount,
+      toAssetId: toAsset.id,
+      toCurrency: toAsset.currency,
+      toAmount: newAssetAllocation.toAmount,
+      type,
+      price,
+      filled,
+      fee: newAssetAllocation.feeAmount,
+      feeCurrency: newAssetAllocation.feeCurrency,
+      totalPrice: price * filled,
+      market,
+      portfolioId: newAssetAllocation.portfolioId,
+    };
+    requester.Trade.addTrade(trade)
+      .then((response) => {
+        this.currentPortfolioTrades.push(response.data);
+      });
+  }
+
+  @action.bound
+  deleteTrade(trade) {
+    console.log('*** remove trade', trade);
+    const selectedExchange = 'Manually Added';
+    const newAssetAllocation = {
+      selectedExchange,
+      selectedDate: trade.transactionDate,
+      fromCurrency: trade.toCurrency,
+      portfolioId: this.selectedPortfolioId,
+      fromAmount: trade.toAmount,
+      toCurrency: trade.fromCurrency,
+      toAmount: trade.fromAmount,
+      feeCurrency: trade.feeCurrency,
+      feeAmount: trade.fee,
+    };
+    const tradeId = trade.id;
+
+    // NOTE: allocation request has update, create and delete.
+    // That why it returns the updated assets for the current portfolio
+    return requester.Asset.allocate(newAssetAllocation)
+      .then(action((result) => {
+        this.currentPortfolioAssets = result.data.assets;
+        this.removeTrade(tradeId);
+      }))
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  @action
   removeTrade(id) {
-    const trade = this.currentPortfolioTrades.filter(x => x.id === id);
-    console.log(trade);
     requester.Trade.deleteTrade(id)
       .then(action(() => {
         this.currentPortfolioTrades = this.currentPortfolioTrades.filter(trade => trade.id !== id);

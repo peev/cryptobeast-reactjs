@@ -67,9 +67,10 @@ class AssetAllocation extends React.Component<Props> {
     // const hasErrors = AssetStore.handleAssetAllocationErrors();
 
     // if (hasErrors) {
-    AssetStore.createAssetAllocation();
+    AssetStore.createTradeAssetAllocation()
+      .then(() => AssetStore.resetAssetAllocation());
     this.props.NotificationStore.addMessage('successMessages', 'Successful asset allocation');
-    AssetStore.resetAssetAllocation();
+    
     // }
   }
 
@@ -168,10 +169,10 @@ class AssetAllocation extends React.Component<Props> {
                   options={allCurrencies}
                   className={classes.alignInputAfter2}
                   style={{
-                  border: 'none',
-                  borderRadius: 0,
-                  borderBottom: '1px solid #757575',
-                }}
+                    border: 'none',
+                    borderRadius: 0,
+                    borderBottom: '1px solid #757575',
+                  }}
                 />
                 <TextValidator
                   name="quantity3"
@@ -194,10 +195,10 @@ class AssetAllocation extends React.Component<Props> {
                   options={allCurrencies}
                   className={classes.alignInputAfter2}
                   style={{
-                  border: 'none',
-                  borderRadius: 0,
-                  borderBottom: '1px solid #757575',
-                }}
+                    border: 'none',
+                    borderRadius: 0,
+                    borderBottom: '1px solid #757575',
+                  }}
                 />
                 <TextValidator
                   name="fee"
@@ -221,8 +222,8 @@ class AssetAllocation extends React.Component<Props> {
                   className={classes.btnAdd}
                   // onClick={this.handleSave}
                   disabled={AssetStore.assetAllocationToAmount === '' || AssetStore.selectedCurrencyToAssetAllocation === '' ||
-                  AssetStore.assetAllocationFromAmount === '' || AssetStore.assetAllocationSelectedDate === '' ||
-                  AssetStore.selectedCurrencyFromAssetAllocation === ''}
+                    AssetStore.assetAllocationFromAmount === '' || AssetStore.assetAllocationSelectedDate === '' ||
+                    AssetStore.selectedCurrencyFromAssetAllocation === ''}
                 >RECORD
                 </RegularButton>
               </Grid>

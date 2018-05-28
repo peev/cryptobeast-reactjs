@@ -171,12 +171,11 @@ class AssetStore {
   }
 
   @action.bound
-  createAssetAllocation() {
+  createTradeAssetAllocation() {
     const selectedExchange = 'Manually Added';
     // const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
     //   this.selectedExchangeAssetAllocation :
     //   'Manually Added';
-
     const newAssetAllocation = {
       selectedExchange,
       selectedDate: this.assetAllocationSelectedDate,
@@ -188,63 +187,20 @@ class AssetStore {
       feeCurrency: this.selectedCurrencyForTransactionFee,
       feeAmount: this.assetAllocationFee,
     };
+    console.log('*** create Asset', newAssetAllocation);
 
     // NOTE: allocation request has update, create and delete.
     // That why it returns the updated assets for the current portfolio
-    requester.Asset.allocate(newAssetAllocation)
+    return requester.Asset.allocate(newAssetAllocation)
       .then(action((result) => {
         PortfolioStore.currentPortfolioAssets = result.data.assets;
-        let type = '';
-        let price = 0;
-        let filled = 0;
-        let market = '';
-        const tradingCoin = newAssetAllocation.toCurrency;
-        switch (tradingCoin) {
-          case 'BTC':
-          case 'ETH':
-          case 'USDT':
-            type = 'sell';
-            market = tradingCoin;
-            price = newAssetAllocation.fromAmount / newAssetAllocation.toAmount;
-            filled = newAssetAllocation.fromAmount;
-            break;
-          default:
-            type = 'buy';
-            market = newAssetAllocation.fromCurrency;
-            price = newAssetAllocation.fromAmount / newAssetAllocation.toAmount;
-            filled = newAssetAllocation.toAmount;
-            break;
-        }
-
-        const trade = {
-          transactionDate: newAssetAllocation.selectedDate,
-          source: newAssetAllocation.selectedExchange,
-          pair: `${newAssetAllocation.fromCurrency}-${newAssetAllocation.toCurrency}`,
-          fromAssetId: result.data.fromAsset.id,
-          fromCurrency: result.data.fromAsset.currency,
-          fromAmount: newAssetAllocation.fromAmount,
-          toAssetId: result.data.toAsset.id,
-          toCurrency: result.data.toAsset.currency,
-          toAmount: newAssetAllocation.toAmount,
-          type,
-          price,
-          filled,
-          fee: newAssetAllocation.feeAmount,
-          feeCurrency: newAssetAllocation.feeCurrency,
-          totalPrice: price * filled,
-          market,
-          portfolioId: newAssetAllocation.portfolioId,
-        };
-
-        requester.Trade.addTrade(trade)
-          .then((response) => {
-            PortfolioStore.currentPortfolioTrades.push(response.data);
-          });
+        PortfolioStore.createTrade(result.data.fromAsset, result.data.toAsset);
       }))
       .catch((error) => {
         console.log(error);
       });
   }
+
 
   @action.bound
   resetAsset() {

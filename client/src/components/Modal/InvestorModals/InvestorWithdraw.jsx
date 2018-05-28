@@ -255,7 +255,7 @@ class InvestorWithdraw extends React.Component<Props, State> {
                 type="submit"
                 color="primary"
                 disabled={NotificationStore.getErrorsLength > 0 || InvestorStore.withdrawalValues.amount === '' ||
-                InvestorStore.withdrawalValues.transactionDate === '' || InvestorStore.selectedInvestorId === null || NotificationStore.getInfoLength > 0}
+                InvestorStore.selectedInvestorId === null || NotificationStore.getInfoLength > 0}
               >Save
               </Button>
             </Grid>

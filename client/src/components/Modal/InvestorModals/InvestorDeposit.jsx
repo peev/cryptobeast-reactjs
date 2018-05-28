@@ -227,7 +227,7 @@ class InvestorDeposit extends React.Component<Props, State> {
               <Button
                 type="submit"
                 color="primary"
-                disabled={InvestorStore.newDepositValues.amount === '' || InvestorStore.newDepositValues.transactionDate === '' ||
+                disabled={InvestorStore.newDepositValues.amount === '' ||
                 MarketStore.selectedBaseCurrency == null || InvestorStore.selectedInvestorId === null}
               >
                 Save

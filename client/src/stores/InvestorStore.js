@@ -407,7 +407,7 @@ class InvestorStore {
         telephone: '',
         dateOfEntry: (new Date()).toLocaleString(),
         managementFee: 0,
-        purchasedShares: this.convertedUsdEquiv,
+        purchasedShares: this.convertedUsdEquiv, // Because initial share price = 1$
         portfolioId: id,
       },
       transaction: {

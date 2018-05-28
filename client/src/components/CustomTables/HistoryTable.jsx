@@ -28,7 +28,7 @@ const HistoryTable = inject('PortfolioStore', 'AssetStore')(observer(({ ...props
     PortfolioStore.removeTrade(id);
   };
   const trades = PortfolioStore.currentPortfolioTrades;
-
+  console.log(PortfolioStore.currentPortfolioTrades);
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>

@@ -128,6 +128,8 @@ class PortfolioStore {
 
   @action
   removeTrade(id) {
+    const trade = this.currentPortfolioTrades.filter(x => x.id === id);
+    console.log(trade);
     requester.Trade.deleteTrade(id)
       .then(action(() => {
         this.currentPortfolioTrades = this.currentPortfolioTrades.filter(trade => trade.id !== id);
@@ -382,7 +384,7 @@ class PortfolioStore {
   createPortfolio() {
     const newPortfolio = {
       name: this.newPortfolioName,
-      shares: InvestorStore.convertedUsdEquiv,
+      // shares: InvestorStore.convertedUsdEquiv,
     };
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {

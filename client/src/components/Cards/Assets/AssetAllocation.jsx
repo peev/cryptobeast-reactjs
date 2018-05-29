@@ -76,7 +76,6 @@ class AssetAllocation extends React.Component<Props> {
   handleRequests = (type: *) => (event: SyntheticInputEvent) => {
     event.preventDefault();
     const inputValue = event.target.value;
-
     this.props.AssetStore.setAssetAllocationValue(type, inputValue);
   }
 
@@ -221,7 +220,7 @@ class AssetAllocation extends React.Component<Props> {
                   className={classes.btnAdd}
                   // onClick={this.handleSave}
                   disabled={AssetStore.assetAllocationToAmount === '' || AssetStore.selectedCurrencyToAssetAllocation === '' ||
-                  AssetStore.assetAllocationFromAmount === '' || AssetStore.assetAllocationSelectedDate === '' ||
+                  AssetStore.assetAllocationFromAmount === '' ||
                   AssetStore.selectedCurrencyFromAssetAllocation === ''}
                 >RECORD
                 </RegularButton>

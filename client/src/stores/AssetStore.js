@@ -175,10 +175,10 @@ class AssetStore {
     const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
       this.selectedExchangeAssetAllocation :
       'Manually Added';
-
+    const today = new Date().toISOString().substring(0, 10);
     const newAssetAllocation = {
       selectedExchange,
-      selectedDate: this.assetAllocationSelectedDate,
+      selectedDate: this.assetAllocationSelectedDate || today,
       fromCurrency: this.selectedCurrencyFromAssetAllocation.currency,
       portfolioId: PortfolioStore.selectedPortfolioId,
       fromAmount: this.assetAllocationFromAmount,

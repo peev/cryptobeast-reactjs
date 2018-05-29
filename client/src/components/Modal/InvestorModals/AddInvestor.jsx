@@ -298,7 +298,7 @@ class AddInvestor extends React.Component<Props, State> {
                 type="submit"
                 color="primary"
                 disabled={NotificationStore.getErrorsLength > 0 || InvestorStore.newInvestorValues.fullName === ''
-                  || InvestorStore.newInvestorValues.email === '' || InvestorStore.newInvestorValues.dateOfEntry === ''
+                  || InvestorStore.newInvestorValues.email === ''
                   || InvestorStore.newInvestorValues.depositedAmount === '' || InvestorStore.newInvestorValues.managementFee === ''}
               >
                 Save

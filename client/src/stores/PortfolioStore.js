@@ -118,13 +118,26 @@ class PortfolioStore {
           // ------------------------------
           // Depends on array's 0 index
           let assetBTCEquiv;
-          if (currentRow[0] === 'BTC' && ind > 1) {
-            assetBTCEquiv = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].Last;
-          } else {
-            assetBTCEquiv = MarketStore.marketSummaries[`BTC-${currentRow[0]}`] ?
-              MarketStore.marketSummaries[`BTC-${currentRow[0]}`].Last :
-              0;
+          switch (true) {
+            case currentRow[0] === 'BTC' && ind > 1:
+              assetBTCEquiv = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].Last;
+              break;
+            case currentRow[0] === 'USD' && ind > 1:
+              assetBTCEquiv = 1 / MarketStore.baseCurrencies[3].last;
+              break;
+            case currentRow[0] === 'JPY' && ind > 1:
+              assetBTCEquiv = 1 / MarketStore.baseCurrencies[2].last;
+              break;
+            case currentRow[0] === 'EUR' && ind > 1:
+              assetBTCEquiv = 1 / MarketStore.baseCurrencies[1].last;
+              break;
+            default:
+              assetBTCEquiv = MarketStore.marketSummaries[`BTC-${currentRow[0]}`] ?
+                MarketStore.marketSummaries[`BTC-${currentRow[0]}`].Last :
+                0;
+              break;
           }
+
           // ------------------------------
           // 3. Price(BTC)
           if (ind === 2) {
@@ -316,6 +329,7 @@ class PortfolioStore {
       .then(action((result) => {
         this.selectedPortfolioId = result.data.id;
         InvestorStore.createDefaultInvestor(result.data.id);
+        this.portfolios.push(result.data);
       }))
       .catch(err => console.log(err));
   }

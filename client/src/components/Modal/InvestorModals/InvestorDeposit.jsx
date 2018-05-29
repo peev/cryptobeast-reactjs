@@ -198,6 +198,7 @@ class InvestorDeposit extends React.Component<Props, State> {
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
+                  disabled
                   name="share price"
                   label="Share Price at Entry Date (USD)"
                   className={classes.alignInputAfter}
@@ -207,6 +208,7 @@ class InvestorDeposit extends React.Component<Props, State> {
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
                 <TextValidator
+                  disabled
                   name="purchased shares"
                   placeholder="Purchased Shares"
                   style={{ marginTop: '26px' }}
@@ -227,7 +229,7 @@ class InvestorDeposit extends React.Component<Props, State> {
               <Button
                 type="submit"
                 color="primary"
-                disabled={InvestorStore.newDepositValues.amount === '' || InvestorStore.newDepositValues.transactionDate === '' ||
+                disabled={InvestorStore.newDepositValues.amount === '' ||
                 MarketStore.selectedBaseCurrency == null || InvestorStore.selectedInvestorId === null}
               >
                 Save

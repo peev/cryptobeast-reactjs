@@ -71,23 +71,6 @@ const investorController = (repository) => {
         res.status(200).send(response);
       })
       .catch(error => res.json(error));
-
-    // const { transaction } = req.body;
-    // const depositData = req.body;
-
-    // upsertAsset(depositData);
-
-    // repository.create({ modelName, newObject: investor })
-    //   .then((newInvestor) => {
-    //     Object.assign(transaction, { investorId: newInvestor.id });
-    //     updatePortfolioShares(transaction);
-    //     repository.create({ modelName: 'Transaction', newObject: transaction })
-    //       .then((response) => {
-    //         res.status(200).send({ investor: newInvestor, transaction: response });
-    //       })
-    //       .catch(error => res.json(error));
-    //   })
-    //   .catch(error => res.json(error));
   };
 
   const updateInvestor = (req, res) => {

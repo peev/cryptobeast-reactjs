@@ -127,12 +127,13 @@ class PortfolioStore {
 
   @action
   createTrade(fromAsset, toAsset) {
-    const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
+    const selectedExchange = AssetStore.selectedExchangeAssetAllocation !== '' ?
       this.selectedExchangeAssetAllocation :
       'Manually Added';
+    const today = new Date().toISOString().substring(0, 10);
     const newAssetAllocation = {
       selectedExchange,
-      selectedDate: AssetStore.assetAllocationSelectedDate,
+      selectedDate: AssetStore.assetAllocationSelectedDate || today,
       fromCurrency: AssetStore.selectedCurrencyFromAssetAllocation.currency,
       portfolioId: this.selectedPortfolioId,
       fromAmount: AssetStore.assetAllocationFromAmount,

@@ -234,38 +234,47 @@ class AssetStore {
   //     });
   // }
 
-  @action.bound
-  updateTradeAssetAllocation(trade) {
-    const oldAssets = [];
-    const selectedExchange = 'Manually Added';
-    // const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
-    //   this.selectedExchangeAssetAllocation :
-    //   'Manually Added';
-    const today = new Date().toISOString().substring(0, 10);
-    const newAssetAllocation = {
-      selectedExchange,
-      selectedDate: this.assetAllocationSelectedDate || today,
-      fromCurrency: this.selectedCurrencyFromAssetAllocation.currency,
-      portfolioId: PortfolioStore.selectedPortfolioId,
-      fromAmount: this.assetAllocationFromAmount,
-      toCurrency: this.selectedCurrencyToAssetAllocation,
-      toAmount: this.assetAllocationToAmount,
-      feeCurrency: this.selectedCurrencyForTransactionFee,
-      feeAmount: this.assetAllocationFee,
-    };
-    console.log('*** create Asset', newAssetAllocation);
+  // @action.bound
+  // updateTradeAssetAllocation(trade) {
+  //   console.log(trade);
+  //   const oldAssets = [];
+  //   // let oldAssets = PortfolioStore.currentPortfolioAssets.map((asset) => (
+  //   //   if(asset.id === trade.fromAssetId){
+  //   //     asset.balance ===
+  //   //   }
+  //   // )
+  //   const [assetFrom] = PortfolioStore.currentPortfolioAssets.filter(x => x.id === trade.fromAssetId);
+  //   const [assetTo] = PortfolioStore.currentPortfolioAssets.filter(x => x.id === trade.toAssetId);
+  //   console.log('assetFrom', assetFrom, 'assetTo', assetTo);
+  //   // const selectedExchange = 'Manually Added';
+  //   // // const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
+  //   // //   this.selectedExchangeAssetAllocation :
+  //   // //   'Manually Added';
+  //   // const today = new Date().toISOString().substring(0, 10);
+  //   // const newAssetAllocation = {
+  //   //   selectedExchange,
+  //   //   selectedDate: this.assetAllocationSelectedDate || today,
+  //   //   fromCurrency: this.selectedCurrencyFromAssetAllocation.currency,
+  //   //   portfolioId: PortfolioStore.selectedPortfolioId,
+  //   //   fromAmount: this.assetAllocationFromAmount,
+  //   //   toCurrency: this.selectedCurrencyToAssetAllocation,
+  //   //   toAmount: this.assetAllocationToAmount,
+  //   //   feeCurrency: this.selectedCurrencyForTransactionFee,
+  //   //   feeAmount: this.assetAllocationFee,
+  //   // };
+  //   // console.log('*** create Asset', newAssetAllocation);
 
-    // NOTE: allocation request has update, create and delete.
-    // That why it returns the updated assets for the current portfolio
-    return requester.Asset.allocate(newAssetAllocation)
-      .then(action((result) => {
-        PortfolioStore.currentPortfolioAssets = result.data.assets;
-        PortfolioStore.createTrade(result.data.fromAsset, result.data.toAsset);
-      }))
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  //   // // NOTE: allocation request has update, create and delete.
+  //   // // That why it returns the updated assets for the current portfolio
+  //   // return requester.Asset.allocate(newAssetAllocation)
+  //   //   .then(action((result) => {
+  //   //     PortfolioStore.currentPortfolioAssets = result.data.assets;
+  //   //     PortfolioStore.createTrade(result.data.fromAsset, result.data.toAsset);
+  //   //   }))
+  //   //   .catch((error) => {
+  //   //     console.log(error);
+  //   //   });
+  // }
 
 
   @action.bound

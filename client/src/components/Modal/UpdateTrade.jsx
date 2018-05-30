@@ -103,11 +103,11 @@ class UpdateTradeModal extends React.Component<Props, State> {
   }
 
   handleSave = () => {
-    const { AssetStore } = this.props;
+    const { AssetStore, trade } = this.props;
     // const hasErrors = AssetStore.handleAssetAllocationErrors();
     this.setState({ open: false });
     // if (hasErrors) {
-    AssetStore.createAssetAllocation();
+    AssetStore.updateTradeAssetAllocation(trade);
     this.props.NotificationStore.addMessage('successMessages', 'Successful asset allocation');
     AssetStore.resetAssetAllocation();
     // }
@@ -143,7 +143,6 @@ class UpdateTradeModal extends React.Component<Props, State> {
   handleOpen = () => {
     this.setState({ open: true });
     const { trade } = this.props;
-    console.log(trade);
     if (trade.source !== 'Manually added') {
       this.props.AssetStore.selectExchangeAssetAllocation(trade.source);
     }
@@ -308,9 +307,10 @@ class UpdateTradeModal extends React.Component<Props, State> {
                 // onClick={this.handleSave}
                 color="primary"
                 type="submit"
-                disabled={AssetStore.assetAllocationToAmount === '' || AssetStore.selectedCurrencyToAssetAllocation === '' ||
-                  AssetStore.assetAllocationFromAmount === '' || AssetStore.assetAllocationSelectedDate === '' ||
-                  AssetStore.selectedCurrencyFromAssetAllocation === ''}
+                disabled
+                // disabled={AssetStore.assetAllocationToAmount === '' || AssetStore.selectedCurrencyToAssetAllocation === '' ||
+                //   AssetStore.assetAllocationFromAmount === '' || AssetStore.assetAllocationSelectedDate === '' ||
+                //   AssetStore.selectedCurrencyFromAssetAllocation === ''}
               >
                 {' '}
                 Save

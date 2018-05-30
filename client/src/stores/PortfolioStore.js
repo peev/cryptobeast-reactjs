@@ -34,9 +34,7 @@ class PortfolioStore {
     // eslint-disable-next-line no-unused-expressions
     // gets portfolios at app init
     this.getPortfolios().then(() => {
-      if (this.portfolios.length > 0) {
-        MarketStore.init();
-      }
+      MarketStore.init();
     });
   }
   // ======= Computed =======
@@ -326,14 +324,12 @@ class PortfolioStore {
   createPortfolio() {
     const newPortfolio = {
       name: this.newPortfolioName,
-      // shares: InvestorStore.convertedUsdEquiv,
     };
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {
         this.selectedPortfolioId = result.data.id;
         InvestorStore.createDefaultInvestor(result.data.id);
-        // this.portfolios.push(result.data);
-        console.log('>>> result', result);
+        this.portfolios.push(result.data);
       }))
       .catch(err => console.log(err));
   }

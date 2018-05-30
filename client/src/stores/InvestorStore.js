@@ -273,7 +273,7 @@ class InvestorStore {
   get individualProfit() {
     if (this.selectedInvestor) {
       let calculatedIndividualProfit = (PortfolioStore.currentPortfolioSharePrice - this.individualWeightedEntryPrice) /
-      (this.individualWeightedEntryPrice || 1);
+        (this.individualWeightedEntryPrice || 1);
       calculatedIndividualProfit = Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`);
 
       return Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`);
@@ -361,22 +361,23 @@ class InvestorStore {
   // Investor -> New, Update, Deposit, Withdraw
   // #region Investor
   @action
-  createNewInvestor(id) {
+  createNewInvestor(portfolioId) {
     const today = new Date().toISOString().substring(0, 10);
     const newInvestor = {
+      isFounder: this.newInvestorValues.isFounder,
+      fullName: this.newInvestorValues.fullName,
+      email: this.newInvestorValues.email,
+      telephone: this.newInvestorValues.telephone,
+      dateOfEntry: this.newInvestorValues.dateOfEntry || today,
+      managementFee: this.newInvestorValues.managementFee,
+      purchasedShares: this.newInvestorValues.purchasedShares,
+      portfolioId,
+    };
+
+    const depositData = {
       currency: MarketStore.selectedBaseCurrency.pair,
       balance: +this.newInvestorValues.depositedAmount,
-      portfolioId: id,
-      investor: {
-        isFounder: this.newInvestorValues.isFounder,
-        fullName: this.newInvestorValues.fullName,
-        email: this.newInvestorValues.email,
-        telephone: this.newInvestorValues.telephone,
-        dateOfEntry: this.newInvestorValues.dateOfEntry || today,
-        managementFee: this.newInvestorValues.managementFee,
-        purchasedShares: this.newInvestorValues.purchasedShares,
-        portfolioId: id,
-      },
+      portfolioId,
       transaction: {
         investorName: this.newInvestorValues.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
@@ -384,33 +385,41 @@ class InvestorStore {
         amountInUSD: this.convertedUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newInvestorValues.purchasedShares),
-        portfolioId: id,
+        portfolioId,
       },
     };
+
     requester.Investor.add(newInvestor)
-      .then(action((result) => {
-        PortfolioStore.currentPortfolioTransactions.push(result.data.transaction);
-        PortfolioStore.currentPortfolioInvestors.push(result.data.investor);
+      .then(action((investor) => {
+        PortfolioStore.currentPortfolioInvestors.push(investor.data);
+        Object.assign(depositData.transaction, { investorId: newInvestor.id });
+        requester.Investor.addDeposit(depositData)
+          .then(action((response) => {
+            PortfolioStore.currentPortfolioTransactions.push(response.data);
+            PortfolioStore.selectedPortfolio.shares = response.data.shares;
+          }))
+          .catch(err => console.log(err));
       }))
       .catch(err => console.log(err));
   }
 
   @action.bound
-  createDefaultInvestor(id) {
+  createDefaultInvestor(portfolioId) {
     const newInvestor = {
+      isFounder: true,
+      fullName: 'default investor',
+      email: 'default@email.com',
+      telephone: '',
+      dateOfEntry: (new Date()).toLocaleString(),
+      managementFee: 0,
+      purchasedShares: this.convertedUsdEquiv, // Because initial share price = 1$
+      portfolioId,
+    };
+
+    const depositData = {
       currency: MarketStore.selectedBaseCurrency.pair,
       balance: +this.newInvestorValues.depositedAmount,
-      portfolioId: id,
-      investor: {
-        isFounder: true,
-        fullName: 'default investor',
-        email: 'default@email.com',
-        telephone: '',
-        dateOfEntry: (new Date()).toLocaleString(),
-        managementFee: 0,
-        purchasedShares: this.convertedUsdEquiv, // Because initial share price = 1$
-        portfolioId: id,
-      },
+      portfolioId,
       transaction: {
         investorName: 'default investor',
         dateOfEntry: (new Date()).toLocaleString(),
@@ -418,15 +427,23 @@ class InvestorStore {
         amountInUSD: this.convertedUsdEquiv,
         sharePrice: 1,
         shares: parseFloat(this.convertedUsdEquiv),
-        portfolioId: id,
+        portfolioId,
       },
     };
 
-    requester.Investor.add(newInvestor)
+    return requester.Investor.add(newInvestor)
       .then(action((result) => {
-        PortfolioStore.currentPortfolioTransactions.push(result.data.transaction);
-        PortfolioStore.currentPortfolioInvestors.push(result.data.investor);
-        this.reset();
+        PortfolioStore.currentPortfolioInvestors.push(result.data);
+        Object.assign(depositData.transaction, { investorId: result.data.id });
+        requester.Investor.addDeposit(depositData)
+          .then(action((response) => {
+            PortfolioStore.currentPortfolioTransactions.push(response.data);
+            this.reset();
+          }))
+          .then(action(() => {
+            PortfolioStore.getPortfolios();
+          }))
+          .catch(err => console.log(err));
       }))
       .catch(err => console.log(err));
   }

@@ -194,7 +194,7 @@ class AssetStore {
       .then(action((result) => {
         PortfolioStore.currentPortfolioAssets = result.data.assets;
         PortfolioStore.createTrade(result.data.fromAsset, result.data.toAsset);
-        console.log(PortfolioStore.currentPortfolioAssets)
+        console.log(PortfolioStore.currentPortfolioAssets);
       }))
       .catch((error) => {
         console.log(error);
@@ -241,9 +241,10 @@ class AssetStore {
     // const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
     //   this.selectedExchangeAssetAllocation :
     //   'Manually Added';
+    const today = new Date().toISOString().substring(0, 10);
     const newAssetAllocation = {
       selectedExchange,
-      selectedDate: this.assetAllocationSelectedDate,
+      selectedDate: this.assetAllocationSelectedDate || today,
       fromCurrency: this.selectedCurrencyFromAssetAllocation.currency,
       portfolioId: PortfolioStore.selectedPortfolioId,
       fromAmount: this.assetAllocationFromAmount,

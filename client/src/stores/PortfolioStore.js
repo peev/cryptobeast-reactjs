@@ -37,9 +37,7 @@ class PortfolioStore {
     // eslint-disable-next-line no-unused-expressions
     // gets portfolios at app init
     this.getPortfolios().then(() => {
-      if (this.portfolios.length > 0) {
-        MarketStore.init();
-      }
+      MarketStore.init();
     });
   }
   // ======= Computed =======
@@ -208,7 +206,7 @@ class PortfolioStore {
       feeAmount: trade.fee,
     };
     const tradeId = trade.id;
-    console.log(newAssetAllocation)
+    console.log(newAssetAllocation);
 
     // NOTE: allocation request has update, create and delete.
     // That why it returns the updated assets for the current portfolio
@@ -284,13 +282,26 @@ class PortfolioStore {
           // ------------------------------
           // Depends on array's 0 index
           let assetBTCEquiv;
-          if (currentRow[0] === 'BTC' && ind > 1) {
-            assetBTCEquiv = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].Last;
-          } else {
-            assetBTCEquiv = MarketStore.marketSummaries[`BTC-${currentRow[0]}`] ?
-              MarketStore.marketSummaries[`BTC-${currentRow[0]}`].Last :
-              0;
+          switch (true) {
+            case currentRow[0] === 'BTC' && ind > 1:
+              assetBTCEquiv = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].Last;
+              break;
+            case currentRow[0] === 'USD' && ind > 1:
+              assetBTCEquiv = 1 / MarketStore.baseCurrencies[3].last;
+              break;
+            case currentRow[0] === 'JPY' && ind > 1:
+              assetBTCEquiv = 1 / MarketStore.baseCurrencies[2].last;
+              break;
+            case currentRow[0] === 'EUR' && ind > 1:
+              assetBTCEquiv = 1 / MarketStore.baseCurrencies[1].last;
+              break;
+            default:
+              assetBTCEquiv = MarketStore.marketSummaries[`BTC-${currentRow[0]}`] ?
+                MarketStore.marketSummaries[`BTC-${currentRow[0]}`].Last :
+                0;
+              break;
           }
+
           // ------------------------------
           // 3. Price(BTC)
           if (ind === 2) {
@@ -477,13 +488,12 @@ class PortfolioStore {
   createPortfolio() {
     const newPortfolio = {
       name: this.newPortfolioName,
-      // shares: InvestorStore.convertedUsdEquiv,
     };
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {
-        this.getPortfolios(); // gets new portfolios
         this.selectedPortfolioId = result.data.id;
         InvestorStore.createDefaultInvestor(result.data.id);
+        this.portfolios.push(result.data);
       }))
       .catch(err => console.log(err));
   }

@@ -23,12 +23,10 @@ type Props = {
 
 const HistoryTable = inject('PortfolioStore', 'AssetStore')(observer(({ ...props }: Props) => {
   const { classes, tableHead, tableData, tableHeaderColor, PortfolioStore } = props;
-
   const handleRemove = (trade: Object) => {
     PortfolioStore.deleteTrade(trade);
   };
   const trades = PortfolioStore.currentPortfolioTrades;
-  console.log(PortfolioStore.currentPortfolioTrades);
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>

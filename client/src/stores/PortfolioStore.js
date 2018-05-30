@@ -128,7 +128,7 @@ class PortfolioStore {
   @action
   createTrade(fromAsset, toAsset) {
     const selectedExchange = AssetStore.selectedExchangeAssetAllocation !== '' ?
-      this.selectedExchangeAssetAllocation :
+      AssetStore.selectedExchangeAssetAllocation :
       'Manually Added';
     const today = new Date().toISOString().substring(0, 10);
     const newAssetAllocation = {
@@ -153,7 +153,7 @@ class PortfolioStore {
       case 'USDT':
         type = 'sell';
         market = tradingCoin;
-        price = newAssetAllocation.fromAmount / newAssetAllocation.toAmount;
+        price = newAssetAllocation.toAmount / newAssetAllocation.fromAmount;
         filled = newAssetAllocation.fromAmount;
         break;
       default:

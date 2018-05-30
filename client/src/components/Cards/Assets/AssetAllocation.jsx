@@ -12,7 +12,6 @@ import RegularButton from '../../CustomButtons/Button';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
 import SelectPortfolioCurrency from '../../Selectors/Asset/SelectPortfolioCurrency';
 import '../../Selectors/Asset/SelectAllCurrency';
-import PortfolioStore from '../../../stores/PortfolioStore';
 
 const styles = () => ({
   container: {
@@ -71,7 +70,6 @@ class AssetAllocation extends React.Component<Props> {
     AssetStore.createTradeAssetAllocation()
       .then(() => AssetStore.resetAssetAllocation());
     this.props.NotificationStore.addMessage('successMessages', 'Successful asset allocation');
-    console.log(PortfolioStore.currentPortfolioTrades)
     // }
   }
 

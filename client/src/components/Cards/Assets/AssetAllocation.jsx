@@ -70,7 +70,6 @@ class AssetAllocation extends React.Component<Props> {
     AssetStore.createTradeAssetAllocation()
       .then(() => AssetStore.resetAssetAllocation());
     this.props.NotificationStore.addMessage('successMessages', 'Successful asset allocation');
-    
     // }
   }
 

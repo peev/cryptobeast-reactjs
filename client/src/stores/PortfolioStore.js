@@ -129,10 +129,9 @@ class PortfolioStore {
 
   @action
   createTrade(fromAsset, toAsset) {
-    const selectedExchange = 'Manually Added';
-    // const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
-    //   this.selectedExchangeAssetAllocation :
-    //   'Manually Added';
+    const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
+      this.selectedExchangeAssetAllocation :
+      'Manually Added';
     const newAssetAllocation = {
       selectedExchange,
       selectedDate: AssetStore.assetAllocationSelectedDate,
@@ -194,7 +193,9 @@ class PortfolioStore {
   @action.bound
   deleteTrade(trade) {
     console.log('*** remove trade', trade);
-    const selectedExchange = 'Manually Added';
+    const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
+      this.selectedExchangeAssetAllocation :
+      'Manually Added';
     const newAssetAllocation = {
       selectedExchange,
       selectedDate: trade.transactionDate,
@@ -207,6 +208,7 @@ class PortfolioStore {
       feeAmount: trade.fee,
     };
     const tradeId = trade.id;
+    console.log(newAssetAllocation)
 
     // NOTE: allocation request has update, create and delete.
     // That why it returns the updated assets for the current portfolio

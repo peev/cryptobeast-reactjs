@@ -172,6 +172,71 @@ class AssetStore {
 
   @action.bound
   createTradeAssetAllocation() {
+    const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
+      this.selectedExchangeAssetAllocation :
+      'Manually Added';
+    const newAssetAllocation = {
+      selectedExchange,
+      selectedDate: this.assetAllocationSelectedDate,
+      fromCurrency: this.selectedCurrencyFromAssetAllocation.currency,
+      portfolioId: PortfolioStore.selectedPortfolioId,
+      fromAmount: this.assetAllocationFromAmount,
+      toCurrency: this.selectedCurrencyToAssetAllocation,
+      toAmount: this.assetAllocationToAmount,
+      feeCurrency: this.selectedCurrencyForTransactionFee,
+      feeAmount: this.assetAllocationFee,
+    };
+    console.log('*** create Asset', newAssetAllocation);
+
+    // NOTE: allocation request has update, create and delete.
+    // That why it returns the updated assets for the current portfolio
+    return requester.Asset.allocate(newAssetAllocation)
+      .then(action((result) => {
+        PortfolioStore.currentPortfolioAssets = result.data.assets;
+        PortfolioStore.createTrade(result.data.fromAsset, result.data.toAsset);
+        console.log(PortfolioStore.currentPortfolioAssets)
+      }))
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  // @action.bound
+  // handleUpdateTradeErrors(trade) {
+  //   const oldAssets = [];
+
+  //   const selectedExchange = 'Manually Added';
+  //   // const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
+  //   //   this.selectedExchangeAssetAllocation :
+  //   //   'Manually Added';
+  //   const newAssetAllocation = {
+  //     selectedExchange,
+  //     selectedDate: this.assetAllocationSelectedDate,
+  //     fromCurrency: this.selectedCurrencyFromAssetAllocation.currency,
+  //     portfolioId: PortfolioStore.selectedPortfolioId,
+  //     fromAmount: this.assetAllocationFromAmount,
+  //     toCurrency: this.selectedCurrencyToAssetAllocation,
+  //     toAmount: this.assetAllocationToAmount,
+  //     feeCurrency: this.selectedCurrencyForTransactionFee,
+  //     feeAmount: this.assetAllocationFee,
+  //   };
+  //   console.log('*** create Asset', newAssetAllocation);
+
+  //   // NOTE: allocation request has update, create and delete.
+  //   // That why it returns the updated assets for the current portfolio
+  //   return requester.Asset.allocate(newAssetAllocation)
+  //     .then(action((result) => {
+  //       PortfolioStore.currentPortfolioAssets = result.data.assets;
+  //       PortfolioStore.createTrade(result.data.fromAsset, result.data.toAsset);
+  //     }))
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }
+
+  @action.bound
+  updateTradeAssetAllocation(trade) {
+    const oldAssets = [];
     const selectedExchange = 'Manually Added';
     // const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
     //   this.selectedExchangeAssetAllocation :

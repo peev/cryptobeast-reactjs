@@ -144,16 +144,20 @@ class UpdateTradeModal extends React.Component<Props, State> {
     this.setState({ open: true });
     const { trade } = this.props;
     console.log(trade);
-    if (trade.source !== 'Manual') {
+    if (trade.source !== 'Manually added') {
       this.props.AssetStore.selectExchangeAssetAllocation(trade.source);
     }
     this.props.AssetStore.setAssetAllocationValue('assetAllocationSelectedDate', trade.transactionDate);
-    this.props.AssetStore.selectCurrencyFromAssetAllocation(trade.market);
-    console.log(this.props.PortfolioStore.currentPortfolioAssets);
-    this.props.AssetStore.setAssetAllocationValue('assetAllocationFromAmount', trade.filled);
+    this.props.AssetStore.selectCurrencyFromAssetAllocation(trade.fromAssetId);
+    this.props.AssetStore.setAssetAllocationValue('assetAllocationFromAmount', trade.fromAmount);
+    this.props.AssetStore.selectCurrencyToAssetAllocation(trade.toCurrency);
+    this.props.AssetStore.setAssetAllocationValue('assetAllocationToAmount', trade.toAmount);
+    this.props.AssetStore.selectCurrencyForTransactionFee(trade.feeCurrency);
+    this.props.AssetStore.setAssetAllocationValue('assetAllocationFee', trade.fee);
   };
   handleClose = () => {
     this.setState({ open: false });
+    this.props.AssetStore.resetAssetAllocation();
   };
 
   render() {

@@ -381,7 +381,7 @@ class InvestorStore {
       transaction: {
         investorName: this.newInvestorValues.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
-        transactionDate: this.newInvestorValues.dateOfEntry,
+        transactionDate: this.newInvestorValues.dateOfEntry || today,
         amountInUSD: this.convertedUsdEquiv,
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newInvestorValues.purchasedShares),
@@ -567,10 +567,10 @@ class InvestorStore {
     // Checks the currently entered values. If value is empty and it is required,
     // than adds a error massage to the array of errors
     Object.keys(currentInvestor).forEach((prop) => {
-      if (currentInvestor[prop] === '' && prop === 'dateOfEntry') {
-        // NotificationStore.addMessage('errorMessages', 'Entry date is required.');
-        noErrors = false;
-      }
+      // if (currentInvestor[prop] === '' && prop === 'dateOfEntry') {
+      //   // NotificationStore.addMessage('errorMessages', 'Entry date is required.');
+      //   noErrors = false;
+      // }
       if (currentInvestor[prop] === '' && prop === 'depositedAmount') {
         // NotificationStore.addMessage('errorMessages', 'Deposited amount is required.');
         noErrors = false;
@@ -616,10 +616,10 @@ class InvestorStore {
     // Checks the currently entered values. If value is empty and it is required,
     // than adds a error massage to the array of errors
     Object.keys(currentDeposit).forEach((prop) => {
-      if (currentDeposit[prop] === '' && prop === 'transactionDate') {
-        // NotificationStore.addMessage('errorMessages', 'Entry date is required.');
-        noErrors = false;
-      }
+      // if (currentDeposit[prop] === '' && prop === 'transactionDate') {
+      //   // NotificationStore.addMessage('errorMessages', 'Entry date is required.');
+      //   noErrors = false;
+      // }
       if (currentDeposit[prop] === '' && prop === 'amount') {
         // NotificationStore.addMessage('errorMessages', 'Amount is required.');
         noErrors = false;

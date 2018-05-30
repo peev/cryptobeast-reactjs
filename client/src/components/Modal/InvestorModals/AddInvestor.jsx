@@ -119,7 +119,6 @@ class AddInvestor extends React.Component<Props, State> {
 
     if (hasErrors) {
       InvestorStore.createNewInvestor(PortfolioStore.selectedPortfolioId);
-
       this.handleClose();
     }
   };

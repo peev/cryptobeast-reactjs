@@ -4,6 +4,7 @@ import { withStyles, Grid } from 'material-ui';
 
 import { ItemGrid } from './../../components';
 import TradeHistory from '../../components/Cards/History/TradeHistory';
+import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
 
 
 const style = {
@@ -36,6 +37,7 @@ const TransactionHistory = ({ classes }: Object) =>
         <TradeHistory />
       </Grid>
       </Grid>
+      <NotificationSnackbar />
    </Grid>);
 
 

@@ -239,7 +239,7 @@ class InvestorWithdraw extends React.Component<Props, State> {
                   disabled
                   name="fee"
                   label="Management Fee"
-                  value={InvestorStore.withdrawManagementFee || ''}
+                  value={`$${Math.round((InvestorStore.convertedUsdEquiv / 100) * InvestorStore.withdrawManagementFee * 100) / 100 || ''}`}
                   className={classes.alignInput}
                 />
               </Grid>

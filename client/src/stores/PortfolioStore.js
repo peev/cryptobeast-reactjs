@@ -11,6 +11,7 @@ import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
+import AssetStore from './AssetStore';
 
 class PortfolioStore {
   @observable portfolios;
@@ -19,6 +20,7 @@ class PortfolioStore {
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
+  @observable currentPortfolioTrades;
   @observable newPortfolioName;
 
   constructor() {
@@ -29,6 +31,7 @@ class PortfolioStore {
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
     this.newPortfolioName = '';
+    this.currentPortfolioTrades = [];
 
 
     // eslint-disable-next-line no-unused-expressions
@@ -62,6 +65,168 @@ class PortfolioStore {
     }
 
     return 0;
+  }
+
+  @computed
+  get tradeHistory() {
+    const trades = this.currentPortfolioTrades;
+    const selectedPortfolioTrades = [];
+    trades.forEach((el) => {
+      const currentRow = [];
+      Object.keys(el).forEach((prop, ind) => {
+        // 1. Transaction date
+        if (ind === 0) {
+          currentRow.push(el.transactionDate);
+        }
+        // 2. Entry Date
+        if (ind === 1) {
+          currentRow.push(el.entryDate);
+        }
+        // 3. Source
+        if (ind === 2) {
+          currentRow.push(el.source);
+        }
+        // 4. Pair
+        if (ind === 3) {
+          currentRow.push(el.pair);
+        }
+        // 5. Type
+        if (ind === 4) {
+          const { type } = el;
+          currentRow.push(type.toUpperCase());
+        }
+        // 6. Price
+        if (ind === 5) {
+          const price = Number(`${Math.round(`${el.price}e2`)}e-2`);
+          currentRow.push(price);
+        }
+        // 7. Filled
+        if (ind === 6) {
+          currentRow.push(el.filled);
+        }
+        // 8. Fee
+        if (ind === 7) {
+          currentRow.push(`${el.fee} ${el.feeCurrency}`);
+        }
+        // 9. Total
+        if (ind === 8) {
+          const totalPrice = Number(`${Math.round(`${el.totalPrice}e2`)}e-2`);
+          currentRow.push(`${totalPrice} ${el.market}`);
+        }
+        if (ind === 9) {
+          currentRow.push('');
+        }
+        if (ind === 10) {
+          currentRow.push('');
+        }
+      });
+      selectedPortfolioTrades.push(currentRow);
+    });
+    return selectedPortfolioTrades;
+  }
+
+  @action
+  createTrade(fromAsset, toAsset) {
+    const selectedExchange = AssetStore.selectedExchangeAssetAllocation !== '' ?
+      AssetStore.selectedExchangeAssetAllocation :
+      'Manually Added';
+    const today = new Date().toISOString().substring(0, 10);
+    const newAssetAllocation = {
+      selectedExchange,
+      selectedDate: AssetStore.assetAllocationSelectedDate || today,
+      fromCurrency: AssetStore.selectedCurrencyFromAssetAllocation.currency,
+      portfolioId: this.selectedPortfolioId,
+      fromAmount: AssetStore.assetAllocationFromAmount,
+      toCurrency: AssetStore.selectedCurrencyToAssetAllocation,
+      toAmount: AssetStore.assetAllocationToAmount,
+      feeCurrency: AssetStore.selectedCurrencyForTransactionFee,
+      feeAmount: AssetStore.assetAllocationFee,
+    };
+    let type = '';
+    let price = 0;
+    let filled = 0;
+    let market = '';
+    const tradingCoin = newAssetAllocation.toCurrency;
+    switch (tradingCoin) {
+      case 'BTC':
+      case 'ETH':
+      case 'USDT':
+        type = 'sell';
+        market = tradingCoin;
+        price = newAssetAllocation.toAmount / newAssetAllocation.fromAmount;
+        filled = newAssetAllocation.fromAmount;
+        break;
+      default:
+        type = 'buy';
+        market = newAssetAllocation.fromCurrency;
+        price = newAssetAllocation.fromAmount / newAssetAllocation.toAmount;
+        filled = newAssetAllocation.toAmount;
+        break;
+    }
+
+    const trade = {
+      transactionDate: newAssetAllocation.selectedDate,
+      source: newAssetAllocation.selectedExchange,
+      pair: `${newAssetAllocation.fromCurrency}-${newAssetAllocation.toCurrency}`,
+      fromAssetId: fromAsset.id,
+      fromCurrency: fromAsset.currency,
+      fromAmount: newAssetAllocation.fromAmount,
+      toAssetId: toAsset.id,
+      toCurrency: toAsset.currency,
+      toAmount: newAssetAllocation.toAmount,
+      type,
+      price,
+      filled,
+      fee: newAssetAllocation.feeAmount,
+      feeCurrency: newAssetAllocation.feeCurrency,
+      totalPrice: price * filled,
+      market,
+      portfolioId: newAssetAllocation.portfolioId,
+    };
+    requester.Trade.addTrade(trade)
+      .then((response) => {
+        this.currentPortfolioTrades.push(response.data);
+      });
+  }
+
+  @action.bound
+  deleteTrade(trade) {
+    console.log('*** remove trade', trade);
+    const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
+      this.selectedExchangeAssetAllocation :
+      'Manually Added';
+    const newAssetAllocation = {
+      selectedExchange,
+      selectedDate: trade.transactionDate,
+      fromCurrency: trade.toCurrency,
+      portfolioId: this.selectedPortfolioId,
+      fromAmount: trade.toAmount,
+      toCurrency: trade.fromCurrency,
+      toAmount: trade.fromAmount,
+      feeCurrency: trade.feeCurrency,
+      feeAmount: trade.fee,
+    };
+    const tradeId = trade.id;
+    console.log(newAssetAllocation);
+
+    // NOTE: allocation request has update, create and delete.
+    // That why it returns the updated assets for the current portfolio
+    return requester.Asset.allocate(newAssetAllocation)
+      .then(action((result) => {
+        this.currentPortfolioAssets = result.data.assets;
+        this.removeTrade(tradeId);
+      }))
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  @action
+  removeTrade(id) {
+    requester.Trade.deleteTrade(id)
+      .then(action(() => {
+        this.currentPortfolioTrades = this.currentPortfolioTrades.filter(trade => trade.id !== id);
+      }))
+      .catch(err => console.log(err));
   }
 
   @computed

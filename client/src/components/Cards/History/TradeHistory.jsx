@@ -4,8 +4,9 @@ import { withStyles } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 
 import { RegularCard } from './../../../components';
-import AllInvestorTable from './../../CustomTables/Investors/AllInvestorTable';
+import HistoryTable from './../../CustomTables/HistoryTable';
 import ExportPdfButton from './../../CustomButtons/ExportPdfButton';
+
 
 const styles = () => ({
   tablePosition: {
@@ -15,7 +16,6 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  InvestorStore: Object,
   PortfolioStore: Object,
 };
 
@@ -23,16 +23,11 @@ type Props = {
 @observer
 class TradeHistory extends Component<Props> {
   render() {
-    const { classes, InvestorStore, PortfolioStore } = this.props;
+    const { classes, PortfolioStore } = this.props;
 
-    const data = InvestorStore.selectedInvestor
-      ? PortfolioStore.currentPortfolioTransactions
-        .filter((t: Object) => t.investorId === (InvestorStore.selectedInvestor ? InvestorStore.selectedInvestor.id : 1))
-      : PortfolioStore.currentPortfolioTransactions;
-
-
-    const investorsTable = (
-      <AllInvestorTable
+    const data = PortfolioStore.tradeHistory;
+    const historyTable = (
+      <HistoryTable
         tableData={data}
         tableHead={[
           'Trade Date',
@@ -40,9 +35,12 @@ class TradeHistory extends Component<Props> {
           'Source',
           'Pair',
           'Type',
-          'Qty',
-          'Total price BTC',
-          'Commission',
+          'Price',
+          'Filled',
+          'Fee',
+          'Total',
+          '',
+          '',
         ]}
       />
     );
@@ -54,7 +52,7 @@ class TradeHistory extends Component<Props> {
         content={
           <div>
             <div className={classes.tablePosition}>
-              {investorsTable}
+              {historyTable}
             </div>
           </div>
         }

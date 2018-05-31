@@ -264,6 +264,7 @@ class PortfolioStore {
       this.currentPortfolioAssets.length > 0 &&
       MarketStore.baseCurrencies.length > 0 &&
       MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
+      const { marketPriceHistory } = MarketStore;
       const currentAssets = this.groupedCurrentPortfolioAssets;
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       const selectedPortfolioSummary = [];
@@ -347,11 +348,7 @@ class PortfolioStore {
             let changeFromYesterday;
             switch (currentRow[0]) {
               case 'USD':
-                changeFromYesterday = 'n/a';
-                break;
               case 'EUR':
-                changeFromYesterday = 'n/a';
-                break;
               case 'JPY':
                 changeFromYesterday = 'n/a';
                 break;
@@ -377,7 +374,23 @@ class PortfolioStore {
           // 8. 7D Change
           if (ind === 7) {
             // FIXME: add real value
-            currentRow.push(12.54 + i);
+            switch (currentRow[0]) {
+              case 'USD':
+              case 'EUR':
+              case 'JPY':
+                currentRow.push('n/a');
+                break;
+              case 'BTC':
+                currentRow.push(0);
+                break;
+              default:
+                if (marketPriceHistory[currentRow[0]]) {
+                  currentRow.push(marketPriceHistory[currentRow[0]].percentChangeFor7d);
+                } else {
+                  currentRow.push('n/a');
+                }
+                break;
+            }
           }
         });
 

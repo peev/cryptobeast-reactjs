@@ -7,7 +7,6 @@ const cors = require('cors');
 const path = require('path');
 
 
-
 const init = async (repository) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
   const marketService = require('../../services/market-service')(repository);
@@ -45,25 +44,25 @@ const init = async (repository) => {
     marketService.syncCurrenciesFromApi();
     marketService.syncSummaries();
     marketService.syncTickersFromKraken();
+    marketService.syncTickersFromCoinMarketCap();
   }
+
   // Market jobs
-  marketService.createMarketJob(marketService.syncCurrenciesFromApi, { hour: 23, minute: 59, second: '*' });
+  marketService.createMarketJob(marketService.syncCurrenciesFromApi, { hour: 23, minute: 59 });
   marketService.createMarketJob(marketService.syncSummaries, { second: 0 }); // sync every minute
   marketService.createMarketJob(marketService.syncTickersFromKraken, { second: 0 }); // sync every minute
+  marketService.createMarketJob(marketService.syncTickersFromCoinMarketCap, { minute: 0 }); // sync every hour
   // Save to history
-  marketService.createMarketJob(marketService.saveSummariesToHistory, { minute: 0, second: '*' }); // sync every hour
-  marketService.createMarketJob(marketService.saveTickersFromKrakenToHistory, { minute: 0, second: '*' }); // sync every hour
+  marketService.createMarketJob(marketService.saveSummariesToHistory, { minute: 0 }); // sync every hour
+  marketService.createMarketJob(marketService.saveTickersFromKrakenToHistory, { minute: 0 }); // sync every hour
 
 
   // Initialize all portfolio jobs and pass them to portfolio-controller
-  let jobs = {
+  const jobs = {
     closingSharePriceJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveClosingSharePriceJob),
     openingSharePriceJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveOpeningSharePriceJob),
     closingPortfolioCostJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveClosingPortfolioCostJob),
   };
-  // Test if jobs is singleton
-  // const printSharePriceJobs = () => console.log('>>> express jobs: ', jobs);
-  // setInterval(printSharePriceJobs, 5000);
   // #endregion
 
   // TODO: Create router for every new model and add it here
@@ -74,7 +73,7 @@ const init = async (repository) => {
   require('./../../routes/account/account-router').attachTo(app, repository);
   require('./../../routes/investor/investor-router').attachTo(app, repository);
 
-  /// Handle Errors
+  // Handle Errors
   // catch 404 and forward to error handler
   app.use(function (req, res, next) {
     next(createError(404));

@@ -414,35 +414,42 @@ class InvestorStore {
       managementFee: 0,
       portfolioId,
     };
-
-    const depositData = {
-      currency: MarketStore.selectedBaseCurrency.pair,
-      balance: +this.newInvestorValues.depositedAmount,
-      portfolioId,
-      transaction: {
-        investorName: 'default investor',
-        dateOfEntry: (new Date()).toLocaleString(),
-        transactionDate: (new Date()).toLocaleString(),
-        amountInUSD: this.convertedUsdEquiv,
-        sharePrice: 1,
-        shares: parseFloat(this.convertedUsdEquiv),
+    let depositData;
+    if (MarketStore.selectedBaseCurrency) {
+      depositData = {
+        currency: MarketStore.selectedBaseCurrency.pair,
+        balance: +this.newInvestorValues.depositedAmount,
         portfolioId,
-      },
-    };
+        transaction: {
+          investorName: 'default investor',
+          dateOfEntry: (new Date()).toLocaleString(),
+          transactionDate: (new Date()).toLocaleString(),
+          amountInUSD: this.convertedUsdEquiv,
+          sharePrice: 1,
+          shares: parseFloat(this.convertedUsdEquiv),
+          portfolioId,
+        },
+      };
+    }
+
 
     return requester.Investor.add(newInvestor)
       .then(action((result) => {
         PortfolioStore.currentPortfolioInvestors.push(result.data);
-        Object.assign(depositData.transaction, { investorId: result.data.id });
-        requester.Investor.addDeposit(depositData)
-          .then(action((response) => {
-            PortfolioStore.currentPortfolioTransactions.push(response.data);
-            this.reset();
-          }))
-          .then(action(() => {
-            PortfolioStore.getPortfolios();
-          }))
-          .catch(err => console.log(err));
+        if (depositData) {
+          Object.assign(depositData.transaction, { investorId: result.data.id });
+          requester.Investor.addDeposit(depositData)
+            .then(action((response) => {
+              PortfolioStore.currentPortfolioTransactions.push(response.data);
+              this.reset();
+            }))
+            .then(action(() => {
+              PortfolioStore.getPortfolios();
+            }))
+            .catch(err => console.log(err));
+        } else {
+          PortfolioStore.getPortfolios();
+        }
       }))
       .catch(err => console.log(err));
   }

@@ -193,9 +193,8 @@ class PortfolioStore {
 
   @action.bound
   deleteTrade(trade) {
-    console.log('*** remove trade', trade);
-    const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
-      this.selectedExchangeAssetAllocation :
+    const selectedExchange = AssetStore.selectedExchangeAssetAllocation !== '' ?
+      AssetStore.selectedExchangeAssetAllocation :
       'Manually Added';
     const newAssetAllocation = {
       selectedExchange,

@@ -10,10 +10,9 @@ import {
 } from 'material-ui';
 import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
-import { Close } from '@material-ui/icons';
-import IconButton from '../CustomButtons/IconButton';
 import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
 import tableStyle from '../../variables/styles/tableStyle';
+import ConfirmationModal from '../Modal/ConfirmationModal';
 
 
 type Props = {
@@ -67,6 +66,7 @@ class PortfoliosTable extends React.Component<Props> {
       null,
       null,
       null,
+      null,
     ]);
 
     const tableInfo = filteredItems.map((prop: Object, key: number) => (
@@ -77,14 +77,14 @@ class PortfoliosTable extends React.Component<Props> {
               <TableCell className={classes.tableCell} key={uuid()}>
                 {item}
                 <UpdatePortfolioModal />
-
-                <IconButton
-                  onClick={() => this.handleRemove(portfolios[key].id)}
-                  color="primary"
-                  customClass="remove"
-                >
-                  <Close />
-                </IconButton>
+              </TableCell>
+            );
+          }
+          if (ind === 5) {
+            return (
+              <TableCell className={classes.tableCell} key={uuid()}>
+                {item}
+                <ConfirmationModal onSave={() => this.handleRemove(portfolios[key].id)} message="Are you shure you want to delete this portfolio?" />
               </TableCell>
             );
           }

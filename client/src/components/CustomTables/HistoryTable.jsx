@@ -12,7 +12,7 @@ import { inject, observer } from 'mobx-react';
 import uuid from 'uuid/v4';
 import UpdateTradeModal from '../Modal/UpdateTrade';
 import tableStyle from '../../variables/styles/tableStyle';
-import ConfirmationModal from '../../components/Cards/History/ConfirmationModal';
+import ConfirmationModal from '../Modal/ConfirmationModal';
 
 type Props = {
   classes: Object,
@@ -52,7 +52,7 @@ const HistoryTable = inject('PortfolioStore', 'AssetStore')(observer(({ ...props
                     return (
                       <TableCell className={classes.tableCellBuy} key={uuid()}>
                         {prop[el]}
-                        <ConfirmationModal onSave={() => handleRemove(trades[i])} />
+                        <ConfirmationModal onSave={() => handleRemove(trades[i])} message="Are you sure you want to delete this transaction?" />
                       </TableCell>
                     );
                   }

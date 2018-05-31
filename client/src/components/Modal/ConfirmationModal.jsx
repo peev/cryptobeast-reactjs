@@ -7,9 +7,9 @@ import { ValidatorForm } from 'react-material-ui-form-validator';
 
 import { Close } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
-import IconButton from '../../CustomButtons/IconButton';
+import IconButton from '../CustomButtons/IconButton';
 
-import Button from '../../CustomButtons/Button';
+import Button from '../CustomButtons/Button';
 
 function getModalStyle() {
   const top = 45;
@@ -48,6 +48,7 @@ const styles = (theme: Object) => ({
 type Props = {
   classes: Object,
   onSave: Function,
+  message: string
   };
 
 
@@ -78,6 +79,7 @@ class ConfirmationModal extends React.Component<Props, State> {
   render() {
     const {
       classes,
+      message,
     } = this.props;
 
     return (
@@ -107,7 +109,7 @@ class ConfirmationModal extends React.Component<Props, State> {
               id="modal-title"
               className={classes.modalTitle}
             >
-              Are you sure you want to delete this transaction?
+              {message}
             </Typography>
 
             <br />
@@ -119,7 +121,7 @@ class ConfirmationModal extends React.Component<Props, State> {
                 color="primary"
               >
                 {' '}
-                Cancel
+                No
               </Button>
 
               {/* SAVE BUTTON */}
@@ -130,7 +132,7 @@ class ConfirmationModal extends React.Component<Props, State> {
                 type="submit"
               >
                 {' '}
-                Save
+                Yes
               </Button>
             </div>
           </ValidatorForm>

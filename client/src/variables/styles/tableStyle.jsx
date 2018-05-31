@@ -54,6 +54,20 @@ const tableStyle = theme => ({
     padding: '12px 8px',
     verticalAlign: 'middle',
   },
+  tableCellBuy: {
+    ...defaultFont,
+    lineHeight: '1.42857143',
+    padding: '12px 8px',
+    verticalAlign: 'middle',
+    color: '#3ab693',
+  },
+  tableCellSell: {
+    ...defaultFont,
+    lineHeight: '1.42857143',
+    padding: '12px 8px',
+    verticalAlign: 'middle',
+    color: '#eb4562',
+  },
   tableResponsive: {
     width: '100%',
     marginTop: theme.spacing.unit * 3,

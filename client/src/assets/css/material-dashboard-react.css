@@ -1,6 +1,9 @@
 div[class*='MuiCard-root'] {
     overflow: unset !important;
 }
+
+ 
+
 div[class^='MuiModal-root'] {
     position: unset;
 }

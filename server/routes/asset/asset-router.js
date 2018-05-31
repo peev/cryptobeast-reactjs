@@ -6,9 +6,9 @@ const attachTo = (app, data) => {
 
   router
     .post('/add', (req, res) => assetController.createAsset(req, res))
-    .put('/update', (req, res) => assetController.updateAsset(req, res))
+    .put('/update/:id', (req, res) => assetController.updateAsset(req, res))
     .post('/allocate', (req, res) => assetController.allocateAsset(req, res))
-    .delete('/delete', (req, res) => assetController.removeAsset(req, res));
+    .delete('/delete/:id', (req, res) => assetController.removeAsset(req, res));
 
   app.use('/asset', router);
 };

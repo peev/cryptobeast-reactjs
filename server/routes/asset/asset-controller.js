@@ -61,51 +61,6 @@ const assetController = (repository) => {
       });
   };
 
-  const recordTrade = (allocationParams, fromAsset, toAsset) => {
-    let type = '';
-    let price = 0;
-    let filled = 0;
-    let market = '';
-    const tradingCoin = allocationParams.toCurrency;
-    switch (tradingCoin) {
-      case 'BTC':
-      case 'ETH':
-      case 'USDT':
-        type = 'sell';
-        market = tradingCoin;
-        price = allocationParams.fromAmount / allocationParams.toAmount;
-        filled = allocationParams.fromAmount;
-        break;
-      default:
-        type = 'buy';
-        market = allocationParams.fromCurrency;
-        price = allocationParams.fromAmount / allocationParams.toAmount;
-        filled = allocationParams.toAmount;
-        break;
-    }
-
-    const trade = {
-      transactionDate: allocationParams.selectedDate,
-      source: allocationParams.selectedExchange,
-      pair: `${allocationParams.fromCurrency}-${allocationParams.toCurrency}`,
-      fromAssetId: fromAsset.id,
-      fromCurrency: fromAsset.currency,
-      fromAmount: allocationParams.fromAmount,
-      toAssetId: toAsset.id,
-      toCurrency: toAsset.currency,
-      toAmount: allocationParams.toAmount,
-      type,
-      price,
-      filled,
-      fee: allocationParams.feeAmount,
-      feeCurrency: allocationParams.feeCurrency,
-      totalPrice: price * filled,
-      market,
-      portfolioId: allocationParams.portfolioId,
-    };
-
-    return repository.create({ modelName: 'Trade', newObject: trade });
-  };
 
   const allocateAsset = async (req, res) => {
     try {
@@ -168,14 +123,16 @@ const assetController = (repository) => {
         };
         await repository.update({ modelName, updatedRecord: updatedAsset });
       }
-      const trade = await recordTrade(allocationParams, fromAsset, toAsset);
+      // const trade = await recordTrade(allocationParams, fromAsset, toAsset);
       const assets = await repository.find({
         modelName,
         options: { where: { portfolioId: allocationParams.portfolioId } },
       });
 
       return res.status(200).send({
-        trade,
+        // trade,
+        fromAsset,
+        toAsset,
         assets,
       });
     } catch (error) {

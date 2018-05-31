@@ -14,6 +14,7 @@ import NotificationStore from './NotificationStore';
 import AssetStore from './AssetStore';
 
 class PortfolioStore {
+  @observable fethingPortfolios;
   @observable portfolios;
   @observable selectedPortfolio;
   @observable selectedPortfolioId;
@@ -25,6 +26,7 @@ class PortfolioStore {
 
   constructor() {
     this.portfolios = [];
+    this.fethingPortfolios = false;
     this.selectedPortfolio = null;
     this.selectedPortfolioId = 0;
     this.currentPortfolioAssets = [];
@@ -505,7 +507,7 @@ class PortfolioStore {
     const { newPortfolioName } = this;
     const { portfolios } = this;
     let hasErrors = false;
-    if (portfolios) {
+    if (portfolios.length) {
       const result = this.portfolios.filter(x => x.name === newPortfolioName);
 
       if (result.length > 0) {
@@ -539,30 +541,35 @@ class PortfolioStore {
   selectPortfolio(id) {
     InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
     this.selectedPortfolioId = id;
-    this.portfolios.forEach((el) => {
-      // Returns only needed values from selected portfolio
-      if (el.id === id) {
-        this.selectedPortfolio = { ...el };
-        this.currentPortfolioAssets = el.assets;
-        this.currentPortfolioInvestors = el.investors;
-        this.currentPortfolioTransactions = el.transactions;
-        this.currentPortfolioTrades = el.trades;
-      }
-    });
+    if (this.portfolios.length) {
+      this.portfolios.forEach((el) => {
+        // Returns only needed values from selected portfolio
+        if (el.id === id) {
+          this.selectedPortfolio = { ...el };
+          this.currentPortfolioAssets = el.assets;
+          this.currentPortfolioInvestors = el.investors;
+          this.currentPortfolioTransactions = el.transactions;
+          this.currentPortfolioTrades = el.trades;
+        }
+      });
+    }
   }
 
   @action
   getPortfolios() {
+    this.fethingPortfolios = true;
     return new Promise((resolve, reject) => {
       requester.Portfolio.getAll()
         .then(action((result) => {
           this.portfolios = result.data;
+          this.fethingPortfolios = false;
           if (this.selectedPortfolioId > 0) {
             this.selectPortfolio(this.selectedPortfolioId);
           }
           resolve(true);
         }))
         .catch((err) => {
+          this.fethingPortfolios = false;
           console.log(err);
           reject(err);
         });

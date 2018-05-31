@@ -47,13 +47,14 @@ type Props = {
   InvestorStore: Object,
   NotificationStore: Object,
   PortfolioStore: Object,
+  MarketStore: Object
 };
 
 type State = {
   open: boolean,
 };
 
-@inject('InvestorStore', 'PortfolioStore', 'NotificationStore')
+@inject('InvestorStore', 'PortfolioStore', 'NotificationStore', 'MarketStore')
 @observer
 class CreatePortfolio extends React.Component<Props, State> {
   state = {
@@ -92,7 +93,7 @@ class CreatePortfolio extends React.Component<Props, State> {
 
   render() {
     const {
-      classes, InvestorStore, PortfolioStore, NotificationStore,
+      classes, InvestorStore, PortfolioStore, NotificationStore, MarketStore,
     } = this.props;
 
     return (
@@ -165,7 +166,8 @@ class CreatePortfolio extends React.Component<Props, State> {
               style={{ display: 'inline-flex', float: 'right' }}
               // onClick={this.handleSave}
               color="primary"
-              disabled={NotificationStore.getErrorsLength > 0 || PortfolioStore.newPortfolioName === ''}
+              disabled={NotificationStore.getErrorsLength > 0 || PortfolioStore.newPortfolioName === '' ||
+              (MarketStore.selectedBaseCurrency && InvestorStore.newInvestorValues.depositedAmount === '')}
 
               type="submit"
             >

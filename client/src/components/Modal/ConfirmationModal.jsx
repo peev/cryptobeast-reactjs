@@ -121,7 +121,7 @@ class ConfirmationModal extends React.Component<Props, State> {
                 color="primary"
               >
                 {' '}
-                Cancel
+                No
               </Button>
 
               {/* SAVE BUTTON */}
@@ -132,7 +132,7 @@ class ConfirmationModal extends React.Component<Props, State> {
                 type="submit"
               >
                 {' '}
-                Save
+                Yes
               </Button>
             </div>
           </ValidatorForm>

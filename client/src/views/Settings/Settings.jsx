@@ -70,6 +70,7 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
                 'Current share price',
                 'Total Amount',
                 '',
+                '',
               ]}
             />
           }

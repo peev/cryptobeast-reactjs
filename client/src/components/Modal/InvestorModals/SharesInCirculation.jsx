@@ -63,7 +63,7 @@ class SharesInCirculation extends React.Component<Props, State> {
     return (
       <Grid container>
         <InvestorCardButton onClick={this.handleOpen}>
-          <InvestorCard headerText={PortfolioStore.selectedPortfolioShares} labelText="Shares in Circulation" />
+          <InvestorCard headerText={PortfolioStore.selectedPortfolioShares || 0} labelText="Shares in Circulation" />
         </InvestorCardButton>
 
         <Modal

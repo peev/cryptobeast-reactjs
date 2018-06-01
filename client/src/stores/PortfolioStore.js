@@ -14,10 +14,11 @@ import NotificationStore from './NotificationStore';
 import AssetStore from './AssetStore';
 
 class PortfolioStore {
-  @observable fethingPortfolios;
+  @observable fetchingPortfolios;
   @observable portfolios;
   @observable selectedPortfolio;
   @observable selectedPortfolioId;
+  @observable selectedPortfolioShares;
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
@@ -26,9 +27,10 @@ class PortfolioStore {
 
   constructor() {
     this.portfolios = [];
-    this.fethingPortfolios = false;
+    this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
     this.selectedPortfolioId = 0;
+    this.selectedPortfolioShares = 0;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
@@ -54,15 +56,6 @@ class PortfolioStore {
       });
 
       return totalAmount.toFixed(2);
-    }
-
-    return 0;
-  }
-
-  @computed
-  get selectedPortfolioShares() {
-    if (this.selectedPortfolio) {
-      return Number(`${Math.round(`${this.selectedPortfolio.shares || 0}e2`)}e-2`);
     }
 
     return 0;
@@ -516,6 +509,7 @@ class PortfolioStore {
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {
         this.selectedPortfolioId = result.data.id;
+        this.selectedPortfolioShares = result.data.shares;
         InvestorStore.createDefaultInvestor(result.data.id);
         this.portfolios.push(result.data);
       }))
@@ -566,6 +560,7 @@ class PortfolioStore {
       this.portfolios.forEach((el) => {
         // Returns only needed values from selected portfolio
         if (el.id === id) {
+          this.selectedPortfolioShares = el.shares;
           this.selectedPortfolio = { ...el };
           this.currentPortfolioAssets = el.assets;
           this.currentPortfolioInvestors = el.investors;
@@ -578,19 +573,19 @@ class PortfolioStore {
 
   @action
   getPortfolios() {
-    this.fethingPortfolios = true;
+    this.fetchingPortfolios = true;
     return new Promise((resolve, reject) => {
       requester.Portfolio.getAll()
         .then(action((result) => {
           this.portfolios = result.data;
-          this.fethingPortfolios = false;
+          this.fetchingPortfolios = false;
           if (this.selectedPortfolioId > 0) {
             this.selectPortfolio(this.selectedPortfolioId);
           }
           resolve(true);
         }))
         .catch((err) => {
-          this.fethingPortfolios = false;
+          this.fetchingPortfolios = false;
           console.log(err);
           reject(err);
         });

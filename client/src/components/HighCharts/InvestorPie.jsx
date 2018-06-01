@@ -21,7 +21,7 @@ class InvestorPieChart extends Component<Props> {
     const pieData = investors.map((inv: Object) => {
       const invSharesWeight = (inv.purchasedShares / portfolioShares) * 100;
       return {
-        name: inv.fullName,
+        name: `${inv.fullName} (${inv.purchasedShares || 0})`,
         y: Number(`${Math.round(`${invSharesWeight}e2`)}e-2`),
       };
     });
@@ -37,7 +37,7 @@ class InvestorPieChart extends Component<Props> {
           id="total-consumption"
           name="Total Shares"
           data={pieData}
-          center={[200, 120]}
+          center={[200, 150]}
           size={255}
           tooltip={{ valueSuffix: '%' }}
           showInLegend

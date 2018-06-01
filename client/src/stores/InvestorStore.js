@@ -10,6 +10,7 @@ import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
 import NotificationStore from './NotificationStore';
+// import InvestorDeposit from '../components/Modal/InvestorModals/InvestorDeposit';
 
 class InvestorStore {
   @observable newInvestorValues;
@@ -271,7 +272,7 @@ class InvestorStore {
 
   @computed
   get individualProfit() {
-    if (this.selectedInvestor) {
+    if (this.selectedInvestorIndividualSummary) {
       let calculatedIndividualProfit = (PortfolioStore.currentPortfolioSharePrice - this.individualWeightedEntryPrice) /
         (this.individualWeightedEntryPrice || 1);
       calculatedIndividualProfit = Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`);
@@ -370,7 +371,6 @@ class InvestorStore {
       telephone: this.newInvestorValues.telephone,
       dateOfEntry: this.newInvestorValues.dateOfEntry || today,
       managementFee: this.newInvestorValues.managementFee,
-      purchasedShares: this.newInvestorValues.purchasedShares,
       portfolioId,
     };
 
@@ -390,13 +390,15 @@ class InvestorStore {
     };
 
     requester.Investor.add(newInvestor)
-      .then(action((investor) => {
-        PortfolioStore.currentPortfolioInvestors.push(investor.data);
-        Object.assign(depositData.transaction, { investorId: newInvestor.id });
+      .then(action((result) => {
+        const createdInvestor = result.data;
+        Object.assign(depositData.transaction, { investorId: createdInvestor.id });
         requester.Investor.addDeposit(depositData)
           .then(action((response) => {
+            createdInvestor.purchasedShares = response.data.shares;
+            PortfolioStore.currentPortfolioInvestors.push(createdInvestor);
             PortfolioStore.currentPortfolioTransactions.push(response.data);
-            PortfolioStore.selectedPortfolio.shares += response.data.shares;
+            PortfolioStore.selectedPortfolioShares += response.data.shares;
           }))
           .catch(err => console.log(err));
       }))
@@ -783,13 +785,15 @@ class InvestorStore {
     this.selectedInvestorIndividualSummaryId = id;
     // selects the marked investor
     // eslint-disable-next-line array-callback-return
-    PortfolioStore.currentPortfolioInvestors.find((element) => {
-      if (element.id === id) {
-        this.selectedInvestorIndividualSummary = {
-          ...element,
-        };
-      }
-    });
+    const selectedInvestor = PortfolioStore.currentPortfolioInvestors
+      .find(inv => inv.id === id);
+    if (selectedInvestor) {
+      this.selectedInvestorIndividualSummary = {
+        ...selectedInvestor,
+      };
+    } else {
+      this.selectedInvestorIndividualSummary = null;
+    }
 
     this.selectedInvestorIndividualSummaryTransactions = PortfolioStore.currentPortfolioTransactions
       .filter(t => t.investorId === id);

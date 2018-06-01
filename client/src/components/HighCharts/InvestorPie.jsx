@@ -1,3 +1,4 @@
+// @flow
 import React, { Component } from 'react';
 import Highcharts from 'highcharts';
 import {
@@ -8,28 +9,22 @@ import {
   PieSeries,
 } from 'react-jsx-highcharts';
 
-class InvestorPieChart extends Component {
-  state = {};
+type Props = {
+  investors: Array,
+  portfolioShares: Float,
+};
 
+class InvestorPieChart extends Component<Props> {
+  state = {};
   render() {
-    const pieData = [
-      {
-        name: 'Jane',
-        y: 17,
-      },
-      {
-        name: 'John',
-        y: 13,
-      },
-      {
-        name: 'Joe',
-        y: 20,
-      },
-      {
-        name: 'Ivan',
-        y: 50,
-      },
-    ];
+    const { investors, portfolioShares } = this.props;
+    const pieData = investors.map((inv: Object) => {
+      const invSharesWeight = (inv.purchasedShares / portfolioShares) * 100;
+      return {
+        name: inv.fullName,
+        y: Number(`${Math.round(`${invSharesWeight}e2`)}e-2`),
+      };
+    });
 
     return (
       <HighchartsChart>
@@ -42,7 +37,7 @@ class InvestorPieChart extends Component {
           id="total-consumption"
           name="Total Shares"
           data={pieData}
-          center={[300, 120]}
+          center={[200, 120]}
           size={255}
           tooltip={{ valueSuffix: '%' }}
           showInLegend

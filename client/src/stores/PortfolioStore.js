@@ -60,6 +60,15 @@ class PortfolioStore {
   }
 
   @computed
+  get selectedPortfolioShares() {
+    if (this.selectedPortfolio) {
+      return Number(`${Math.round(`${this.selectedPortfolio.shares || 0}e2`)}e-2`);
+    }
+
+    return 0;
+  }
+
+  @computed
   get summaryTotalProfitLoss() {
     if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
       const result = ((this.currentPortfolioCostInUSD - this.summaryTotalInvestmentInUSD) / this.summaryTotalInvestmentInUSD) * 100;
@@ -271,7 +280,7 @@ class PortfolioStore {
       const selectedPortfolioSummary = [];
 
       // Creates the needed array, that will be shown in the view
-      currentAssets.forEach((el, i) => {
+      currentAssets.forEach((el) => {
         const currentRow = [];
         Object.keys(el).forEach((prop, ind) => {
           // 1. Ticker

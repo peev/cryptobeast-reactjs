@@ -3,6 +3,7 @@ import React from 'react';
 import { withStyles, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
+import { inject, observer } from 'mobx-react';
 
 import InvestorCard from '../../CustomElements/InvestorCard';
 import Button from '../../CustomButtons/Button';
@@ -35,12 +36,15 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
+  PortfolioStore: Object,
 };
 
 type State = {
   open: boolean,
 };
 
+@inject('PortfolioStore')
+@observer
 class SharesInCirculation extends React.Component<Props, State> {
   state = {
     open: false,
@@ -54,12 +58,12 @@ class SharesInCirculation extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, PortfolioStore } = this.props;
 
     return (
       <Grid container>
         <InvestorCardButton onClick={this.handleOpen}>
-          <InvestorCard headerText="1180" labelText="Shares in Circulation" />
+          <InvestorCard headerText={PortfolioStore.selectedPortfolioShares} labelText="Shares in Circulation" />
         </InvestorCardButton>
 
         <Modal
@@ -83,7 +87,10 @@ class SharesInCirculation extends React.Component<Props, State> {
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
-                <InvestorPieChart />
+                <InvestorPieChart
+                  investors={PortfolioStore.currentPortfolioInvestors}
+                  portfolioShares={PortfolioStore.selectedPortfolioShares}
+                />
               </Grid>
 
               <Grid item xs={12} sm={12} md={12} >

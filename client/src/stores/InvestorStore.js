@@ -396,7 +396,7 @@ class InvestorStore {
         requester.Investor.addDeposit(depositData)
           .then(action((response) => {
             PortfolioStore.currentPortfolioTransactions.push(response.data);
-            PortfolioStore.selectedPortfolio.shares = response.data.shares;
+            PortfolioStore.selectedPortfolio.shares += response.data.shares;
           }))
           .catch(err => console.log(err));
       }))

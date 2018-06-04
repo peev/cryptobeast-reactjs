@@ -523,9 +523,18 @@ class PortfolioStore {
       const result = this.portfolios.filter(x => x.name === newPortfolioName);
 
       if (result.length > 0) {
-        NotificationStore.addMessage('errorMessages', 'Portfolio Name  already Exists');
+        NotificationStore.addMessage('errorMessages', 'Portfolio Name already Exists');
         hasErrors = true;
       }
+    }
+    if (MarketStore.selectedBaseCurrency && InvestorStore.newInvestorValues.depositedAmount === '') {
+      NotificationStore.addMessage('errorMessages', 'Please add investment amount');
+      hasErrors = true;
+    }
+
+    if (InvestorStore.newInvestorValues.depositedAmount && MarketStore.selectedBaseCurrency === null) {
+      NotificationStore.addMessage('errorMessages', 'Please select currency');
+      hasErrors = true;
     }
 
     return hasErrors;

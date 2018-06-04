@@ -67,6 +67,7 @@ class CreatePortfolio extends React.Component<Props, State> {
 
   handleClose = () => {
     this.props.PortfolioStore.resetPortfolio();
+    this.props.InvestorStore.reset();
     this.setState({ open: false });
   };
 
@@ -93,7 +94,7 @@ class CreatePortfolio extends React.Component<Props, State> {
 
   render() {
     const {
-      classes, InvestorStore, PortfolioStore, NotificationStore, MarketStore,
+      classes, InvestorStore, PortfolioStore, NotificationStore,
     } = this.props;
 
     return (
@@ -166,8 +167,7 @@ class CreatePortfolio extends React.Component<Props, State> {
               style={{ display: 'inline-flex', float: 'right' }}
               // onClick={this.handleSave}
               color="primary"
-              disabled={NotificationStore.getErrorsLength > 0 || PortfolioStore.newPortfolioName === '' ||
-              (MarketStore.selectedBaseCurrency && InvestorStore.newInvestorValues.depositedAmount === '')}
+              disabled={NotificationStore.getErrorsLength > 0 || PortfolioStore.newPortfolioName === ''}
 
               type="submit"
             >

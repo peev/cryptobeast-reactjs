@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 import SwipeableViews from 'react-swipeable-views';
+import { inject, observer } from 'mobx-react';
 import {
   Tabs,
   Tab,
@@ -48,12 +49,15 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
+  Analytics: Object,
 };
 
 type State = {
   value: ?number,
 };
 
+@inject('Analytics')
+@observer
 class SummaryTabs extends React.Component<Props, State> {
   state = {
     value: 0,
@@ -62,6 +66,11 @@ class SummaryTabs extends React.Component<Props, State> {
   handleChange = (event: SyntheticEvent, value: number) => {
     this.setState({ value });
   };
+
+  componentDidMount() {
+    this.props.Analytics.getPortfolioPriceHistory();
+  }
+
   render() {
     const { classes } = this.props;
     const centered = true;

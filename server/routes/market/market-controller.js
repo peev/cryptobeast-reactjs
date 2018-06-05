@@ -128,6 +128,16 @@ const marketController = (repository) => {
       });
   };
 
+  const getBaseTickersHistory = (req, res) => {
+    repository.find({ modelName: 'TickerHistory', options: { where: { pair: ['USD'] } } })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   return {
     syncSummariesOnRequest,
     getSummaries,
@@ -139,6 +149,7 @@ const marketController = (repository) => {
     getAllMarketPriceHistory,
     getAllCurrencies,
     syncTickersFromKrakenOnRequest,
+    getBaseTickersHistory,
   };
 };
 

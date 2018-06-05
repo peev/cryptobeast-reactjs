@@ -142,7 +142,10 @@ class Analytics {
 
       return currentArray.map((el) => {
         const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
-        return [timeOfCreation, el.price, null];
+        const usdEquivalent = el.price * MarketStore.baseCurrencies[3].last;
+        const usdEquivalentRounded = Number(`${Math.round(`${usdEquivalent}e2`)}e-2`);
+
+        return [timeOfCreation, usdEquivalentRounded, null];
       });
     }
 

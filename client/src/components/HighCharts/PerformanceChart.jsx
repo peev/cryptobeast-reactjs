@@ -2,6 +2,8 @@
 import React from 'react';
 import { withStyles } from 'material-ui';
 import Highcharts from 'highcharts/highstock';
+import { inject, observer } from 'mobx-react';
+
 import {
   HighchartsStockChart,
   Chart,
@@ -43,14 +45,21 @@ const createRandomData = (time: Date, magnitude: number) => {
 
 type Props = {
   classes: Object,
+  Analytics: Object,
+  PortfolioStore: Object,
+  MarketStore: Object,
 };
 
-const PerformanceChart = (props: Props) => {
-  const { classes } = props;
+const PerformanceChart = inject('Analytics', 'PortfolioStore', 'MarketStore')(observer(({ ...props }: Props) => {
+  const { classes, Analytics, PortfolioStore, MarketStore } = props;
   const now = Date.now();
-  const data = createRandomData(now, 1e8);
+  const data = Analytics.currentPortfolioPriceHistoryBreakdown
+    .map((ph: Array) => [ph[0], ph[1], null]);
 
-  const data2 = createRandomData(now, 1e8);
+  
+  const data2 = createRandomData(now, 1);
+
+  console.log('>>> MarketStore', MarketStore.marketPriceHistory);
 
   return (
     <HighchartsStockChart className={classes.container}>
@@ -67,12 +76,12 @@ const PerformanceChart = (props: Props) => {
         <RangeSelector.Button type="all">All</RangeSelector.Button>
       </RangeSelector>
 
-      <Tooltip valueSuffix="%" shared />
+      <Tooltip valueSuffix="$" shared />
       <XAxis />
 
       <YAxis id="price" opposite >
-        <YAxis.Title>%</YAxis.Title>
-        <SplineSeries id="portfolio" name="Basic Portfolio" data={data} />
+        <YAxis.Title>USD</YAxis.Title>
+        <SplineSeries id="portfolio" name={PortfolioStore.selectedPortfolio ? PortfolioStore.selectedPortfolio.name : ''} data={data} />
         <SplineSeries id="BTC" name="BTC" data={data2} />
       </YAxis>
 
@@ -82,6 +91,6 @@ const PerformanceChart = (props: Props) => {
       </Navigator>
     </HighchartsStockChart>
   );
-};
+}));
 
 export default withStyles(styles)(withHighcharts(PerformanceChart, Highcharts));

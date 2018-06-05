@@ -35,6 +35,9 @@ const attachTo = (app, data) => {
     .get('/allCurrencies', (req, res) => {
       return marketController.getAllCurrencies(req, res);
     })
+    .get('/tickersHistory', (req, res) => {
+      return marketController.getBaseTickersHistory(req, res);
+    });
 
   app.use('/market', router);
 };

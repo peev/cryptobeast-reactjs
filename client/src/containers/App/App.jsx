@@ -40,9 +40,9 @@ class App extends React.Component<Props> {
 
   render() {
     const { classes, PortfolioStore, UserStore, children, ...rest } = this.props;
-    const { fethingPortfolios } = PortfolioStore;
+    const { fetchingPortfolios } = PortfolioStore;
 
-    if (fethingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
+    if (fetchingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
 
     return (
       <div>

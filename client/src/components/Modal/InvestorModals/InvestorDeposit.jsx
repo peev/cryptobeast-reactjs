@@ -12,8 +12,8 @@ import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 
 const getModalStyle = () => {
-  const top = 20;
-  const left = 28;
+  const top = 35;
+  const left = 35;
   return {
     top: `${top}%`,
     left: `${left}%`,
@@ -25,8 +25,8 @@ const styles = (theme: Object) => ({
     position: 'absolute',
     minWidth: '100px',
     backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4,
+    boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
+    padding: '40px',
   },
   containerDirection: {
     display: 'flex',
@@ -45,6 +45,10 @@ const styles = (theme: Object) => ({
   },
   alignBtn: {
     marginRight: '20px',
+  },
+  inputWrapper: {
+    marginTop: '15px',
+    width: '200px',
   },
 });
 
@@ -151,6 +155,7 @@ class InvestorDeposit extends React.Component<Props, State> {
 
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+              <div className={classes.inputWrapper}>
                 <SelectInvestor
                   value={InvestorStore.selectedInvestorId || ''}
                   handleChange={this.handleSelectInvestor}
@@ -162,8 +167,10 @@ class InvestorDeposit extends React.Component<Props, State> {
                     borderBottom: '1px solid #757575',
                 }}
                 />
+              </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+              <div className={classes.inputWrapper}>
                 <TextValidator
                   name="date"
                   type="date"
@@ -174,10 +181,12 @@ class InvestorDeposit extends React.Component<Props, State> {
                   validators={['required', 'isDateValid']}
                   errorMessages={['this field is required', 'Date must be before today']}
                 />
+              </div>
               </Grid>
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+              <div className={classes.inputWrapper}>
                 <TextValidator
                   name="amount"
                   type="number"
@@ -189,14 +198,18 @@ class InvestorDeposit extends React.Component<Props, State> {
                   validators={['required', 'isPositive']}
                   errorMessages={['this field is required', 'value must be a positive number']}
                 />
+              </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+              <div className={classes.inputWrapper}>
                 <SelectBaseCurrency />
+              </div>
               </Grid>
             </Grid>
 
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+              <div className={classes.inputWrapper}>
                 <TextValidator
                   disabled
                   name="share price"
@@ -205,8 +218,10 @@ class InvestorDeposit extends React.Component<Props, State> {
                   value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
                   style={{ width: '95%' }}
                 />
+              </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+              <div className={classes.inputWrapper}>
                 <TextValidator
                   disabled
                   name="purchased shares"
@@ -214,6 +229,7 @@ class InvestorDeposit extends React.Component<Props, State> {
                   style={{ marginTop: '26px' }}
                   value={InvestorStore.depositPurchasedShares || ''}
                 />
+              </div>
               </Grid>
             </Grid>
 

@@ -67,10 +67,6 @@ class SummaryTabs extends React.Component<Props, State> {
     this.setState({ value });
   };
 
-  componentDidMount() {
-    this.props.Analytics.getPortfolioPriceHistory();
-  }
-
   render() {
     const { classes } = this.props;
     const centered = true;

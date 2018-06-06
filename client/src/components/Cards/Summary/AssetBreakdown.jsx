@@ -37,12 +37,17 @@ const styles = () => ({
 type Props = {
   classes: Object,
   PortfolioStore: Object,
+  Analytics: Object,
 };
 
-@inject('PortfolioStore')
+@inject('PortfolioStore', 'Analytics')
 @observer
 class AssetBreakdown extends React.Component<Props> {
   state = {};
+
+  componentDidMount() {
+    this.props.Analytics.getPortfolioPriceHistory();
+  }
 
   render() {
     const { classes, PortfolioStore } = this.props;

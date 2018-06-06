@@ -35,10 +35,26 @@ type Props = {
 
 const PerformanceChart = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: Props) => {
   const { classes, Analytics, PortfolioStore } = props;
+  const initialPortfolioCost = Analytics.currentPortfolioPriceHistoryBreakdown[0][1];
   const data = Analytics.currentPortfolioPriceHistoryBreakdown
-    .map((ph: Array) => [ph[0], ph[1], null]);
-  const data2 = Analytics.currentPortfolioBTCPriceHistory
-    .map((ph: Array) => [ph[0], ph[1], null]);
+    .map((ph: Array, i: Integer) => {
+      const currentPrice = ph[1];
+      const change = i > 0 ? (((currentPrice - initialPortfolioCost) / initialPortfolioCost) * 100) : 0;
+      const value = Number(`${Math.round(`${change}e2`)}e-2`);
+      return [ph[0], value, null];
+    });
+
+  let data2;
+  if (Analytics.currentPortfolioBTCPriceHistory.length > 0) {
+    const initialBtcPrice = Analytics.currentPortfolioBTCPriceHistory[0][1];
+    data2 = Analytics.currentPortfolioBTCPriceHistory
+      .map((ph: Array, i: Integer) => {
+        const currentPrice = ph[1];
+        const change = i > 0 ? (((currentPrice - initialBtcPrice) / initialBtcPrice) * 100) : 0;
+        const value = Number(`${Math.round(`${change}e2`)}e-2`);
+        return [ph[0], value, null];
+      });
+  }
 
   return (
     <HighchartsStockChart className={classes.container}>
@@ -55,11 +71,11 @@ const PerformanceChart = inject('Analytics', 'PortfolioStore')(observer(({ ...pr
         <RangeSelector.Button type="all">All</RangeSelector.Button>
       </RangeSelector>
 
-      <Tooltip valueSuffix="$" shared />
+      <Tooltip valueSuffix="%" shared />
       <XAxis />
 
       <YAxis id="price" opposite >
-        <YAxis.Title>USD</YAxis.Title>
+        <YAxis.Title>%</YAxis.Title>
         <SplineSeries id="portfolio" name={PortfolioStore.selectedPortfolio ? PortfolioStore.selectedPortfolio.name : ''} data={data} />
         <SplineSeries id="BTC" name="BTC" data={data2} />
       </YAxis>

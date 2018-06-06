@@ -7,20 +7,21 @@ const createConnection = (dbName, dbUser, dbPass) => new Sequelize(dbName, dbUse
   dialect: 'postgres',
 });
 
-const init = (databaseConfig) => new Promise((resolve, reject) => {
+const init = databaseConfig => new Promise((resolve) => {
   const dbName = databaseConfig.name;
   const dbUser = databaseConfig.user;
   const dbPass = databaseConfig.password;
-  const testconnection = createConnection(dbName, dbUser, dbPass);
+  const testConnection = createConnection(dbName, dbUser, dbPass);
 
-  testconnection.query(`CREATE DATABASE ${dbName} WITH OWNER = ${dbUser}`)
+  testConnection.query(`CREATE DATABASE ${dbName} WITH OWNER = ${dbUser}`)
     .then(() => {
       console.log('Database created.'.green);
     })
-    .catch((err) => {
+    .catch(() => {
       console.log('Database already exists.'.grey);
-    }).then(() => {
-      testconnection.close();
+    })
+    .then(() => {
+      testConnection.close();
       const sequelize = createConnection(dbName, dbUser, dbPass);
       const db = {};
 

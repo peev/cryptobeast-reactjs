@@ -5,12 +5,14 @@ import MarketStore from './MarketStore';
 
 class Analytics {
   @observable currentPortfolioPriceHistoryAll;
+  @observable currentPortfolioBTCPriceHistory;
   @observable currentPortfolioClosingSharePrices;
   @observable currentPortfolioPriceHistoryForPeriod;
   @observable selectedTimeInPerformance;
 
   constructor() {
     this.currentPortfolioPriceHistoryAll = [];
+    this.currentPortfolioBTCPriceHistory = [];
     this.currentPortfolioClosingSharePrices = [];
     this.currentPortfolioPriceHistoryForPeriod = [];
     this.selectedTimeInPerformance = '';
@@ -29,7 +31,6 @@ class Analytics {
 
     return 0;
   }
-
 
   @computed
   get performanceMax() {
@@ -172,14 +173,31 @@ class Analytics {
   }
 
   @action.bound
+  getCurrentPortfolioBTCPriceHistoryForPeriod(portfolioPriceHistory) {
+    const toDate = portfolioPriceHistory[0].createdAt;
+    const fromDate = portfolioPriceHistory[portfolioPriceHistory.length - 1].createdAt;
+    requester.Market.getBaseTickerHistory({ fromDate, toDate })
+      .then(action((response) => {
+        const convertedData = response.data
+          .map((el) => {
+            const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
+            return [timeOfCreation, el.last, null];
+          });
+        this.currentPortfolioBTCPriceHistory = convertedData;
+      }));
+  }
+
+  @action.bound
   getPortfolioPriceHistory() {
     const searchedHistoryItems = {
       portfolioId: PortfolioStore.selectedPortfolioId,
     };
-
     requester.Portfolio.getPriceHistory(searchedHistoryItems)
       .then(action((result) => {
         this.currentPortfolioPriceHistoryAll = result.data;
+        if (result.data.length > 0) {
+          this.getCurrentPortfolioBTCPriceHistoryForPeriod(result.data);
+        }
       }));
   }
 

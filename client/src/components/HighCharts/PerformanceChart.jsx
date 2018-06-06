@@ -26,23 +26,6 @@ const styles = () => ({
   },
 });
 
-
-const createDataPoint = (
-  time: Date = Date.now(), // Argument: Type = DefaultValue
-  magnitude: number = 100, // Argument: Type = DefaultValue
-  offset: number = 0, // Argument: Type = DefaultValue
-) => [time + (offset * magnitude), Math.round(Math.random() * 20 * 2) / 2];
-
-
-const createRandomData = (time: Date, magnitude: number) => {
-  const data = [];
-
-  for (let i = 0; i <= 100; i++) { // eslint-disable-line
-    data.push(createDataPoint(time, magnitude, i));
-  }
-  return data;
-};
-
 type Props = {
   classes: Object,
   Analytics: Object,
@@ -50,16 +33,12 @@ type Props = {
   MarketStore: Object,
 };
 
-const PerformanceChart = inject('Analytics', 'PortfolioStore', 'MarketStore')(observer(({ ...props }: Props) => {
-  const { classes, Analytics, PortfolioStore, MarketStore } = props;
-  const now = Date.now();
+const PerformanceChart = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: Props) => {
+  const { classes, Analytics, PortfolioStore } = props;
   const data = Analytics.currentPortfolioPriceHistoryBreakdown
     .map((ph: Array) => [ph[0], ph[1], null]);
-
-  
-  const data2 = createRandomData(now, 1);
-
-  console.log('>>> MarketStore', MarketStore.marketPriceHistory);
+  const data2 = Analytics.currentPortfolioBTCPriceHistory
+    .map((ph: Array) => [ph[0], ph[1], null]);
 
   return (
     <HighchartsStockChart className={classes.container}>

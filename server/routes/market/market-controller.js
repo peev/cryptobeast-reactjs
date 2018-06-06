@@ -129,7 +129,13 @@ const marketController = (repository) => {
   };
 
   const getBaseTickersHistory = (req, res) => {
-    repository.find({ modelName: 'TickerHistory', options: { where: { pair: ['USD'] } } })
+    const { fromDate } = req.body;
+    const { toDate } = req.body;
+    const query = `select * from public.ticker_history 
+                   where "pair" = 'USD' 
+                   and CAST("createdAt" as VarChar) like '%00:0%'::text
+                   and "createdAt" between '${fromDate}' and '${toDate}'`;
+    repository.rawQuery({ query })
       .then((response) => {
         res.status(200).send(response);
       })

@@ -15,10 +15,11 @@ import AssetStore from './AssetStore';
 import Analytics from './Analytics';
 
 class PortfolioStore {
-  @observable fethingPortfolios;
+  @observable fetchingPortfolios;
   @observable portfolios;
   @observable selectedPortfolio;
   @observable selectedPortfolioId;
+  @observable selectedPortfolioShares;
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
@@ -27,9 +28,10 @@ class PortfolioStore {
 
   constructor() {
     this.portfolios = [];
-    this.fethingPortfolios = false;
+    this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
     this.selectedPortfolioId = 0;
+    this.selectedPortfolioShares = 0;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
@@ -272,7 +274,7 @@ class PortfolioStore {
       const selectedPortfolioSummary = [];
 
       // Creates the needed array, that will be shown in the view
-      currentAssets.forEach((el, i) => {
+      currentAssets.forEach((el) => {
         const currentRow = [];
         Object.keys(el).forEach((prop, ind) => {
           // 1. Ticker
@@ -508,6 +510,7 @@ class PortfolioStore {
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {
         this.selectedPortfolioId = result.data.id;
+        this.selectedPortfolioShares = result.data.shares;
         InvestorStore.createDefaultInvestor(result.data.id);
         this.portfolios.push(result.data);
       }))
@@ -524,9 +527,18 @@ class PortfolioStore {
       const result = this.portfolios.filter(x => x.name === newPortfolioName);
 
       if (result.length > 0) {
-        NotificationStore.addMessage('errorMessages', 'Portfolio Name  already Exists');
+        NotificationStore.addMessage('errorMessages', 'Portfolio Name already Exists');
         hasErrors = true;
       }
+    }
+    if (MarketStore.selectedBaseCurrency && InvestorStore.newInvestorValues.depositedAmount === '') {
+      NotificationStore.addMessage('errorMessages', 'Please add investment amount');
+      hasErrors = true;
+    }
+
+    if (InvestorStore.newInvestorValues.depositedAmount && MarketStore.selectedBaseCurrency === null) {
+      NotificationStore.addMessage('errorMessages', 'Please select currency');
+      hasErrors = true;
     }
 
     return hasErrors;
@@ -558,6 +570,7 @@ class PortfolioStore {
       this.portfolios.forEach((el) => {
         // Returns only needed values from selected portfolio
         if (el.id === id) {
+          this.selectedPortfolioShares = el.shares;
           this.selectedPortfolio = { ...el };
           this.currentPortfolioAssets = el.assets;
           this.currentPortfolioInvestors = el.investors;
@@ -570,19 +583,19 @@ class PortfolioStore {
 
   @action
   getPortfolios() {
-    this.fethingPortfolios = true;
+    this.fetchingPortfolios = true;
     return new Promise((resolve, reject) => {
       requester.Portfolio.getAll()
         .then(action((result) => {
           this.portfolios = result.data;
-          this.fethingPortfolios = false;
+          this.fetchingPortfolios = false;
           if (this.selectedPortfolioId > 0) {
             this.selectPortfolio(this.selectedPortfolioId);
           }
           resolve(true);
         }))
         .catch((err) => {
-          this.fethingPortfolios = false;
+          this.fetchingPortfolios = false;
           console.log(err);
           reject(err);
         });

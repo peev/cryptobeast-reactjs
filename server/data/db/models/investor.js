@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     isFounder: {
-      type: DataTypes.BOOLEAN
+      type: DataTypes.BOOLEAN,
     },
     managementFee: {
       type: DataTypes.DOUBLE,

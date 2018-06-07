@@ -131,7 +131,7 @@ class InvestorWithdraw extends React.Component<Props, State> {
     const today = new Date().toISOString().substring(0, 10);
     return (
       <Grid container>
-        <Button onClick={this.handleOpen} color="primary">
+        <Button onClick={this.handleOpen} color="primary" style={{ fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}>
           Investor Withdrawal
         </Button>
 

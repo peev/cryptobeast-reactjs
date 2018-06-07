@@ -123,6 +123,7 @@ class InvestorDeposit extends React.Component<Props, State> {
         <Button
           onClick={this.handleOpen}
           color="primary"
+          style={{ fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}
         >
           Investor Deposit
         </Button>

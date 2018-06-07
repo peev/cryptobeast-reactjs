@@ -99,7 +99,7 @@ class EditInvestor extends React.Component<Props, State> {
 
     return (
       <Grid container>
-        <Button onClick={this.handleOpen} color="primary">
+        <Button onClick={this.handleOpen} color="primary" style={{ fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}>
           Edit Investor
         </Button>
 

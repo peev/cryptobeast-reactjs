@@ -36,6 +36,7 @@ const styles = () => ({
     marginTop: '25px',
   },
   alignInputAfter: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     width: '95%',
     marginTop: '5px',
   },
@@ -136,7 +137,7 @@ class AssetAllocation extends React.Component<Props> {
                 <TextValidator
                   name="date"
                   type="date"
-                  style={{ marginTop: '21px', width: '95%' }}
+                  style={{ marginTop: '21px', width: '95%'}}
                   value={AssetStore.assetAllocationSelectedDate || today}
                   onChange={this.handleRequests('assetAllocationSelectedDate')}
                   validators={['required']}

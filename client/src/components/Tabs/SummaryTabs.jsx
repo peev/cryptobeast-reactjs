@@ -34,6 +34,7 @@ const styles = () => ({
     },
   },
   tabItem: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     width: '50%',
     height: '41px',
     minHeight: '41px',

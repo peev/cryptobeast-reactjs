@@ -92,8 +92,8 @@ const Trending = inject('PortfolioStore')(observer(({ ...props }: Props) => {
         if (ind > 0) {
           return (
             <TableCell className={classes.tableCell} key={uuid()} >
-              <UpArrowIcon className={classes.upArrow} />
-              <p className={classes.change}> {`${item}%`}</p>
+              {item ? <UpArrowIcon className={classes.upArrow} /> : ''}
+              <p className={classes.change}> {item ? `${item}%` : 'n/a'}</p>
             </TableCell>
           );
         }
@@ -113,8 +113,8 @@ const Trending = inject('PortfolioStore')(observer(({ ...props }: Props) => {
         if (ind > 0) {
           return (
             <TableCell className={classes.tableCell} key={uuid()} >
-              <DownArrowIcon className={classes.downArrow} />
-              <p className={classes.change}> {`${item}%`}</p>
+              {item ? <DownArrowIcon className={classes.downArrow} /> : ''}
+              <p className={classes.change}> {item ? `${item}%` : 'n/a'}</p>
             </TableCell>
           );
         }

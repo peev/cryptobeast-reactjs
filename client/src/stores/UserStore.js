@@ -76,7 +76,7 @@ class UserStore {
 
     requester.User.updateClosingTime(newClosingTime)
       .then((result) => {
-        console.log(result);
+        console.log(result); // eslint-disable-line
       });
   }
 }

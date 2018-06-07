@@ -5,9 +5,9 @@ const { coinMarketCapServices } = require('../integrations/coinMarketCap-service
 
 const marketService = (repository) => {
   const syncSummaries = async () => {
-    const newSummaries = await bittrexServices().getSummaries();    
+    const newSummaries = await bittrexServices().getSummaries();
     await repository.removeAll({ modelName: 'MarketSummary' });
-    
+
     return repository.createMany({ modelName: 'MarketSummary', newObjects: newSummaries });
   }
 
@@ -39,17 +39,17 @@ const marketService = (repository) => {
   const syncTickersFromKraken = async (currenciesToGet) => {
     const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
     await repository.removeAll({ modelName: 'Ticker' });
- 
+
     return repository.createMany({ modelName: 'Ticker', newObjects: currentTickerPairs });
   }
 
   const saveTickersFromKrakenToHistory = async (currenciesToGet) => {
     const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
-    
+
     return repository.createMany({ modelName: 'TickerHistory', newObjects: currentTickerPairs });
   }
 
-  const syncTickersFromCoinMarketCap = async (convertCurrency) => {
+  const syncTickersFromCoinMarketCap = async (convertCurrency = 'BTC') => {
     const tickers = await coinMarketCapServices().getTickers(convertCurrency);
 
     await repository.removeAll({ modelName: 'MarketPriceHistory' });

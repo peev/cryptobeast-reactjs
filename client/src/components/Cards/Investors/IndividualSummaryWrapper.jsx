@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react';
 import IndividualSummary from './IndividualSummary';
 import { RegularCard } from './../../../components';
 import AllInvestorTable from './../../CustomTables/Investors/AllInvestorTable';
-import ExportPdfButton from './../../CustomButtons/ExportPdfButton';
+// import ExportPdfButton from './../../CustomButtons/ExportPdfButton';
 
 const styles = () => ({
   tablePosition: {
@@ -49,7 +49,7 @@ class IndividualSummaryWrapper extends Component<Props> {
     return (
       <RegularCard
         cardTitle="INDIVIDUAL SUMMARY"
-        button={<ExportPdfButton />}
+        // button={<ExportPdfButton />}
         content={
           <div>
             <IndividualSummary />

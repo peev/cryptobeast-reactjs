@@ -3,6 +3,7 @@ import React from 'react';
 import uuid from 'uuid/v4';
 import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
+import { withRouter } from 'react-router';
 import {
   withStyles,
   Drawer,
@@ -35,8 +36,6 @@ const Sidebar = ({ ...props }: Props) => {
   const links = (
     <List className={classes.list}>
       {routes.map((prop: Object) => {
-        if (prop.redirect) return null;
-
         const listItemClasses = cx({
           [` ${classes[color]}`]: activeRoute(prop.path),
         });
@@ -52,7 +51,11 @@ const Sidebar = ({ ...props }: Props) => {
             activeClassName="active"
             key={uuid()}
           >
-            <ListItem button className={classes.itemLink + listItemClasses}>
+            <ListItem
+              button
+              className={classes.itemLink + listItemClasses}
+              disabled={disabled}
+            >
               <ListItemIcon className={classes.itemIcon + whiteFontClasses}>
                 <prop.icon />
               </ListItemIcon>
@@ -111,4 +114,4 @@ const Sidebar = ({ ...props }: Props) => {
   );
 };
 
-export default withStyles(sidebarStyle)(Sidebar);
+export default withStyles(sidebarStyle)(withRouter(Sidebar));

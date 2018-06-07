@@ -14,9 +14,11 @@ import NotificationStore from './NotificationStore';
 import AssetStore from './AssetStore';
 
 class PortfolioStore {
+  @observable fetchingPortfolios;
   @observable portfolios;
   @observable selectedPortfolio;
   @observable selectedPortfolioId;
+  @observable selectedPortfolioShares;
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
@@ -25,8 +27,10 @@ class PortfolioStore {
 
   constructor() {
     this.portfolios = [];
+    this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
     this.selectedPortfolioId = 0;
+    this.selectedPortfolioShares = 0;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
@@ -191,9 +195,8 @@ class PortfolioStore {
 
   @action.bound
   deleteTrade(trade) {
-    console.log('*** remove trade', trade);
-    const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
-      this.selectedExchangeAssetAllocation :
+    const selectedExchange = AssetStore.selectedExchangeAssetAllocation !== '' ?
+      AssetStore.selectedExchangeAssetAllocation :
       'Manually Added';
     const newAssetAllocation = {
       selectedExchange,
@@ -264,12 +267,13 @@ class PortfolioStore {
       this.currentPortfolioAssets.length > 0 &&
       MarketStore.baseCurrencies.length > 0 &&
       MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
+      const { marketPriceHistory } = MarketStore;
       const currentAssets = this.groupedCurrentPortfolioAssets;
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
       const selectedPortfolioSummary = [];
 
       // Creates the needed array, that will be shown in the view
-      currentAssets.forEach((el, i) => {
+      currentAssets.forEach((el) => {
         const currentRow = [];
         Object.keys(el).forEach((prop, ind) => {
           // 1. Ticker
@@ -347,11 +351,7 @@ class PortfolioStore {
             let changeFromYesterday;
             switch (currentRow[0]) {
               case 'USD':
-                changeFromYesterday = 'n/a';
-                break;
               case 'EUR':
-                changeFromYesterday = 'n/a';
-                break;
               case 'JPY':
                 changeFromYesterday = 'n/a';
                 break;
@@ -377,7 +377,23 @@ class PortfolioStore {
           // 8. 7D Change
           if (ind === 7) {
             // FIXME: add real value
-            currentRow.push(12.54 + i);
+            switch (currentRow[0]) {
+              case 'USD':
+              case 'EUR':
+              case 'JPY':
+                currentRow.push('n/a');
+                break;
+              case 'BTC':
+                currentRow.push(0);
+                break;
+              default:
+                if (marketPriceHistory[currentRow[0]]) {
+                  currentRow.push(marketPriceHistory[currentRow[0]].percentChangeFor7d);
+                } else {
+                  currentRow.push('n/a');
+                }
+                break;
+            }
           }
         });
 
@@ -493,6 +509,7 @@ class PortfolioStore {
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {
         this.selectedPortfolioId = result.data.id;
+        this.selectedPortfolioShares = result.data.shares;
         InvestorStore.createDefaultInvestor(result.data.id);
         this.portfolios.push(result.data);
       }))
@@ -505,13 +522,22 @@ class PortfolioStore {
     const { newPortfolioName } = this;
     const { portfolios } = this;
     let hasErrors = false;
-    if (portfolios) {
+    if (portfolios.length) {
       const result = this.portfolios.filter(x => x.name === newPortfolioName);
 
       if (result.length > 0) {
-        NotificationStore.addMessage('errorMessages', 'Portfolio Name  already Exists');
+        NotificationStore.addMessage('errorMessages', 'Portfolio Name already Exists');
         hasErrors = true;
       }
+    }
+    if (MarketStore.selectedBaseCurrency && InvestorStore.newInvestorValues.depositedAmount === '') {
+      NotificationStore.addMessage('errorMessages', 'Please add investment amount');
+      hasErrors = true;
+    }
+
+    if (InvestorStore.newInvestorValues.depositedAmount && MarketStore.selectedBaseCurrency === null) {
+      NotificationStore.addMessage('errorMessages', 'Please select currency');
+      hasErrors = true;
     }
 
     return hasErrors;
@@ -539,30 +565,36 @@ class PortfolioStore {
   selectPortfolio(id) {
     InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
     this.selectedPortfolioId = id;
-    this.portfolios.forEach((el) => {
-      // Returns only needed values from selected portfolio
-      if (el.id === id) {
-        this.selectedPortfolio = { ...el };
-        this.currentPortfolioAssets = el.assets;
-        this.currentPortfolioInvestors = el.investors;
-        this.currentPortfolioTransactions = el.transactions;
-        this.currentPortfolioTrades = el.trades;
-      }
-    });
+    if (this.portfolios.length) {
+      this.portfolios.forEach((el) => {
+        // Returns only needed values from selected portfolio
+        if (el.id === id) {
+          this.selectedPortfolioShares = el.shares;
+          this.selectedPortfolio = { ...el };
+          this.currentPortfolioAssets = el.assets;
+          this.currentPortfolioInvestors = el.investors;
+          this.currentPortfolioTransactions = el.transactions;
+          this.currentPortfolioTrades = el.trades;
+        }
+      });
+    }
   }
 
   @action
   getPortfolios() {
+    this.fetchingPortfolios = true;
     return new Promise((resolve, reject) => {
       requester.Portfolio.getAll()
         .then(action((result) => {
           this.portfolios = result.data;
+          this.fetchingPortfolios = false;
           if (this.selectedPortfolioId > 0) {
             this.selectPortfolio(this.selectedPortfolioId);
           }
           resolve(true);
         }))
         .catch((err) => {
+          this.fetchingPortfolios = false;
           console.log(err);
           reject(err);
         });

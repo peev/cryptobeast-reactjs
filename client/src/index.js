@@ -6,8 +6,12 @@ import { Provider } from 'mobx-react';
 import uuid from 'uuid/v4';
 
 import './assets/css/material-dashboard-react.css';
-import indexRoutes from './routes/index';
+// import indexRoutes from './routes/index';
+import appRoutes from './routes/app';
 import history from './services/History';
+import CustomRoute from './components/CustomRoute';
+import App from './containers/App/App';
+import CreatePortfolioView from './views/CreatePortfolio/Index';
 
 import PortfolioStore from './stores/PortfolioStore';
 import AssetStore from './stores/AssetStore';
@@ -38,9 +42,16 @@ configure({ enforceActions: true });
 ReactDOM.render(
   <Provider {...stores}>
     <Router history={history}>
-      <Switch>
-        {indexRoutes.map(route => <Route path={route.path} component={route.component} key={uuid()} />)}
-      </Switch>
+      <Route
+        render={props => (
+          <App {...props} >
+            <Switch>
+              {appRoutes.map(route => <CustomRoute path={route.path} component={route.component} key={uuid()} />)}
+              <Route exact path="/" component={CreatePortfolioView} />
+            </Switch>
+          </App>
+        )}
+      />
     </Router>
   </Provider>,
   document.getElementById('root'),  //eslint-disable-line

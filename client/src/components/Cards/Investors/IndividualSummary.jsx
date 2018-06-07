@@ -14,6 +14,7 @@ const styles = () => ({
   },
   containerItems: {
     paddingTop: '20px',
+    marginRight: '40px',
     display: 'flex',
     alignItems: 'baseline',
     justifyContent: 'space-between',
@@ -27,6 +28,7 @@ const styles = () => ({
     '&>span': {
       fontSize: '14px',
       fontWeight: '600',
+      whiteSpace: 'nowrap',
     },
   },
   overrideGrid: {

@@ -29,7 +29,6 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  Analytics: Object,
 };
 
 type State = {
@@ -42,10 +41,6 @@ class AnalyticsTabs extends React.Component<Props, State> {
   state = {
     value: 0,
   };
-
-  componentDidMount() {
-    this.props.Analytics.getPortfolioPriceHistory();
-  }
 
   handleChange = (event: SyntheticEvent, value: number) => {
     this.setState({ value });

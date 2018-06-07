@@ -35,26 +35,8 @@ type Props = {
 
 const PerformanceChart = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: Props) => {
   const { classes, Analytics, PortfolioStore } = props;
-  const initialPortfolioCost = Analytics.currentPortfolioPriceHistoryBreakdown[0][1];
-  const data = Analytics.currentPortfolioPriceHistoryBreakdown
-    .map((ph: Array, i: Integer) => {
-      const currentPrice = ph[1];
-      const change = i > 0 ? (((currentPrice - initialPortfolioCost) / initialPortfolioCost) * 100) : 0;
-      const value = Number(`${Math.round(`${change}e2`)}e-2`);
-      return [ph[0], value, null];
-    });
-
-  let data2;
-  if (Analytics.currentPortfolioBTCPriceHistory.length > 0) {
-    const initialBtcPrice = Analytics.currentPortfolioBTCPriceHistory[0][1];
-    data2 = Analytics.currentPortfolioBTCPriceHistory
-      .map((ph: Array, i: Integer) => {
-        const currentPrice = ph[1];
-        const change = i > 0 ? (((currentPrice - initialBtcPrice) / initialBtcPrice) * 100) : 0;
-        const value = Number(`${Math.round(`${change}e2`)}e-2`);
-        return [ph[0], value, null];
-      });
-  }
+  const data = Analytics.currentPortfolioPriceChangeBreakdown;
+  const data2 = Analytics.currentBtcPriceChangeBreakdown;
 
   return (
     <HighchartsStockChart className={classes.container}>

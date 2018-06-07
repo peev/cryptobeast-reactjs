@@ -133,7 +133,7 @@ const marketController = (repository) => {
     const { toDate } = req.body;
     const query = `select * from public.ticker_history 
                    where "pair" = 'USD' 
-                   and CAST("createdAt" as VarChar) like '%23:%'::text
+                   and CAST("createdAt" as VarChar) like '%23:00:59%'::text
                    and "createdAt" between '${fromDate}' and '${toDate}'`;
     repository.rawQuery({ query })
       .then((response) => {

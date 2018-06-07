@@ -578,6 +578,8 @@ class PortfolioStore {
           this.currentPortfolioTrades = el.trades;
         }
       });
+
+      Analytics.btcPriceHistoryForPeriod();
     }
   }
 

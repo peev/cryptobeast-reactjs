@@ -128,6 +128,22 @@ const marketController = (repository) => {
       });
   };
 
+  const getBaseTickersHistory = (req, res) => {
+    const { fromDate } = req.body;
+    const { toDate } = req.body;
+    const query = `select * from public.ticker_history 
+                   where "pair" = 'USD' 
+                   and CAST("createdAt" as VarChar) like '%23:00:59%'::text
+                   and "createdAt" between '${fromDate}' and '${toDate}'`;
+    repository.rawQuery({ query })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   return {
     syncSummariesOnRequest,
     getSummaries,
@@ -139,6 +155,7 @@ const marketController = (repository) => {
     getAllMarketPriceHistory,
     getAllCurrencies,
     syncTickersFromKrakenOnRequest,
+    getBaseTickersHistory,
   };
 };
 

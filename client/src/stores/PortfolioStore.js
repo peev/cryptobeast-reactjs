@@ -12,6 +12,7 @@ import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
 import AssetStore from './AssetStore';
+import Analytics from './Analytics';
 
 class PortfolioStore {
   @observable fetchingPortfolios;
@@ -577,6 +578,8 @@ class PortfolioStore {
           this.currentPortfolioTrades = el.trades;
         }
       });
+
+      Analytics.btcPriceHistoryForPeriod();
     }
   }
 

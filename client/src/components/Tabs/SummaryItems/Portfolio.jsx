@@ -1,6 +1,8 @@
 // @flow
 import React from 'react';
 import { withStyles, Grid } from 'material-ui';
+import { inject, observer } from 'mobx-react';
+
 import PerformanceChart from '../../HighCharts/PerformanceChart';
 
 const styles = () => ({
@@ -22,18 +24,19 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
+  Analytics: Object,
 };
 
-const Portfolio = (props: Props) => {
-  const { classes } = props;
+const Portfolio = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: Props) => {
+  const { classes, Analytics } = props;
 
   return (
     <Grid container className={classes.container}>
       <Grid item xs={12} sm={12} md={12} className={classes.gridItem}>
-        <PerformanceChart />
+        {Analytics.currentPortfolioPriceHistoryBreakdown.length > 0 ? <PerformanceChart /> : ''}
       </Grid>
     </Grid>
   );
-};
+}));
 
 export default withStyles(styles)(Portfolio);

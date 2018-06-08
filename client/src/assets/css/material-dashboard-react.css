@@ -73,7 +73,7 @@ body {
     background-color: #EEEEEE;
     color: #3C4858;
     margin: 0;
-    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-family: Lato, Helvetica, Arial, sans-serif;
     font-weight: 300;
     line-height: 1.5em;
 }
@@ -124,7 +124,7 @@ blockquote p {
 }
 
 body, h1, h2, h3, h4, h5, h6 {
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-family: "Lato", "Helvetica", "Arial", sans-serif;
     font-weight: 300;
     line-height: 1.5em;
 }
@@ -202,4 +202,12 @@ label {
         z-index: 9999;
         overflow-x: hidden;
     }
+}
+
+div[class^="MuiInput"] {
+    font-family: "Lato", "Helvetica", "Arial", sans-serif !important;
+}
+
+div[class^="MuiFormControl"] {
+    font-family: "Lato", "Helvetica", "Arial", sans-serif !important;
 }

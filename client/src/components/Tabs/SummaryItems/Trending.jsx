@@ -24,10 +24,12 @@ const styles = () => ({
     textAlign: 'center',
   },
   tableCellHead: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     fontWeight: '900',
     textTransform: 'uppercase',
   },
   tableCell: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     paddingRight: '10px !important',
     paddingLeft: '10px',
     borderBottom: 'none',

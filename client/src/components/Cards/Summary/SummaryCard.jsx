@@ -37,16 +37,19 @@ const styles = () => ({
     textAlign: 'right',
   },
   cardTitle: {
-    height: '40px',
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
   },
   cardDescriptionNormal: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     paddingTop: '7px',
   },
   cardDescriptionPositive: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     paddingTop: '7px',
     color: '#70A800',
   },
   cardDescriptionNegative: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     paddingTop: '7px',
     color: '#B94A48',
   },
@@ -62,6 +65,7 @@ const styles = () => ({
     padding: '20px',
   },
   popover: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     pointerEvents: 'none',
   },
   popperClose: {
@@ -164,7 +168,7 @@ class SummaryCard extends React.Component<Props> {
           onClose={this.handlePopoverClose}
           disableRestoreFocus
         >
-          <Typography>{infoMessage}</Typography>
+          <Typography className={classes.cardTitle}>{infoMessage}</Typography>
         </Popover>
         <Typography
           type="headline"

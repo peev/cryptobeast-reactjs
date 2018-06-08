@@ -63,6 +63,8 @@ const styles = (theme: Object) => ({
   width: {
     width: '95%',
   },
+  font: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
   inputWrapper: {
     marginTop: '15px',
     width: '200px',
@@ -135,7 +137,7 @@ class AddInvestor extends React.Component<Props, State> {
 
     return (
       <Grid container>
-        <Button onClick={this.handleOpen} color="primary" >
+        <Button onClick={this.handleOpen} color="primary" style={{ fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }} >
           Add new investor
         </Button>
 
@@ -156,7 +158,7 @@ class AddInvestor extends React.Component<Props, State> {
                 <Typography
                   variant="title"
                   id="modal-title"
-                  style={{ fontSize: '18px', fontWeight: '400' }}
+                  style={{ fontSize: '18px', fontWeight: '400', fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}
                 >
                   Add a new investor
                 </Typography>
@@ -166,7 +168,7 @@ class AddInvestor extends React.Component<Props, State> {
               <Grid item xs={6} sm={6} md={6} className={classes.headerContainerRight}>
                 <Typography
                   variant="subheading"
-                  style={{ fontSize: '17px', fontWeight: '400' }}
+                  style={{ fontSize: '17px', fontWeight: '400', fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}
                 >
                   Founder
                 </Typography>

@@ -22,9 +22,11 @@ const styles = () => ({
     padding: '20px 25px',
   },
   tableHead: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     borderBottom: '1px solid black',
   },
   tableCell: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     paddingRight: '24px',
     borderBottom: 'none',
   },

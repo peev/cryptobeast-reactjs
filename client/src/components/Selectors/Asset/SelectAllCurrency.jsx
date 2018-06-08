@@ -130,7 +130,7 @@ const styles = theme => ({
       padding: 0,
       cursor: 'default',
       display: 'inline-block',
-      fontFamily: 'inherit',
+      fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
       fontSize: 'inherit',
       margin: 0,
       outline: 0,

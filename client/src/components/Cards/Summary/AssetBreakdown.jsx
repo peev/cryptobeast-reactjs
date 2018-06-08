@@ -14,6 +14,7 @@ import { inject, observer } from 'mobx-react';
 
 const styles = () => ({
   text: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     padding: '10px 23px',
     color: 'white',
     backgroundColor: '#4c5265',
@@ -26,6 +27,7 @@ const styles = () => ({
     height: '314px',
   },
   containerParagraph: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     paddingTop: '0 !important',
     textAlign: 'center',
   },

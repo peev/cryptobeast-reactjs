@@ -37,6 +37,9 @@ const styles = () => ({
     width: '95%',
     marginTop: '12px',
   },
+  font: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif, !important',
+  },
 });
 
 type Props = {
@@ -110,6 +113,7 @@ class AssetInput extends React.Component<Props> {
                 }}
                 />
                 <TextValidator
+                  className={classes.font}
                   name="Quantity"
                   label="Quantity*"
                   value={AssetStore.assetInputValue}

@@ -83,7 +83,7 @@ class PortfolioSelect extends React.Component<Props> {
   };
 
   render() {
-    const { classes, PortfolioStore } = this.props;
+    const { classes, PortfolioStore, UserStore } = this.props;
     const portfoliosToShow = [];
 
     // 1st value is empty, this is required by the Select component
@@ -125,12 +125,20 @@ class PortfolioSelect extends React.Component<Props> {
       ));
     });
 
+    let initialValue = '';
+    if (currentPortfolios.length === 0) {
+      return null;
+    } else if (currentPortfolios.length === 1) {
+      initialValue = currentPortfolios[0].id;
+      UserStore.setPortfolio(initialValue);
+    }
+
     return (
       <form autoComplete="off" >
         <FormControl className={classes.formControl}>
           <Select
             className="headerListSelect"
-            value={PortfolioStore.selectedPortfolioId || ''}
+            value={PortfolioStore.selectedPortfolioId || initialValue}
             onChange={this.handleChange}
             displayEmpty // uses the 1st element as placeholder
             disableUnderline // removes underline from component

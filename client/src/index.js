@@ -12,6 +12,7 @@ import history from './services/History';
 import CustomRoute from './components/CustomRoute';
 import App from './containers/App/App';
 import CreatePortfolioView from './views/CreatePortfolio/Index';
+import AuthService from './services/Authentication';
 
 import PortfolioStore from './stores/PortfolioStore';
 import AssetStore from './stores/AssetStore';
@@ -21,6 +22,14 @@ import ApiAccountStore from './stores/ApiAccountStore';
 import UserStore from './stores/UserStore';
 import NotificationStore from './stores/NotificationStore';
 import Analytics from './stores/Analytics';
+
+if (AuthService.isAuthenticated()) {
+  PortfolioStore.setFetchingPortfolios(true);
+} else {
+  if (!AuthService.isSignedOut()) {
+    AuthService.signOut();
+  }
+}
 
 const stores = {
   PortfolioStore,

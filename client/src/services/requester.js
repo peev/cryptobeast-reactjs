@@ -6,12 +6,14 @@ if (process.env.NODE_ENV === 'development') {
 } else {
   API_ROOT = 'https://cryptobeast.motiontest.eu/api';
 }
+const idToken = localStorage.getItem('id_token'); // eslint-disable-line
+const options = { headers: { Authorization: `Bearer ${idToken}` } };
 
 const requests = {
-  get: url => axios.get(`${API_ROOT}${url}`),
-  post: (url, body) => axios.post(`${API_ROOT}${url}`, body),
-  put: (url, body) => axios.put(`${API_ROOT}${url}`, body),
-  delete: (url, body) => axios.delete(`${API_ROOT}${url}`, body),
+  get: url => axios.get(`${API_ROOT}${url}`, options),
+  post: (url, body) => axios.post(`${API_ROOT}${url}`, body, options),
+  put: (url, body) => axios.put(`${API_ROOT}${url}`, body, options),
+  delete: (url, body) => axios.delete(`${API_ROOT}${url}`, body, options),
 };
 
 // TODO: Add model http requests and create model store (mobx)

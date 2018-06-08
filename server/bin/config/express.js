@@ -4,7 +4,9 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-const path = require('path');
+const jwksRsa = require('jwks-rsa');
+const jwt = require('express-jwt');
+// const path = require('path');
 
 
 const init = async (repository) => {
@@ -17,9 +19,7 @@ const init = async (repository) => {
 
   // Logger
   app.use(morgan('dev', {
-    skip: (req, res) => {
-      return res.statusCode < 400;
-    },
+    skip: (req, res) => res.statusCode < 400,
   }));
 
   app.use(bodyParser.json());
@@ -33,6 +33,30 @@ const init = async (repository) => {
     res.header('Access-Control-Allow-Headers', 'Access-Control-*, Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
+
+  // Middleware for checking the JWT
+  const checkJwt = jwt({
+    // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint
+    secret: jwksRsa.expressJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: 'https://cryptobeast.eu.auth0.com/.well-known/jwks.json',
+    }),
+
+    // Validate the audience and the issuer
+    audience: 'ro3TfD3x5qWYVH7EhI7IlpoHPK330NeQ',
+    issuer: 'https://cryptobeast.eu.auth0.com/',
+    algorithms: ['RS256'],
+  });
+
+  // Enable Authentication on all API Endpoints
+  app.use(checkJwt);
+
+  // Create timesheets API endpoint
+  // app.post('/timesheets', checkJwt, (req, res) => {
+  //   res.status(201).send(req.user);
+  // });
 
   // #region Middleware
   // TODO: Here you can add new middleware
@@ -75,19 +99,19 @@ const init = async (repository) => {
 
   // Handle Errors
   // catch 404 and forward to error handler
-  app.use(function (req, res, next) {
+  app.use((req, res, next) => {
     next(createError(404));
   });
 
   // error handler
-  app.use(function (err, req, res, next) {
+  app.use((err, req, res, next) => {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    next();
   });
 
   return app;

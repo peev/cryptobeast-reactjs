@@ -38,9 +38,14 @@ class PortfolioStore {
 
     // eslint-disable-next-line no-unused-expressions
     // gets portfolios at app init
-    this.getPortfolios().then(() => {
-      MarketStore.init();
-    });
+    // this.getPortfolios().then(() => {
+    //   MarketStore.init();
+    // });
+  }
+
+  @action
+  setFetchingPortfolios(value) {
+    this.fethingPortfolios = value;
   }
   // ======= Computed =======
   // #region Computed
@@ -271,7 +276,7 @@ class PortfolioStore {
       const selectedPortfolioSummary = [];
 
       // Creates the needed array, that will be shown in the view
-      currentAssets.forEach((el, i) => {
+      currentAssets.forEach((el) => {
         const currentRow = [];
         Object.keys(el).forEach((prop, ind) => {
           // 1. Ticker
@@ -580,11 +585,11 @@ class PortfolioStore {
           }
           resolve(true);
         }))
-        .catch((err) => {
+        .catch(action((err) => {
           this.fethingPortfolios = false;
           console.log(err);
           reject(err);
-        });
+        }));
     });
   }
 

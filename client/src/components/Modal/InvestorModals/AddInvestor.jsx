@@ -65,6 +65,7 @@ const styles = (theme: Object) => ({
   },
   font: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
+  },
   inputWrapper: {
     marginTop: '15px',
     width: '200px',

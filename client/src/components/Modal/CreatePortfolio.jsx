@@ -57,7 +57,7 @@ type State = {
   open: boolean,
 };
 
-@inject('InvestorStore', 'PortfolioStore', 'NotificationStore', 'MarketStore')
+@inject('InvestorStore', 'PortfolioStore', 'NotificationStore')
 @observer
 class CreatePortfolio extends React.Component<Props, State> {
   state = {
@@ -91,7 +91,7 @@ class CreatePortfolio extends React.Component<Props, State> {
     const hasErrors = this.props.PortfolioStore.handlePortfolioValidation();
     if (!hasErrors) {
       this.props.PortfolioStore.createPortfolio();
-      this.handleClose();
+      this.setState({ open: false });
     }
   };
 

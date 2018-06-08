@@ -4,13 +4,12 @@ import { withStyles, FormControl } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 import Select from 'react-select';
 
-const styles = (theme: Object) => ({
-  button: {
-    display: 'block',
-    marginTop: theme.spacing.unit * 2,
+const styles = () => ({
+  container: {
+    width: '100%',
   },
   formControl: {
-    margin: theme.spacing.unit,
+    margin: 0,
     minWidth: '100%',
   },
 });
@@ -21,25 +20,9 @@ type Props = {
   classes: Object,
 };
 
-type State = {
-  open: boolean,
-};
-
 @inject('PortfolioStore', 'AssetStore')
 @observer
-class SelectPortfolioCurrency extends React.Component<Props, State> {
-  // state = {
-  //   open: false,
-  // };
-
-  // handleOpen = () => {
-  //   this.setState({ open: true });
-  // };
-
-  // handleClose = () => {
-  //   this.setState({ open: false });
-  // };
-
+class SelectPortfolioCurrency extends React.Component<Props> {
   handleChange = (event: SyntheticInputEvent) => {
     if (event) {
       this.props.AssetStore.selectCurrencyFromAssetAllocation(event.value);
@@ -54,23 +37,14 @@ class SelectPortfolioCurrency extends React.Component<Props, State> {
     const optionsToShow = options.map((el: Object) => ({ value: el.id, label: el.currency }));
 
     return (
-      <div autoComplete="off">
-
-        <FormControl className={classes.formControl} style={{ margin: 0 }}>
-          {/* <InputLabel htmlFor="controlled-open-select">
-            Paid or sent
-          </InputLabel> */}
-
+      <div autoComplete="off" className={classes.container}>
+        <FormControl className={classes.formControl}>
           <Select
             placeholder="Paid or sent*"
             name="currency"
-            // open={this.state.open}
             value={AssetStore.selectedCurrencyFromAssetAllocation.id || ''}
-            // onClose={this.handleClose}
             options={optionsToShow}
-            // onOpen={this.handleOpen}
             onChange={this.handleChange}
-            // onClear={this.handleChange}
             inputProps={{
               name: 'portfolioCurrencyId',
               id: 'controlled-open-select',

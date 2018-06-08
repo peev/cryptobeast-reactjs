@@ -11,15 +11,16 @@ const init = databaseConfig => new Promise((resolve) => {
   const dbPass = databaseConfig.password;
   const testconnection = createConnection(databaseConfig);
 
-  testconnection.query(`CREATE DATABASE ${dbName} WITH OWNER = ${dbUser}`)
+  testConnection.query(`CREATE DATABASE ${dbName} WITH OWNER = ${dbUser}`)
     .then(() => {
       console.log('Database created.'.green);
     })
-    .catch((err) => {
+    .catch(() => {
       console.log('Database already exists.'.grey);
     }).then(() => {
       testconnection.close();
       const sequelize = createConnection(databaseConfig);
+
       const db = {};
 
       // TODO: Add new models here

@@ -42,6 +42,9 @@ class App extends React.Component<Props> {
     const { classes, PortfolioStore, UserStore, children, ...rest } = this.props;
     const { fetchingPortfolios } = PortfolioStore;
 
+    // this is used for portfolio select start screen, because those views doesn't have header
+    const checkPortfolioNumber = this.props.location.pathname === '/' && (PortfolioStore.portfolios.length === 0 || PortfolioStore.portfolios.length > 1);
+
     if (fetchingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
 
     return (
@@ -55,7 +58,9 @@ class App extends React.Component<Props> {
             {...rest}
           />
           <div className={classes.mainPanel}>
-            <Header {...rest} />
+            {checkPortfolioNumber
+              ? null
+              : <Header {...rest} />}
             <div className={classes.content}>
               <div className={classes.container}>
                 {children}

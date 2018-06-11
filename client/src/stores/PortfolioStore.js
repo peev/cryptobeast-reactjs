@@ -40,9 +40,14 @@ class PortfolioStore {
 
     // eslint-disable-next-line no-unused-expressions
     // gets portfolios at app init
-    this.getPortfolios().then(() => {
-      MarketStore.init();
-    });
+    // this.getPortfolios().then(() => {
+    //   MarketStore.init();
+    // });
+  }
+
+  @action
+  setFetchingPortfolios(value) {
+    this.fethingPortfolios = value;
   }
   // ======= Computed =======
   // #region Computed
@@ -593,11 +598,11 @@ class PortfolioStore {
           }
           resolve(true);
         }))
-        .catch((err) => {
-          this.fetchingPortfolios = false;
+        .catch(action((err) => {
+          this.fethingPortfolios = false;
           console.log(err);
           reject(err);
-        });
+        }));
     });
   }
 

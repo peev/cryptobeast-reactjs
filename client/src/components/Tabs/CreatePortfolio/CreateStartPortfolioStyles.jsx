@@ -1,32 +1,21 @@
-import { drawerWidth, transition, container } from '../../../variables/styles';
-
-const createStartPortfolioStyles = theme => ({
-  wrapper: {
-    position: 'relative !important',
-    top: '0',
-    height: '100vh',
-    // backgroundColor: '#EEE',
+const createStartPortfolioStyles = () => ({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
-  mainPanel: {
-    [theme.breakpoints.up('md')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-    },
-    overflow: 'auto',
-    position: 'relative',
-    float: 'right',
-    ...transition,
-    maxHeight: '100%',
-    width: '100%',
-    overflowScrolling: 'touch',
+  tittle: {
+    margin: '0',
+    marginTop: '17%',
+    fontSize: '5.1rem',
+    color: '#D1D3D6',
   },
-  content: {
-    marginTop: '70px',
-    padding: '30px 15px',
-    minHeight: 'calc(100% - 123px)',
+  subTitle: {
+    margin: '0',
+    marginTop: '30px',
   },
-  container,
-  map: {
-    marginTop: '70px',
+  button: {
+    margin: '0',
   },
 });
 

@@ -1,6 +1,14 @@
 {
     "extends": "airbnb-base",
     "rules": {
-        "linebreak-style": [0]
+        "linebreak-style": [0],
+        "global-require": [0],
+        "max-len": [2, {
+            "code": 155,
+            "ignoreUrls": true,
+            "ignoreStrings": true,
+            "ignoreTemplateLiterals": true
+          }
+        ]
     }
 }

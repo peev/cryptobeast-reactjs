@@ -12,11 +12,12 @@ type Props = {
   portfolios: Array<object>,
 };
 
-const SelectFromPortfolios = inject('PortfolioStore')(observer(({ ...props }: Props) => {
-  const { classes, PortfolioStore } = props;
+const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ ...props }: Props) => {
+  const { classes, PortfolioStore, UserStore } = props;
 
   const handleClick = (id: number) => {
-    PortfolioStore.selectPortfolio(id);
+    // PortfolioStore.selectPortfolio(id);
+    UserStore.setPortfolio(id);
     history.push('/summary');
   };
 
@@ -51,7 +52,7 @@ const SelectFromPortfolios = inject('PortfolioStore')(observer(({ ...props }: Pr
 
   return (
     <Grid container className={classes.containerMain}>
-      <Grid container className={classes.containerTitle}>
+      <Grid container xs={12} sm={12} md={12} className={classes.containerTitle}>
         <p className={classes.title}>To start using CryptoBeast, please select a portfolio to analyze</p>
       </Grid>
 

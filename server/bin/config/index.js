@@ -9,5 +9,5 @@ module.exports = {
     name: process.env.DBNAME || 'cryptobeast',
     user: process.env.DBUSER || 'postgres',
     password: process.env.DBPASS || 'postgres',
-  }
+  },
 };

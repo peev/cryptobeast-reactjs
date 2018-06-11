@@ -6,7 +6,7 @@ import { Redirect } from 'react-router-dom';
 
 import appStyle from './../../variables/styles/appStyle';
 import CreateStartPortfolio from '../../components/Tabs/CreatePortfolio/CreateStartPortfolio';
-import SelectFromPortfolios from '../../components/Tabs/CreatePortfolio/SelectFromPortfolios';
+import SelectFromPortfolios from '../../components/Tabs/SelectFromPortfolios/SelectFromPortfolios';
 
 type Props = {
   PortfolioStore: Object,

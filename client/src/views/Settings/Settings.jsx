@@ -61,7 +61,7 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
       <ItemGrid xs={12} sm={12} md={12}>
         <RegularCard
           cardTitle="Portfolios"
-          button={<CreatePortfolio />}
+          button={<CreatePortfolio place="settings" />}
           content={
             <PortfoliosTable
               tableHead={[

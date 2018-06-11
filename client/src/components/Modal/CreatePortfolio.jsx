@@ -30,10 +30,21 @@ const styles = (theme: Object) => ({
     boxShadow: theme.shadows[3],
     padding: theme.spacing.unit * 4,
   },
-  headerButtonContainer: {
+  buttonSettings: {
     float: 'right',
     marginTop: '-35px',
     marginRight: '40px',
+  },
+  buttonStartScreen: {
+    marginTop: '51px',
+    padding: '12px 41px',
+    backgroundColor: '#5E6779',
+    color: 'white',
+    border: 'none',
+    textTransform: 'uppercase',
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   modalTitle: {
     fontSize: '18px',
@@ -47,14 +58,14 @@ type Props = {
   InvestorStore: Object,
   NotificationStore: Object,
   PortfolioStore: Object,
-  MarketStore: Object
+  place: string,
 };
 
 type State = {
   open: boolean,
 };
 
-@inject('InvestorStore', 'PortfolioStore', 'NotificationStore', 'MarketStore')
+@inject('InvestorStore', 'PortfolioStore', 'NotificationStore')
 @observer
 class CreatePortfolio extends React.Component<Props, State> {
   state = {
@@ -94,27 +105,42 @@ class CreatePortfolio extends React.Component<Props, State> {
 
   render() {
     const {
-      classes, InvestorStore, PortfolioStore, NotificationStore,
+      classes, InvestorStore, PortfolioStore, NotificationStore, place,
     } = this.props;
+    let createButton = null;
+
+    if (place === 'startScreen') {
+      createButton = (
+        <button
+          className={classes.buttonStartScreen}
+          onClick={this.handleOpen}
+        >
+          create
+        </button>
+      );
+    } else if (place === 'settings') {
+      createButton = (
+        <div className={classes.buttonSettings}>
+          <IconButton
+            onClick={this.handleOpen}
+            color="primary"
+          >
+            <Add />
+          </IconButton>
+        </div>
+      );
+    }
 
     return (
-      <div className={classes.headerButtonContainer}>
-        <IconButton
-          className={classes.headerButton}
-          onClick={this.handleOpen}
-          color="primary"
-        >
-          <Add />
-        </IconButton>
+      <React.Fragment>
+        {createButton}
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
           <ValidatorForm
-            // ref="form"
             onSubmit={this.handleSave}
-            // onError={errors => console.log(errors)}
             style={getModalStyle()}
             className={classes.paper}
           >
@@ -158,25 +184,21 @@ class CreatePortfolio extends React.Component<Props, State> {
               onClick={this.handleClose}
               color="primary"
             >
-              {' '}
               Cancel
             </Button>
 
             {/* SAVE BUTTON */}
             <Button
               style={{ display: 'inline-flex', float: 'right' }}
-              // onClick={this.handleSave}
               color="primary"
               disabled={NotificationStore.getErrorsLength > 0 || PortfolioStore.newPortfolioName === ''}
-
               type="submit"
             >
-              {' '}
               Save
             </Button>
           </ValidatorForm>
         </Modal>
-      </div>
+      </React.Fragment>
     );
   }
 }

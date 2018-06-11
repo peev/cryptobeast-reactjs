@@ -5,6 +5,8 @@
   "dependencies": {
     "@material-ui/icons": "^1.0.0-beta.43",
     "ajv": "^6.4.0",
+    "auth0-js": "^9.6.0",
+    "auth0-lock": "^11.7.1",
     "axios": "^0.18.0",
     "babel-plugin-styled-components": "^1.5.1",
     "classnames": "^2.2.5",
@@ -14,6 +16,7 @@
     "material-ui": "^1.0.0-beta.45",
     "mobx": "^4.2.1",
     "mobx-react": "^5.1.2",
+    "mobx-react-devtools": "^5.0.1",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
     "react-app-rewire-mobx": "^1.0.8",

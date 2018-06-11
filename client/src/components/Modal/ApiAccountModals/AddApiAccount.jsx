@@ -15,7 +15,7 @@ import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 
 
 function getModalStyle() {
-  const top = 45;
+  const top = 30;
   const left = 41;
   return {
     top: `${top}%`,
@@ -28,8 +28,8 @@ const styles = (theme: Object) => ({
     position: 'absolute',
     minWidth: '200px',
     backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4,
+    boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
+    padding: '40px',
   },
   headerButtonContainer: {
     float: 'right',
@@ -38,11 +38,12 @@ const styles = (theme: Object) => ({
   },
   modalTitle: {
     fontSize: '18px',
-    fontWeight: '400',
-    textAlign: 'center',
+    fontWeight: '200',
+    textAlign: 'left',
   },
   inputWrapper: {
-    width: '200px',
+    marginTop: '15px',
+    width: '300px',
   },
   container: {
     display: 'flex',
@@ -52,8 +53,8 @@ const styles = (theme: Object) => ({
   },
   isActiveCheckbox: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
   },
 });
 
@@ -144,16 +145,17 @@ class AddApiAccount extends React.Component<Props, State> {
             style={getModalStyle()}
             className={classes.paper}
           >
-            <div>
+            <div className={classes.isActiveCheckbox}>
+              <div>
               <Typography
                 variant="title"
                 id="modal-title"
                 className={classes.modalTitle}
               >
-                Import from API
+                IMPORT FROM API
               </Typography>
-
-              <div className={classes.isActiveCheckbox}>
+              </div>
+              <div>
                 Active
                 <Checkbox
                   onChange={() => this.handleActive('isActive')}
@@ -170,6 +172,11 @@ class AddApiAccount extends React.Component<Props, State> {
                   handleChange={this.handleExchangeCreateAccount}
                   validators={['required']}
                   errorMessages={['this field is required']}
+                  style={{
+                    border: 'none',
+                    borderRadius: 0,
+                    borderBottom: '1px solid #757575',
+                  }}
                 />
               </div>
 

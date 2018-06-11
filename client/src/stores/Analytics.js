@@ -4,13 +4,13 @@ import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
 
 class Analytics {
-  @observable currentPortfolioPriceHistoryAll;
+  @observable currentPortfolioBTCPriceHistory;
   @observable currentPortfolioClosingSharePrices;
   @observable currentPortfolioPriceHistoryForPeriod;
   @observable selectedTimeInPerformance;
 
   constructor() {
-    this.currentPortfolioPriceHistoryAll = [];
+    this.currentPortfolioBTCPriceHistory = [];
     this.currentPortfolioClosingSharePrices = [];
     this.currentPortfolioPriceHistoryForPeriod = [];
     this.selectedTimeInPerformance = '';
@@ -20,7 +20,7 @@ class Analytics {
   get performanceMin() {
     if (MarketStore.baseCurrencies.length > 0 &&
       (this.currentPortfolioPriceHistoryForPeriod.length > 0 ||
-        this.currentPortfolioPriceHistoryAll.length > 0)) {
+        PortfolioStore.selectedPortfolio.portfolioPrices.length > 0)) {
       const currentArray = this.currentPriceHistory();
       const valueOfUSD = MarketStore.baseCurrencies[3].last;
 
@@ -30,12 +30,11 @@ class Analytics {
     return 0;
   }
 
-
   @computed
   get performanceMax() {
     if (MarketStore.baseCurrencies.length > 0 &&
       (this.currentPortfolioPriceHistoryForPeriod.length > 0 ||
-        this.currentPortfolioPriceHistoryAll.length > 0)) {
+        PortfolioStore.selectedPortfolio.portfolioPrices.length > 0)) {
       const currentArray = this.currentPriceHistory();
       const valueOfUSD = MarketStore.baseCurrencies[3].last;
 
@@ -46,10 +45,11 @@ class Analytics {
   }
 
   @computed
+  // eslint-disable-next-line class-methods-use-this
   get performanceATH() {
     if (MarketStore.baseCurrencies.length > 0 &&
-      this.currentPortfolioPriceHistoryAll.length > 0) {
-      const currentArray = this.currentPortfolioPriceHistoryAll;
+      PortfolioStore.selectedPortfolio.portfolioPrices.length > 0) {
+      const currentArray = PortfolioStore.selectedPortfolio.portfolioPrices;
       const valueOfUSD = MarketStore.baseCurrencies[3].last;
 
       return Math.max(...currentArray.map(el => el.price)) * valueOfUSD;
@@ -60,8 +60,8 @@ class Analytics {
 
   @computed
   get performanceProfitLoss() {
-    if (this.currentPortfolioPriceHistoryForPeriod.length > 0 ||
-      this.currentPortfolioPriceHistoryAll.length > 0) {
+    if (MarketStore.baseCurrencies.length > 0 && (this.currentPortfolioPriceHistoryForPeriod.length > 0 ||
+      PortfolioStore.selectedPortfolio.portfolioPrices.length > 0)) {
       const currentArray = this.currentPriceHistory();
 
       return ((currentArray[currentArray.length - 1].price - currentArray[0].price) / currentArray[0].price) * 100;
@@ -73,7 +73,7 @@ class Analytics {
   @computed
   get performanceAverageChange() {
     if (this.currentPortfolioPriceHistoryForPeriod.length > 0 ||
-      this.currentPortfolioPriceHistoryAll.length > 0) {
+      PortfolioStore.selectedPortfolio.portfolioPrices.length > 0) {
       const currentArray = this.currentPriceHistory();
 
       let time;
@@ -99,23 +99,26 @@ class Analytics {
   }
 
   @computed
+  // eslint-disable-next-line class-methods-use-this
   get performanceLast24H() {
-    if (this.currentPortfolioPriceHistoryAll.length > 0) {
-      const currentArray = this.currentPortfolioPriceHistoryAll;
+    if (PortfolioStore.selectedPortfolio.portfolioPrices.length > 0) {
+      const currentArray = PortfolioStore.selectedPortfolio.portfolioPrices;
       const date = new Date();
       date.setDate(date.getDate() - 1);
       const result = currentArray.filter(el => date <= new Date(el.createdAt));
-
-      return ((result[result.length - 1].price - result[0].price) / result[0].price) * 100;
+      if (result.length > 0) {
+        return ((result[result.length - 1].price - result[0].price) / result[0].price) * 100;
+      }
     }
 
     return 0;
   }
 
   @computed
+  // eslint-disable-next-line class-methods-use-this
   get performanceLast7D() {
-    if (this.currentPortfolioPriceHistoryAll.length > 0) {
-      const currentArray = this.currentPortfolioPriceHistoryAll;
+    if (PortfolioStore.selectedPortfolio.portfolioPrices.length > 0) {
+      const currentArray = PortfolioStore.selectedPortfolio.portfolioPrices;
       const date = new Date();
       date.setDate(date.getDate() - 7);
       const result = currentArray.filter(el => date <= new Date(el.createdAt));
@@ -135,15 +138,35 @@ class Analytics {
 
   @computed
   get currentPortfolioPriceHistoryBreakdown() {
-    if (PortfolioStore.selectedPortfolio &&
+    if (PortfolioStore.selectedPortfolio && MarketStore.baseCurrencies.length > 0 &&
       (this.currentPortfolioPriceHistoryForPeriod.length > 0 ||
-        this.currentPortfolioPriceHistoryAll.length > 0)) {
-      const currentArray = this.currentPriceHistory();
+        PortfolioStore.selectedPortfolio.portfolioPrices.length > 0)) {
+      return PortfolioStore.selectedPortfolio.portfolioPrices
+        .sort((a, b) => (a.id - b.id))
+        .map((el) => {
+          const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
+          const usdEquivalent = el.price * MarketStore.baseCurrencies[3].last;
+          const usdEquivalentRounded = Number(`${Math.round(`${usdEquivalent}e2`)}e-2`);
 
-      return currentArray.map((el) => {
-        const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
-        return [timeOfCreation, el.price, null];
-      });
+          return [timeOfCreation, usdEquivalentRounded, null];
+        });
+    }
+
+    return [];
+  }
+
+  @computed
+  get currentPortfolioPriceChangeBreakdown() {
+    if (this.currentPortfolioPriceHistoryBreakdown.length > 0) {
+      const initialPortfolioCost = this.currentPortfolioPriceHistoryBreakdown[0][1];
+
+      return this.currentPortfolioPriceHistoryBreakdown
+        .map((ph, i) => {
+          const currentPrice = ph[1];
+          const change = i > 0 ? (((currentPrice - initialPortfolioCost) / initialPortfolioCost) * 100) : 0;
+          const value = Number(`${Math.round(`${change}e2`)}e-2`);
+          return [ph[0], value, null];
+        });
     }
 
     return [];
@@ -169,15 +192,49 @@ class Analytics {
   }
 
   @action.bound
-  getPortfolioPriceHistory() {
-    const searchedHistoryItems = {
-      portfolioId: PortfolioStore.selectedPortfolioId,
-    };
+  btcPriceHistoryForPeriod() {
+    if (PortfolioStore.selectedPortfolio.portfolioPrices.length > 1) {
+      const sortedPrices = PortfolioStore.selectedPortfolio.portfolioPrices.slice();
+      const portfolioPriceHistory = sortedPrices
+        .sort((a, b) => a.id - b.id);
+      const firstDate = portfolioPriceHistory[0].createdAt;
+      const secondDate = portfolioPriceHistory[portfolioPriceHistory.length - 1].createdAt;
+      let fromDate = firstDate < secondDate ? firstDate : secondDate;
+      fromDate = fromDate.toString().substr(0, 10);
+      const toDate = firstDate > secondDate ? firstDate : secondDate;
 
-    requester.Portfolio.getPriceHistory(searchedHistoryItems)
-      .then(action((result) => {
-        this.currentPortfolioPriceHistoryAll = result.data;
-      }));
+      requester.Market.getBaseTickerHistory({ fromDate, toDate })
+        .then(action((result) => {
+          const convertedData = result.data
+            .sort((a, b) => a.id - b.id)
+            .map((el) => {
+              const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
+              return [timeOfCreation, el.last, null];
+            });
+          this.currentPortfolioBTCPriceHistory = convertedData;
+        }))
+        .catch(error => console.log(error));
+    } else {
+      this.currentPortfolioBTCPriceHistory = [];
+    }
+  }
+
+  @computed
+  get currentBtcPriceChangeBreakdown() {
+    if (this.currentPortfolioBTCPriceHistory.length > 0) {
+      const initialBtcPrice = this.currentPortfolioBTCPriceHistory[0][1];
+      const btcPriceHistoryBreakdown = this.currentPortfolioBTCPriceHistory
+        .map((ph, i) => {
+          const currentPrice = ph[1];
+          const change = i > 0 ? (((currentPrice - initialBtcPrice) / initialBtcPrice) * 100) : 0;
+          const value = Number(`${Math.round(`${change}e2`)}e-2`);
+          return [ph[0], value, null];
+        });
+
+      return btcPriceHistoryBreakdown;
+    }
+
+    return [];
   }
 
   @action.bound
@@ -210,7 +267,7 @@ class Analytics {
   currentPriceHistory() {
     return this.currentPortfolioPriceHistoryForPeriod.length > 0 ?
       this.currentPortfolioPriceHistoryForPeriod :
-      this.currentPortfolioPriceHistoryAll;
+      PortfolioStore.selectedPortfolio.portfolioPrices;
   }
 }
 

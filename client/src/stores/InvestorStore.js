@@ -77,7 +77,7 @@ class InvestorStore {
     } = PortfolioStore;
     if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
       // TODO: To add Assets value below
-      const calculatedPurchasedShares = (this.convertedUsdEquiv / (currentPortfolioSharePrice || 1)).toFixed(2);
+      const calculatedPurchasedShares = (this.convertedUsdEquiv() / (currentPortfolioSharePrice || 1)).toFixed(2);
       this.newInvestorValues.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
     }
@@ -109,7 +109,7 @@ class InvestorStore {
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
       // const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
-      const calculatedPurchasedShares = (this.convertedUsdEquiv / currentPortfolioSharePrice).toFixed(2);
+      const calculatedPurchasedShares = (this.convertedUsdEquiv() / currentPortfolioSharePrice).toFixed(2);
       this.newDepositValues.purchasedShares = calculatedPurchasedShares;
 
       return calculatedPurchasedShares;
@@ -151,7 +151,7 @@ class InvestorStore {
     if (this.selectedInvestor && this.withdrawalValues.amount) {
       // const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / 1.75).toFixed(2);
 
-      const calculatedWithdrawPurchasedShares = (this.convertedUsdEquiv / currentPortfolioSharePrice).toFixed(2);
+      const calculatedWithdrawPurchasedShares = (this.convertedUsdEquiv() / currentPortfolioSharePrice).toFixed(2);
       this.withdrawalValues.purchasedShares = calculatedWithdrawPurchasedShares;
       return calculatedWithdrawPurchasedShares;
     }
@@ -318,7 +318,7 @@ class InvestorStore {
     this.newInvestorValues.isFounder = !this.newInvestorValues.isFounder;
   }
 
-  @action.bound
+  @action
   setNewInvestorValues(propertyType, newValue) {
     const fieldsChecked = this.handleFieldValidations(propertyType, newValue);
 
@@ -382,7 +382,7 @@ class InvestorStore {
         investorName: this.newInvestorValues.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
         transactionDate: this.newInvestorValues.dateOfEntry || today,
-        amountInUSD: this.convertedUsdEquiv,
+        amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newInvestorValues.purchasedShares),
         portfolioId,
@@ -426,9 +426,9 @@ class InvestorStore {
           investorName: 'default investor',
           dateOfEntry: (new Date()).toLocaleString(),
           transactionDate: (new Date()).toLocaleString(),
-          amountInUSD: this.convertedUsdEquiv,
+          amountInUSD: this.convertedUsdEquiv(),
           sharePrice: 1,
-          shares: parseFloat(this.convertedUsdEquiv),
+          shares: parseFloat(this.convertedUsdEquiv()),
           portfolioId,
         },
       };
@@ -499,7 +499,7 @@ class InvestorStore {
         investorName: this.selectedInvestor.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
         transactionDate: this.newDepositValues.transactionDate || today,
-        amountInUSD: this.convertedUsdEquiv,
+        amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newDepositValues.purchasedShares),
         portfolioId: PortfolioStore.selectedPortfolioId,
@@ -529,7 +529,7 @@ class InvestorStore {
         investorName: this.selectedInvestor.fullName,
         dateOfEntry: (new Date()).toLocaleString(),
         transactionDate: this.withdrawalValues.transactionDate || today,
-        amountInUSD: this.convertedUsdEquiv,
+        amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.withdrawalValues.purchasedShares),
         portfolioId: PortfolioStore.selectedPortfolioId,
@@ -807,10 +807,9 @@ class InvestorStore {
     // }
   }
 
-  @computed
-  get convertedUsdEquiv() {
+  @action.bound
+  convertedUsdEquiv() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-
     const currentAmount = this.newInvestorValues.depositedAmount || this.newDepositValues.amount || this.withdrawalValues.amount;
     if (baseCurrency && currentAmount) {
       let calculatedUsdEquiv;
@@ -830,6 +829,7 @@ class InvestorStore {
           console.log('The is no such currency');
           break;
       }
+
       return calculatedUsdEquiv;
     }
 

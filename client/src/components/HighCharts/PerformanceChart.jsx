@@ -2,6 +2,8 @@
 import React from 'react';
 import { withStyles } from 'material-ui';
 import Highcharts from 'highcharts/highstock';
+import { inject, observer } from 'mobx-react';
+
 import {
   HighchartsStockChart,
   Chart,
@@ -24,33 +26,17 @@ const styles = () => ({
   },
 });
 
-
-const createDataPoint = (
-  time: Date = Date.now(), // Argument: Type = DefaultValue
-  magnitude: number = 100, // Argument: Type = DefaultValue
-  offset: number = 0, // Argument: Type = DefaultValue
-) => [time + (offset * magnitude), Math.round(Math.random() * 20 * 2) / 2];
-
-
-const createRandomData = (time: Date, magnitude: number) => {
-  const data = [];
-
-  for (let i = 0; i <= 100; i++) { // eslint-disable-line
-    data.push(createDataPoint(time, magnitude, i));
-  }
-  return data;
-};
-
 type Props = {
   classes: Object,
+  Analytics: Object,
+  PortfolioStore: Object,
+  MarketStore: Object,
 };
 
-const PerformanceChart = (props: Props) => {
-  const { classes } = props;
-  const now = Date.now();
-  const data = createRandomData(now, 1e8);
-
-  const data2 = createRandomData(now, 1e8);
+const PerformanceChart = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: Props) => {
+  const { classes, Analytics, PortfolioStore } = props;
+  const data = Analytics.currentPortfolioPriceChangeBreakdown;
+  const data2 = Analytics.currentBtcPriceChangeBreakdown;
 
   return (
     <HighchartsStockChart className={classes.container}>
@@ -72,7 +58,7 @@ const PerformanceChart = (props: Props) => {
 
       <YAxis id="price" opposite >
         <YAxis.Title>%</YAxis.Title>
-        <SplineSeries id="portfolio" name="Basic Portfolio" data={data} />
+        <SplineSeries id="portfolio" name={PortfolioStore.selectedPortfolio ? PortfolioStore.selectedPortfolio.name : ''} data={data} />
         <SplineSeries id="BTC" name="BTC" data={data2} />
       </YAxis>
 
@@ -82,6 +68,6 @@ const PerformanceChart = (props: Props) => {
       </Navigator>
     </HighchartsStockChart>
   );
-};
+}));
 
 export default withStyles(styles)(withHighcharts(PerformanceChart, Highcharts));

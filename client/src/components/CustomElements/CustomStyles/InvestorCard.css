@@ -4,6 +4,7 @@
     background-color: #22252f
 }
 .headingText{
+    font-family: 'Lato', 'Helvetica', 'Arial', sans-serif;
     text-align: left;
     font-weight: 300;
     margin:0;
@@ -11,6 +12,7 @@
     max-width:100%;
 }
 .labelText{
+    font-family: 'Lato', 'Helvetica', 'Arial', sans-serif;
     text-align:left;
     font-weight: 300;
     margin:0;

@@ -13,7 +13,7 @@ import SelectBaseCurrency from '../Selectors/SelectBaseCurrency';
 import Button from '../CustomButtons/Button';
 
 function getModalStyle() {
-  const top = 45;
+  const top = 30;
   const left = 41;
   return {
     top: `${top}%`,
@@ -26,7 +26,7 @@ const styles = (theme: Object) => ({
     position: 'absolute',
     minWidth: '300px',
     backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[3],
+    boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
     padding: theme.spacing.unit * 4,
   },
   buttonSettings: {
@@ -49,6 +49,10 @@ const styles = (theme: Object) => ({
     fontSize: '18px',
     fontWeight: '400',
     textAlign: 'center',
+  },
+  inputWrapper: {
+    marginTop: '15px',
+    width: '300px',
   },
 });
 
@@ -155,29 +159,32 @@ class CreatePortfolio extends React.Component<Props, State> {
               name="Portfolio Name"
               label="Portfolio name*"
               style={{ width: '100%' }}
+              className={classes.inputWrapper}
               onChange={this.handleInputValue}
               value={PortfolioStore.newPortfolioName}
               validators={['required']}
               errorMessages={['this field is required']}
             />
-
+            <div className={classes.inputWrapper}>
             <SelectBaseCurrency
               label="Select currency"
               validators={['isPositive']}
             />
-
+            </div>
             <TextValidator
               label="Portfolio investment (optional)"
               style={{ width: '100%' }}
               onChange={this.handleRequests('depositedAmount')}
               name="depositedAmount"
               value={InvestorStore.newInvestorValues.depositedAmount}
+              className={classes.inputWrapper}
               validators={['isPositive']}
               errorMessages={['this field is required', 'value must be a positive number']}
             />
             <br />
 
             {/* Cancel BUTTON */}
+            <div className={classes.inputWrapper} >
             <Button
               style={{ display: 'inline-flex', marginRight: '50px', float: 'left' }}
               onClick={this.handleClose}
@@ -195,6 +202,7 @@ class CreatePortfolio extends React.Component<Props, State> {
             >
               Save
             </Button>
+            </div>
           </ValidatorForm>
         </Modal>
       </React.Fragment>

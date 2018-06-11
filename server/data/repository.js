@@ -17,7 +17,7 @@ const init = (db) => {
   const update = request =>
     db[request.modelName].update(
       request.updatedRecord,
-      { where: { id: request.updatedRecord.id } }
+      { where: { id: request.updatedRecord.id } },
     );
 
   const remove = request =>
@@ -30,6 +30,11 @@ const init = (db) => {
       where: {},
     });
 
+  const rawQuery = request =>
+    db.sequelize.query(request.query, {
+      type: db.sequelize.QueryTypes.SELECT,
+    });
+
   return {
     create,
     createMany,
@@ -39,6 +44,7 @@ const init = (db) => {
     update,
     remove,
     removeAll,
+    rawQuery,
   };
 };
 

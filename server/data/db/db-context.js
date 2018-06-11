@@ -6,16 +6,19 @@ require('colors');
 const createConnection = conf => new Sequelize(`postgres://${conf.user}:${conf.password}@${conf.host}:${conf.port}/${conf.name}`);
 
 const init = databaseConfig => new Promise((resolve) => {
-  const testconnection = createConnection(databaseConfig);
+  const dbName = databaseConfig.name;
+  const dbUser = databaseConfig.user;
+  // const dbPass = databaseConfig.password;
+  const testConnection = createConnection(databaseConfig);
 
-  testconnection.query(`CREATE DATABASE ${databaseConfig.name} WITH OWNER = ${databaseConfig.user}`)
+  testConnection.query(`CREATE DATABASE ${dbName} WITH OWNER = ${dbUser}`)
     .then(() => {
       console.log('Database created.'.green);
     })
     .catch(() => {
       console.log('Database already exists.'.grey);
     }).then(() => {
-      testconnection.close();
+      testConnection.close();
       const sequelize = createConnection(databaseConfig);
       const db = {};
 

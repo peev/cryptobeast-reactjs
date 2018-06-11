@@ -45,6 +45,7 @@ const Market = {
   getBaseTickers: searchedCurrencies => requests.post('/market/syncBaseTickers', searchedCurrencies),
   syncMarketPriceHistory: convertCurrency => requests.post('/market/syncMarketPriceHistory', convertCurrency),
   getMarketPriceHistory: () => requests.get('/market/getMarketPriceHistory'),
+  getBaseTickerHistory: requestParams => requests.post('/market/periodPriceHistory', requestParams),
 };
 
 const ApiAccount = {

@@ -12,7 +12,7 @@ import SelectInvestor from '../../Selectors/SelectInvestor';
 
 const getModalStyle = () => {
   const top = 20;
-  const left = 28;
+  const left = 35;
   return {
     top: `${top}%`,
     left: `${left}%`,
@@ -24,8 +24,8 @@ const styles = (theme: Object) => ({
     position: 'absolute',
     minWidth: '100px',
     backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[3],
-    padding: theme.spacing.unit * 4,
+    boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
+    padding: '40px',
   },
   containerDirection: {
     display: 'flex',
@@ -44,6 +44,11 @@ const styles = (theme: Object) => ({
   },
   alignBtn: {
     marginRight: '20px',
+  },
+  inputWrapper: {
+    marginTop: '15px',
+    width: '200px',
+    margin: '0px 20px 0px 20px',
   },
 });
 
@@ -99,7 +104,7 @@ class EditInvestor extends React.Component<Props, State> {
 
     return (
       <Grid container>
-        <Button onClick={this.handleOpen} color="primary">
+        <Button onClick={this.handleOpen} color="primary" style={{ fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}>
           Edit Investor
         </Button>
 
@@ -143,6 +148,7 @@ class EditInvestor extends React.Component<Props, State> {
 
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+              <div className={classes.inputWrapper}>
                 <TextValidator
                   name="name"
                   type="text"
@@ -152,8 +158,10 @@ class EditInvestor extends React.Component<Props, State> {
                   className={classes.alignInputAfter}
                   autoFocus
                 />
+              </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+              <div className={classes.inputWrapper}>
                 <TextValidator
                   name="email"
                   type="email"
@@ -164,11 +172,12 @@ class EditInvestor extends React.Component<Props, State> {
                   validators={['isEmail']}
                   errorMessages={['email is not valid']}
                 />
-
+              </div>
               </Grid>
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+              <div className={classes.inputWrapper}>
                 <TextValidator
                   name="phone"
                   type="number"
@@ -179,8 +188,10 @@ class EditInvestor extends React.Component<Props, State> {
                   validators={['isNumber']}
                   errorMessages={['telephone is not valid']}
                 />
+              </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+              <div className={classes.inputWrapper}>
                 <TextValidator
                   name="fee"
                   type="number"
@@ -191,6 +202,7 @@ class EditInvestor extends React.Component<Props, State> {
                   validators={['isPositive', 'maxNumber:100']}
                   errorMessages={['Fee must be a positive number', 'must be a number between 0 and 100']}
                 />
+              </div>
               </Grid>
             </Grid>
 

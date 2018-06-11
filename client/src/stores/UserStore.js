@@ -9,11 +9,13 @@ class UserStore {
   @observable data;
   @observable timeValue;
   @observable timeType;
+  @observable profile;
 
   constructor() {
     this.data = {};
     this.timeValue = '23:59';
     this.timeType = true;
+    this.profile = {};
 
     this.getUserData();
 
@@ -34,6 +36,14 @@ class UserStore {
   saveData() {
     userApi.setUserData(this.data).then(action((data) => {
       this.data = data;
+    }));
+  }
+
+  @action
+  getUserProfile() {
+    return userApi.getUserProfile().then(action((profile) => {
+      this.profile = { ...profile };
+      return profile;
     }));
   }
 

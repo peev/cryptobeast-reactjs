@@ -36,18 +36,18 @@ class NotificationSnackbar extends React.Component<Props> {
       }, 6000);
     }
   }
+  // NOTE: This caused side effects to the observable
+  // componentWillUpdate() {
+  //   const { NotificationStore } = this.props;
 
-  componentWillUpdate() {
-    const { NotificationStore } = this.props;
-
-    if (NotificationStore.getErrorsLength > 0
-      || NotificationStore.getSuccessLength > 0
-      || NotificationStore.getInfoLength > 0) {
-      setTimeout(() => {
-        NotificationStore.resetMessages();
-      }, 6000);
-    }
-  }
+  //   if (NotificationStore.getErrorsLength > 0
+  //     || NotificationStore.getSuccessLength > 0
+  //     || NotificationStore.getInfoLength > 0) {
+  //     setTimeout(() => {
+  //       NotificationStore.resetMessages();
+  //     }, 6000);
+  //   }
+  // }
 
   render() {
     const { classes, NotificationStore } = this.props;

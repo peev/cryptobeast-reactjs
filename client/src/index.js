@@ -51,14 +51,15 @@ function enableDevtools() {
     render(createElement(mobxDevtools.default), wrapper);
   });
 }
+if (process.env.NODE_ENV === 'development') {
+  configure({
+    enforceActions: true,
+    computedRequiresReaction: true,
+    disableErrorBoundaries: true,
+  });
 
-configure({
-  enforceActions: true,
-  computedRequiresReaction: true,
-  disableErrorBoundaries: true,
-});
-
-enableDevtools();
+  enableDevtools();
+}
 // ====================================
 
 ReactDOM.render(

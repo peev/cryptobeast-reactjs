@@ -39,10 +39,12 @@ const portfolioController = (repository, jobs) => {
   };
 
   const getAllPortfolios = (req, res) => {
-    console.log(req.user.email);
     repository.find({
       modelName,
-      options: { include: [{ all: true }] }, // Eager loading
+      options: {
+        where: { owner: req.user.email },
+        include: [{ all: true }], // Eager loading
+      },
     })
       .then((response) => {
         res.status(200).send(response);

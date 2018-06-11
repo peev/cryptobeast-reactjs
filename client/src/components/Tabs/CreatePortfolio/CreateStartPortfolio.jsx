@@ -5,16 +5,13 @@ import { inject, observer } from 'mobx-react';
 import createStartPortfolioStyles from './CreateStartPortfolioStyles';
 import CreatePortfolio from '../../../components/Modal/CreatePortfolio';
 
-
 type Props = {
   classes: Object,
   PortfolioStore: Object,
   portfolios: Array<object>,
 };
 
-const CreateStartPortfolio = inject('PortfolioStore')(observer(({ classes, PortfolioStore: { portfolios } }: Props) => {
-  // if (portfolios.length > 0) return <Redirect to="/summary" />;
-
+const CreateStartPortfolio = inject('PortfolioStore')(observer(({ classes, PortfolioStore: { portfolios, selectedPortfolioId } }: Props) => {
   return (
     <Grid container className={classes.container}>
       <Grid item className={classes.container}>

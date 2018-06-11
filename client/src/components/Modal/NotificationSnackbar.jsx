@@ -26,15 +26,23 @@ class NotificationSnackbar extends React.Component<Props> {
   state = {};
 
   componentDidMount() {
-    setTimeout(() => {
-      this.props.NotificationStore.resetMessages();
-    }, 6000);
+    const { NotificationStore } = this.props;
+
+    if (NotificationStore.getErrorsLength > 0
+      || NotificationStore.getSuccessLength > 0
+      || NotificationStore.getInfoLength > 0) {
+      setTimeout(() => {
+        NotificationStore.resetMessages();
+      }, 6000);
+    }
   }
 
   componentWillUpdate() {
     const { NotificationStore } = this.props;
 
-    if (NotificationStore.getErrorsLength > 0 || NotificationStore.getSuccessLength > 0 || NotificationStore.getInfoLength > 0) {
+    if (NotificationStore.getErrorsLength > 0
+      || NotificationStore.getSuccessLength > 0
+      || NotificationStore.getInfoLength > 0) {
       setTimeout(() => {
         NotificationStore.resetMessages();
       }, 6000);

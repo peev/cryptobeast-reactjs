@@ -54,13 +54,13 @@ class App extends React.Component<Props> {
     if (fetchingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
 
     return (
-      <div>
+      <React.Fragment>
         <div className={classes.wrapper}>
           <Sidebar
             routes={appRoutes}
             handleDrawerToggle={this.handleDrawerToggle}
             open={this.state.mobileOpen}
-            disabled={!PortfolioStore.portfolios.length || !UserStore.data.selectedPortfolio}
+            disabled={checkPortfolioNumber}
             {...rest}
           />
           <div className={classes.mainPanel}>
@@ -74,7 +74,7 @@ class App extends React.Component<Props> {
             </div>
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

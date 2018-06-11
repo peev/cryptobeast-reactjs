@@ -10,7 +10,6 @@ import { inject, observer } from 'mobx-react';
 import IconButton from '../CustomButtons/IconButton';
 
 import SelectBaseCurrency from '../Selectors/SelectBaseCurrency';
-
 import Button from '../CustomButtons/Button';
 
 function getModalStyle() {
@@ -99,7 +98,7 @@ class CreatePortfolio extends React.Component<Props, State> {
     const hasErrors = this.props.PortfolioStore.handlePortfolioValidation();
     if (!hasErrors) {
       this.props.PortfolioStore.createPortfolio();
-      this.handleClose();
+      this.setState({ open: false });
     }
   };
 
@@ -140,7 +139,7 @@ class CreatePortfolio extends React.Component<Props, State> {
           open={this.state.open}
         >
           <ValidatorForm
-            onSubmit={this.handleSave}
+            onSubmit={() => this.handleSave()}
             style={getModalStyle()}
             className={classes.paper}
           >

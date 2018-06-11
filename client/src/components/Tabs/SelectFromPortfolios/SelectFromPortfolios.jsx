@@ -52,7 +52,7 @@ const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ .
 
   return (
     <Grid container className={classes.containerMain}>
-      <Grid container xs={12} sm={12} md={12} className={classes.containerTitle}>
+      <Grid item xs={12} sm={12} md={12} className={classes.containerTitle}>
         <p className={classes.title}>To start using CryptoBeast, please select a portfolio to analyze</p>
       </Grid>
 

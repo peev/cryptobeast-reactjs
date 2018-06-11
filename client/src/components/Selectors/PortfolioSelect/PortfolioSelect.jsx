@@ -4,7 +4,6 @@ import { withStyles, MenuItem, FormControl } from 'material-ui';
 import Select from 'material-ui/Select';
 
 import { inject, observer } from 'mobx-react';
-
 import './PortfolioSelect.css';
 
 const styles = (theme: Object) => ({
@@ -83,7 +82,7 @@ class PortfolioSelect extends React.Component<Props> {
   };
 
   render() {
-    const { classes, PortfolioStore, UserStore } = this.props;
+    const { classes, PortfolioStore } = this.props;
     const portfoliosToShow = [];
 
     // 1st value is empty, this is required by the Select component
@@ -125,20 +124,16 @@ class PortfolioSelect extends React.Component<Props> {
       ));
     });
 
-    let initialValue = '';
-    if (currentPortfolios.length === 0) {
-      return null;
-    } else if (currentPortfolios.length === 1) {
-      initialValue = currentPortfolios[0].id;
-      UserStore.setPortfolio(initialValue);
-    }
-
     return (
       <form autoComplete="off" >
         <FormControl className={classes.formControl}>
           <Select
-            className="headerListSelect"
-            value={PortfolioStore.selectedPortfolioId || initialValue}
+            className="listSelect"
+            style={{
+              marginTop: '16px',
+              marginBottom: '16px',
+            }}
+            value={PortfolioStore.selectedPortfolioId || ''}
             onChange={this.handleChange}
             displayEmpty // uses the 1st element as placeholder
             disableUnderline // removes underline from component

@@ -69,9 +69,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={AscendantBarsIcon}
             iconColor="gray"
             title="Share price"
-            description={PortfolioStore.selectedPortfolio ?
-              (PortfolioStore.currentPortfolioSharePrice ? `$${PortfolioStore.currentPortfolioSharePrice.toFixed(2)}` : `$${1}`) :
-              `$${0}`}
+            description={`$${PortfolioStore.currentPortfolioSharePrice.toFixed(2)}`}
           />
 
           <SummaryCard
@@ -99,7 +97,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
               `${PortfolioStore.summaryTotalProfitLoss}%`}
             hasInfo={(PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0) ||
               (PortfolioStore.summaryTotalInvestmentInUSD > 0 && PortfolioStore.currentPortfolioCostInUSD === 0) ||
-            (PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD === 0)}
+              (PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD === 0)}
             infoMessage={handleInfoMessage()}
           />
         </Grid>

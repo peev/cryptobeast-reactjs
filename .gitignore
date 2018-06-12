@@ -11,7 +11,7 @@
 /server/yarn.lock
 
 # testing
-/coverage
+/client/coverage
 
 # production
 /client/build

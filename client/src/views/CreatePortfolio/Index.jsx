@@ -3,26 +3,29 @@ import * as React from 'react';
 import { withStyles } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 import { Redirect } from 'react-router-dom';
-import appStyle from './../../variables/styles/appStyle';
-import CreatePortfolio from './../../components/Modal/CreatePortfolio';
 
+import appStyle from './../../variables/styles/appStyle';
+import CreateStartPortfolio from '../../components/Tabs/CreatePortfolio/CreateStartPortfolio';
+import SelectFromPortfolios from '../../components/Tabs/SelectFromPortfolios/SelectFromPortfolios';
 
 type Props = {
-  classes: Object,
   PortfolioStore: Object,
   portfolios: Array<object>,
+  selectedPortfolioId: number,
 };
 
-const CreatePortfolioView = inject('PortfolioStore')(observer(({ classes, PortfolioStore: { portfolios } }: Props) => {
-  if (portfolios.length > 0) return <Redirect to="/summary" />;
+const CreatePortfolioView = inject('PortfolioStore')(observer(({ PortfolioStore: { portfolios, selectedPortfolioId } }: Props) => {
+  if (portfolios.length === 1) {
+    selectedPortfolioId = portfolios[0].id;
+    return <Redirect to="/summary" />;
+  }
 
   return (
     <React.Fragment>
-      <p className={classes.warningText}>
-        You currently have no portfolio to display. Please create a
-        portfolio to start
-      </p>
-      <CreatePortfolio />
+      {portfolios.length === 0
+        ? <CreateStartPortfolio />
+        : <SelectFromPortfolios />
+      }
     </React.Fragment>
   );
 }));

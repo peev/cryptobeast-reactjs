@@ -1,4 +1,4 @@
-const { CronJob } = require('cron');
+// const { CronJob } = require('cron');
 const { responseHandler } = require('../utilities/response-handler');
 
 const modelName = 'Portfolio';
@@ -10,7 +10,7 @@ const portfolioController = (repository, jobs) => {
   // setInterval(printSharePriceJobs, 5000);
 
   const createPortfolio = (req, res) => {
-    const portfolio = req.body;
+    const portfolio = Object.assign({}, req.body, { owner: req.user.email });
     repository.create({ modelName, newObject: portfolio })
       .then((newPortfolio) => {
         // async only this part and not the whole controller
@@ -25,9 +25,7 @@ const portfolioController = (repository, jobs) => {
       .then((response) => {
         res.status(200).send(response);
       })
-      .catch((error) => {
-        return res.json(error);
-      });
+      .catch(error => res.json(error));
   };
 
   const getById = (req, res) => {
@@ -43,7 +41,10 @@ const portfolioController = (repository, jobs) => {
   const getAllPortfolios = (req, res) => {
     repository.find({
       modelName,
-      options: { include: [{ all: true }] }, // Eager loading
+      options: {
+        where: { owner: req.user.email },
+        include: [{ all: true }], // Eager loading
+      },
     })
       .then((response) => {
         res.status(200).send(response);
@@ -59,9 +60,7 @@ const portfolioController = (repository, jobs) => {
       .then((response) => {
         res.status(200).send(response);
       })
-      .catch((error) => {
-        return res.json(error);
-      });
+      .catch(error => res.json(error));
   };
 
   const removePortfolio = (req, res) => {
@@ -74,9 +73,7 @@ const portfolioController = (repository, jobs) => {
     delete closingPortfolioCostJobs[id];
     repository.remove({ modelName, id })
       .then(result => responseHandler(res, result))
-      .catch((error) => {
-        return res.json(error);
-      });
+      .catch(error => res.json(error));
   };
 
   // TODO: Calculate prices in the front end
@@ -109,7 +106,7 @@ const portfolioController = (repository, jobs) => {
         where: {
           portfolioId: req.body.portfolioId,
           isClosingPrice: req.body.isClosingPrice,
-        }
+        },
       },
     })
       .then((response) => {
@@ -126,7 +123,7 @@ const portfolioController = (repository, jobs) => {
       options: {
         where: {
           portfolioId: req.body.portfolioId,
-        }
+        },
       },
     })
       .then((response) => {
@@ -165,8 +162,8 @@ const portfolioController = (repository, jobs) => {
           portfolioId: id,
           createdAt: {
             $gt: new Date(endDate),
-          }
-        }
+          },
+        },
       },
     })
       .then((response) => {

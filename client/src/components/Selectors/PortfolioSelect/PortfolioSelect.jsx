@@ -4,7 +4,6 @@ import { withStyles, MenuItem, FormControl } from 'material-ui';
 import Select from 'material-ui/Select';
 
 import { inject, observer } from 'mobx-react';
-
 import './PortfolioSelect.css';
 
 const styles = (theme: Object) => ({
@@ -129,7 +128,11 @@ class PortfolioSelect extends React.Component<Props> {
       <form autoComplete="off" >
         <FormControl className={classes.formControl}>
           <Select
-            className="headerListSelect"
+            className="listSelect"
+            style={{
+              marginTop: '16px',
+              marginBottom: '16px',
+            }}
             value={PortfolioStore.selectedPortfolioId || ''}
             onChange={this.handleChange}
             displayEmpty // uses the 1st element as placeholder

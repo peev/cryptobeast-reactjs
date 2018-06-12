@@ -1,17 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+/* globals document */
+import React, { createElement } from 'react';
+import ReactDOM, { render } from 'react-dom';
 import { Router, Route, Switch } from 'react-router-dom';
 import { configure } from 'mobx';
 import { Provider } from 'mobx-react';
 import uuid from 'uuid/v4';
-
 import './assets/css/material-dashboard-react.css';
-// import indexRoutes from './routes/index';
 import appRoutes from './routes/app';
 import history from './services/History';
 import CustomRoute from './components/CustomRoute';
 import App from './containers/App/App';
 import CreatePortfolioView from './views/CreatePortfolio/Index';
+import AuthService from './services/Authentication';
 
 import PortfolioStore from './stores/PortfolioStore';
 import AssetStore from './stores/AssetStore';
@@ -21,6 +21,14 @@ import ApiAccountStore from './stores/ApiAccountStore';
 import UserStore from './stores/UserStore';
 import NotificationStore from './stores/NotificationStore';
 import Analytics from './stores/Analytics';
+
+if (AuthService.isAuthenticated()) {
+  PortfolioStore.setFetchingPortfolios(true);
+} else {
+  if (!AuthService.isSignedOut()) {
+    AuthService.signOut();
+  }
+}
 
 const stores = {
   PortfolioStore,
@@ -33,11 +41,26 @@ const stores = {
   Analytics,
 };
 
-// For easier debugging
-// eslint-disable-next-line no-underscore-dangle
-window._____APP_STATE_____ = stores; //eslint-disable-line
+// ====================================
+// For easier debugging MobX
+function enableDevtools() {
+  require(['mobx-react-devtools'], mobxDevtools => {//eslint-disable-line
+    const wrapper = document.createElement('div');
+    wrapper.id = 'mobx-devtools-wrapper';
+    document.body.appendChild(wrapper);
+    render(createElement(mobxDevtools.default), wrapper);
+  });
+}
+if (process.env.NODE_ENV === 'development') {
+  configure({
+    enforceActions: true,
+    computedRequiresReaction: true,
+    disableErrorBoundaries: true,
+  });
 
-configure({ enforceActions: true });
+  enableDevtools();
+}
+// ====================================
 
 ReactDOM.render(
   <Provider {...stores}>

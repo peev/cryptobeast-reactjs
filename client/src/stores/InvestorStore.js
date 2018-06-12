@@ -443,16 +443,14 @@ class InvestorStore {
           requester.Investor.addDeposit(depositData)
             .then(action((response) => {
               PortfolioStore.currentPortfolioTransactions.push(response.data);
-              this.reset();
             }))
             .then(action(() => {
-              PortfolioStore.getPortfolios();
-              PortfolioStore.resetPortfolio();
               this.reset();
+              PortfolioStore.resetPortfolio();
             }))
             .catch(err => console.log(err));
         } else {
-          PortfolioStore.getPortfolios();
+          PortfolioStore.resetPortfolio();
         }
       }))
       .catch(err => console.log(err));

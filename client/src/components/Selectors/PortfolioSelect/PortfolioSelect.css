@@ -2,28 +2,23 @@ ul[class^="MuiList-root"] {
   padding: 0;
 }
 
-.headerListSelect {
-  margin-top: 16px;
-  margin-bottom: 16px;
-}
-
-.headerListSelect>div {
+.listSelect>div {
   border-right: 1px solid #F6F6F6;
 }
 
-.headerListSelect>div>div {
+.listSelect>div>div {
   width: 200px;
   height: 60px;
   padding: 0 32px;
   color: #F6F6F6;
 }
 
-.headerListSelect>div>div>div {
+.listSelect>div>div>div {
   padding: 7px 25px;
   border-bottom: none;
 }
 
-.headerListSelect>div>svg {
+.listSelect>div>svg {
   padding-right: 10px;
   fill: #F6F6F6;
   top: 18px;

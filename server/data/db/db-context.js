@@ -8,8 +8,8 @@ const createConnection = conf => new Sequelize(`postgres://${conf.user}:${conf.p
 const init = databaseConfig => new Promise((resolve) => {
   const dbName = databaseConfig.name;
   const dbUser = databaseConfig.user;
-  const dbPass = databaseConfig.password;
-  const testconnection = createConnection(databaseConfig);
+  // const dbPass = databaseConfig.password;
+  const testConnection = createConnection(databaseConfig);
 
   testConnection.query(`CREATE DATABASE ${dbName} WITH OWNER = ${dbUser}`)
     .then(() => {
@@ -18,9 +18,8 @@ const init = databaseConfig => new Promise((resolve) => {
     .catch(() => {
       console.log('Database already exists.'.grey);
     }).then(() => {
-      testconnection.close();
+      testConnection.close();
       const sequelize = createConnection(databaseConfig);
-
       const db = {};
 
       // TODO: Add new models here

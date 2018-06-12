@@ -193,6 +193,7 @@ class Analytics {
 
   @action.bound
   btcPriceHistoryForPeriod() {
+    console.log(PortfolioStore.selectedPortfolio.portfolioPrices);
     if (PortfolioStore.selectedPortfolio.portfolioPrices.length > 1) {
       const sortedPrices = PortfolioStore.selectedPortfolio.portfolioPrices.slice();
       const portfolioPriceHistory = sortedPrices

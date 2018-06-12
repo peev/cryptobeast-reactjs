@@ -1,3 +1,4 @@
+/* globals window */
 import axios from 'axios';
 
 let API_ROOT;
@@ -6,7 +7,7 @@ if (process.env.NODE_ENV === 'development') {
 } else {
   API_ROOT = 'https://cryptobeast.motiontest.eu/api';
 }
-const idToken = localStorage.getItem('id_token'); // eslint-disable-line
+const idToken = window.localStorage.getItem('id_token'); // eslint-disable-line
 const options = { headers: { Authorization: `Bearer ${idToken}` } };
 
 const requests = {

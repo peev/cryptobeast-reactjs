@@ -6,7 +6,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const jwksRsa = require('jwks-rsa');
 const jwt = require('express-jwt');
-// const path = require('path');
+const path = require('path');
 
 
 const init = async (repository) => {
@@ -22,10 +22,12 @@ const init = async (repository) => {
     skip: (req, res) => res.statusCode < 400,
   }));
 
+  // static folder for testing
+  // app.use('/static', express.static(path.join(__dirname, '..', '..', '..', 'client/build')));
+
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(cookieParser());
-
 
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');

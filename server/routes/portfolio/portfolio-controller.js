@@ -28,8 +28,16 @@ const portfolioController = (repository, jobs) => {
       .catch(error => res.json(error));
   };
 
-  const getById = (req, res) => {
-    repository.findById({ modelName, id: req.params.id })
+  const searchItemsInCurrentPortfolio = (req, res) => {
+    const searchedModelName = req.params.item;
+    repository.find({
+      modelName: searchedModelName,
+      options: {
+        where: {
+          portfolioId: req.params.portfolioId,
+        },
+      },
+    })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -43,7 +51,6 @@ const portfolioController = (repository, jobs) => {
       modelName,
       options: {
         where: { owner: req.user.email },
-        include: [{ all: true }], // Eager loading
       },
     })
       .then((response) => {
@@ -175,7 +182,7 @@ const portfolioController = (repository, jobs) => {
   };
 
   return {
-    getById,
+    searchItemsInCurrentPortfolio,
     getAllPortfolios,
     createPortfolio,
     updatePortfolio,

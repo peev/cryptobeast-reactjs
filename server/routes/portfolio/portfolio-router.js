@@ -7,7 +7,7 @@ const attachTo = (app, repository, jobs) => {
   router
     .post('/create', (req, res) => portfolioController.createPortfolio(req, res))
     .get('/all', (req, res) => portfolioController.getAllPortfolios(req, res))
-    .get('/:id', (req, res) => portfolioController.getById(req, res))
+    .get('/:portfolioId/:item', (req, res) => portfolioController.searchItemsInCurrentPortfolio(req, res))
     .put('/update/:id', (req, res) => portfolioController.updatePortfolio(req, res))
     .delete('/delete/:id', (req, res) => portfolioController.removePortfolio(req, res))
     .post('/updatePortfolioCost', (req, res) => portfolioController.updatePortfolioBTCEquivalentOnRequest(req, res))

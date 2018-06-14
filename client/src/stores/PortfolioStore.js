@@ -5,7 +5,7 @@ import {
   observable,
   action,
   computed,
-  // autorun,
+  onBecomeObserved,
 } from 'mobx';
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
@@ -24,6 +24,7 @@ class PortfolioStore {
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
   @observable currentPortfolioTrades;
+  @observable currentPortfolioPrices;
   @observable newPortfolioName;
 
   constructor() {
@@ -35,15 +36,16 @@ class PortfolioStore {
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
-    this.newPortfolioName = '';
     this.currentPortfolioTrades = [];
+    this.currentPortfolioPrices = [];
+    this.newPortfolioName = '';
 
-
-    // eslint-disable-next-line no-unused-expressions
-    // gets portfolios at app init
-    // this.getPortfolios().then(() => {
-    //   MarketStore.init();
-    // });
+    // only start data fetching if those properties are actually used!
+    onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
+    onBecomeObserved(this, 'currentPortfolioInvestors', this.getCurrentPortfolioInvestors);
+    onBecomeObserved(this, 'currentPortfolioTransactions', this.getCurrentPortfolioTransactions);
+    onBecomeObserved(this, 'currentPortfolioTrades', this.getCurrentPortfolioTrades);
+    onBecomeObserved(this, 'currentPortfolioPrices', this.getCurrentPortfolioPrices);
   }
 
   @action
@@ -54,10 +56,19 @@ class PortfolioStore {
   // #region Computed
   // #region Summary Page
   @computed
+  get summaryTotalNumberOfShares() {
+    if (this.selectedPortfolio !== null && this.selectedPortfolio.shares !== null) {
+      return this.selectedPortfolio.shares;
+    }
+
+    return 0;
+  }
+
+  @computed
   get summaryTotalInvestmentInUSD() {
-    if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
+    if (this.selectedPortfolio && this.currentPortfolioTransactions.length > 0) {
       let totalAmount = 0;
-      this.selectedPortfolio.transactions.forEach((el) => {
+      this.currentPortfolioTransactions.forEach((el) => {
         totalAmount += el.amountInUSD;
       });
 
@@ -69,7 +80,7 @@ class PortfolioStore {
 
   @computed
   get summaryTotalProfitLoss() {
-    if (this.selectedPortfolio && this.selectedPortfolio.transactions.length > 0) {
+    if (this.selectedPortfolio && this.currentPortfolioTransactions.length > 0) {
       const result = ((this.currentPortfolioCostInUSD - this.summaryTotalInvestmentInUSD) / this.summaryTotalInvestmentInUSD) * 100;
       return result.toFixed(2);
     }
@@ -548,21 +559,26 @@ class PortfolioStore {
 
     return hasErrors;
   }
+
   @action
+  // eslint-disable-next-line class-methods-use-this
   updatePortfolio(portfolioName, id) {
     requester.Portfolio.update(portfolioName, id)
       .then(() => {
-        this.getPortfolios();
+        // TODO: update current portfolio array
       })
       .catch(err => console.log(err));
   }
 
   @action
+  // eslint-disable-next-line class-methods-use-this
   removePortfolio(id) {
     requester.Portfolio.delete(id)
-      .then(() => {
-        this.getPortfolios();
-      })
+      .then(action((result) => {
+        if (result.data === 1) {
+          this.portfolios = this.portfolios.filter(el => el.id !== id);
+        }
+      }))
       .catch(err => console.log(err));
   }
   // #endregion
@@ -577,10 +593,13 @@ class PortfolioStore {
         if (el.id === id) {
           this.selectedPortfolioShares = el.shares;
           this.selectedPortfolio = { ...el };
-          this.currentPortfolioAssets = el.assets;
-          this.currentPortfolioInvestors = el.investors;
-          this.currentPortfolioTransactions = el.transactions;
-          this.currentPortfolioTrades = el.trades;
+
+          // removed eager loading and all data is separated
+          this.getCurrentPortfolioAssets();
+          this.getCurrentPortfolioPrices();
+          this.getCurrentPortfolioInvestors();
+          this.getCurrentPortfolioTrades();
+          this.getCurrentPortfolioTransactions();
         }
       });
 
@@ -609,6 +628,65 @@ class PortfolioStore {
     });
   }
 
+  @action.bound
+  getCurrentPortfolioAssets() {
+    const searchedItem = {
+      portfolioId: this.selectedPortfolioId,
+      item: 'Asset',
+    };
+    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
+      .then(action((result) => {
+        this.currentPortfolioAssets = result.data;
+      }));
+  }
+
+  @action.bound
+  getCurrentPortfolioPrices() {
+    const searchedItem = {
+      portfolioId: this.selectedPortfolioId,
+      item: 'PortfolioPrice',
+    };
+    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
+      .then(action((result) => {
+        this.currentPortfolioPrices = result.data;
+      }));
+  }
+
+  @action.bound
+  getCurrentPortfolioInvestors() {
+    const searchedItem = {
+      portfolioId: this.selectedPortfolioId,
+      item: 'Investor',
+    };
+    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
+      .then(action((result) => {
+        this.currentPortfolioInvestors = result.data;
+      }));
+  }
+
+  @action.bound
+  getCurrentPortfolioTransactions() {
+    const searchedItem = {
+      portfolioId: this.selectedPortfolioId,
+      item: 'Transaction',
+    };
+    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
+      .then(action((result) => {
+        this.currentPortfolioTransactions = result.data;
+      }));
+  }
+
+  @action.bound
+  getCurrentPortfolioTrades() {
+    const searchedItem = {
+      portfolioId: this.selectedPortfolioId,
+      item: 'Trade',
+    };
+    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
+      .then(action((result) => {
+        this.currentPortfolioTrades = result.data;
+      }));
+  }
 
   @action.bound
   resetPortfolio() {

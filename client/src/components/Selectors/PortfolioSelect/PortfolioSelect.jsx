@@ -111,7 +111,7 @@ class PortfolioSelect extends React.Component<Props> {
           key={el.id}
           value={el.id}
           index={i + 1}
-          select={i === 1 ? el.id : undefined}
+        // select={i === 1 ? el.id : undefined}
         >
           <div className={classes.listItemContainer}>
             <p className={classes.listItemName}>{el.name}</p>
@@ -135,7 +135,7 @@ class PortfolioSelect extends React.Component<Props> {
             }}
             value={PortfolioStore.selectedPortfolioId || ''}
             onChange={this.handleChange}
-            displayEmpty // uses the 1st element as placeholder
+            // displayEmpty // uses the 1st element as placeholder
             disableUnderline // removes underline from component
             inputProps={{
               name: 'selectedPortfolioId',

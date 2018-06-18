@@ -34,8 +34,11 @@ const styles = () => ({
   overrideGrid: {
     padding: '12px',
   },
-  profitStyle: {
-    color: '#60bb9b',
+  positiveValue: {
+    color: '#70A800',
+  },
+  negativeValue: {
+    color: '#B94A48',
   },
 });
 
@@ -47,9 +50,9 @@ type Props = {
 @inject('InvestorStore')
 @observer
 class IndividualSummary extends React.Component<Props> {
-  handleSave = () => {
-    // console.log('Submit');
-  };
+  componentWillUnmount() {
+    this.props.InvestorStore.resetSelectedInvestor();
+  }
 
   handleSelectInvestorForSummary = (value: *) => {
     this.props.InvestorStore.selectInvestorIndividualSummary(value);
@@ -60,7 +63,7 @@ class IndividualSummary extends React.Component<Props> {
 
     return (
       <ValidatorForm
-        onSubmit={this.handleSave}
+        onSubmit={() => { }}
       >
         <Grid container>
           <Grid container className={classes.container}>
@@ -82,48 +85,78 @@ class IndividualSummary extends React.Component<Props> {
             <Grid item xs={12} sm={6} md={3}>
               <div className={classes.containerItems}>
                 <p>Shares Held:</p>
-                <span>{InvestorStore.individualSharesHeld}</span>
+                <span>{InvestorStore.individualSharesHeld !== null
+                  ? InvestorStore.individualSharesHeld
+                  : ''}
+                </span>
               </div>
 
               <div className={classes.containerItems}>
                 <p>Weighted entry price:</p>
-                <span>{InvestorStore.individualWeightedEntryPrice ? `$ ${InvestorStore.individualWeightedEntryPrice}` : ''}</span>
+                <span>{InvestorStore.individualWeightedEntryPrice !== null
+                  ? `$ ${InvestorStore.nearZeroRounding(InvestorStore.individualWeightedEntryPrice, 2)}`
+                  : ''}
+                </span>
               </div>
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
               <div className={classes.containerItems}>
                 <p>USD Equivalent:</p>
-                <span>{InvestorStore.individualUSDEquivalent}</span>
+                <span>{InvestorStore.individualUSDEquivalent !== null
+                  ? InvestorStore.nearZeroRounding(InvestorStore.individualUSDEquivalent, 2)
+                  : ''}
+                </span>
               </div>
 
               <div className={classes.containerItems}>
                 <p>BTC Equivalent:</p>
-                <span>{InvestorStore.individualBTCEquivalent}</span>
+                <span>{InvestorStore.individualBTCEquivalent !== null
+                  ? InvestorStore.nearZeroRounding(InvestorStore.individualBTCEquivalent, 2)
+                  : ''}
+                </span>
               </div>
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
               <div className={classes.containerItems}>
                 <p>Investment Period:</p>
-                <span>{InvestorStore.individualInvestmentPeriod ? `${InvestorStore.individualInvestmentPeriod} DAYS` : ''}</span>
+                <span>{InvestorStore.individualInvestmentPeriod !== null
+                  ? `${InvestorStore.individualInvestmentPeriod} DAYS`
+                  : ''}
+                </span>
               </div>
 
               <div className={classes.containerItems}>
                 <p>Profit:</p>
-                <span className={classes.profitStyle}>{InvestorStore.individualProfit ? `${InvestorStore.individualProfit} %` : ''}</span>
+                <span className={InvestorStore.individualProfit > 0
+                  ? classes.positiveValue
+                  : InvestorStore.individualProfit < 0
+                    ? classes.negativeValue
+                    : ''}
+                >
+                  {InvestorStore.individualProfit !== null
+                    ? `${InvestorStore.nearZeroRounding(InvestorStore.individualProfit, 2)} %`
+                    : ''}
+                </span>
               </div>
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
               <div className={classes.containerItems}>
                 <p>ETH Equivalent:</p>
-                <span>{InvestorStore.individualETHEquivalent}</span>
+                <span>{InvestorStore.individualETHEquivalent !== null
+                  ? InvestorStore.nearZeroRounding(InvestorStore.individualETHEquivalent, 2)
+                  : ''}
+                </span>
               </div>
 
               <div className={classes.containerItems}>
                 <p>Fee Potential:</p>
-                <span>{InvestorStore.individualFeePotential ? `$ ${InvestorStore.individualFeePotential}` : ''}</span>
+                <span>{InvestorStore.individualFeePotential !== null
+                  ? `$ ${InvestorStore.nearZeroRounding(InvestorStore.individualFeePotential, 2)}`
+                  : ''}
+                </span>
               </div>
             </Grid>
           </Grid>

@@ -602,7 +602,7 @@ class PortfolioStore {
           this.getCurrentPortfolioTransactions();
         }
       });
-
+      InvestorStore.selectedInvestorIndividualSummary = null;
       Analytics.btcPriceHistoryForPeriod();
     }
   }

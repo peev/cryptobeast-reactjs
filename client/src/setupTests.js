@@ -1,6 +1,10 @@
 import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import sinon from 'sinon';
 import requestAnimationFrame from './tempPolyfills'; // eslint-disable-line
+
+// React 16 Enzyme adapter
+configure({ adapter: new Adapter(), disableLifecycleMethods: true });
 
 class LocalStorageMock {
   constructor() {
@@ -25,5 +29,4 @@ class LocalStorageMock {
 }
 
 global.localStorage = new LocalStorageMock();
-
-configure({ adapter: new Adapter(), disableLifecycleMethods: true });
+global.sinon = sinon;

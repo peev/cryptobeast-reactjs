@@ -36,7 +36,6 @@ const Performance = inject('Analytics')(observer(({ ...props }: Props) => {
       return;
     }
 
-    Analytics.getPortfolioPriceHistory();
     Analytics.getPortfolioPriceHistoryForTimePeriod();
   };
 

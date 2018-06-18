@@ -41,9 +41,8 @@ class UserStore {
 
   @action
   getUserProfile() {
-    return userApi.getUserProfile().then(action((profile) => {
+    userApi.getUserProfile().then(action((profile) => {
       this.profile = { ...profile };
-      return profile;
     }));
   }
 

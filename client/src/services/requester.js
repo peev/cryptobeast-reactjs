@@ -14,13 +14,14 @@ const requests = {
   get: url => axios.get(`${API_ROOT}${url}`, options),
   post: (url, body) => axios.post(`${API_ROOT}${url}`, body, options),
   put: (url, body) => axios.put(`${API_ROOT}${url}`, body, options),
-  delete: (url, body) => axios.delete(`${API_ROOT}${url}`, body, options),
+  delete: url => axios.delete(`${API_ROOT}${url}`, options), // axios.delete doesn't support body in requests !!!
 };
 
 // TODO: Add model http requests and create model store (mobx)
 const Portfolio = {
   getAll: () => requests.get('/portfolio/all'),
   create: portfolioName => requests.post('/portfolio/create', portfolioName),
+  searchItemsInCurrentPortfolio: requestParams => requests.get(`/portfolio/${requestParams.portfolioId}/${requestParams.item}`),
   getSharePrice: id => requests.post('/portfolio/getPortfolioSharePrice', id),
   getSharePriceHistory: requestParams => requests.post('/portfolio/sharePriceHistory', requestParams),
   getPriceHistory: requestParams => requests.post('/portfolio/priceHistory', requestParams),

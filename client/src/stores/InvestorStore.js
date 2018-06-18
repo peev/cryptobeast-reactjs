@@ -508,13 +508,10 @@ class InvestorStore {
     };
 
     requester.Investor.addDeposit(deposit)
-      .then((result) => {
+      .then(action((result) => {
         PortfolioStore.addTransaction(result.data);
-        PortfolioStore.getPortfolios().then(() => {
-          this.selectInvestor(result.data.investorId);
-        })
-          .catch(err => console.log(err));
-      });
+        this.selectInvestor(result.data.investorId);
+      }));
   }
 
   @action
@@ -540,10 +537,8 @@ class InvestorStore {
     requester.Investor.withdrawal(withdrawal)
       .then(action((result) => {
         PortfolioStore.addTransaction(result.data);
-        PortfolioStore.getPortfolios().then(action(() => {
-          this.selectInvestor(result.data.investorId);
-          NotificationStore.addMessage('successMessages', 'Widthdraw completed successfuly');
-        }));
+        this.selectInvestor(result.data.investorId);
+        NotificationStore.addMessage('successMessages', 'Withdraw completed successfully');
       }))
       .catch(err => console.log(err));
   }
@@ -763,7 +758,7 @@ class InvestorStore {
   // #endregion
 
   // #region Others
-  @action
+  @action.bound
   selectInvestor(id) {
     this.selectedInvestorId = id;
     this.selectedInvestor = {

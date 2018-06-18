@@ -18,7 +18,7 @@ type Props = {
   children?: React.Node
 };
 
-@inject('PortfolioStore', 'UserStore', 'MarketStore')
+@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore')
 @observer
 class App extends React.Component<Props> {
   state = {
@@ -26,7 +26,8 @@ class App extends React.Component<Props> {
   };
 
   componentDidMount() {
-    const { location, PortfolioStore, MarketStore } = this.props;
+    const { location, PortfolioStore, MarketStore, UserStore } = this.props;
+    UserStore.getUserProfile(); // tries to get user from local storage
     if (!AuthService.isAuthenticated()) {
       if (/access_token|id_token|error/.test(location.hash)) {
         AuthService.receiveAuthentication(location.hash);

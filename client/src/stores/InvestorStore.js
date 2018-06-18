@@ -76,7 +76,6 @@ class InvestorStore {
       currentPortfolioSharePrice,
     } = PortfolioStore;
     if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
-      // TODO: To add Assets value below
       const calculatedPurchasedShares = (this.convertedUsdEquiv() / (currentPortfolioSharePrice || 1)).toFixed(2);
       this.newInvestorValues.purchasedShares = calculatedPurchasedShares;
       return calculatedPurchasedShares;
@@ -175,6 +174,10 @@ class InvestorStore {
   @computed
   get individualSharesHeld() {
     if (this.selectedInvestorIndividualSummary) {
+      if (this.selectedInvestorIndividualSummary.purchasedShares === null) {
+        return 0;
+      }
+
       return this.selectedInvestorIndividualSummary.purchasedShares;
     }
 
@@ -210,13 +213,13 @@ class InvestorStore {
 
   @computed
   get individualWeightedEntryPrice() {
-    if (this.selectedInvestorIndividualSummary && this.selectedInvestorIndividualSummaryTransactions) {
+    if (this.selectedInvestorIndividualSummary && this.individualSharesHeld !== null) {
       const calculatedIndividualWeightedEntryPrice = this.selectedInvestorIndividualSummaryTransactions.reduce((result, transaction) => {
         result += (transaction.shares / this.individualSharesHeld) * transaction.sharePrice; // eslint-disable-line no-param-reassign
         return result;
       }, 0);
 
-      return Number(`${Math.round(`${calculatedIndividualWeightedEntryPrice}e2`)}e-2`);
+      return calculatedIndividualWeightedEntryPrice;
     }
 
     return null;
@@ -227,7 +230,7 @@ class InvestorStore {
     if (this.selectedInvestorIndividualSummary) {
       const calculatedIndividualUSDEquivalent = this.individualSharesHeld * PortfolioStore.currentPortfolioSharePrice;
 
-      return Number(`${Math.round(`${calculatedIndividualUSDEquivalent}e2`)}e-2`);
+      return calculatedIndividualUSDEquivalent;
     }
 
     return null;
@@ -238,7 +241,7 @@ class InvestorStore {
     if (this.selectedInvestorIndividualSummary) {
       const calculatedIndividualBTCEquivalent = this.individualUSDEquivalent / MarketStore.baseCurrencies[3].last;
 
-      return Number(`${Math.round(`${calculatedIndividualBTCEquivalent}e2`)}e-2`);
+      return calculatedIndividualBTCEquivalent;
     }
 
     return null;
@@ -249,7 +252,7 @@ class InvestorStore {
     if (this.selectedInvestorIndividualSummary && MarketStore.baseCurrencies) {
       const calculatedIndividualETHEquivalent = this.individualBTCEquivalent / MarketStore.baseCurrencies[0].last;
 
-      return Number(`${Math.round(`${calculatedIndividualETHEquivalent}e2`)}e-2`);
+      return calculatedIndividualETHEquivalent;
     }
 
     return null;
@@ -272,12 +275,14 @@ class InvestorStore {
 
   @computed
   get individualProfit() {
-    if (this.selectedInvestorIndividualSummary) {
-      let calculatedIndividualProfit = (PortfolioStore.currentPortfolioSharePrice - this.individualWeightedEntryPrice) /
-        (this.individualWeightedEntryPrice || 1);
-      calculatedIndividualProfit = Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`);
+    if (this.selectedInvestorIndividualSummary && this.individualWeightedEntryPrice !== null) {
+      if (this.individualWeightedEntryPrice === 0) {
+        return 0;
+      }
+      const calculatedIndividualProfit = ((PortfolioStore.currentPortfolioSharePrice - this.individualWeightedEntryPrice) /
+        this.individualWeightedEntryPrice) * 100;
 
-      return Number(`${Math.round(`${calculatedIndividualProfit}e2`)}e-2`);
+      return calculatedIndividualProfit;
     }
 
     return null;
@@ -288,7 +293,7 @@ class InvestorStore {
     if (this.selectedInvestorIndividualSummary) {
       const calculatedIndividualFeePotential = (this.individualUSDEquivalent * this.selectedInvestorIndividualSummary.managementFee) / 100;
 
-      return Number(`${Math.round(`${calculatedIndividualFeePotential}e2`)}e-2`);
+      return calculatedIndividualFeePotential;
     }
 
     return null;
@@ -597,37 +602,10 @@ class InvestorStore {
 
   @action
   handleDepositInvestorErrors() {
-    const currentDeposit = this.newDepositValues;
-    const baseCurrency = MarketStore.selectedBaseCurrency;
     let noErrors = true;
 
     // Checks if portfolio is selected
     noErrors = this.handleIsPortfolioSelected();
-
-    // Checks if Investor is selected
-    if (this.selectedInvestor === null) {
-      // NotificationStore.addMessage('errorMessages', 'Please select Investor');
-      noErrors = false;
-    }
-
-    // Checks if base currency is added
-    if (baseCurrency === null) {
-      // NotificationStore.addMessage('errorMessages', 'Please select currency');
-      noErrors = false;
-    }
-
-    // Checks the currently entered values. If value is empty and it is required,
-    // than adds a error massage to the array of errors
-    Object.keys(currentDeposit).forEach((prop) => {
-      // if (currentDeposit[prop] === '' && prop === 'transactionDate') {
-      //   // NotificationStore.addMessage('errorMessages', 'Entry date is required.');
-      //   noErrors = false;
-      // }
-      if (currentDeposit[prop] === '' && prop === 'amount') {
-        // NotificationStore.addMessage('errorMessages', 'Amount is required.');
-        noErrors = false;
-      }
-    });
 
     return noErrors;
   }
@@ -753,6 +731,7 @@ class InvestorStore {
   @action.bound
   resetSelectedInvestor() {
     this.selectedInvestorId = null;
+    this.selectedInvestorIndividualSummary = null;
     this.selectedInvestorIndividualSummaryTransactions = null;
   }
   // #endregion
@@ -831,7 +810,6 @@ class InvestorStore {
     return null;
   }
 
-  @action.bound
   // eslint-disable-next-line class-methods-use-this
   prettifyNumber(value) {
     const thousand = 1000;
@@ -860,6 +838,20 @@ class InvestorStore {
     }
     return endValue;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  nearZeroRounding(value, places) {
+    if (value > 0) {
+      return Number(`${Math.round(`${value}e${places}`)}e-${places}`);
+    } else if (value === 0 || value > `1e-${places}`) {
+      return value.toFixed(places);
+    } else if (value < `1e-${places}`) {
+      return Number(`${Math.round(`${value}e${places}`)}e-${places}`);
+    } else {
+      return value;
+    }
+  }
+
   // #endregion
 }
 

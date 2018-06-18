@@ -35,7 +35,7 @@ const CreatePortfolioView = inject('PortfolioStore', 'UserStore')(observer(({ ..
   const { classes, PortfolioStore, UserStore } = props;
 
   if (PortfolioStore.portfolios.length === 1) {
-    PortfolioStore.selectedPortfolioId = PortfolioStore.portfolios[0].id;
+    PortfolioStore.selectPortfolio(PortfolioStore.portfolios[0].id);
     return <Redirect to="/summary" />;
   }
 

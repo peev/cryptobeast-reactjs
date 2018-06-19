@@ -2,9 +2,7 @@
 import React, { SyntheticEvent } from 'react';
 import { withStyles, MenuItem, FormControl } from 'material-ui';
 import Select from 'material-ui/Select';
-
 import { inject, observer } from 'mobx-react';
-import './PortfolioSelect.css';
 
 const styles = (theme: Object) => ({
   button: {
@@ -28,14 +26,20 @@ const styles = (theme: Object) => ({
     display: 'flex',
     height: '100%',
     padding: '0 16px',
-    backgroundColor: '#22252f !important',
+    backgroundColor: '#22252f',
     // backgroundColor: 'rgba(34, 37, 47, 1) !important',
     opacity: '1',
     '&:hover': {
-      backgroundColor: '#414555 !important',
+      backgroundColor: '#5B5F70 !important',
     },
     '&:last-child>div': {
       borderBottom: 'none',
+    },
+  },
+  selectedListItem: {
+    backgroundColor: '#414555 !important',
+    '&:hover': {
+      backgroundColor: '#414555 !important',
     },
   },
   listItemContainer: {
@@ -64,6 +68,32 @@ const styles = (theme: Object) => ({
     color: '#D0D0D0',
     fontSize: '14px',
   },
+  menuItemContainer: {
+    zIndex: '1',
+    '&>ul': {
+      padding: '0',
+    },
+  },
+  root: {
+    '&>svg': {
+      paddingRight: '10px',
+      fill: '#F6F6F6',
+      top: '34px',
+    },
+  },
+  select: {
+    width: '200px',
+    height: '60px',
+    padding: '0 32px',
+    marginTop: '16px',
+    marginBottom: '16px',
+    color: '#F6F6F6',
+    borderRight: '1px solid #F6F6F6',
+    '&>div': {
+      padding: '7px 25px',
+      borderBottom: 'none',
+    },
+  },
 });
 
 type Props = {
@@ -83,30 +113,11 @@ class PortfolioSelect extends React.Component<Props> {
 
   render() {
     const { classes, PortfolioStore } = this.props;
-    const portfoliosToShow = [];
 
-    // 1st value is empty, this is required by the Select component
-    portfoliosToShow.push((
-      <MenuItem
-        className={classes.listItem}
-        key={0}
-        value=""
-        index={0}
-        disabled
-      >
-        <div className={classes.inputLabel}>
-          <div>
-            <p>Select Portfolio</p>
-          </div>
-        </div>
-      </MenuItem>
-    ));
-
-    const currentPortfolios = PortfolioStore.portfolios;
-
-    currentPortfolios.forEach((el: Object, i: number) => {
-      portfoliosToShow.push((
+    const portfoliosToShow = PortfolioStore.portfolios.map((el: Object, i: number) => {
+      return (
         <MenuItem
+          classes={{ selected: classes.selectedListItem }}
           className={classes.listItem}
           key={el.id}
           value={el.id}
@@ -121,22 +132,21 @@ class PortfolioSelect extends React.Component<Props> {
             </div>
           </div>
         </MenuItem>
-      ));
+      );
     });
 
     return (
       <form autoComplete="off" >
         <FormControl className={classes.formControl}>
           <Select
-            className="listSelect"
-            style={{
-              marginTop: '16px',
-              marginBottom: '16px',
+            classes={{
+              root: classes.root,
+              select: classes.select,
             }}
             value={PortfolioStore.selectedPortfolioId || ''}
             onChange={this.handleChange}
-            // displayEmpty // uses the 1st element as placeholder
             disableUnderline // removes underline from component
+            MenuProps={{ classes: { paper: classes.menuItemContainer } }}
             inputProps={{
               name: 'selectedPortfolioId',
               id: 'controlled-open-select',

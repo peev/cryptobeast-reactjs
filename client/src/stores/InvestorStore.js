@@ -478,6 +478,7 @@ class InvestorStore {
       .then(action(() => {
         const portfolioInvestors = PortfolioStore.currentPortfolioInvestors;
         // console.log(PortfolioStore.currentPortfolioInvestors, finalResult, investorId)
+        PortfolioStore.getCurrentPortfolioTransactions();
         portfolioInvestors.forEach((investor) => {
           if (investor.id === investorId) {
             // eslint-disable-next-line no-restricted-syntax

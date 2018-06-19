@@ -76,19 +76,12 @@ const investorController = (repository) => {
   const updateInvestor = async (req, res) => {
     const { id } = req.params;
     const investorData = Object.assign({}, req.body, { id });
-    const asyncForEach = async (array, callback) => {
-      for (let index = 0; index < array.length; index++) { // eslint-disable-line
-        await callback(array[index], index, array); // eslint-disable-line
-      }
-    };
     try {
       const updatedInvestorRecord = await repository.update({ modelName, updatedRecord: investorData });
-      const transactions = await repository.find({ modelName: 'Transaction', options: { where: { investorId: id } } });
-      await asyncForEach(transactions, async (t) => {
-        await repository.update({
-          modelName: 'Transaction',
-          updatedRecord: { investorName: investorData.fullName, id: t.dataValues.id },
-        });
+      await repository.updateMany({
+        modelName: 'Transaction',
+        updatedRecord: { investorName: investorData.fullName },
+        options: { where: { investorId: id } },
       });
       res.status(200).send(updatedInvestorRecord);
     } catch (er) {

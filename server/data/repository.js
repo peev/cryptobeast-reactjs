@@ -20,6 +20,12 @@ const init = (db) => {
       { where: { id: request.updatedRecord.id } },
     );
 
+  const updateMany = request =>
+    db[request.modelName].update(
+      request.updatedRecord,
+      request.options,
+    );
+
   const remove = request =>
     db[request.modelName].destroy({
       where: { id: request.id },
@@ -42,6 +48,7 @@ const init = (db) => {
     find,
     findOne,
     update,
+    updateMany,
     remove,
     removeAll,
     rawQuery,

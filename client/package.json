@@ -35,7 +35,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "build:demo": "REACT_APP_AUTH_REDIRECT='https://cryptobeast.motiontest.eu/' react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom --watch --updateSnapshot --no-cache --coverage",
     "test:ci": "react-app-rewired test --env=jsdom --forceExit --coverage --updateSnapshot --no-cache",
     "eject": "react-app-rewired eject",

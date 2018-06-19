@@ -1,3 +1,4 @@
+/* globals document */
 // @flow
 import React from 'react';
 import { withStyles, Grid, IconButton } from 'material-ui';
@@ -37,8 +38,8 @@ const styles = () => ({
   popUpTextInner: {
     width: '200px',
     padding: '15px 30px',
-    fontSize: '11px',
-    lineHeight: '13px',
+    fontSize: '14px',
+    lineHeight: '16px',
     boxShadow: '-1px 1px 14px 2px rgba(0, 0, 0, 0.4)',
   },
   marginNone: {
@@ -47,9 +48,10 @@ const styles = () => ({
   mainColor: {
     color: '#3BB3E4',
   },
-  button: {
-    background: 'none',
-    border: 'none',
+  link: {
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
 });
 
@@ -104,12 +106,12 @@ class ClickablePopup extends React.Component<Props, State> {
                 <p className={classes.marginNone}>
                   Allocation not allowed - assets in selected portfolio. Please add assets manually (use menu above) or via an
                 </p>
-                <button
+                <a
                   onClick={this.handleRedirectUser}
-                  className={`${classes.button} ${classes.marginNone} ${classes.mainColor}`}
+                  className={`${classes.link} ${classes.marginNone} ${classes.mainColor}`}
                 >
                   exchange API
-                </button>
+                </a>
               </Paper>
             </Grid>
             : ''}

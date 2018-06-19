@@ -46,9 +46,12 @@ const styles = (theme: Object) => ({
     marginRight: '20px',
   },
   inputWrapper: {
-    marginTop: '15px',
     width: '200px',
-    margin: '0px 20px 0px 20px',
+    margin: '0px 20px',
+  },
+  inputWrapperTop: {
+    width: '206px',
+    margin: '10px 20px 0',
   },
 });
 
@@ -123,7 +126,7 @@ class EditInvestor extends React.Component<Props, State> {
                 <Typography
                   variant="title"
                   id="modal-title"
-                  style={{ fontSize: '18px', fontWeight: '400' }}
+                  style={{ marginLeft: '20px', fontSize: '18px', fontWeight: '400' }}
                 >
                   Edit Investor
                 </Typography>
@@ -132,77 +135,79 @@ class EditInvestor extends React.Component<Props, State> {
 
             <Grid container >
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <SelectInvestor
-                  value={InvestorStore.selectedInvestorId || ''}
-                  handleChange={this.handleSelectInvestor}
-                  style={{
-                  marginTop: '12px',
-                  width: '95%',
-                  border: 'none',
-                  borderRadius: 0,
-                  borderBottom: '1px solid #757575',
-              }}
-                />
+                <div className={classes.inputWrapperTop}>
+                  <SelectInvestor
+                    value={InvestorStore.selectedInvestorId || ''}
+                    handleChange={this.handleSelectInvestor}
+                    style={{
+                      marginTop: '12px',
+                      width: '95%',
+                      border: 'none',
+                      borderRadius: 0,
+                      borderBottom: '1px solid #757575',
+                    }}
+                  />
+                </div>
               </Grid>
             </Grid>
 
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  name="name"
-                  type="text"
-                  label="Full name"
-                  value={InvestorStore.updateInvestorValues.fullName}
-                  onChange={this.handleEditRequests('fullName')}
-                  className={classes.alignInputAfter}
-                  autoFocus
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    name="name"
+                    type="text"
+                    label="Full name"
+                    value={InvestorStore.updateInvestorValues.fullName}
+                    onChange={this.handleEditRequests('fullName')}
+                    className={classes.alignInputAfter}
+                    autoFocus
+                  />
+                </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  name="email"
-                  type="email"
-                  label="Email Address"
-                  value={InvestorStore.updateInvestorValues.email}
-                  onChange={this.handleEditRequests('email')}
-                  className={classes.alignInputAfter}
-                  validators={['isEmail']}
-                  errorMessages={['email is not valid']}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    name="email"
+                    type="email"
+                    label="Email Address"
+                    value={InvestorStore.updateInvestorValues.email}
+                    onChange={this.handleEditRequests('email')}
+                    className={classes.alignInputAfter}
+                    validators={['isEmail']}
+                    errorMessages={['email is not valid']}
+                  />
+                </div>
               </Grid>
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  name="phone"
-                  type="number"
-                  label="Telephone"
-                  value={InvestorStore.updateInvestorValues.telephone}
-                  onChange={this.handleEditRequests('telephone')}
-                  className={classes.alignInput}
-                  validators={['isNumber']}
-                  errorMessages={['telephone is not valid']}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    name="phone"
+                    type="number"
+                    label="Telephone"
+                    value={InvestorStore.updateInvestorValues.telephone}
+                    onChange={this.handleEditRequests('telephone')}
+                    className={classes.alignInput}
+                    validators={['isNumber']}
+                    errorMessages={['telephone is not valid']}
+                  />
+                </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  name="fee"
-                  type="number"
-                  label="Management Fee %"
-                  value={InvestorStore.updateInvestorValues.managementFee}
-                  onChange={this.handleEditRequests('managementFee')}
-                  className={classes.alignInput}
-                  validators={['isPositive', 'maxNumber:100']}
-                  errorMessages={['Fee must be a positive number', 'must be a number between 0 and 100']}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    name="fee"
+                    type="number"
+                    label="Management Fee %"
+                    value={InvestorStore.updateInvestorValues.managementFee}
+                    onChange={this.handleEditRequests('managementFee')}
+                    className={classes.alignInput}
+                    validators={['isPositive', 'maxNumber:100']}
+                    errorMessages={['Fee must be a positive number', 'must be a number between 0 and 100']}
+                  />
+                </div>
               </Grid>
             </Grid>
 
@@ -214,7 +219,7 @@ class EditInvestor extends React.Component<Props, State> {
                   color="primary"
                   onClick={this.handleClose}
                 >
-                Cancel
+                  Cancel
                 </Button>
               </div>
 

@@ -1,13 +1,8 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-
 import Select from 'react-select';
-
 import { withStyles } from 'material-ui/styles';
-// import { InputLabel } from 'material-ui/Input';
-
 import { FormControl } from 'material-ui/Form';
-
 import { inject, observer } from 'mobx-react';
 
 const styles = (theme: Object) => ({
@@ -70,37 +65,19 @@ class SelectBaseCurrency extends React.Component<Props, State> {
       currenciesToShow.push(currency);
     });
 
-    // const baseCurrencies = MarketStore.baseCurrencies.map((el: Object, i: number) =>
-    //   ((currencies.length === 0 || currencies.includes(MarketStore.baseCurrencies[i].pair)) ?
-    //     (
-    //       <MenuItem
-    //         key={uuid()}
-    //         value={i}
-    //       >
-    //         <em>{MarketStore.baseCurrencies[i].pair}</em>
-    //       </MenuItem>
-    //     ) : ''
-    //   ));
-
     return (
       <div autoComplete="off">
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
-          {/* <InputLabel htmlFor="controlled-open-select">
-            Select Currency
-          </InputLabel> */}
-
           <Select
             name="currency"
             placeholder={label || 'Select Base Currency*'}
             open={this.state.open}
             value={this.state.baseCurrency}
-            // onOpen={this.handleOpen}
             options={currenciesToShow}
             onClose={this.handleClose}
             onChange={this.handleChange}
             style={{
               marginTop: '12px',
-              width: '95%',
               border: 'none',
               borderRadius: 0,
               borderBottom: '1px solid #757575',

@@ -73,15 +73,21 @@ const investorController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const updateInvestor = (req, res) => {
+  const updateInvestor = async (req, res) => {
     const { id } = req.params;
-    const investorData = req.body;
-    Object.assign(investorData, { id });
-    repository.update({ modelName, updatedRecord: investorData })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch(error => res.json(error));
+    const investorData = Object.assign({}, req.body, { id });
+    try {
+      const updatedInvestorRecord = await repository.update({ modelName, updatedRecord: investorData });
+      await repository.updateMany({
+        modelName: 'Transaction',
+        updatedRecord: { investorName: investorData.fullName },
+        options: { where: { investorId: id } },
+      });
+      res.status(200).send(updatedInvestorRecord);
+    } catch (er) {
+      console.log(er); // eslint-disable-line
+      res.status(500).json(er);
+    }
   };
 
   const depositInvestor = (req, res) => {

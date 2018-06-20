@@ -18,6 +18,7 @@ const styles = () => ({
   cardContainer: {
     width: '18%',
     marginTop: '20px',
+    overflow: 'unset',
   },
   cardHeader: {
     float: 'left',

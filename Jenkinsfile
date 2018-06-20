@@ -31,7 +31,7 @@ node {
     }
     stage('Build Front-End Static Bundle') {
       nodejs(nodeJSInstallationName: 'nodejs') {
-        sh 'cd client && npm run build'
+        sh 'cd client && npm run build:demo'
       }
     }
     stage('Deploy Front-End') {

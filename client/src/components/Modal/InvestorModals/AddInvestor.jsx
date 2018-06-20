@@ -331,9 +331,7 @@ class AddInvestor extends React.Component<Props, State> {
               <Button
                 type="submit"
                 color="primary"
-                disabled={NotificationStore.getErrorsLength > 0 || InvestorStore.newInvestorValues.fullName === ''
-                  || InvestorStore.newInvestorValues.email === ''
-                  || InvestorStore.newInvestorValues.depositedAmount === '' || InvestorStore.newInvestorValues.managementFee === ''}
+                disabled={NotificationStore.getErrorsLength > 0}
               >
                 Save
               </Button>

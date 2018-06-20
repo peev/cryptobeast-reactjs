@@ -576,10 +576,6 @@ class InvestorStore {
     // Checks the currently entered values. If value is empty and it is required,
     // than adds a error massage to the array of errors
     Object.keys(currentInvestor).forEach((prop) => {
-      // if (currentInvestor[prop] === '' && prop === 'dateOfEntry') {
-      //   // NotificationStore.addMessage('errorMessages', 'Entry date is required.');
-      //   noErrors = false;
-      // }
       if (currentInvestor[prop] === '' && prop === 'depositedAmount') {
         // NotificationStore.addMessage('errorMessages', 'Deposited amount is required.');
         noErrors = false;

@@ -94,6 +94,9 @@ const styles = (theme: Object) => ({
       borderBottom: 'none',
     },
   },
+  flex: {
+    flex: 1,
+  },
 });
 
 type Props = {
@@ -114,8 +117,7 @@ class PortfolioSelect extends React.Component<Props> {
   render() {
     const { classes, PortfolioStore } = this.props;
 
-    const portfoliosToShow = PortfolioStore.portfolios.map((el: Object, i: number) => {
-      return (
+    const portfoliosToShow = PortfolioStore.portfolios.map((el: Object, i: number) => (
         <MenuItem
           classes={{ selected: classes.selectedListItem }}
           className={classes.listItem}
@@ -132,11 +134,10 @@ class PortfolioSelect extends React.Component<Props> {
             </div>
           </div>
         </MenuItem>
-      );
-    });
+    ));
 
     return (
-      <form autoComplete="off" >
+      <form autoComplete="off" className={classes.flex}>
         <FormControl className={classes.formControl}>
           <Select
             classes={{

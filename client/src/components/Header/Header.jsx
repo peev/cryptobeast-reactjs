@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { withStyles, Toolbar } from 'material-ui';
+import { withStyles, Toolbar, Button } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 
 import AuthService from './../../services/Authentication';
@@ -10,7 +10,11 @@ import headerStyle from '../../variables/styles/headerStyle';
 
 
 const styles = () => ({
+  root: {
+    flexGrow: 1,
+  },
   headerContainer: {
+    flexGrow: 1,
     position: 'fixed',
     width: '100%',
     paddingLeft: '0px',
@@ -18,17 +22,19 @@ const styles = () => ({
     zIndex: '1',
   },
   logoutButton: {
-    marginLeft: '40px',
-    padding: '10px 40px',
+    position: 'fixed',
+    right: 50,
+    width: 100,
+    padding: 0,
+    height: 40,
     color: 'white',
-    backgroundColor: '#4D5265',
+    backgroundColor: 'rgba(0,0,0,0)',
     border: 'none',
     fontSize: '14px',
     textTransform: 'uppercase',
+    boxShadow: '0px 1px 6px 0px rgba(255, 255, 255, 0.2)',
     '&:hover': {
-      cursor: 'pointer',
-      color: 'black',
-      backgroundColor: '#8A8E9B',
+      boxShadow: '0px 2px 12px 0px rgba(255, 255, 255, 0.4)',
     },
   },
 });
@@ -52,13 +58,13 @@ class Header extends Component<Props> {
 
     return (
       <Toolbar className={classes.headerContainer}>
-        {portfoliosArray.length > 0 && <PortfolioSelect />}
-        <button
+        {portfoliosArray.length > 0 && <PortfolioSelect className={classes.flex} />}
+        <Button
           className={classes.logoutButton}
           onClick={() => handleLogout()}
         >
-          Logout
-        </button>
+          Log out
+        </Button>
       </Toolbar>
     );
   }

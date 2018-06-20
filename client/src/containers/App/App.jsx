@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
-import { withStyles } from 'material-ui';
+import { withStyles, MuiThemeProvider } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 
+import { THEME } from './../../variables/theme';
 import { Header, Sidebar } from './../../components';
 import appRoutes from './../../routes/app';
 import appStyle from './../../variables/styles/appStyle';
@@ -55,7 +56,7 @@ class App extends React.Component<Props> {
     if (fetchingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
 
     return (
-      <React.Fragment>
+      <MuiThemeProvider theme={THEME}>
         <div className={classes.wrapper}>
           <Sidebar
             routes={appRoutes}
@@ -75,7 +76,7 @@ class App extends React.Component<Props> {
             </div>
           </div>
         </div>
-      </React.Fragment>
+      </MuiThemeProvider>
     );
   }
 }

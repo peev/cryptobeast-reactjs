@@ -1,9 +1,10 @@
+// @flow
 import { observable, action, computed, reaction, autorun } from 'mobx';
 
 class NotificationStore {
-  @observable errorMessages;
-  @observable successMessages;
-  @observable infoMessages;
+  @observable errorMessages: Array<string>;
+  @observable successMessages: Array<string>;
+  @observable infoMessages: Array<string>;
 
   constructor() {
     this.errorMessages = [];
@@ -34,8 +35,11 @@ class NotificationStore {
   }
 
   @action.bound
-  addMessage(kindOfMessage, message) {
-    this[kindOfMessage].push(message);
+  addMessage(kindOfMessage: string, message: string) {
+    const result: boolean = this[kindOfMessage].includes(message);
+    if (!result) {
+      this[kindOfMessage].push(message);
+    }
   }
 
   @action.bound

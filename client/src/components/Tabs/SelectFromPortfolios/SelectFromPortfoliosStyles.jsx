@@ -3,7 +3,7 @@ const selectFromPortfoliosStyles = () => ({
     padding: '0px 70px',
   },
   title: {
-    margin: '10px auto',
+    margin: '10px 0',
   },
   grid: {
     margin: '20px',
@@ -17,7 +17,14 @@ const selectFromPortfoliosStyles = () => ({
     minHeight: 'calc(100% - 123px)',
   },
   containerTitle: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     marginBottom: '50px',
+  },
+  containerContent: {
+    display: 'flex',
+    justifyContent: 'center',
   },
   portfolioName: {
     textTransform: 'capitalize',

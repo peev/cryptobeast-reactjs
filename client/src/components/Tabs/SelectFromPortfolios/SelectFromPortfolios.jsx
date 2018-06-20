@@ -3,6 +3,7 @@ import * as React from 'react';
 import { withStyles, Grid, Paper } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 import selectFromPortfoliosStyles from './SelectFromPortfoliosStyles';
+import CreatePortfolio from '../../../components/Modal/CreatePortfolio';
 import history from '../../../services/History';
 
 
@@ -54,6 +55,7 @@ const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ .
     <Grid container className={classes.containerMain}>
       <Grid item xs={12} sm={12} md={12} className={classes.containerTitle}>
         <p className={classes.title}>To start using CryptoBeast, please select a portfolio to analyze</p>
+        <CreatePortfolio place="startScreen" />
       </Grid>
 
       <Grid container spacing={40} className={classes.containerContent}>

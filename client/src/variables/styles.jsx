@@ -36,6 +36,7 @@ const boxShadow = {
 };
 
 const card = {
+  overflow: 'unset',
   display: 'inline-block',
   position: 'relative',
   width: '100%',

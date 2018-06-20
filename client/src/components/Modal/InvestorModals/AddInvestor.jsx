@@ -45,11 +45,11 @@ const styles = (theme: Object) => ({
     flexDirection: 'column',
   },
   alignInput: {
-    width: '95%',
+    width: '98%',
     marginTop: '16px',
   },
   alignInputAfter: {
-    width: '95%',
+    width: '98%',
     marginTop: '10px',
   },
   buttonsContainer: {
@@ -67,8 +67,15 @@ const styles = (theme: Object) => ({
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
   },
   inputWrapper: {
-    marginTop: '15px',
     width: '200px',
+    margin: '10px 20px 0',
+  },
+  inputWrapperSelectBaseCurrency: {
+    width: '190px',
+    margin: '10px 20px 0',
+  },
+  checkbox: {
+    marginRight: '10px',
   },
 });
 
@@ -159,7 +166,7 @@ class AddInvestor extends React.Component<Props, State> {
                 <Typography
                   variant="title"
                   id="modal-title"
-                  style={{ fontSize: '18px', fontWeight: '400', fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}
+                  style={{ marginLeft: '20px', fontSize: '18px', fontWeight: '400', fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}
                 >
                   Add a new investor
                 </Typography>
@@ -175,136 +182,137 @@ class AddInvestor extends React.Component<Props, State> {
                 </Typography>
 
                 <Checkbox
-                  onChange={this.handleFounder('founder')}
                   color="primary"
+                  className={classes.checkbox}
+                  onChange={this.handleFounder('founder')}
                 />
               </Grid>
             </Grid>
 
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  label="Full Name*"
-                  onChange={this.handleRequests('fullName')}
-                  name="name"
-                  className={classes.width}
-                  value={InvestorStore.newInvestorValues.fullName}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    label="Full Name*"
+                    onChange={this.handleRequests('fullName')}
+                    name="name"
+                    className={classes.width}
+                    value={InvestorStore.newInvestorValues.fullName}
+                    validators={['required']}
+                    errorMessages={['this field is required']}
+                  />
+                </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  label="Email*"
-                  onChange={this.handleRequests('email')}
-                  name="email"
-                  value={InvestorStore.newInvestorValues.email}
-                  validators={['required', 'isEmail']}
-                  errorMessages={['this field is required', 'email is not valid']}
-                />
-              </div>
-              </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  label="Telephone"
-                  onChange={this.handleRequests('telephone')}
-                  name="telephone"
-                  className={classes.width}
-                  value={InvestorStore.newInvestorValues.telephone}
-                  validators={['isNumber']}
-                  errorMessages={['telephone is not valid']}
-                />
-              </div>
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  onChange={this.handleRequests('dateOfEntry')}
-                  type="date"
-                  name="date"
-                  value={InvestorStore.newInvestorValues.dateOfEntry || today}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
-                  className={classes.alignInput}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    label="Email*"
+                    onChange={this.handleRequests('email')}
+                    name="email"
+                    value={InvestorStore.newInvestorValues.email}
+                    validators={['required', 'isEmail']}
+                    errorMessages={['this field is required', 'email is not valid']}
+                  />
+                </div>
               </Grid>
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    label="Telephone"
+                    onChange={this.handleRequests('telephone')}
+                    name="telephone"
+                    className={classes.width}
+                    value={InvestorStore.newInvestorValues.telephone}
+                    validators={['isNumber']}
+                    errorMessages={['telephone is not valid']}
+                  />
+                </div>
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    onChange={this.handleRequests('dateOfEntry')}
+                    type="date"
+                    name="date"
+                    value={InvestorStore.newInvestorValues.dateOfEntry || today}
+                    validators={['required']}
+                    errorMessages={['this field is required']}
+                    className={classes.alignInput}
+                  />
+                </div>
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <div className={classes.inputWrapperSelectBaseCurrency}>
                   <SelectBaseCurrency />
-              </div>
+                </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  label="Deposited Amount*"
-                  onChange={this.handleRequests('depositedAmount')}
-                  name="depositedAmount"
-                  value={InvestorStore.newInvestorValues.depositedAmount}
-                  validators={['required', 'isPositive']}
-                  errorMessages={['this field is required', 'value must be a positive number']}
-                />
-              </div>
-              </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  disabled
-                  name="USD"
-                  label="Deposited USD Equiv."
-                  className={classes.width}
-                  value={Math.round(InvestorStore.convertedUsdEquiv * 100) / 100 || ''}
-                />
-              </div>
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  type="number"
-                  label="Management Fee %*"
-                  onChange={this.handleRequests('managementFee')}
-                  name="fee"
-                  value={InvestorStore.newInvestorValues.managementFee || ''}
-                  validators={['required', 'maxNumber:100']}
-                  errorMessages={['this field is required', 'must be a number between 0 and 100']}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    label="Deposited Amount*"
+                    onChange={this.handleRequests('depositedAmount')}
+                    name="depositedAmount"
+                    value={InvestorStore.newInvestorValues.depositedAmount}
+                    validators={['required', 'isPositive']}
+                    errorMessages={['this field is required', 'value must be a positive number']}
+                  />
+                </div>
               </Grid>
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-              <TextValidator
-                disabled
-                name="share price"
-                label="Share Price at Entry Date (USD)"
-                className={classes.alignInputAfter}
-                value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
-                style={{ width: '95%' }}
-              />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    disabled
+                    name="USD"
+                    label="Deposited USD Equiv."
+                    className={classes.width}
+                    value={Math.round(InvestorStore.convertedUsdEquiv * 100) / 100 || ''}
+                  />
+                </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  disabled
-                  name="shares"
-                  type="number"
-                  value={InvestorStore.purchasedShares || ''}
-                  label="Purchased Shares"
-                  className={classes.alignInputAfter}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    type="number"
+                    label="Management Fee %*"
+                    onChange={this.handleRequests('managementFee')}
+                    name="fee"
+                    value={InvestorStore.newInvestorValues.managementFee || ''}
+                    validators={['required', 'maxNumber:100']}
+                    errorMessages={['this field is required', 'must be a number between 0 and 100']}
+                  />
+                </div>
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    disabled
+                    name="share price"
+                    label="Share Price at Entry Date (USD)"
+                    className={classes.alignInputAfter}
+                    value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
+                    style={{ width: '95%' }}
+                  />
+                </div>
+              </Grid>
+              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    disabled
+                    name="shares"
+                    type="number"
+                    value={InvestorStore.purchasedShares || ''}
+                    label="Purchased Shares"
+                    className={classes.alignInputAfter}
+                  />
+                </div>
               </Grid>
             </Grid>
 
@@ -316,7 +324,7 @@ class AddInvestor extends React.Component<Props, State> {
                   color="primary"
                   onClick={this.handleClose}
                 >
-                Cancel
+                  Cancel
                 </Button>
               </div>
 

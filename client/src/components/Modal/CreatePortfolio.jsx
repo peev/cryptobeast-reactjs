@@ -166,10 +166,11 @@ class CreatePortfolio extends React.Component<Props, State> {
               errorMessages={['this field is required']}
             />
             <div className={classes.inputWrapper}>
-            <SelectBaseCurrency
-              label="Select currency"
-              validators={['isPositive']}
-            />
+              <SelectBaseCurrency
+                className={classes.inputWrapper}
+                label="Select currency"
+                validators={['isPositive']}
+              />
             </div>
             <TextValidator
               label="Portfolio investment (optional)"
@@ -185,22 +186,22 @@ class CreatePortfolio extends React.Component<Props, State> {
 
             {/* Cancel BUTTON */}
             <div className={classes.inputWrapper} >
-            <Button
-              style={{ display: 'inline-flex', marginRight: '50px', float: 'left' }}
-              onClick={this.handleClose}
-              color="primary"
-            >
-              Cancel
-            </Button>
+              <Button
+                style={{ display: 'inline-flex', marginRight: '50px', float: 'left' }}
+                onClick={this.handleClose}
+                color="primary"
+              >
+                Cancel
+              </Button>
 
-            {/* SAVE BUTTON */}
-            <Button
-              style={{ display: 'inline-flex', float: 'right' }}
-              color="primary"
-              disabled={NotificationStore.getErrorsLength > 0 || PortfolioStore.newPortfolioName === ''}
-              type="submit"
-            >
-              Save
+              {/* SAVE BUTTON */}
+              <Button
+                style={{ display: 'inline-flex', float: 'right' }}
+                color="primary"
+                disabled={NotificationStore.getErrorsLength > 0 || PortfolioStore.newPortfolioName === ''}
+                type="submit"
+              >
+                Save
             </Button>
             </div>
           </ValidatorForm>

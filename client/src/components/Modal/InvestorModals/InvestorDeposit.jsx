@@ -33,6 +33,7 @@ const styles = (theme: Object) => ({
     flexDirection: 'column',
   },
   alignInput: {
+    width: '100%',
     marginTop: '16px',
   },
   alignInputAfter: {
@@ -47,8 +48,16 @@ const styles = (theme: Object) => ({
     marginRight: '20px',
   },
   inputWrapper: {
-    marginTop: '15px',
     width: '200px',
+    margin: '10px 20px 0',
+  },
+  inputWrapperTransactionDate: {
+    width: '192px',
+    margin: '10px 20px 0',
+  },
+  inputWrapperSelectBaseCurrency: {
+    width: '192px',
+    margin: '10px 20px 0',
   },
 });
 
@@ -147,7 +156,7 @@ class InvestorDeposit extends React.Component<Props, State> {
                 <Typography
                   variant="title"
                   id="modal-title"
-                  style={{ fontSize: '18px', fontWeight: '400' }}
+                  style={{ marginLeft: '20px', fontSize: '18px', fontWeight: '400' }}
                 >
                   Investor Deposit
                 </Typography>
@@ -171,7 +180,7 @@ class InvestorDeposit extends React.Component<Props, State> {
               </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
+              <div className={classes.inputWrapperTransactionDate}>
                 <TextValidator
                   name="date"
                   type="date"
@@ -202,7 +211,7 @@ class InvestorDeposit extends React.Component<Props, State> {
               </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
+              <div className={classes.inputWrapperSelectBaseCurrency}>
                 <SelectBaseCurrency />
               </div>
               </Grid>

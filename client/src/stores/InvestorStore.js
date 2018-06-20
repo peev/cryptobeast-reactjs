@@ -400,10 +400,10 @@ class InvestorStore {
         Object.assign(depositData.transaction, { investorId: createdInvestor.id });
         requester.Investor.addDeposit(depositData)
           .then(action((response) => {
-            createdInvestor.purchasedShares = response.data.shares;
             PortfolioStore.currentPortfolioInvestors.push(createdInvestor);
             PortfolioStore.currentPortfolioTransactions.push(response.data);
-            PortfolioStore.selectedPortfolioShares += response.data.shares;
+            PortfolioStore.selectedPortfolio.shares += response.data.shares;
+            PortfolioStore.getCurrentPortfolioAssets();
           }))
           .catch(err => console.log(err));
       }))

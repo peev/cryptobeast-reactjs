@@ -19,7 +19,6 @@ class PortfolioStore {
   @observable portfolios;
   @observable selectedPortfolio;
   @observable selectedPortfolioId;
-  @observable selectedPortfolioShares;
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
@@ -32,7 +31,6 @@ class PortfolioStore {
     this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
     this.selectedPortfolioId = 0;
-    this.selectedPortfolioShares = 0;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
@@ -393,7 +391,6 @@ class PortfolioStore {
           }
           // 8. 7D Change
           if (ind === 7) {
-            // FIXME: add real value
             switch (currentRow[0]) {
               case 'USD':
               case 'EUR':
@@ -455,8 +452,7 @@ class PortfolioStore {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
     if (this.selectedPortfolio &&
-      MarketStore.baseCurrencies.length > 0 &&
-      this.currentPortfolioAssets.length > 0) {
+      MarketStore.baseCurrencies.length > 0) {
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this is USD
       return this.currentPortfolioAssets.reduce((accumulator, el) => {
         let assetUSDValue;
@@ -526,7 +522,6 @@ class PortfolioStore {
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {
         this.selectedPortfolioId = result.data.id;
-        this.selectedPortfolioShares = result.data.shares;
         InvestorStore.createDefaultInvestor(result.data.id);
         this.portfolios.push(result.data);
       }))
@@ -578,6 +573,8 @@ class PortfolioStore {
         if (result.data === 1) {
           this.portfolios = this.portfolios.filter(el => el.id !== id);
         }
+
+        this.selectPortfolio(this.portfolios[this.portfolios.length - 1].id);
       }))
       .catch(err => console.log(err));
   }
@@ -591,7 +588,6 @@ class PortfolioStore {
       this.portfolios.forEach((el) => {
         // Returns only needed values from selected portfolio
         if (el.id === id) {
-          this.selectedPortfolioShares = el.shares;
           this.selectedPortfolio = { ...el };
 
           // removed eager loading and all data is separated

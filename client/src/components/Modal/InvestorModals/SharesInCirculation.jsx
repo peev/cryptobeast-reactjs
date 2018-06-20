@@ -59,6 +59,7 @@ class SharesInCirculation extends React.Component<Props, State> {
 
   render() {
     const { classes, PortfolioStore } = this.props;
+    const purchasedShares = PortfolioStore.currentPortfolioInvestors.filter((el: object) => el.purchasedShares > 0)
 
     return (
       <Grid container>
@@ -88,7 +89,7 @@ class SharesInCirculation extends React.Component<Props, State> {
 
               <Grid item xs={12} sm={12} md={12}>
                 <InvestorPieChart
-                  investors={PortfolioStore.currentPortfolioInvestors}
+                  investors={purchasedShares}
                   portfolioShares={PortfolioStore.selectedPortfolio.shares}
                 />
               </Grid>

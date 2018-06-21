@@ -1,7 +1,8 @@
 import Auth0Lock from 'auth0-lock';
 import history from './History';
 import { clientId, domain, redirectUrl } from './../variables/auth0';
-
+import Logo from './../assets/img/CryptoBeastLogo.svg';
+import './../variables/auth_lock.css';
 
 // LOCK v11 DOCUMENTATION
 // https://auth0.com/docs/libraries/lock/v11/api
@@ -12,14 +13,24 @@ const options = {
     audience: 'https://cryptobeast.eu.auth0.com/userinfo',
     scope: 'openid',
   },
+  rememberLastLogin: false,
   autoParseHash: false,
   allowAutocomplete: true,
+  closable: false,
   allowedConnections: ['Username-Password-Authentication'],
   autoclose: true,
   autofocus: true,
   theme: {
-    // logo: 'https://rebootaccel.com/wp-content/uploads/2015/08/google-favicon-vector-400x400.png',
-    primaryColor: '#31324F',
+    logo: Logo,
+    primaryColor: '#22252F',
+  },
+  languageDictionary: {
+    usernameInputPlaceholder: 'Username',
+    passwordInputPlaceholder: 'Password',
+    title: 'CryptoBeast',
+    loginLabel: 'LOG IN',
+    signUpLabel: 'SIGN UP',
+    forgotPasswordAction: 'Forgot password?',
   },
 };
 

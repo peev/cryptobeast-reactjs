@@ -8,6 +8,13 @@ const selectFromPortfoliosStyles = () => ({
   grid: {
     margin: '20px',
   },
+  gridLastElement: {
+    '&:after': {
+      content: '""',
+      width: '100%',
+      height: '100%',
+    },
+  },
   paper: {
     padding: '20px 30px',
   },

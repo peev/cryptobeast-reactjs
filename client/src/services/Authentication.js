@@ -1,3 +1,4 @@
+/* globals localStorage fetch */
 import Auth0Lock from 'auth0-lock';
 import history from './History';
 import { clientId, domain, redirectUrl } from './../variables/auth0';
@@ -48,7 +49,7 @@ class AuthService {
       if (error) console.log(error); // eslint-disable-line
       else {
         this.persistSession(authResult);
-        localStorage.setItem('profile', JSON.stringify(profile)); // eslint-disable-line
+        localStorage.setItem('profile', JSON.stringify(profile));
       }
     });
   }
@@ -81,19 +82,19 @@ class AuthService {
   persistSession = (authResult) => {
     // Access Token + ID Token + Expiry Time = SESSION
     const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-    localStorage.setItem('accessToken', authResult.accessToken); // eslint-disable-line
-    localStorage.setItem('id_token', authResult.idToken); // eslint-disable-line
-    localStorage.setItem('expires_at', expiresAt); // eslint-disable-line
+    localStorage.setItem('accessToken', authResult.accessToken);
+    localStorage.setItem('id_token', authResult.idToken);
+    localStorage.setItem('expires_at', expiresAt);
     // navigate to the home route
     history.push('/');
   }
 
   signOut = () => {
     // // Clear Access Token and ID Token from local storage
-    localStorage.removeItem('accessToken'); // eslint-disable-line
-    localStorage.removeItem('id_token'); // eslint-disable-line
-    localStorage.removeItem('expires_at'); // eslint-disable-line
-    localStorage.removeItem('profile'); // eslint-disable-line
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('id_token');
+    localStorage.removeItem('expires_at');
+    localStorage.removeItem('profile');
     this.lock.logout({
       returnTo: redirectUrl,
     });
@@ -102,11 +103,48 @@ class AuthService {
   isAuthenticated = () => {
     // Check whether the current time is past the
     // Access Token's expiry time
-    const expiresAt = JSON.parse(localStorage.getItem('expires_at')); // eslint-disable-line
+    const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
     return new Date().getTime() < expiresAt;
   }
 
-  isSignedOut = () => Boolean(!localStorage.getItem('accessToken') && !localStorage.getItem('profile')); // eslint-disable-line
+  isSignedOut = () => Boolean(!localStorage.getItem('accessToken') && !localStorage.getItem('profile'));
+
+  getUserIdToken = () => localStorage.getItem('id_token');
+
+  getUserProfile = () => JSON.parse(localStorage.getItem('profile'));
+
+  getUserData = () => {
+    const request = {
+      url: `https://${domain}/api/v2/users/user_id?fields=user_metadata&include_fields=true`,
+      method: 'GET',
+      headers:
+      {
+        'content-type': 'application/json',
+        authorization: `Bearer ${this.getUserIdToken()}`,
+      },
+    };
+
+    return fetch(request)
+      .catch(error => console.log(error));
+  };
+
+  patchUserData = (userData) => {
+    const request = {
+      url: `https://${domain}/api/v2/${this.getUserProfile().sub}`,
+      // url: `https://${domain}/api/v2/user_id`,
+      method: 'PATCH',
+      headers:
+      {
+        'content-type': 'application/json',
+        authorization: `Bearer ${this.getUserIdToken()}`,
+      },
+      body: userData,
+    };
+
+    console.log(request);
+    return fetch(request)
+      .catch(error => console.log(error));
+  };
 }
 
 const authService = new AuthService();

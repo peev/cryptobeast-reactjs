@@ -24,7 +24,7 @@ const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ .
 
   const portfoliosToSelectFrom = PortfolioStore.portfolios.map((el: object, i: number) => {
     const isLastElementOdd = ((i === PortfolioStore.portfolios.length - 1) && (i % 2 === 0))
-      ? <Grid item xs={12} sm={10} md={5} className={classes.grid} key={i} />
+      ? <Grid item xs={12} sm={10} md={5} className={classes.grid} key={i + 1} />
       : '';
 
     return (

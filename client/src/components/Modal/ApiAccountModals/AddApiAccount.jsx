@@ -108,14 +108,14 @@ class AddApiAccount extends React.Component<Props, State> {
 
   handleSave = () => {
     const { ApiAccountStore, PortfolioStore } = this.props;
-    const hasErrors = ApiAccountStore.handleCreateNewAccountErrors(PortfolioStore.selectedPortfolioId);
+    // const hasErrors = ApiAccountStore.handleCreateNewAccountErrors(PortfolioStore.selectedPortfolioId);
 
-    if (PortfolioStore.selectedPortfolioId !== null && !hasErrors) {
-      ApiAccountStore.createNewAccount(PortfolioStore.selectedPortfolioId);
-      this.props.NotificationStore.addMessage('successMessages', 'Successfully added API');
-    }
+    // if (PortfolioStore.selectedPortfolioId !== null && !hasErrors) {
+    ApiAccountStore.addNewApiAccount();
+    this.props.NotificationStore.addMessage('successMessages', 'Successfully added API');
+    // }
 
-    this.setState({ open: false });
+    // this.setState({ open: false });
   };
 
   handleExchangeCreateAccount = (value: any) => {
@@ -147,12 +147,12 @@ class AddApiAccount extends React.Component<Props, State> {
           >
             <div className={classes.isActiveCheckbox}>
               <div>
-              <Typography
-                variant="title"
-                id="modal-title"
-                className={classes.modalTitle}
-              >
-                IMPORT FROM API
+                <Typography
+                  variant="title"
+                  id="modal-title"
+                  className={classes.modalTitle}
+                >
+                  IMPORT FROM API
               </Typography>
               </div>
               <div>

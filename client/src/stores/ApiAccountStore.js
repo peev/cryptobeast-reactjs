@@ -2,6 +2,7 @@ import { observable, action } from 'mobx';
 import requester from '../services/requester';
 import AssetStore from './AssetStore';
 import NotificationStore from './NotificationStore';
+import Authentication from '../services/Authentication';
 
 class ApiAccountStore {
   @observable
@@ -46,20 +47,24 @@ class ApiAccountStore {
   }
 
   @action
-  createNewAccount(id) {
-    const newAccount = {
-      apiServiceName: AssetStore.selectedExchangeCreateAccount,
-      apiKey: this.values.apiKey,
-      apiSecret: this.values.apiSecret,
-      isActive: this.values.isActive,
-      portfolioId: id,
+  addNewApiAccount() {
+    const newApiAccount = {
+      user_metadata: {
+        apiServiceName: AssetStore.selectedExchangeCreateAccount,
+        apiKey: this.values.apiKey,
+        apiSecret: this.values.apiSecret,
+        isActive: this.values.isActive,
+      },
     };
 
-    requester.ApiAccount.addAccount(newAccount)
-      .then(() => {
-        // TODO: Something with result
-      })
-      .catch(this.onError);
+    // Authentication.getUserData()
+    //   .then((result) => {
+    //     console.log(result);
+    //   });
+    Authentication.patchUserData(newApiAccount)
+      .then((result) => {
+        console.log(result);
+      });
   }
 
 

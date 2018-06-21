@@ -35,10 +35,12 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
+  onUpdate: Function,
 };
 
 type State = {
   open: boolean,
+  newName: string,
 };
 
 @inject('PortfolioStore')
@@ -48,6 +50,7 @@ class UpdatePortfolioModal extends React.Component<Props, State> {
 
   state = {
     open: false,
+    newName: '',
   };
 
   handleOpen = () => {
@@ -58,6 +61,7 @@ class UpdatePortfolioModal extends React.Component<Props, State> {
   };
 
   handleSave = () => {
+    this.props.onUpdate(this.state.newName);
     this.setState({ open: false });
   };
 
@@ -91,6 +95,7 @@ class UpdatePortfolioModal extends React.Component<Props, State> {
               style={{ width: '100%', marginBottom: '10px', marginTop: '10px' }}
               placeholder="Portfolio name"
               inputRef={(el: React.Ref<any>) => (this.name = el)} // eslint-disable-line
+              onChange={(event: object) => this.setState({ newName: event.target.value })}
             />
 
             <br />
@@ -108,7 +113,7 @@ class UpdatePortfolioModal extends React.Component<Props, State> {
             {/* SAVE BUTTON */}
             <Button
               style={{ display: 'inline-flex', float: 'right' }}
-              onClick={this.handleClose}
+              onClick={this.handleSave}
               color="primary"
             >
               {' '}

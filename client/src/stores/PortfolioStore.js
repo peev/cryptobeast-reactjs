@@ -561,10 +561,15 @@ class PortfolioStore {
   @action
   // eslint-disable-next-line class-methods-use-this
   updatePortfolio(portfolioName, id) {
-    requester.Portfolio.update(portfolioName, id)
-      .then(() => {
-        // TODO: update current portfolio array
-      })
+    requester.Portfolio.update({ name: portfolioName }, id)
+      .then(action(() => {
+        this.portfolios = this.portfolios.map((portfl) => {
+          if (portfl.id === id) {
+            return Object.assign({}, portfl, { name: portfolioName });
+          }
+          return portfl;
+        });
+      }))
       .catch(err => console.log(err));
   }
 

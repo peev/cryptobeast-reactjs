@@ -23,6 +23,7 @@ type Props = {
   PortfolioStore: {
     portfolios: Array<Object>,
     removePortfolio: (id: string) => any,
+    updatePortfolio: (id: string, newName: string) => any,
   },
 };
 
@@ -33,6 +34,10 @@ class PortfoliosTable extends React.Component<Props> {
   handleRemove = (id: string) => {
     this.props.PortfolioStore.removePortfolio(id);
     // console.log(id);
+  }
+
+  handleUpdate = (id: string, newName: string) => {
+    this.props.PortfolioStore.updatePortfolio(newName, id);
   }
 
   render() {
@@ -76,7 +81,7 @@ class PortfoliosTable extends React.Component<Props> {
             return (
               <TableCell className={classes.tableCell} key={uuid()}>
                 {item}
-                <UpdatePortfolioModal />
+                <UpdatePortfolioModal onUpdate={(newName: string) => this.handleUpdate(portfolios[key].id, newName)} />
               </TableCell>
             );
           }

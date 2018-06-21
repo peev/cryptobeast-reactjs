@@ -2,7 +2,7 @@ node {
   try {
     def commit_id
     def out
-    def mailRecipients = "ivan@motionsoftware.eu,liubomir.markov@motionsoftware.eu,krasen.ilkov@motionsoftware.eu"
+    def mailRecipients = "liubomir.markov@motionsoftware.eu,krasen.ilkov@motionsoftware.eu"
     def jobName = currentBuild.fullDisplayName
 
     stage('Preparation') {

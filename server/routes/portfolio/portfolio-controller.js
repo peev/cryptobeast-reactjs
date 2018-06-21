@@ -62,7 +62,8 @@ const portfolioController = (repository, jobs) => {
   };
 
   const updatePortfolio = (req, res) => {
-    const portfolioData = req.body;
+    const { id } = req.params;
+    const portfolioData = Object.assign({}, req.body, { id });
     repository.update({ modelName, updatedRecord: portfolioData })
       .then((response) => {
         res.status(200).send(response);

@@ -288,16 +288,16 @@ class PortfolioStore {
       const selectedPortfolioSummary = [];
 
       // Creates the needed array, that will be shown in the view
-      currentAssets.forEach((el) => {
+      currentAssets.forEach((asset) => {
         const currentRow = [];
-        Object.keys(el).forEach((prop, ind) => {
+        Object.keys(asset).forEach((keyName, ind) => {
           // 1. Ticker
-          if (prop === 'currency') {
-            currentRow.push(el[prop]);
+          if (keyName === 'currency') {
+            currentRow.push(asset[keyName]);
           }
           // 2. Holdings
-          if (prop === 'balance') {
-            currentRow.push(el[prop]);
+          if (keyName === 'balance') {
+            currentRow.push(asset[keyName]);
           }
           // ------------------------------
           // Depends on array's 0 index
@@ -315,10 +315,13 @@ class PortfolioStore {
             case currentRow[0] === 'EUR' && ind > 1:
               assetBTCEquiv = 1 / MarketStore.baseCurrencies[1].last;
               break;
+            case currentRow[0] === 'USDT' && ind > 1:
+              assetBTCEquiv = 1 / MarketStore.marketSummaries['USDT-BTC'].Last;
+              break;
             default:
-              assetBTCEquiv = MarketStore.marketSummaries[`BTC-${currentRow[0]}`] ?
-                MarketStore.marketSummaries[`BTC-${currentRow[0]}`].Last :
-                0;
+              assetBTCEquiv = MarketStore.marketSummaries[`BTC-${currentRow[0]}`]
+                ? MarketStore.marketSummaries[`BTC-${currentRow[0]}`].Last
+                : 0;
               break;
           }
 
@@ -327,7 +330,7 @@ class PortfolioStore {
           if (ind === 2) {
             let calcPriceBTC;
             if (currentRow[0] === 'BTC') {
-              calcPriceBTC = el.balance;
+              calcPriceBTC = asset.balance;
             } else {
               calcPriceBTC = Math.round(assetBTCEquiv * (10 ** 12)) / (10 ** 12);
             }
@@ -349,7 +352,7 @@ class PortfolioStore {
           }
           // 5. Total Value(USD)
           if (ind === 4) {
-            const calcPriceUSD = currentRow[3] * el.balance;
+            const calcPriceUSD = currentRow[3] * asset.balance;
             const roundedCalcPriceUSD = Math.round(calcPriceUSD * (10 ** 12)) / (10 ** 12);
             currentRow.push(roundedCalcPriceUSD);
           }

@@ -107,11 +107,6 @@ class AddInvestor extends React.Component<Props, State> {
     InvestorStore.setNewInvestorValues(propertyType, inputValue);
   }
 
-  handleFounder = (name: string) => (event: SyntheticEvent) => {
-    this.setState({ [name]: event.target.checked });
-    this.props.InvestorStore.setIsFounder();
-  };
-
   handleSave = () => {
     const { PortfolioStore, InvestorStore } = this.props;
 
@@ -157,22 +152,6 @@ class AddInvestor extends React.Component<Props, State> {
                 >
                   Add a new investor
                 </Typography>
-                {/* <div />
-              </Grid>
-
-              <Grid item xs={6} sm={6} md={6} className={classes.headerContainerRight}>
-                <Typography
-                  variant="subheading"
-                  style={{ fontSize: '17px', fontWeight: '400', fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}
-                >
-                  Founder
-                </Typography>
-
-                <Checkbox
-                  color="primary"
-                  className={classes.checkbox}
-                  onChange={this.handleFounder('founder')}
-                /> */}
               </Grid>
             </Grid>
 

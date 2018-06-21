@@ -23,31 +23,38 @@ const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ .
   };
 
   const portfoliosToSelectFrom = PortfolioStore.portfolios.map((el: object, i: number) => {
+    const isLastElementOdd = ((i === PortfolioStore.portfolios.length - 1) && (i % 2 === 0))
+      ? <Grid item xs={12} sm={10} md={5} className={classes.grid} key={i} />
+      : '';
+
     return (
-      <Grid item xs={12} sm={10} md={5} className={classes.grid} key={i}>
-        <Paper className={classes.paper}>
-          <div>
+      <React.Fragment>
+        <Grid item xs={12} sm={10} md={5} className={`${classes.grid} ${''}`} key={i}>
+          <Paper className={classes.paper}>
             <div>
-              <p className={`${classes.generalPStyle} ${classes.portfolioName}`}>{el.name}</p>
-              <span className={`${classes.portfolioPercent} ${i >= 0 ? classes.positivePercent : classes.negativePercent}`}>{` ^ ${8.45 + i}%`}</span>
+              <div>
+                <p className={`${classes.generalPStyle} ${classes.portfolioName}`}>{el.name}</p>
+                <span className={`${classes.portfolioPercent} ${i >= 0 ? classes.positivePercent : classes.negativePercent}`}>{` ^ ${8.45 + i}%`}</span>
+              </div>
+
+              <div className={classes.marginTop}>
+                <p className={classes.generalPStyle}>USD</p>
+                <span className={classes.portfolioValue}>{985648 + i}</span>
+              </div>
             </div>
 
-            <div className={classes.marginTop}>
-              <p className={classes.generalPStyle}>USD</p>
-              <span className={classes.portfolioValue}>{985648 + i}</span>
+            <div className={`${classes.buttonContainer} ${classes.marginTop}`}>
+              <button
+                className={classes.button}
+                onClick={() => handleClick(el.id)}
+              >
+                select
+              </button>
             </div>
-          </div>
-
-          <div className={`${classes.buttonContainer} ${classes.marginTop}`}>
-            <button
-              className={classes.button}
-              onClick={() => handleClick(el.id)}
-            >
-              select
-            </button>
-          </div>
-        </Paper>
-      </Grid >
+          </Paper>
+        </Grid >
+        {isLastElementOdd}
+      </React.Fragment>
     );
   });
 

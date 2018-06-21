@@ -27,7 +27,7 @@ class InvestorStore {
   constructor() {
     // #region Initialize Values
     this.newInvestorValues = {
-      isFounder: false,
+      isFounder: false, // this stays, because BE model still has it
       fullName: '',
       email: '',
       telephone: '',
@@ -316,13 +316,8 @@ class InvestorStore {
   // #endregion
 
   // ======= Action =======
-  // Investor Set Values -> Founder, New, Update, Deposit, Withdraw
+  // Investor Set Values -> New, Update, Deposit, Withdraw
   // #region Investor Set Values
-  @action
-  setIsFounder() {
-    this.newInvestorValues.isFounder = !this.newInvestorValues.isFounder;
-  }
-
   @action
   setNewInvestorValues(propertyType, newValue) {
     const fieldsChecked = this.handleFieldValidations(propertyType, newValue);

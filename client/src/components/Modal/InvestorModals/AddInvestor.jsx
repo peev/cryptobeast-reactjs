@@ -3,7 +3,6 @@ import React, { SyntheticEvent } from 'react';
 import { withStyles, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
-import Checkbox from 'material-ui/Checkbox';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
@@ -30,15 +29,6 @@ const styles = (theme: Object) => ({
     backgroundColor: theme.palette.background.paper,
     boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
     padding: '40px',
-  },
-  headerContainerLeft: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  headerContainerRight: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
   },
   containerDirection: {
     display: 'flex',
@@ -73,9 +63,6 @@ const styles = (theme: Object) => ({
   inputWrapperSelectBaseCurrency: {
     width: '190px',
     margin: '10px 20px 0',
-  },
-  checkbox: {
-    marginRight: '10px',
   },
 });
 
@@ -162,7 +149,7 @@ class AddInvestor extends React.Component<Props, State> {
             className={classes.paper}
           >
             <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.headerContainerLeft}>
+              <Grid item xs={6} sm={6} md={6}>
                 <Typography
                   variant="title"
                   id="modal-title"
@@ -170,7 +157,7 @@ class AddInvestor extends React.Component<Props, State> {
                 >
                   Add a new investor
                 </Typography>
-                <div />
+                {/* <div />
               </Grid>
 
               <Grid item xs={6} sm={6} md={6} className={classes.headerContainerRight}>
@@ -185,7 +172,7 @@ class AddInvestor extends React.Component<Props, State> {
                   color="primary"
                   className={classes.checkbox}
                   onChange={this.handleFounder('founder')}
-                />
+                /> */}
               </Grid>
             </Grid>
 

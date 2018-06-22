@@ -110,6 +110,7 @@ class AddApiAccount extends React.Component<Props, State> {
     const { ApiAccountStore, PortfolioStore } = this.props;
     // const hasErrors = ApiAccountStore.handleCreateNewAccountErrors(PortfolioStore.selectedPortfolioId);
 
+    // work in progress
     // if (PortfolioStore.selectedPortfolioId !== null && !hasErrors) {
     ApiAccountStore.addNewApiAccount();
     this.props.NotificationStore.addMessage('successMessages', 'Successfully added API');
@@ -153,7 +154,7 @@ class AddApiAccount extends React.Component<Props, State> {
                   className={classes.modalTitle}
                 >
                   IMPORT FROM API
-              </Typography>
+                </Typography>
               </div>
               <div>
                 Active

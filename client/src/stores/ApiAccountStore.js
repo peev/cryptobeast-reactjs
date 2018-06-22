@@ -57,11 +57,11 @@ class ApiAccountStore {
       },
     };
 
-    // Authentication.getUserData()
-    //   .then((result) => {
-    //     console.log(result);
-    //   });
     Authentication.patchUserData(newApiAccount)
+      .then((result) => {
+        console.log(result);
+      });
+    Authentication.getUserData()
       .then((result) => {
         console.log(result);
       });

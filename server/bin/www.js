@@ -6,7 +6,7 @@ const config = require('./config');
 (async () => {
   const dbContext = await require('./../data/db/db-context').init(config.database);
   const repository = await require('./../data/repository').init(dbContext);
-  const app = await require('./config/express').init(repository, config);
+  const app = await require('./config/express').init(repository);
   const port = parseInt(config.api.port, 10);
 
   app.set('port', port);

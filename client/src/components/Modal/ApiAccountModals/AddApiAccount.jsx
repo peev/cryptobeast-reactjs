@@ -60,7 +60,6 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
-  // MarketStore: Object,
   AssetStore: Object,
   PortfolioStore: Object,
   ApiAccountStore: Object,
@@ -71,7 +70,7 @@ type State = {
   open: boolean,
 };
 
-@inject('ApiAccountStore', 'PortfolioStore', 'MarketStore', 'AssetStore', 'NotificationStore')
+@inject('ApiAccountStore', 'PortfolioStore', 'AssetStore', 'NotificationStore')
 @observer
 class AddApiAccount extends React.Component<Props, State> {
   constructor() {
@@ -108,15 +107,13 @@ class AddApiAccount extends React.Component<Props, State> {
 
   handleSave = () => {
     const { ApiAccountStore, PortfolioStore } = this.props;
-    // const hasErrors = ApiAccountStore.handleCreateNewAccountErrors(PortfolioStore.selectedPortfolioId);
+    const hasErrors = ApiAccountStore.handleCreateNewAccountErrors(PortfolioStore.selectedPortfolioId);
 
-    // work in progress
-    // if (PortfolioStore.selectedPortfolioId !== null && !hasErrors) {
     ApiAccountStore.addNewApiAccount();
-    this.props.NotificationStore.addMessage('successMessages', 'Successfully added API');
-    // }
+    if (PortfolioStore.selectedPortfolioId !== null && !hasErrors) {
+    }
 
-    // this.setState({ open: false });
+    this.setState({ open: false });
   };
 
   handleExchangeCreateAccount = (value: any) => {

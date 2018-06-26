@@ -1,12 +1,12 @@
 const { Router } = require('express');
 const AManagement = require('./../../services/Auth0ManagementAPI');
 
-const attachTo = (app, repository, jobs, config) => {
+const attachTo = (app, repository, jobs) => {
   const router = new Router();
   const userController = require('./user-controller')(repository, jobs);
 
   // Apply Auth0 middleware to check and update token if necessary;
-  const Auth0ManagementApi = new AManagement(config.authManagementApi);
+  const Auth0ManagementApi = new AManagement();
   const checkAuthManagementToken = async (req, res, next) => {
     try {
       const access_token = await Auth0ManagementApi.getToken();

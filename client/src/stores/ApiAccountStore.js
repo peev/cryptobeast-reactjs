@@ -1,3 +1,4 @@
+// @flow
 import { observable, action } from 'mobx';
 import requester from '../services/requester';
 import AssetStore from './AssetStore';
@@ -13,11 +14,10 @@ class ApiAccountStore {
     isActive: true,
   }
 
+  @observable userApis: Array;
+
   constructor() {
-    this.apiServiceName = '';
-    this.apiKey = '';
-    this.apiSecret = '';
-    this.isActive = true;
+    this.userApis = [];
   }
 
   @action
@@ -26,7 +26,7 @@ class ApiAccountStore {
   }
 
   @action
-  handleCreateNewAccountErrors(id) {
+  handleCreateNewAccountErrors(id: string) {
     const newAccount = {
       apiServiceName: AssetStore.selectedExchangeCreateAccount,
       apiKey: this.values.apiKey,
@@ -36,7 +36,7 @@ class ApiAccountStore {
     };
     let noErrors = true;
     requester.ApiAccount.getBalance(newAccount)
-      .then((data) => {
+      .then((data: object) => {
         if (!data.success) {
           NotificationStore.addMessage('errorMessages', 'Invalid API Key and API Secret combination');
           noErrors = false;
@@ -48,31 +48,37 @@ class ApiAccountStore {
 
   @action
   addNewApiAccount() {
+    const currentUserAuthId = Authentication.getUserProfile().sub;
+    const selectedExchangeName = AssetStore.selectedExchangeCreateAccount;
+    const numberOfSameApiNames = this.userApis.filter((value: Array) => value[0] !== selectedExchangeName).length;
+    const selectedExchangeNameModified = `${[selectedExchangeName]}_API_${numberOfSameApiNames}`;
     const newApiAccount = {
       user_metadata: {
-        apiServiceName: AssetStore.selectedExchangeCreateAccount,
-        apiKey: this.values.apiKey,
-        apiSecret: this.values.apiSecret,
-        isActive: this.values.isActive,
+        [selectedExchangeNameModified]: { // creates the name of the api
+          apiKey: this.values.apiKey,
+          apiSecret: this.values.apiSecret,
+          isActive: this.values.isActive,
+        },
       },
     };
 
-    Authentication.patchUserData(newApiAccount)
-      .then((result) => {
-        console.log(result);
-      });
-    Authentication.getUserData()
-      .then((result) => {
-        console.log(result);
-      });
+    requester.User.patchUser(currentUserAuthId, newApiAccount)
+      .then(action((result: object) => {
+        if (result.data.isSuccessful) {
+          NotificationStore.addMessage('successMessages', 'Successfully added API');
+
+          const apiStatus = this.values.isActive ? 'Active' : 'Inactive';
+          const apiToAdd = [selectedExchangeNameModified, apiStatus, '**********', '**********', ''];
+          this.userApis.push(apiToAdd);
+        }
+      }));
   }
 
 
   @action
-  setNewApiAccountValues(propertyType, newValue) {
+  setNewApiAccountValues(propertyType: string, newValue: string) {
     // all properties are send as string !!!
     this.values[propertyType] = newValue;
-    // console.log('>>> values in api account store', this.values);
   }
 }
 

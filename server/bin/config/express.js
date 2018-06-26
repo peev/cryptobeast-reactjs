@@ -9,7 +9,7 @@ const jwt = require('express-jwt');
 // const path = require('path');
 
 
-const init = async (repository, config) => {
+const init = async (repository) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
   const marketService = require('../../services/market-service')(repository);
 
@@ -85,7 +85,7 @@ const init = async (repository, config) => {
 
   // TODO: Create router for every new model and add it here
   require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
-  require('./../../routes/user/user-router').attachTo(app, repository, jobs, config);
+  require('./../../routes/user/user-router').attachTo(app, repository, jobs);
   require('./../../routes/asset/asset-router').attachTo(app, repository);
   require('./../../routes/market/market-router').attachTo(app, repository);
   require('./../../routes/account/account-router').attachTo(app, repository);

@@ -109,51 +109,9 @@ class AuthService {
 
   isSignedOut = () => Boolean(!localStorage.getItem('accessToken') && !localStorage.getItem('profile'));
 
-  // work in progress
   getUserIdToken = () => localStorage.getItem('id_token');
 
   getUserProfile = () => JSON.parse(localStorage.getItem('profile'));
-
-  getUserProfileId = () => this.getUserProfile().sub.slice(6); // removes the 'auth0|' at the start of id
-
-  getUserData = () => {
-    const request = {
-      // url: `https://${domain}/api/v2/users/${this.getUserProfile().sub}`,
-      url: `https://${domain}/api/v2/users/${this.getUserProfileId()}?fields=user_metadata&include_fields=true`,
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        authorization: `Bearer ${this.getUserIdToken()}`,
-      },
-      mode: 'cors',
-      cache: 'default',
-    };
-    console.log(request);
-
-    return fetch(request)
-      .catch(error => console.log(error));
-  };
-
-  patchUserData = (userData) => {
-    const request = {
-      // url: `https://${domain}/api/v2/users/${this.getUserProfileId()}`,
-      url: `https://${domain}/api/v2/users/user_id`,
-      // url: `https://${domain}/api/v2/user_id`,
-      method: 'PATCH',
-      headers: {
-        'content-type': 'application/json',
-        authorization: `Bearer ${this.getUserIdToken()}`,
-      },
-      body: userData,
-      // mode: 'cors',
-      // cache: 'default',
-    };
-
-    console.log(request, this.getUserProfileId());
-
-    return fetch(request)
-      .catch(error => console.log(error));
-  };
 }
 
 const authService = new AuthService();

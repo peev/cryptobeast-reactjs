@@ -34,11 +34,29 @@ class Auth0ManagementApi {
     this.expiresIn = expiration;
   }
 
+  // only for server side usage, don't expose
+  async getUser(req) {
+    try {
+      const options = { headers: { Authorization: `Bearer ${req.token}` } };
+      const { data } = await axios.get(`https://${domain}/api/v2/users/${encodeURI(req.params.id)}`, options);
+
+      console.log(data);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async patchUser(req, res) {
     try {
       const options = { headers: { Authorization: `Bearer ${req.token}` } };
-      const { data } = await axios.patch(`https://${domain}/api/v2/users/${encodeURI(req.params.id)}`, req.body, options);
-      res.status(200).send(data);
+      console.log(encodeURI(req.params.id));
+      const data = await axios.patch(`https://${domain}/api/v2/users/${encodeURI(req.params.id)}`, req.body, options);
+
+      console.log(data.data.user_metadata.exchangeApis);
+      if (data.status === 200) {
+        res.status(200).send({ isSuccessful: true });
+      }
+      res.status(500).send({ isSuccessful: false });
     } catch (error) {
       res.status(500).send(error);
     }

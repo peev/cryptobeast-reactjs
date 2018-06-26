@@ -10,6 +10,7 @@ import {
 } from 'material-ui';
 import uuid from 'uuid/v4';
 import { Close } from '@material-ui/icons';
+import { inject, observer } from 'mobx-react';
 import IconButton from '../CustomButtons/IconButton';
 import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
 import tableStyle from '../../variables/styles/tableStyle';
@@ -21,9 +22,9 @@ type Props = {
   tableData: Array<Array<string>>,
 };
 
-function IntegrationsTable({ ...props }: Props) {
+const IntegrationsTable = inject('ApiAccountStore')(observer(({ ...props }: Props) => {
   const {
-    classes, tableHead, tableData, tableHeaderColor,
+    classes, tableHead, tableHeaderColor, ApiAccountStore,
   } = props;
   const tableHeader = (
     <TableHead className={classes[`${tableHeaderColor}TableHeader`]}>
@@ -45,7 +46,7 @@ function IntegrationsTable({ ...props }: Props) {
       <Table className={classes.table}>
         {tableHead !== undefined ? tableHeader : null}
         <TableBody>
-          {tableData.map((rows: Array<Object>) => (
+          {ApiAccountStore.userApis.map((rows: Array<Object>) => (
             <TableRow key={uuid()}>
               {rows.map((col: Object, key: number) => {
                 if (key === 4) {
@@ -71,7 +72,7 @@ function IntegrationsTable({ ...props }: Props) {
       </Table>
     </div>
   );
-}
+}));
 
 
 export default withStyles(tableStyle)(IntegrationsTable);

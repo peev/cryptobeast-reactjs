@@ -36,23 +36,6 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
           content={
             <IntegrationsTable
               tableHead={['Exchange', 'Status', 'Key', 'Secret', '']}
-              tableData={[
-                ['Poloniex',
-                  'Inactive',
-                  'b38c243abc1f41d6b238f563610d74dc',
-                  '941ecbcd752d4a4eb9e684625919d382',
-                  ''],
-                ['Bittrex',
-                  'Active',
-                  'ad720e1be39f437280efe61bddbe07d6',
-                  'aae3dfa80b614af3b50aef34908693df',
-                  ''],
-                ['Kraken',
-                  'Active',
-                  '1de4e0b2ac254df4989670016a093c9c',
-                  '46fe9499d0aa47adbc0f2a7193c5089c',
-                  ''],
-              ]}
             />
           }
         />

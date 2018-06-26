@@ -6,10 +6,10 @@ const morgan = require('morgan');
 const cors = require('cors');
 const jwksRsa = require('jwks-rsa');
 const jwt = require('express-jwt');
-const path = require('path');
+// const path = require('path');
 
 
-const init = async (repository) => {
+const init = async (repository, config) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
   const marketService = require('../../services/market-service')(repository);
 
@@ -30,7 +30,7 @@ const init = async (repository) => {
   app.use(cookieParser());
 
   app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Access-Control-*, Origin, X-Requested-With, Content-Type, Accept');
     next();
@@ -55,14 +55,6 @@ const init = async (repository) => {
   // Enable Authentication on all API Endpoints
   app.use(checkJwt);
 
-  // Create timesheets API endpoint
-  // app.post('/timesheets', checkJwt, (req, res) => {
-  //   res.status(201).send(req.user);
-  // });
-
-  // #region Middleware
-  // TODO: Here you can add new middleware
-  // require('./passport').applyTo(app, data);
 
   // Initialize market summaries, base tickers and their sync jobs
   const currencies = await repository.find({ modelName: 'Currency' });
@@ -93,7 +85,7 @@ const init = async (repository) => {
 
   // TODO: Create router for every new model and add it here
   require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
-  require('./../../routes/user/user-router').attachTo(app, repository, jobs);
+  require('./../../routes/user/user-router').attachTo(app, repository, jobs, config);
   require('./../../routes/asset/asset-router').attachTo(app, repository);
   require('./../../routes/market/market-router').attachTo(app, repository);
   require('./../../routes/account/account-router').attachTo(app, repository);

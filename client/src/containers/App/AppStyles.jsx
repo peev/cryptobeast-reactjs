@@ -87,8 +87,20 @@ const appStyles = (theme: object) => ({
   divider: {
     backgroundColor: '#fafafa',
   },
+  dividerDisabled: {
+    backgroundColor: '#77787F',
+  },
   sidebarClosed: {
     borderBottom: '1px solid #fafafa',
+  },
+  disabledMenuIcon: {
+    margin: '0 auto',
+    '&>g': {
+      fill: '#77787F',
+      '&>path': {
+        fill: '#77787F',
+      },
+    },
   },
 });
 

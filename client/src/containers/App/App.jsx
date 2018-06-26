@@ -71,24 +71,24 @@ class App extends React.Component<Props> {
 
     return (
       <div className={classes.root}>
-        <AppBar
-          position="absolute"
-          className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
-        >
-          <Toolbar disableGutters={!this.state.open}>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={this.handleDrawerOpen}
-              className={classNames(classes.menuButton, this.state.open && classes.hide)}
-            >
-              <MenuIcon />
-            </IconButton>
-            {checkPortfolioNumber
-              ? null
-              : <Header {...rest} />}
-          </Toolbar>
-        </AppBar>
+        {checkPortfolioNumber
+          ? null
+          : (<AppBar
+            position="absolute"
+            className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
+          >
+            <Toolbar disableGutters={!this.state.open}>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={this.handleDrawerOpen}
+                className={classNames(classes.menuButton, this.state.open && classes.hide)}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Header {...rest} />
+            </Toolbar>
+          </AppBar>)}
         <Drawer
           variant="permanent"
           classes={{
@@ -97,11 +97,13 @@ class App extends React.Component<Props> {
           open={this.state.open}
         >
           <div className={classes.toolbar}>
-            <IconButton onClick={this.handleDrawerClose}>
-              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </IconButton>
+            {checkPortfolioNumber
+              ? <MenuIcon className={classes.disabledMenuIcon} />
+              : (<IconButton onClick={this.handleDrawerClose}>
+                {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              </IconButton>)}
           </div>
-          <Divider className={classes.divider} />
+          <Divider className={checkPortfolioNumber ? classes.dividerDisabled : classes.divider} />
           <Sidebar
             routes={appRoutes}
             handleDrawerToggle={this.handleDrawerToggle}

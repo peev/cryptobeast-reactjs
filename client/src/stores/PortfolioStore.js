@@ -378,6 +378,11 @@ class PortfolioStore {
                 changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
                   .toFixed(2);
                 break;
+              case 'USDT':
+                yesterdayCost = 1 / MarketStore.marketSummaries['USDT-BTC'].PrevDay;
+                changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
+                  .toFixed(2);
+                break;
               default:
                 if (MarketStore.marketSummaries[`BTC-${currentRow[0]}`]) {
                   yesterdayCost = MarketStore.marketSummaries[`BTC-${currentRow[0]}`].PrevDay;

@@ -588,10 +588,12 @@ class PortfolioStore {
   }
   // #endregion
 
-  @action
+  @action.bound
   selectPortfolio(id) {
     InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
-    this.selectedPortfolioId = id;
+    if (id !== 0) {
+      this.selectedPortfolioId = id;
+    }
     if (this.portfolios.length) {
       this.portfolios.forEach((el) => {
         // Returns only needed values from selected portfolio

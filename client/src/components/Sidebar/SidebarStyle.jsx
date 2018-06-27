@@ -14,7 +14,7 @@ import {
   warningColor,
   dangerColor,
   navBackgroundColor,
-} from './../styles';
+} from '../../variables/styles';
 
 const sidebarStyle = theme => ({
   drawerPaper: {
@@ -108,7 +108,6 @@ const sidebarStyle = theme => ({
     border: '0',
   },
   background: {
-    // position: 'absolute',
     zIndex: '1',
     height: '100%',
     width: '100%',
@@ -129,7 +128,6 @@ const sidebarStyle = theme => ({
     },
   },
   list: {
-    marginTop: '20px',
     paddingLeft: '0',
     paddingTop: '0',
     paddingBottom: '0',
@@ -137,17 +135,26 @@ const sidebarStyle = theme => ({
     listStyle: 'none',
   },
   item: {
+    margin: '0 15px',
+    paddingBottom: '20px',
     position: 'relative',
     display: 'block',
     textDecoration: 'none',
   },
+  itemClosed: {
+    borderBottom: '1px solid #fafafa',
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
   itemLink: {
     transition: 'all 300ms linear',
-    margin: '10px 15px 0',
     borderRadius: '3px',
     position: 'relative',
     display: 'block',
-    padding: '10px 15px',
+    padding: '0',
+    paddingTop: '20px',
     backgroundColor: 'transparent',
     ...defaultFont,
   },
@@ -155,7 +162,8 @@ const sidebarStyle = theme => ({
     width: '24px',
     height: '30px',
     float: 'left',
-    marginRight: '15px',
+    // margin: '0 25px',
+    margin: '0 25px 0 10px',
     textAlign: 'center',
     verticalAlign: 'middle',
     color: 'rgba(255, 255, 255, 0.8)',
@@ -163,6 +171,7 @@ const sidebarStyle = theme => ({
   itemText: {
     ...defaultFont,
     margin: '0',
+    padding: '0',
     lineHeight: '30px',
     fontSize: '14px',
     color: '#FFFFFF',

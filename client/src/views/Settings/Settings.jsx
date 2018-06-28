@@ -35,7 +35,7 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
           button={<AddApiAccount />}
           content={
             <IntegrationsTable
-              tableHead={['Exchange', 'Status', 'Key', 'Secret', '']}
+              tableHead={['Exchange', 'Account', 'Status', 'Key', 'Secret', '']}
             />
           }
         />

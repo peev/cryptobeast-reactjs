@@ -3,11 +3,12 @@ const { Router } = require('express');
 const attachTo = (app, repository, jobs) => {
   const router = new Router();
   const portfolioController = require('./portfolio-controller')(repository, jobs);
+  const authenticationService = require('./../../services/authentication-service')();
 
   router
     .post('/create', (req, res) => portfolioController.createPortfolio(req, res))
-    .get('/all', (req, res) => portfolioController.getAllPortfolios(req, res))
-    .get('/:portfolioId/:item', (req, res) => portfolioController.searchItemsInCurrentPortfolio(req, res))
+    .get('/all', authenticationService.checkAuthManagementToken, portfolioController.getAllPortfolios)
+    .get('/:portfolioId/:item', authenticationService.checkAuthManagementToken, portfolioController.searchItemsInCurrentPortfolio)
     .put('/update/:id', (req, res) => portfolioController.updatePortfolio(req, res))
     .delete('/delete/:id', (req, res) => portfolioController.removePortfolio(req, res))
     .post('/updatePortfolioCost', (req, res) => portfolioController.updatePortfolioBTCEquivalentOnRequest(req, res))

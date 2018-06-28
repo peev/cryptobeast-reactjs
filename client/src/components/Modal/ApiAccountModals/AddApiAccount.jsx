@@ -107,13 +107,12 @@ class AddApiAccount extends React.Component<Props, State> {
 
   handleSave = () => {
     const { ApiAccountStore, PortfolioStore } = this.props;
-    const hasErrors = ApiAccountStore.handleCreateNewAccountErrors(PortfolioStore.selectedPortfolioId);
+    const hasErrors = ApiAccountStore.handleCreateNewAccountErrors();
 
-    ApiAccountStore.addNewApiAccount();
-    if (PortfolioStore.selectedPortfolioId !== null && !hasErrors) {
+    if (PortfolioStore.selectedPortfolioId !== null && hasErrors) {
+      ApiAccountStore.addNewApiAccount();
+      this.setState({ open: false });
     }
-
-    this.setState({ open: false });
   };
 
   handleExchangeCreateAccount = (value: any) => {
@@ -177,6 +176,16 @@ class AddApiAccount extends React.Component<Props, State> {
                   }}
                 />
               </div>
+
+              <TextValidator
+                name="email"
+                label="Account*"
+                className={classes.inputWrapper}
+                value={ApiAccountStore.values.account}
+                onChange={(e: SyntheticEvent) => this.handleInputValue('account', e)}
+                validators={['required', 'isEmail']}
+                errorMessages={['this field is required', 'email is not valid']}
+              />
 
               <TextValidator
                 name="Api Key"

@@ -13,6 +13,7 @@ import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
 import AssetStore from './AssetStore';
 import Analytics from './Analytics';
+import ApiAccountStore from './ApiAccountStore';
 
 class PortfolioStore {
   @observable fetchingPortfolios;
@@ -612,7 +613,9 @@ class PortfolioStore {
     return new Promise((resolve, reject) => {
       requester.Portfolio.getAll()
         .then(action((result) => {
-          this.portfolios = result.data;
+          console.log(result);
+          ApiAccountStore.convertUserApis(result.data.userApis);
+          this.portfolios = result.data.portfolios;
           this.fetchingPortfolios = false;
           if (this.selectedPortfolioId > 0) {
             this.selectPortfolio(this.selectedPortfolioId);
@@ -635,6 +638,7 @@ class PortfolioStore {
     };
     requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
       .then(action((result) => {
+        // console.log(result);
         this.currentPortfolioAssets = result.data;
       }));
   }

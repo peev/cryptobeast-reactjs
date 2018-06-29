@@ -9,7 +9,8 @@ const attachTo = (app, repository, jobs) => {
   router
     .post('/updateClosingTime', (req, res) => userController.updateClosingTime(req, res))
     .patch('/verifiedPatch/:id', authenticationService.checkAuthManagementToken, userController.verifiedPatchUserMetadata)
-    .patch('/patch/:id', authenticationService.checkAuthManagementToken, userController.patchUserMetadata);
+    .patch('/patch/:id', authenticationService.checkAuthManagementToken, userController.patchUserMetadata)
+    .patch('/delete/:id', authenticationService.checkAuthManagementToken, userController.deleteUserMetadata);
 
   app.use('/user', router);
 };

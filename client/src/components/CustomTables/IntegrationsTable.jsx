@@ -9,10 +9,10 @@ import {
   TableCell,
 } from 'material-ui';
 import uuid from 'uuid/v4';
-import { Close } from '@material-ui/icons';
 import { inject, observer } from 'mobx-react';
-import IconButton from '../CustomButtons/IconButton';
-import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
+
+import UpdateApiAccount from '../Modal/ApiAccountModals/UpdateApiAccount';
+import ConfirmationModal from '../Modal/ConfirmationModal';
 import tableStyle from '../../variables/styles/tableStyle';
 
 type Props = {
@@ -22,9 +22,9 @@ type Props = {
   tableData: Array<Array<string>>,
 };
 
-const IntegrationsTable = inject('ApiAccountStore')(observer(({ ...props }: Props) => {
+const IntegrationsTable = inject('ApiAccountStore', 'PortfolioStore')(observer(({ ...props }: Props) => {
   const {
-    classes, tableHead, tableHeaderColor, ApiAccountStore,
+    classes, tableHead, tableHeaderColor, ApiAccountStore, PortfolioStore,
   } = props;
 
   const handleDelete = (id: string) => {
@@ -53,19 +53,24 @@ const IntegrationsTable = inject('ApiAccountStore')(observer(({ ...props }: Prop
         {tableHead !== undefined ? tableHeader : null}
         <TableBody>
           {ApiAccountStore.userApis.map((rows: Array<Object>) => {
-            if (rows[0]) { // if its not empty array
+            // if its not empty array and portfolio is selected
+            if (rows[0] &&
+              PortfolioStore.selectedPortfolioId === rows[6]) {
               return (
                 <TableRow key={uuid()}>
                   {rows.map((col: Object, key: number) => {
                     if (key === 5) {
                       return (
                         <TableCell className={classes.tableCell} key={uuid()}>
-                          <UpdatePortfolioModal />
-                          <IconButton color="primary" customClass="remove" id={col} onClick={() => handleDelete(col)}>
-                            <Close />
-                          </IconButton>
+                          <UpdateApiAccount apiId={col} />
+                          <ConfirmationModal
+                            onSave={() => handleDelete(col)}
+                            message={`Are you shure you want to delete this ${rows[0]} API?`}
+                          />
                         </TableCell>
                       );
+                    } else if (key > 5) {
+                      return null;
                     }
                     return (
                       <TableCell className={classes.tableCell} key={uuid()}>

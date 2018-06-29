@@ -51,12 +51,10 @@ class Auth0ManagementApi {
       const options = { headers: { Authorization: `Bearer ${req.token}` } };
       const data = await axios.patch(`https://${domain}/api/v2/users/${encodeURI(req.params.id)}`, req.body, options);
 
-      console.log('---------------', data.data.user_metadata);
-
       if (data.status === 200) {
-        res.status(200).send({ isSuccessful: true });
+        return res.status(200).send({ isSuccessful: true });
       }
-      res.status(500).send({ isSuccessful: false });
+      return res.status(500).send({ isSuccessful: false });
     } catch (error) {
       res.status(500).send(error);
     }

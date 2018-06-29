@@ -82,6 +82,7 @@ const User = {
   updateClosingTime: data => requests.post('/user/updateClosingTime', data),
   verifiedPatchUserMetadata: (id, data) => requests.patch(`/user/verifiedPatch/${id}`, data),
   patchUserMetadata: (id, data) => requests.patch(`/user/patch/${id}`, data),
+  deleteUserMetadata: (id, data) => requests.patch(`/user/delete/${id}`, data),
 };
 
 export default {

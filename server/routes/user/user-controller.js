@@ -51,99 +51,78 @@ const userController = (repository, jobs) => {
 
   const verifiedPatchUserMetadata = async (req, res) => {
     try {
-      switch (req.body.user_metadata.uploadApi.exchange) {
+      const { exchange, apiKey, apiSecret, portfolioId } = req.body.user_metadata.api;
+      let returnedAssets;
+      switch (exchange) {
         case 'Bittrex':
-          await bittrexServices().getBalance({
-            apiKey: req.body.user_metadata.uploadApi.apiKey,
-            apiSecret: req.body.user_metadata.uploadApi.apiSecret,
-          });
+          returnedAssets = await bittrexServices().getBalance({ apiKey, apiSecret });
           break;
         case 'Kraken':
-          await krakenServices().getBalance({
-            apiKey: req.body.user_metadata.uploadApi.apiKey,
-            apiSecret: req.body.user_metadata.uploadApi.apiSecret,
-          });
+          returnedAssets = await krakenServices().getBalance({ apiKey, apiSecret });
           break;
         default:
           console.log('There is no such api');
           break;
       }
 
-      // res.status(200).send({ isSuccessful: true }); userMetadata
-      const returnedUser = await Auth0ManagementApi.patchUser(req, res);
-      await addAssetFromApi(returnedUser.user_metadata, req.user.email);
+      if (returnedAssets) {
+        await addAssetsToPortfolio(returnedAssets, portfolioId);
+        const returnedUser = await Auth0ManagementApi.patchUser(req, res);
 
-      return returnedUser;
+        return returnedUser;
+      }
+
+      return res.status(200).send({ isSuccessful: false, message: 'No assets found' });
     } catch (error) {
       res.status(200).send({ isSuccessful: false, error });
     }
   };
 
-  const addAssetFromApi = async (userMetadata, userEmail) => {
+
+  const patchUserMetadata = async (req, res) => {
+    const userMetadata = await Auth0ManagementApi.getUser(req);
+
+    const apiId = req.body.user_metadata.api.id;
+    const selectedUserApi = userMetadata.user_metadata[apiId];
+    const updateData = req.body.user_metadata[apiId];
+
+    Object.keys(selectedUserApi).forEach((property) => {
+      if (updateData[property] !== undefined) { // if updating metadata can select current property
+        selectedUserApi[property] = updateData[property];
+      }
+    });
+
+    req.body.user_metadata = {
+      [apiId]: selectedUserApi,
+    };
+
+    const result = await Auth0ManagementApi.patchUser(req, res);
+    return result;
+  };
+
+  const deleteUserMetadata = async (req, res) => Auth0ManagementApi.patchUser(req, res);
+
+  //  Utility functions
+  const addAssetsToPortfolio = async (assetsFromApi, portfolioId) => {
     try {
-      // console.log('----------------searchItemsInCurrentPortfolio111', userMetadata);
-      await Object.keys(userMetadata).forEach(async (apiData) => {
-        // req is account object with apiKey, apiSecret and foreign key portfolioId
-        // TODO: switch between apis
-        if (apiData.includes('api_account')) {
-          if (userMetadata[apiData].exchange) {
-            let returnedAssets;
-            let formatedAssets;
-            switch (userMetadata[apiData].exchange) {
-              case 'Bittrex':
-                returnedAssets = await bittrexServices().getBalance({
-                  apiKey: userMetadata[apiData].apiKey,
-                  apiSecret: userMetadata[apiData].apiSecret,
-                });
-                break;
-              case 'Kraken':
-                returnedAssets = await krakenServices().getBalance({
-                  apiKey: userMetadata[apiData].apiKey,
-                  apiSecret: userMetadata[apiData].apiSecret,
-                });
-                break;
-              default:
-                console.log('There is no such api');
-                break;
-            }
+      const formatedAssets = Object.keys(assetsFromApi).map(property => ({
+        currency: assetsFromApi[property].currency,
+        balance: assetsFromApi[property].balance,
+        origin: assetsFromApi[property].origin,
+        portfolioId,
+      }));
 
-            const allProfilesFound = await repository.find({
-              modelName,
-              options: {
-                where: { owner: userEmail },
-                attributes: ['id'],
-              },
-            });
-
-            allProfilesFound.forEach((userPortfolio) => {
-              formatedAssets = Object.keys(returnedAssets).map(property => ({
-                currency: returnedAssets[property].currency,
-                balance: returnedAssets[property].balance,
-                origin: returnedAssets[property].origin,
-                portfolioId: userPortfolio.id,
-              }));
-            });
-
-
-            // console.log('----------------searchItemsInCurrentPortfolio', allProfilesFound);
-            console.log('----------------addAssetFromApi', allProfilesFound, returnedAssets, formatedAssets);
-            // map the DTO??? to database
-
-            await repository.createMany({ modelName: 'Asset', newObjects: formatedAssets });
-          }
-        }
-      });
+      await repository.createMany({ modelName: 'Asset', newObjects: formatedAssets });
     } catch (error) {
       console.log(error);
     }
   };
 
-  const patchUserMetadata = async (req, res) => Auth0ManagementApi.patchUser(req, res);
-
   return {
     updateClosingTime,
     verifiedPatchUserMetadata,
     patchUserMetadata,
+    deleteUserMetadata,
   };
 };
 

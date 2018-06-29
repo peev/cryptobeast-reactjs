@@ -69,6 +69,7 @@ const portfolioController = (repository, jobs) => {
             exchange: userMetadata[apiData].exchange,
             account: userMetadata[apiData].account,
             isActive: userMetadata[apiData].isActive,
+            portfolioId: userMetadata[apiData].portfolioId,
           });
         }
       });

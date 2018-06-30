@@ -3,50 +3,49 @@ const { CronJob } = require('cron');
 const portfolioService = (repository) => {
   const modelName = 'Portfolio';
 
-  const updateAssetBTCEquivalent = (asset) => {
-    return new Promise((resolve, reject) => {
-      let assetPair;
-      let lastBTCEquivalent;
-      let updatedRecord;
+  const updateAssetBTCEquivalent = asset => new Promise((resolve) => {
+    let assetPair;
+    let lastBTCEquivalent;
+    let updatedRecord;
 
-      switch (asset.currency) {
-        case 'BTC':
-          lastBTCEquivalent = asset.balance;
-          resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-          repository.update({ modelName: 'Asset', updatedRecord });
-          break;
-        case 'USDT':
-          assetPair = `${asset.currency}-BTC`;
-          repository.findOne({ modelName: 'MarketSummary', options:{where:{MarketName: assetPair }}})
-            .then((foundSummary) => {
-              lastBTCEquivalent = asset.balance / foundSummary.Last;
-              resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-              repository.update({ modelName: 'Asset', updatedRecord });
-            });
-          break;
-        case 'USD':
-        case 'JPY':
-        case 'EUR':
-          assetPair = asset.currency;
-          repository.findById({ modelName: 'Ticker', id: assetPair })
-            .then((foundTickers) => {
-              lastBTCEquivalent = asset.balance / foundTickers.last;
-              resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-              repository.update({ modelName: 'Asset', updatedRecord });
-            });
-          break;
-        default:
-          assetPair = `BTC-${asset.currency}`;
-          repository.findOne({ modelName: 'MarketSummary', options:{where:{MarketName: assetPair }}})
-            .then((foundSummary) => {
-              lastBTCEquivalent = asset.balance * foundSummary.Last;
-              resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-              repository.update({ modelName: 'Asset', updatedRecord });
-            });
-          break;
-      }
-    });
-  };
+    switch (asset.currency) {
+      case 'BTC':
+        lastBTCEquivalent = asset.balance;
+        resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
+        repository.update({ modelName: 'Asset', updatedRecord });
+        break;
+      case 'USDT':
+        assetPair = `${asset.currency}-BTC`;
+        repository.findOne({ modelName: 'MarketSummary', options: { where: { MarketName: assetPair } } })
+          .then((foundSummary) => {
+            lastBTCEquivalent = asset.balance / foundSummary.dataValues.Last;
+            resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
+            repository.update({ modelName: 'Asset', updatedRecord });
+          });
+        break;
+      case 'USD':
+      case 'JPY':
+      case 'EUR':
+        assetPair = asset.currency;
+        repository.findById({ modelName: 'Ticker', id: assetPair })
+          .then((foundTickers) => {
+            lastBTCEquivalent = asset.balance / foundTickers.last;
+            resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
+            repository.update({ modelName: 'Asset', updatedRecord });
+          });
+        break;
+      default:
+        assetPair = `BTC-${asset.currency}`;
+        repository.findOne({ modelName: 'MarketSummary', options: { where: { MarketName: assetPair } } })
+          .then((foundSummary) => {
+            lastBTCEquivalent = asset.balance * foundSummary.dataValues.Last;
+            resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
+            repository.update({ modelName: 'Asset', updatedRecord });
+          });
+        break;
+    }
+  });
+
 
   const updatePortfolioBTCEquivalent = async (portfolioId) => {
     const portfolio = await repository.findOne({
@@ -77,9 +76,10 @@ const portfolioService = (repository) => {
   };
 
   const createSaveClosingSharePriceJob = async (portfolioId) => {
-    const { userId } = await repository.findById({ modelName, id: portfolioId });
-    const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
-    const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
+    // const { userId } = await repository.findById({ modelName, id: portfolioId });
+    // const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
+    // const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
+    const [hours, minutes] = [23, 59];
     const job = new CronJob(`${minutes} ${hours} * * *`, async () => {
       // Load assets from pf here to get current values
       await updatePortfolioBTCEquivalent(portfolioId);
@@ -95,9 +95,10 @@ const portfolioService = (repository) => {
   };
 
   const createSaveOpeningSharePriceJob = async (portfolioId) => {
-    const { userId } = await repository.findById({ modelName, id: portfolioId });
-    const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
-    const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
+    // const { userId } = await repository.findById({ modelName, id: portfolioId });
+    // const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
+    // const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
+    const [hours, minutes] = [23, 59];
     const job = new CronJob(`1 ${minutes} ${hours} * * *`, async () => { // 1 second after closing time
       // Load assets from pf here to get current values
       await updatePortfolioBTCEquivalent(portfolioId);
@@ -113,9 +114,10 @@ const portfolioService = (repository) => {
   };
 
   const createSaveClosingPortfolioCostJob = async (portfolioId) => {
-    const { userId } = await repository.findById({ modelName, id: portfolioId });
-    const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
-    const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
+    // const { userId } = await repository.findById({ modelName, id: portfolioId });
+    // const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
+    // const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
+    const [hours, minutes] = [23, 59];
     const job = new CronJob(`${minutes} ${hours} * * *`, async () => {
       // Load assets from pf here to get current values
       await updatePortfolioBTCEquivalent(portfolioId);

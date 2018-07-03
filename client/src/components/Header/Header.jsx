@@ -15,7 +15,7 @@ const styles = () => ({
   },
   headerContainer: {
     flexGrow: 1,
-    position: 'fixed',
+    // position: 'fixed',
     width: '100%',
     paddingLeft: '0px',
     backgroundColor: '#22252f',

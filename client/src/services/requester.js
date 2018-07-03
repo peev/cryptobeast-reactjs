@@ -27,7 +27,7 @@ const Portfolio = {
   getSharePriceHistory: requestParams => requests.post('/portfolio/sharePriceHistory', requestParams),
   getPriceHistory: requestParams => requests.post('/portfolio/priceHistory', requestParams),
   getPriceHistoryForPeriod: requestParams => requests.post('/portfolio/periodPriceHistory', requestParams),
-  update: requestParams => requests.put('/portfolio/update', requestParams), // id + newName
+  update: (requestParams, id) => requests.put(`/portfolio/update/${id}`, requestParams), // id + newName
   delete: id => requests.delete(`/portfolio/delete/${id}`),
 };
 

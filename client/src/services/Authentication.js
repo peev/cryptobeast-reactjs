@@ -29,6 +29,7 @@ const options = {
     usernameInputPlaceholder: 'Username',
     passwordInputPlaceholder: 'Password',
     title: 'CryptoBeast',
+    signupTitle: 'CryptoBeast',
     loginLabel: 'LOG IN',
     signUpLabel: 'SIGN UP',
     forgotPasswordAction: 'Forgot password?',

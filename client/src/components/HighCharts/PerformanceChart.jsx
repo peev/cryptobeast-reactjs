@@ -34,9 +34,10 @@ type Props = {
 };
 
 const PerformanceChart = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: Props) => {
-  const { classes, Analytics, PortfolioStore } = props;
-  const data = Analytics.currentPortfolioPriceChangeBreakdown;
-  const data2 = Analytics.currentBtcPriceChangeBreakdown;
+  const { classes, Analytics } = props;
+  // const data = Analytics.currentPortfolioPriceHistoryBreakdown;
+  const data3 = Analytics.currentPortfolioClosingSharePricesBreakdown;
+
 
   return (
     <HighchartsStockChart className={classes.container}>
@@ -53,18 +54,16 @@ const PerformanceChart = inject('Analytics', 'PortfolioStore')(observer(({ ...pr
         <RangeSelector.Button type="all">All</RangeSelector.Button>
       </RangeSelector>
 
-      <Tooltip valueSuffix="%" shared />
+      <Tooltip valuePrefix="$ " shared />
       <XAxis />
 
       <YAxis id="price" opposite >
-        <YAxis.Title>%</YAxis.Title>
-        <SplineSeries id="portfolio" name={PortfolioStore.selectedPortfolio ? PortfolioStore.selectedPortfolio.name : ''} data={data} />
-        <SplineSeries id="BTC" name="BTC" data={data2} />
+        <YAxis.Title>U S D</YAxis.Title>
+        <SplineSeries id="CSP" name="Closing Share Price" data={data3} />
       </YAxis>
 
       <Navigator>
         <Navigator.Series seriesId="portfolio" />
-        <Navigator.Series seriesId="BTC" />
       </Navigator>
     </HighchartsStockChart>
   );

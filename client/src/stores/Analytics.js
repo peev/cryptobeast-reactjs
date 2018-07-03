@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, onBecomeObserved } from 'mobx';
 import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
@@ -14,6 +14,8 @@ class Analytics {
     this.currentPortfolioClosingSharePrices = [];
     this.currentPortfolioPriceHistoryForPeriod = [];
     this.selectedTimeInPerformance = '';
+
+    onBecomeObserved(this, 'currentPortfolioClosingSharePrices', this.getClosingSharePriceHistory);
   }
 
   @computed

@@ -118,22 +118,22 @@ class PortfolioSelect extends React.Component<Props> {
     const { classes, PortfolioStore } = this.props;
 
     const portfoliosToShow = PortfolioStore.portfolios.map((el: Object, i: number) => (
-        <MenuItem
-          classes={{ selected: classes.selectedListItem }}
-          className={classes.listItem}
-          key={el.id}
-          value={el.id}
-          index={i + 1}
-        // select={i === 1 ? el.id : undefined}
-        >
-          <div className={classes.listItemContainer}>
-            <p className={classes.listItemName}>{el.name}</p>
-            <div className={classes.listItemDescription}>
-              <p className={classes.listItemDescriptionL}>^4{0.45 + i}%</p>
-              <p className={classes.listItemDescriptionR}>{103.90 + i}</p>
-            </div>
+      <MenuItem
+        classes={{ selected: classes.selectedListItem }}
+        className={classes.listItem}
+        key={el.id}
+        value={el.id}
+        index={i + 1}
+      // select={i === 1 ? el.id : undefined}
+      >
+        <div className={classes.listItemContainer}>
+          <p className={classes.listItemName}>{el.name}</p>
+          <div className={classes.listItemDescription}>
+            <p className={classes.listItemDescriptionL}>^4{0.45 + i}%</p>
+            <p className={classes.listItemDescriptionR}>{103.90 + i}</p>
           </div>
-        </MenuItem>
+        </div>
+      </MenuItem>
     ));
 
     return (
@@ -144,7 +144,7 @@ class PortfolioSelect extends React.Component<Props> {
               root: classes.root,
               select: classes.select,
             }}
-            value={PortfolioStore.selectedPortfolioId || ''}
+            value={PortfolioStore.selectedPortfolioId}
             onChange={this.handleChange}
             disableUnderline // removes underline from component
             MenuProps={{ classes: { paper: classes.menuItemContainer } }}

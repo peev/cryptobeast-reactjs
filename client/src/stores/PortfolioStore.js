@@ -379,6 +379,11 @@ class PortfolioStore {
                 changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
                   .toFixed(2);
                 break;
+              case 'USDT':
+                yesterdayCost = 1 / MarketStore.marketSummaries['USDT-BTC'].PrevDay;
+                changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
+                  .toFixed(2);
+                break;
               default:
                 if (MarketStore.marketSummaries[`BTC-${currentRow[0]}`]) {
                   yesterdayCost = MarketStore.marketSummaries[`BTC-${currentRow[0]}`].PrevDay;
@@ -562,10 +567,15 @@ class PortfolioStore {
   @action
   // eslint-disable-next-line class-methods-use-this
   updatePortfolio(portfolioName, id) {
-    requester.Portfolio.update(portfolioName, id)
-      .then(() => {
-        // TODO: update current portfolio array
-      })
+    requester.Portfolio.update({ name: portfolioName }, id)
+      .then(action(() => {
+        this.portfolios = this.portfolios.map((portfl) => {
+          if (portfl.id === id) {
+            return Object.assign({}, portfl, { name: portfolioName });
+          }
+          return portfl;
+        });
+      }))
       .catch(err => console.log(err));
   }
 
@@ -584,10 +594,12 @@ class PortfolioStore {
   }
   // #endregion
 
-  @action
+  @action.bound
   selectPortfolio(id) {
     InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
-    this.selectedPortfolioId = id;
+    if (id !== 0) {
+      this.selectedPortfolioId = id;
+    }
     if (this.portfolios.length) {
       this.portfolios.forEach((el) => {
         // Returns only needed values from selected portfolio

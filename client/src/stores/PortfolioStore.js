@@ -613,8 +613,7 @@ class PortfolioStore {
     return new Promise((resolve, reject) => {
       requester.Portfolio.getAll()
         .then(action((result) => {
-          console.log(result);
-          ApiAccountStore.convertUserApis(result.data.userApis);
+          ApiAccountStore.initializeUserApis(result.data.userApis);
           this.portfolios = result.data.portfolios;
           this.fetchingPortfolios = false;
           if (this.selectedPortfolioId > 0) {
@@ -638,7 +637,6 @@ class PortfolioStore {
     };
     requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
       .then(action((result) => {
-        // console.log(result);
         this.currentPortfolioAssets = result.data;
       }));
   }

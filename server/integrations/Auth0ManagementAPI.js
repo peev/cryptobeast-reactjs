@@ -54,9 +54,10 @@ class Auth0ManagementApi {
       if (data.status === 200) {
         return res.status(200).send({ isSuccessful: true });
       }
-      return res.status(500).send({ isSuccessful: false });
+
+      return res.status(404).send({ isSuccessful: false });
     } catch (error) {
-      res.status(500).send(error);
+      res.status(404).send(error);
     }
   }
 }

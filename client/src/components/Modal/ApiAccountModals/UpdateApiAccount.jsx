@@ -155,7 +155,7 @@ class UpdateApiAccount extends React.Component<Props, State> {
             </div>
 
             <div className={classes.container}>
-              <TextValidator
+              {/* <TextValidator
                 name="email"
                 label="Account*"
                 className={classes.inputWrapper}
@@ -163,7 +163,7 @@ class UpdateApiAccount extends React.Component<Props, State> {
                 onChange={(e: SyntheticEvent) => this.handleInputValue('account', e)}
                 validators={['required', 'isEmail']}
                 errorMessages={['this field is required', 'email is not valid']}
-              />
+              /> */}
 
               <TextValidator
                 name="Api Key"

@@ -8,7 +8,7 @@ import RegularButton from './../../components/CustomButtons/Button';
 import CreatePortfolio from './../../components/Modal/CreatePortfolio';
 import PortfoliosTable from './../../components/CustomTables/PortfoliosTable';
 import TimeSettings from '../../components/Cards/TimeSettings';
-import IntegrationsTable from './../../components/CustomTables/IntegrationsTable';
+import ApiIntegrations from './../../components/CustomTables/ApiIntegrations';
 import AddApiAccount from './../../components/Modal/ApiAccountModals/AddApiAccount';
 import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
 
@@ -34,7 +34,7 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
           cardTitle="API Integrations"
           button={<AddApiAccount />}
           content={
-            <IntegrationsTable
+            <ApiIntegrations
               tableHead={['Exchange', 'Account', 'Status', 'Key', 'Secret', '']}
             />
           }

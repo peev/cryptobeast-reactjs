@@ -52,7 +52,7 @@ const IntegrationsTable = inject('ApiAccountStore', 'PortfolioStore')(observer((
       <Table className={classes.table}>
         {tableHead !== undefined ? tableHeader : null}
         <TableBody>
-          {ApiAccountStore.userApis.map((rows: Array<Object>) => {
+          {ApiAccountStore.convertUserApis.map((rows: Array<Object>) => {
             // if its not empty array and portfolio is selected
             if (rows[0] &&
               PortfolioStore.selectedPortfolioId === rows[6]) {

@@ -1,5 +1,5 @@
 // @flow
-import { observable, action } from 'mobx';
+import { observable, action, computed, ObservableMap } from 'mobx';
 import requester from '../services/requester';
 import AssetStore from './AssetStore';
 import PortfolioStore from './PortfolioStore';
@@ -15,15 +15,14 @@ class ApiAccountStore {
     apiSecret: '',
     isActive: true,
   }
-  @observable updateValues;
-  @observable updateValues;
-  @observable userApis: Array;
+  @observable updateValues: Object;
+  @observable userApis: ObservableMap;
   @observable selectedApi: Object;
   placeholder: string = '***************';
 
   constructor() {
     this.updateValues = {};
-    this.userApis = [];
+    this.userApis = observable.map();
     this.selectedApi = {};
   }
 
@@ -38,9 +37,10 @@ class ApiAccountStore {
     const selectedExchangeName = AssetStore.selectedExchangeCreateAccount;
 
     // Checks if exchange with this account already exists
-    this.userApis.forEach((apiValues: Array) => {
-      if (apiValues[0] === selectedExchangeName
-        && apiValues[1] === this.values.account) {
+    this.userApis.forEach((values: object) => {
+      if (values.exchange === selectedExchangeName
+        && values.account === this.values.account
+        && values.portfolioId === PortfolioStore.selectedPortfolioId) {
         NotificationStore.addMessage('errorMessages', 'This account already exists with same exchange');
         noErrors = false;
       }
@@ -54,7 +54,7 @@ class ApiAccountStore {
     const currentUserAuthId = Authentication.getUserProfile().sub;
     const selectedExchangeName = AssetStore.selectedExchangeCreateAccount;
     const portfolioId = PortfolioStore.selectedPortfolioId;
-    const apiNameGenerate = `api_account_${this.userApis.length}`;
+    const apiNameGenerate = `api_account_${this.userApis.size}`;
     const newApiAccount = {
       user_metadata: {
         [apiNameGenerate]: { // creates the name of the api
@@ -78,25 +78,29 @@ class ApiAccountStore {
     requester.User.verifiedPatchUserMetadata(currentUserAuthId, newApiAccount)
       .then(action((result: object) => {
         if (result.data.isSuccessful) {
+          const apiToAdd = {
+            exchange: selectedExchangeName,
+            account: this.values.account,
+            isActive: this.values.isActive,
+            portfolioId,
+          };
+          this.userApis.set(apiNameGenerate, { ...apiToAdd });
+
           NotificationStore.addMessage('successMessages', 'Successfully added API');
 
-          const apiStatus = this.values.isActive ? 'Active' : 'Inactive';
-          const apiToAdd = [
-            selectedExchangeName,
-            this.values.account,
-            apiStatus,
-            this.placeholder,
-            this.placeholder,
-            apiNameGenerate,
-            portfolioId,
-          ];
-          this.userApis.push(apiToAdd);
-
           this.resetApiAccount();
-        } else if (!result.data.isSuccessful) {
-          NotificationStore.addMessage('errorMessages', 'The API Key and Secret are invalid');
         }
-      }));
+      }))
+      .catch((error: object) => {
+        if (!error.response.data.isSuccessful) {
+          if (error.response.data.message.message) {
+            NotificationStore.addMessage('errorMessages', error.response.data.message.message);
+          } else if (selectedExchangeName === 'Kraken'
+            && Object.keys(error.response.data.message).length === 0) {
+            NotificationStore.addMessage('errorMessages', 'Invalid Api Key or Secret');
+          }
+        }
+      });
   }
 
   @action
@@ -116,19 +120,15 @@ class ApiAccountStore {
     requester.User.patchUserMetadata(currentUserAuthId, updatedApiAccount)
       .then(action((result: object) => {
         if (result.data.isSuccessful) {
+          const selectedUserAPi = this.userApis.get(apiID);
+          // const accountResult = this.updateValues.account
+          //   ? this.updateValues.account
+          //   : this.values.account;
+          const isActiveResult = this.updateValues.isActive
+            ? this.updateValues.isActive
+            : this.values.isActive;
 
-          this.userApis = this.userApis.map((api: Array<any>) => {
-            if (api[5] === apiID && updatedApiAccount.user_metadata[apiID].account !== undefined) {
-              api[1] = updatedApiAccount.user_metadata[apiID].account;
-              return api;
-            } else if (api[5] === apiID && updatedApiAccount.user_metadata[apiID].isActive !== undefined) {
-              const apiStatus = updatedApiAccount.user_metadata[apiID].isActive ? 'Active' : 'Inactive';
-              api[2] = apiStatus;
-              return api;
-            }
-
-            return api;
-          });
+          Object.assign(selectedUserAPi, { isActive: isActiveResult });
 
           NotificationStore.addMessage('successMessages', 'Successfully updated API');
           this.resetApiAccount();
@@ -150,36 +150,59 @@ class ApiAccountStore {
         if (result.data.isSuccessful) {
           NotificationStore.addMessage('successMessages', 'Successfully removed API');
 
-          this.userApis = this.userApis.filter((api: Array<any>) => api[5] !== apiID);
+          this.userApis.set(apiID, {});
         }
       }));
   }
 
-  @action
-  convertUserApis(user: user) {
-    user.forEach((property: Array<string, object>) => {
-      const apiStatus = property[1].isActive ? 'Active' : 'Inactive';
-      this.userApis.push([
-        property[1].exchange,
-        property[1].account,
-        apiStatus,
-        this.placeholder,
-        this.placeholder,
-        property[0],
-        property[1].portfolioId,
-      ]);
+  @computed
+  get convertUserApis() {
+    const returnApis = [];
+    if (this.userApis.size > 0) {
+      this.userApis.forEach((values: object, key: string) => {
+        if (values.exchange
+          && PortfolioStore.selectedPortfolioId === values.portfolioId) {
+          const apiStatus = values.isActive ? 'Active' : 'Inactive';
+
+          returnApis.push([
+            values.exchange,
+            values.account,
+            apiStatus,
+            this.placeholder,
+            this.placeholder,
+            key,
+            values.portfolioId,
+          ]);
+        }
+      });
+
+      return returnApis;
+    }
+
+    return returnApis;
+  }
+
+  @action.bound
+  initializeUserApis(userMetadata: object) {
+    Object.keys(userMetadata).forEach((property: object) => {
+      this.userApis.set(property, {
+        exchange: userMetadata[property].exchange,
+        account: userMetadata[property].account,
+        isActive: userMetadata[property].isActive,
+        portfolioId: userMetadata[property].portfolioId,
+      });
     });
   }
 
   @action
   setApiAccountForEditing(apiID: string) {
-    const result = this.userApis.filter((api: Array<any>) => api[5] === apiID);
+    const result = this.userApis.get(apiID);
     this.values = {
-      exchange: result[0][0],
-      account: result[0][1],
-      isActive: result[0][2],
-      apiKey: result[0][3],
-      apiSecret: result[0][4],
+      exchange: result.exchange,
+      account: result.account,
+      isActive: result.isActive,
+      apiKey: this.placeholder,
+      apiSecret: this.placeholder,
     };
   }
 

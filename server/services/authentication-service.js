@@ -1,4 +1,4 @@
-const AManagement = require('./Auth0ManagementAPI');
+const AManagement = require('../integrations/Auth0ManagementAPI');
 
 
 const authenticationService = () => {

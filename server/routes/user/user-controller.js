@@ -3,7 +3,7 @@ const userController = (repository, jobs) => {
   const { bittrexServices } = require('../../integrations/bittrex-services');
   const { krakenServices } = require('../../integrations/kraken-services');
   const portfolioService = require('../../services/portfolio-service')(repository);
-  const AManagement = require('./../../services/Auth0ManagementAPI');
+  const AManagement = require('../../integrations/Auth0ManagementAPI');
 
   const Auth0ManagementApi = new AManagement();
   const modelName = 'User';
@@ -50,15 +50,46 @@ const userController = (repository, jobs) => {
   };
 
   const verifiedPatchUserMetadata = async (req, res) => {
+    // Validations
+    if (!req.body.user_metadata) {
+      return res.status(200).send({ isSuccessful: false, message: 'No user metadata found' });
+    }
+    if (!req.body.user_metadata.api.exchange
+      || req.body.user_metadata.api.exchange === ''
+      || typeof req.body.user_metadata.api.exchange !== 'string') {
+      return res.status(200).send({ isSuccessful: false, message: 'Invalid exchange' });
+    }
+    if (!req.body.user_metadata.api.apiKey
+      || req.body.user_metadata.api.apiKey === ''
+      || typeof req.body.user_metadata.api.apiKey !== 'string') {
+      return res.status(200).send({ isSuccessful: false, message: 'Invalid apiKey' });
+    }
+    if (!req.body.user_metadata.api.apiSecret
+      || req.body.user_metadata.api.apiSecret === ''
+      || typeof req.body.user_metadata.api.apiSecret !== 'string') {
+      return res.status(200).send({ isSuccessful: false, message: 'Invalid apiSecret' });
+    }
+    if (!req.body.user_metadata.api.portfolioId
+      || req.body.user_metadata.api.portfolioId === ''
+      || typeof req.body.user_metadata.api.portfolioId !== 'number') {
+      return res.status(200).send({ isSuccessful: false, message: 'Invalid portfolioId' });
+    }
+
     try {
       const { exchange, apiKey, apiSecret, portfolioId } = req.body.user_metadata.api;
+
+      // Check user api key and secret, be requesting account balance
       let returnedAssets;
+      let returnedOrderHistory;
       switch (exchange) {
         case 'Bittrex':
           returnedAssets = await bittrexServices().getBalance({ apiKey, apiSecret });
+          returnedOrderHistory = await bittrexServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
+
           break;
         case 'Kraken':
           returnedAssets = await krakenServices().getBalance({ apiKey, apiSecret });
+          returnedOrderHistory = await krakenServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
           break;
         default:
           console.log('There is no such api');
@@ -66,20 +97,38 @@ const userController = (repository, jobs) => {
       }
 
       if (returnedAssets) {
-        await addAssetsToPortfolio(returnedAssets, portfolioId);
+        // Add given api key and secret to auth0
         const returnedUser = await Auth0ManagementApi.patchUser(req, res);
+
+        // Add found balance to current selected portfolio
+        await addAssetsToPortfolio(returnedAssets, portfolioId);
+
+        // Add found trade history to current selected portfolio
+        await addTradeHistoryToPortfolio(returnedOrderHistory);
+
+        console.log(returnedOrderHistory); // for testing api response
 
         return returnedUser;
       }
 
       return res.status(200).send({ isSuccessful: false, message: 'No assets found' });
     } catch (error) {
-      res.status(200).send({ isSuccessful: false, error });
+      return res.status(404).send({ isSuccessful: false, message: error });
     }
   };
 
 
   const patchUserMetadata = async (req, res) => {
+    // Validations
+    if (!req.body.user_metadata) {
+      return res.status(200).send({ isSuccessful: false, message: 'No user metadata found' });
+    }
+    if (!req.body.user_metadata.api.id
+      || req.body.user_metadata.api.id === ''
+      || typeof req.body.user_metadata.api.id !== 'string') {
+      return res.status(200).send({ isSuccessful: false, message: 'Invalid api id' });
+    }
+
     const userMetadata = await Auth0ManagementApi.getUser(req);
 
     const apiId = req.body.user_metadata.api.id;
@@ -114,7 +163,17 @@ const userController = (repository, jobs) => {
 
       await repository.createMany({ modelName: 'Asset', newObjects: formatedAssets });
     } catch (error) {
-      console.log(error);
+      return error;
+    }
+  };
+
+  const addTradeHistoryToPortfolio = async (orderHistoryFromApi) => {
+    try {
+      if (orderHistoryFromApi.length > 0) {
+        await repository.createMany({ modelName: 'ApiTradeHistory', newObjects: orderHistoryFromApi });
+      }
+    } catch (error) {
+      return error;
     }
   };
 

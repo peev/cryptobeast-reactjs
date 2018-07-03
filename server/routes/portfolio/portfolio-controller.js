@@ -2,7 +2,7 @@
 const { bittrexServices } = require('../../integrations/bittrex-services');
 const { krakenServices } = require('../../integrations/kraken-services');
 const { responseHandler } = require('../utilities/response-handler');
-const AManagement = require('../../services/Auth0ManagementAPI');
+const AManagement = require('../../integrations/Auth0ManagementAPI');
 
 const Auth0ManagementApi = new AManagement();
 
@@ -62,21 +62,20 @@ const portfolioController = (repository, jobs) => {
       });
 
       const userMetadata = returnedUser.user_metadata;
-      const userApis = new Map();
-      Object.keys(userMetadata).forEach((apiData) => {
+      const userApis = {};
+      Object.keys(userMetadata).forEach(async (apiData) => {
         if (apiData.includes('api_account')) {
-          userApis.set(apiData, {
+          // eslint-disable-next-line
+          return userApis[apiData] = {
             exchange: userMetadata[apiData].exchange,
             account: userMetadata[apiData].account,
             isActive: userMetadata[apiData].isActive,
             portfolioId: userMetadata[apiData].portfolioId,
-          });
+          };
         }
       });
 
-      const flatoutMapApis = Array.from(userApis);
-
-      res.status(200).send({ userApis: flatoutMapApis, portfolios: allProfilesFound });
+      res.status(200).send({ userApis, portfolios: allProfilesFound });
     } catch (error) {
       res.status(500).send(error);
     }

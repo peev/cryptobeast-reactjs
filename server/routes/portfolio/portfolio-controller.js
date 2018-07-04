@@ -1,6 +1,4 @@
 // const { CronJob } = require('cron');
-const { bittrexServices } = require('../../integrations/bittrex-services');
-const { krakenServices } = require('../../integrations/kraken-services');
 const { responseHandler } = require('../utilities/response-handler');
 const AManagement = require('../../integrations/Auth0ManagementAPI');
 

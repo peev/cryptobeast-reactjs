@@ -1,6 +1,6 @@
 const bittrex = require('node-bittrex-api');
 
-// const bittrexServices = (key, secret) => {
+
 const bittrexServices = () => {
   const setOptions = (key, secret) => {
     bittrex.options({
@@ -8,13 +8,6 @@ const bittrexServices = () => {
       apisecret: secret,
     });
   };
-
-  // const setOptions = () => {
-  //   bittrex.options({
-  //     apikey: key,
-  //     apisecret: secret,
-  //   });
-  // };
 
   const getSummaries = () => {
     return new Promise((resolve, reject) => {

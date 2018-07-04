@@ -85,7 +85,6 @@ const userController = (repository, jobs) => {
         case 'Bittrex':
           returnedAssets = await bittrexServices().getBalance({ apiKey, apiSecret });
           returnedOrderHistory = await bittrexServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
-
           break;
         case 'Kraken':
           returnedAssets = await krakenServices().getBalance({ apiKey, apiSecret });

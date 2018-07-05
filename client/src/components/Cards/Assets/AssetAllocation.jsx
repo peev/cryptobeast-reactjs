@@ -5,7 +5,6 @@ import Paper from 'material-ui/Paper';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
-import { toJS } from 'mobx';
 import Select from 'react-select';
 
 import ClickablePopup from '../../Modal/ClickablePopup';
@@ -62,11 +61,10 @@ type Props = {
   classes: Object,
   AssetStore: Object,
   MarketStore: Object,
-  NotificationStore: Object,
   PortfolioStore: Object,
 };
 
-@inject('AssetStore', 'NotificationStore', 'MarketStore', 'PortfolioStore')
+@inject('AssetStore', 'MarketStore', 'PortfolioStore')
 @observer
 class AssetAllocation extends React.Component<Props> {
   componentWillUnmount() {
@@ -75,13 +73,8 @@ class AssetAllocation extends React.Component<Props> {
 
   handleSave = () => {
     const { AssetStore } = this.props;
-    // const hasErrors = AssetStore.handleAssetAllocationErrors();
 
-    // if (hasErrors) {
-    AssetStore.createTradeAssetAllocation()
-      .then(() => AssetStore.resetAssetAllocation());
-    this.props.NotificationStore.addMessage('successMessages', 'Successful asset allocation');
-    // }
+    AssetStore.createTradeAssetAllocation();
   }
 
   handleRequests = (type: *) => (event: SyntheticInputEvent) => {
@@ -118,11 +111,7 @@ class AssetAllocation extends React.Component<Props> {
       PortfolioStore,
     } = this.props;
     const today = new Date().toISOString().substring(0, 10);
-    const allCurrencies = toJS(MarketStore.allCurrencies);
-    const baseCurrencies = toJS(MarketStore.baseCurrencies)
-      .map((currency: object) => ({ value: currency.pair, label: currency.pair }))
-      .filter((x: object) => x.value !== 'BTC' && x.value !== 'ETH');
-    baseCurrencies.forEach((element: object) => allCurrencies.push(element));
+    const { allCurrenciesCombined } = MarketStore;
 
     return (
       <Grid container>
@@ -148,7 +137,7 @@ class AssetAllocation extends React.Component<Props> {
                 <TextValidator
                   name="date"
                   type="date"
-                  style={{ marginTop: '21px', width: '95%'}}
+                  style={{ marginTop: '21px', width: '95%' }}
                   value={AssetStore.assetAllocationSelectedDate || today}
                   onChange={this.handleRequests('assetAllocationSelectedDate')}
                   validators={['required']}
@@ -160,9 +149,9 @@ class AssetAllocation extends React.Component<Props> {
                 <div className={classes.popOverContainer}>
                   <SelectPortfolioCurrency />
 
-                  {PortfolioStore.currentPortfolioAssets.length === 0 ?
-                    <ClickablePopup /> :
-                    ''}
+                  {PortfolioStore.currentPortfolioAssets.length === 0
+                    ? <ClickablePopup />
+                    : ''}
                 </div>
 
                 <TextValidator
@@ -183,7 +172,7 @@ class AssetAllocation extends React.Component<Props> {
                   name="currency-to-asset-allocation"
                   value={AssetStore.selectedCurrencyToAssetAllocation}
                   onChange={this.handleCurrencyToAssetAllocation}
-                  options={allCurrencies}
+                  options={allCurrenciesCombined}
                   className={classes.alignInputAfter2}
                   style={{
                     border: 'none',
@@ -209,7 +198,7 @@ class AssetAllocation extends React.Component<Props> {
                   name="currency-for-asset-fee"
                   value={AssetStore.selectedCurrencyForTransactionFee}
                   onChange={this.handleCurrencyForTransactionFee}
-                  options={allCurrencies}
+                  options={allCurrenciesCombined}
                   className={classes.alignInputAfter2}
                   style={{
                     border: 'none',
@@ -238,9 +227,10 @@ class AssetAllocation extends React.Component<Props> {
                   color="primary"
                   className={classes.btnAdd}
                   // onClick={this.handleSave}
-                  disabled={AssetStore.assetAllocationToAmount === '' || AssetStore.selectedCurrencyToAssetAllocation === '' ||
-                    AssetStore.assetAllocationFromAmount === '' ||
-                    AssetStore.selectedCurrencyFromAssetAllocation === ''}
+                  disabled={AssetStore.assetAllocationToAmount === ''
+                    || AssetStore.selectedCurrencyToAssetAllocation === ''
+                    || AssetStore.assetAllocationFromAmount === ''
+                    || AssetStore.selectedCurrencyFromAssetAllocation === ''}
                 >RECORD
                 </RegularButton>
               </Grid>

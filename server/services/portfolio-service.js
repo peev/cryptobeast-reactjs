@@ -11,16 +11,22 @@ const portfolioService = (repository) => {
     switch (asset.currency) {
       case 'BTC':
         lastBTCEquivalent = asset.balance;
-        resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-        repository.update({ modelName: 'Asset', updatedRecord });
+        updatedRecord = { id: asset.id, lastBTCEquivalent };
+        repository.update({ modelName: 'Asset', updatedRecord })
+          .then(() => {
+            resolve(updatedRecord);
+          });
         break;
       case 'USDT':
         assetPair = `${asset.currency}-BTC`;
         repository.findOne({ modelName: 'MarketSummary', options: { where: { MarketName: assetPair } } })
           .then((foundSummary) => {
             lastBTCEquivalent = asset.balance / foundSummary.dataValues.Last;
-            resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-            repository.update({ modelName: 'Asset', updatedRecord });
+            updatedRecord = { id: asset.id, lastBTCEquivalent };
+            repository.update({ modelName: 'Asset', updatedRecord })
+              .then(() => {
+                resolve(updatedRecord);
+              });
           });
         break;
       case 'USD':
@@ -30,8 +36,11 @@ const portfolioService = (repository) => {
         repository.findById({ modelName: 'Ticker', id: assetPair })
           .then((foundTickers) => {
             lastBTCEquivalent = asset.balance / foundTickers.last;
-            resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-            repository.update({ modelName: 'Asset', updatedRecord });
+            updatedRecord = { id: asset.id, lastBTCEquivalent };
+            repository.update({ modelName: 'Asset', updatedRecord })
+              .then(() => {
+                resolve(updatedRecord);
+              });
           });
         break;
       default:
@@ -39,8 +48,11 @@ const portfolioService = (repository) => {
         repository.findOne({ modelName: 'MarketSummary', options: { where: { MarketName: assetPair } } })
           .then((foundSummary) => {
             lastBTCEquivalent = asset.balance * foundSummary.dataValues.Last;
-            resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-            repository.update({ modelName: 'Asset', updatedRecord });
+            updatedRecord = { id: asset.id, lastBTCEquivalent };
+            repository.update({ modelName: 'Asset', updatedRecord })
+              .then(() => {
+                resolve(updatedRecord);
+              });
           });
         break;
     }

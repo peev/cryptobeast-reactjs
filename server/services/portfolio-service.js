@@ -11,16 +11,22 @@ const portfolioService = (repository) => {
     switch (asset.currency) {
       case 'BTC':
         lastBTCEquivalent = asset.balance;
-        resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-        repository.update({ modelName: 'Asset', updatedRecord });
+        updatedRecord = { id: asset.id, lastBTCEquivalent };
+        repository.update({ modelName: 'Asset', updatedRecord })
+          .then(() => {
+            resolve(updatedRecord);
+          });
         break;
       case 'USDT':
         assetPair = `${asset.currency}-BTC`;
         repository.findOne({ modelName: 'MarketSummary', options: { where: { MarketName: assetPair } } })
           .then((foundSummary) => {
             lastBTCEquivalent = asset.balance / foundSummary.dataValues.Last;
-            resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-            repository.update({ modelName: 'Asset', updatedRecord });
+            updatedRecord = { id: asset.id, lastBTCEquivalent };
+            repository.update({ modelName: 'Asset', updatedRecord })
+              .then(() => {
+                resolve(updatedRecord);
+              });
           });
         break;
       case 'USD':
@@ -30,8 +36,11 @@ const portfolioService = (repository) => {
         repository.findById({ modelName: 'Ticker', id: assetPair })
           .then((foundTickers) => {
             lastBTCEquivalent = asset.balance / foundTickers.last;
-            resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-            repository.update({ modelName: 'Asset', updatedRecord });
+            updatedRecord = { id: asset.id, lastBTCEquivalent };
+            repository.update({ modelName: 'Asset', updatedRecord })
+              .then(() => {
+                resolve(updatedRecord);
+              });
           });
         break;
       default:
@@ -39,8 +48,11 @@ const portfolioService = (repository) => {
         repository.findOne({ modelName: 'MarketSummary', options: { where: { MarketName: assetPair } } })
           .then((foundSummary) => {
             lastBTCEquivalent = asset.balance * foundSummary.dataValues.Last;
-            resolve(updatedRecord = { id: asset.id, lastBTCEquivalent });
-            repository.update({ modelName: 'Asset', updatedRecord });
+            updatedRecord = { id: asset.id, lastBTCEquivalent };
+            repository.update({ modelName: 'Asset', updatedRecord })
+              .then(() => {
+                resolve(updatedRecord);
+              });
           });
         break;
     }
@@ -82,7 +94,11 @@ const portfolioService = (repository) => {
     const [hours, minutes] = [23, 59];
     const job = new CronJob(`${minutes} ${hours} * * *`, async () => {
       // Load assets from pf here to get current values
-      await updatePortfolioBTCEquivalent(portfolioId);
+      try {
+        await updatePortfolioBTCEquivalent(portfolioId);
+      } catch (err) {
+        console.log(err); // eslint-disable-line
+      }
       const sharePrice = await calcSharePrice(portfolioId);
       repository.create({ modelName: 'SharePrice', newObject: { price: sharePrice, portfolioId, isClosingPrice: true } });
     }, () => {
@@ -101,7 +117,11 @@ const portfolioService = (repository) => {
     const [hours, minutes] = [23, 59];
     const job = new CronJob(`1 ${minutes} ${hours} * * *`, async () => { // 1 second after closing time
       // Load assets from pf here to get current values
-      await updatePortfolioBTCEquivalent(portfolioId);
+      try {
+        await updatePortfolioBTCEquivalent(portfolioId);
+      } catch (err) {
+        console.log(err); // eslint-disable-line
+      }
       const sharePrice = await calcSharePrice(portfolioId);
       repository.create({ modelName: 'SharePrice', newObject: { price: sharePrice, portfolioId, isClosingPrice: false } });
     }, () => {
@@ -120,7 +140,11 @@ const portfolioService = (repository) => {
     const [hours, minutes] = [23, 59];
     const job = new CronJob(`${minutes} ${hours} * * *`, async () => {
       // Load assets from pf here to get current values
-      await updatePortfolioBTCEquivalent(portfolioId);
+      try {
+        await updatePortfolioBTCEquivalent(portfolioId);
+      } catch (err) {
+        console.log(err); // eslint-disable-line
+      }
       const { cost } = await repository.findById({ modelName, id: portfolioId });
       repository.create({ modelName: 'PortfolioPrice', newObject: { price: cost, portfolioId } });
     }, () => {

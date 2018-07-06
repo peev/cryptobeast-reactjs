@@ -95,7 +95,8 @@ const bittrexServices = () => {
         if (err) {
           reject(err);
         } else {
-          if (data.result.length > 0) {
+          console.log('getOderHistory --->', data, data.result);
+          if (data.result.length === 0) {
             resolve([]);
           }
 
@@ -112,30 +113,6 @@ const bittrexServices = () => {
               volume: order.Quantity,
               portfolioId,
             };
-
-            // mapped to trade model
-            // const orderTypeDash = order.Exchange.indexOf('-');
-            // const fromCurrency = order.Exchange.slice(0, orderTypeDash);
-            // const toCurrency = order.Exchange.slice(orderTypeDash);
-            // return {
-            //   transactionDate: order.TimeStamp,
-            //   source: 'Bittrex',
-            //   pair: order.Exchange,
-            //   fromAssetId: null,
-            //   fromCurrency,
-            //   fromAmount: order.Price,
-            //   toAssetId: null,
-            //   toCurrency,
-            //   toAmount: order.Quantity,
-            //   type: order.OrderType.slice(orderTypeUnderscore),
-            //   price: order.PricePerUnit,
-            //   filled: order.Quantity,
-            //   fee: order.Commission,
-            //   feeCurrency: fromCurrency,
-            //   totalPrice: order.Price,
-            //   market: fromCurrency,
-            //   portfolioId,
-            // };
           }));
         }
       });

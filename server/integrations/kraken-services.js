@@ -67,23 +67,24 @@ const krakenServices = (key, secret) => {
           reject(err);
         } else {
           const ordersHistory = data.result;
+
           if (ordersHistory.count === 0) {
             resolve([]);
           }
 
-          resolve(Object.keys(ordersHistory.trades).map((property) => {
-            return {
-              source: 'Kraken',
-              pair: ordersHistory.trades[property].pair,
-              time: ordersHistory.trades[property].time,
-              type: ordersHistory.trades[property].type,
-              orderType: ordersHistory.trades[property].orderType,
-              price: ordersHistory.trades[property].cost,
-              fee: ordersHistory.trades[property].fee,
-              volume: ordersHistory.trades[property].volume,
-              portfolioId,
-            };
-          }));
+          resolve(Object.keys(ordersHistory.trades).map((property, i) => ({
+            source: 'Kraken',
+            sourceId: Object.keys(ordersHistory.trades)[i],
+            pair: ordersHistory.trades[property].pair,
+            time: new Date(ordersHistory.trades[property].time * 1000), // converted from unix time stamp
+            entryDate: Date.now(),
+            type: ordersHistory.trades[property].type,
+            orderType: ordersHistory.trades[property].ordertype,
+            price: ordersHistory.trades[property].cost,
+            fee: ordersHistory.trades[property].fee,
+            volume: ordersHistory.trades[property].vol,
+            portfolioId,
+          })));
         }
       });
     });

@@ -4,11 +4,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    sourceId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     pair: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     time: {
+      type: DataTypes.DATEONLY,
+    },
+    entryDate: {
       type: DataTypes.DATEONLY,
     },
     type: {

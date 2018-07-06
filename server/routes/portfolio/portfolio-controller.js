@@ -1,6 +1,8 @@
 // const { CronJob } = require('cron');
 const { responseHandler } = require('../utilities/response-handler');
 const AManagement = require('../../integrations/Auth0ManagementAPI');
+// const { bittrexServices } = require('../../integrations/bittrex-services');
+// const { krakenServices } = require('../../integrations/kraken-services');
 
 const Auth0ManagementApi = new AManagement();
 
@@ -34,6 +36,28 @@ const portfolioController = (repository, jobs) => {
   const searchItemsInCurrentPortfolio = async (req, res) => {
     const searchedModelName = req.params.item;
     try {
+      if (searchedModelName === 'Trade') {
+        const tradeHistory = await repository.find({
+          modelName: searchedModelName,
+          options: {
+            where: {
+              portfolioId: req.params.portfolioId,
+            },
+          },
+        });
+
+        const apiTradeHistory = await repository.find({
+          modelName: 'ApiTradeHistory',
+          options: {
+            where: {
+              portfolioId: req.params.portfolioId,
+            },
+          },
+        });
+
+        res.status(200).send({ tradeHistory, apiTradeHistory });
+      }
+
       const foundAssets = await repository.find({
         modelName: searchedModelName,
         options: {
@@ -61,6 +85,31 @@ const portfolioController = (repository, jobs) => {
 
       const userMetadata = returnedUser.user_metadata;
       const userApis = {};
+
+      // testing ==========
+      // const commonBitrex = {
+      //   apiKey: returnedUser.user_metadata.api_account_14.apiKey,
+      //   apiSecret: returnedUser.user_metadata.api_account_14.apiSecret,
+      // };
+      // const luboBitrex = {
+      //   apiKey: returnedUser.user_metadata.api_account_41.apiKey,
+      //   apiSecret: returnedUser.user_metadata.api_account_41.apiSecret,
+      // };
+      // const kraken = {
+      //   apiKey: returnedUser.user_metadata.api_account_37.apiKey,
+      //   apiSecret: returnedUser.user_metadata.api_account_37.apiSecret,
+      // };
+      // console.log('--->', commonBitrex, luboBitrex, kraken);
+      // // console.log('--->', userMetadata);
+      // bittrexServices().getOderHistory(commonBitrex, returnedUser.user_metadata.api_account_14.portfolioId)
+      //   .then(res => console.log(res))
+      // bittrexServices().getOderHistory(luboBitrex, returnedUser.user_metadata.api_account_41.portfolioId)
+      //   .then(res => console.log(res))
+      // // krakenServices().getOderHistory(kraken, returnedUser.user_metadata.api_account_37.portfolioId)
+      // //   .then(res => console.log(res))
+
+      // testing ==========
+
       Object.keys(userMetadata).forEach(async (apiData) => {
         if (apiData.includes('api_account')) {
           // eslint-disable-next-line

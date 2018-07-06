@@ -7,6 +7,8 @@ import UserStore from './UserStore';
 import NotificationStore from './NotificationStore';
 import Analytics from './Analytics';
 
+import TradeHistoryStore from '../features/TransactionHistory/TradeHistory/TradeHistoryStore';
+
 
 const stores = {
   PortfolioStore,
@@ -17,6 +19,8 @@ const stores = {
   UserStore,
   NotificationStore,
   Analytics,
+
+  TradeHistoryStore,
 };
 
 export default stores;

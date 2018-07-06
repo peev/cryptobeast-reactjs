@@ -1,4 +1,5 @@
-import { observable, action } from 'mobx';
+// @flow
+import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
@@ -37,77 +38,84 @@ class AssetStore {
     this.assetAllocationFee = '0';
   }
 
+  @computed
+  get currentPortfolioAssetsToShow() {
+    const selectedExchange = this.selectedExchangeAssetAllocation === ''
+      ? 'Manually Added'
+      : this.selectedExchangeAssetAllocation;
+
+    const filteredAssets = PortfolioStore.currentPortfolioAssets
+      .filter((el: Object) => el.origin === selectedExchange)
+      .map((el: Object) => ({ value: el.id, label: el.currency }));
+
+    return filteredAssets;
+  }
+
   // start: select from all currencies
   @action.bound
-  selectCurrencyBasicAsset(input) {
+  selectCurrencyBasicAsset(input: string) {
     this.selectedCurrencyBasicAsset = input;
   }
 
   @action
-  selectCurrencyFromAssetAllocation(id) {
-    PortfolioStore.currentPortfolioAssets.forEach((el) => {
-      if (el.id === id) {
-        this.selectedCurrencyFromAssetAllocation = el;
+  selectCurrencyFromAssetAllocation(id: string) {
+    PortfolioStore.currentPortfolioAssets.forEach((asset: object) => {
+      if (asset.id === id) {
+        this.selectedCurrencyFromAssetAllocation = asset;
       }
     });
-  }
 
-  @action.bound
-  selectCurrencyToAssetAllocation(value) {
-    this.selectedCurrencyToAssetAllocation = value;
+    // if current value is bigger then available balance
+    if (this.selectedCurrencyFromAssetAllocation !== ''
+      && this.selectedCurrencyToAssetAllocation !== ''
+      && parseInt(this.assetAllocationFromAmount, 10) > this.selectedCurrencyFromAssetAllocation.balance) {
+      this.assetAllocationFromAmount = this.selectedCurrencyFromAssetAllocation.balance;
+    }
 
-    /**
-     * This checks if current available asset can be converted to desired output asset.
-     * If so, suggest quantity to convert for.
-     * currentFromQuantity => current BTC or other crypto currencies quantity for available asset
-     * currentToQuantity => current BTC or other crypto currencies quantity for output asset
-     */
-    if (this.selectedCurrencyToAssetAllocation !== '') {
-      const currentFromQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyFromAssetAllocation.currency);
-      const currentToQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyToAssetAllocation);
-
-      switch (currentToQuantity) {
-        case 0:
-        case 1:
-          this.assetAllocationToAmount = this.assetAllocationFromAmount * currentFromQuantity;
-          break;
-        default:
-          this.assetAllocationToAmount = (this.assetAllocationFromAmount * currentFromQuantity) / currentToQuantity;
-          break;
-      }
+    if (this.selectedCurrencyFromAssetAllocation !== '' && this.selectedCurrencyToAssetAllocation !== '') {
+      this.setSuggestionValueForAssetAllocationToAmount();
     }
   }
 
   @action.bound
-  selectCurrencyForTransactionFee(value) {
+  selectCurrencyToAssetAllocation(value: string) {
+    this.selectedCurrencyToAssetAllocation = value;
+
+    if (this.selectedCurrencyToAssetAllocation !== '') {
+      this.setSuggestionValueForAssetAllocationToAmount();
+    }
+  }
+
+  @action.bound
+  selectCurrencyForTransactionFee(value: string) {
     this.selectedCurrencyForTransactionFee = value;
   }
   // end: select from all currencies
 
   // start: select exchange
   @action.bound
-  selectExchangeBasicInput(value) {
+  selectExchangeBasicInput(value: string) {
     this.selectedExchangeBasicInput = value;
   }
 
   @action.bound
-  selectExchangeAssetAllocation(value) {
+  selectExchangeAssetAllocation(value: string) {
     this.selectedExchangeAssetAllocation = value;
   }
 
   @action.bound
-  selectExchangeCreateAccount(value) {
+  selectExchangeCreateAccount(value: string) {
     this.selectedExchangeCreateAccount = value;
   }
   // end: select exchange
 
   @action
-  setBasicAssetInputValue(value) {
+  setBasicAssetInputValue(value: string) {
     this.assetInputValue = value;
   }
 
   @action.bound
-  setAssetAllocationValue(type, value) {
+  setAssetAllocationValue(type: string, value: string) {
     if (type === 'assetAllocationFromAmount' &&
       this.selectedCurrencyFromAssetAllocation !== '') {
       if (parseInt(value, 10) > this.selectedCurrencyFromAssetAllocation.balance) {
@@ -137,7 +145,7 @@ class AssetStore {
   }
 
   @action
-  createBasicAsset(id) {
+  createBasicAsset(id: string) {
     if (this.selectedCurrencyBasicAsset === null || this.selectedCurrencyBasicAsset === '') {
       return;
     }
@@ -147,7 +155,7 @@ class AssetStore {
       'Manually Added';
 
     const existingAsset = PortfolioStore.currentPortfolioAssets
-      .find(asset =>
+      .find((asset: object) =>
         asset.currency === this.selectedCurrencyBasicAsset &&
         asset.origin === selectedExchangeOrigin &&
         asset.portfolioId === id);
@@ -165,16 +173,16 @@ class AssetStore {
     };
 
     requester.Asset.add(newBasicAsset)
-      .then(action((result) => {
+      .then(action((result: object) => {
         PortfolioStore.currentPortfolioAssets.push(result.data);
       }));
   }
 
   @action.bound
   createTradeAssetAllocation() {
-    const selectedExchange = this.selectedExchangeAssetAllocation !== '' ?
-      this.selectedExchangeAssetAllocation :
-      'Manually Added';
+    const selectedExchange = this.selectedExchangeAssetAllocation !== ''
+      ? this.selectedExchangeAssetAllocation
+      : 'Manually Added';
     const today = new Date().toISOString().substring(0, 10);
     const newAssetAllocation = {
       selectedExchange,
@@ -191,12 +199,19 @@ class AssetStore {
     // NOTE: allocation request has update, create and delete.
     // That why it returns the updated assets for the current portfolio
     return requester.Asset.allocate(newAssetAllocation)
-      .then(action((result) => {
+      .then(action((result: object) => {
         PortfolioStore.currentPortfolioAssets = result.data.assets;
         PortfolioStore.createTrade(result.data.fromAsset, result.data.toAsset);
+
+        NotificationStore.addMessage('successMessages', 'Successful asset allocation');
+
+        this.resetAssetAllocation();
       }))
-      .catch((error) => {
-        console.log(error);
+      .catch((error: object) => {
+        if (!error.response.data.isSuccessful) {
+          NotificationStore.addMessage('errorMessages', 'Error occurred, please try again.');
+        }
+        console.log(error.response);
       });
   }
 
@@ -299,7 +314,7 @@ class AssetStore {
 
   @action.bound
   // eslint-disable-next-line class-methods-use-this
-  selectCurrencyFromMarketSummaries(currencyName) {
+  selectCurrencyFromMarketSummaries(currencyName: string) {
     let foundCurrency;
     switch (currencyName) {
       case 'BTC':
@@ -324,9 +339,33 @@ class AssetStore {
 
     return foundCurrency;
   }
+
   @action.bound
   resetCurrency() {
     this.selectedCurrencyFromAssetAllocation = '';
+  }
+
+  /**
+   * This checks if current available asset can be converted to desired output asset.
+   * If so, suggest quantity to convert for.
+   *
+   * currentFromQuantity => current BTC or other crypto currencies quantity for available asset
+   * currentToQuantity => current BTC or other crypto currencies quantity for output asset
+   */
+  @action.bound
+  setSuggestionValueForAssetAllocationToAmount() {
+    const currentFromQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyFromAssetAllocation.currency);
+    const currentToQuantity = this.selectCurrencyFromMarketSummaries(this.selectedCurrencyToAssetAllocation);
+
+    switch (currentToQuantity) {
+      case 0:
+      case 1:
+        this.assetAllocationToAmount = this.assetAllocationFromAmount * currentFromQuantity;
+        break;
+      default:
+        this.assetAllocationToAmount = (this.assetAllocationFromAmount * currentFromQuantity) / currentToQuantity;
+        break;
+    }
   }
 }
 

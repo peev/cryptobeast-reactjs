@@ -5,7 +5,6 @@ import Paper from 'material-ui/Paper';
 import Select from 'react-select';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { toJS } from 'mobx';
 
 import RegularButton from '../../CustomButtons/Button';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
@@ -84,11 +83,8 @@ class AssetInput extends React.Component<Props> {
 
   render() {
     const { classes, AssetStore, MarketStore } = this.props;
-    const allCurrencies = toJS(MarketStore.allCurrencies);
-    const baseCurrencies = toJS(MarketStore.baseCurrencies)
-      .map((currency: object) => ({ value: currency.pair, label: currency.pair }))
-      .filter((x: object) => x.value !== 'BTC' && x.value !== 'ETH');
-    baseCurrencies.forEach((element: object) => allCurrencies.push(element));
+    const { allCurrenciesCombined } = MarketStore;
+
     return (
       <Grid container >
         <Paper className={classes.container}>
@@ -104,13 +100,13 @@ class AssetInput extends React.Component<Props> {
                   name="currency-to-asset-allocation"
                   value={AssetStore.selectedCurrencyBasicAsset || ''}
                   onChange={this.handleFromAllCurrenciesBasicAsset}
-                  options={allCurrencies}
+                  options={allCurrenciesCombined}
                   className={classes.input}
                   style={{
-                  border: 'none',
-                  borderRadius: 0,
-                  borderBottom: '1px solid #757575',
-                }}
+                    border: 'none',
+                    borderRadius: 0,
+                    borderBottom: '1px solid #757575',
+                  }}
                 />
                 <TextValidator
                   className={classes.font}
@@ -146,7 +142,7 @@ class AssetInput extends React.Component<Props> {
                 type="submit"
                 color="primary"
                 className="btnAdd"
-              // onClick={this.handleSave}
+                // onClick={this.handleSave}
                 disabled={AssetStore.assetInputValue === '' || AssetStore.selectedCurrencyBasicAsset === ''}
               >ADD
               </RegularButton>

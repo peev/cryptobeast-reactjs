@@ -16,11 +16,10 @@ const styles = () => ({
 
 type Props = {
   AssetStore: Object,
-  PortfolioStore: Object,
   classes: Object,
 };
 
-@inject('PortfolioStore', 'AssetStore')
+@inject('AssetStore')
 @observer
 class SelectPortfolioCurrency extends React.Component<Props> {
   handleChange = (event: SyntheticInputEvent) => {
@@ -32,9 +31,8 @@ class SelectPortfolioCurrency extends React.Component<Props> {
   };
 
   render() {
-    const { classes, PortfolioStore, AssetStore } = this.props;
-    const options = PortfolioStore.currentPortfolioAssets;
-    const optionsToShow = options.map((el: Object) => ({ value: el.id, label: el.currency }));
+    const { classes, AssetStore } = this.props;
+    const { currentPortfolioAssetsToShow } = AssetStore;
 
     return (
       <div autoComplete="off" className={classes.container}>
@@ -43,7 +41,7 @@ class SelectPortfolioCurrency extends React.Component<Props> {
             placeholder="Paid or sent*"
             name="currency"
             value={AssetStore.selectedCurrencyFromAssetAllocation.id || ''}
-            options={optionsToShow}
+            options={currentPortfolioAssetsToShow}
             onChange={this.handleChange}
             inputProps={{
               name: 'portfolioCurrencyId',

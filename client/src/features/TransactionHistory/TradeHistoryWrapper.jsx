@@ -4,7 +4,7 @@ import { withStyles } from 'material-ui';
 
 import { RegularCard } from '../../components';
 import TradeHistory from './TradeHistory/TradeHistory';
-import ExportPdfButton from '../../components/CustomButtons/ExportPdfButton';
+// import ExportPdfButton from '../../components/CustomButtons/ExportPdfButton';
 
 
 const styles = () => ({
@@ -21,7 +21,7 @@ type Props = {
 const TradeHistoryWrapper = ({ classes }: Props) => (
   <RegularCard
     cardTitle="TRADE HISTORY"
-    button={<ExportPdfButton />}
+    // button={<ExportPdfButton />}
     content={
       <React.Fragment>
         <div className={classes.tablePosition}>

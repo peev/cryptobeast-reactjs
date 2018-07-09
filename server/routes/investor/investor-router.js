@@ -2,14 +2,15 @@ const { Router } = require('express');
 
 const attachTo = (app, data) => {
   const router = new Router();
-  const investorController = require('./investor-controller')(data);
+  const controller = require('./investor-controller')(data);
+  const validator = require('./investor-validator')();
 
   router
-    .post('/add', (req, res) => investorController.createInvestor(req, res))
-    .put('/deposit/', (req, res) => investorController.depositInvestor(req, res))
-    .put('/withdrawal/', (req, res) => investorController.withdrawalInvestor(req, res))
-    .put('/update/:id', (req, res) => investorController.updateInvestor(req, res))
-    .delete('/delete', (req, res) => investorController.removeInvestor(req, res));
+    .post('/add', validator.createInvestor, controller.createInvestor)
+    .put('/deposit/', validator.investorTransaction, controller.depositInvestor)
+    .put('/withdrawal/', validator.investorTransaction, controller.withdrawalInvestor)
+    .put('/update/:id', validator.updateInvestor, controller.updateInvestor)
+    .delete('/delete', validator.deleteInvestor, controller.removeInvestor);
 
   app.use('/investor', router);
 };

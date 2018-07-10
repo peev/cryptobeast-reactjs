@@ -30,7 +30,7 @@ const investorValidator = () => {
     }
 
     // Provided by developer
-    if (!payload || !payload.hasOwnProperty('dateOfEntry') || !validator.isLength(payload.dateOfEntry, { min: 10, max: 10 })) {
+    if (!payload || !payload.hasOwnProperty('dateOfEntry') || !validator.isLength(payload.dateOfEntry, { min: 10, max: 21 })) {
       isFormValid = false;
       errors.dateOfEntry = 'Provide a date of entry!';
     }
@@ -76,10 +76,10 @@ const investorValidator = () => {
     }
 
     // Provided by developer
-    // VALIDATE TRANSATION RECORD
+    // VALIDATE TRANSACTION RECORD
     if (!payload || !payload.hasOwnProperty('transaction') || typeof payload.transaction !== 'object') {
       isFormValid = false;
-      errors.transaction = 'Deposit must have assisiated transation record!';
+      errors.transaction = 'Deposit must have associated transaction record!';
     }
 
     if (payload && payload.hasOwnProperty('transaction') && typeof payload.transaction === 'object') {
@@ -107,7 +107,7 @@ const investorValidator = () => {
 
       if (!transaction.hasOwnProperty('portfolioId') || typeof transaction.portfolioId !== 'number') {
         isFormValid = false;
-        errors.portfolioIdTransaction = 'Specify portfolio ID for transation!';
+        errors.portfolioIdTransaction = 'Specify portfolio ID for transaction!';
       }
 
       if (!transaction.hasOwnProperty('sharePrice') || typeof transaction.sharePrice !== 'number') {

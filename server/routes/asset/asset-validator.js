@@ -41,32 +41,32 @@ const assetValidator = () => {
     const errors = {};
     let isFormValid = true;
 
-    if (!payload || typeof payload.feeCurrency !== 'string' || !validator.isLength(payload.feeCurrency, { min: 1, max: 4 })) {
+    if (!payload || typeof payload.feeCurrency !== 'string' || !validator.isLength(payload.feeCurrency, { min: 3, max: 5 })) {
       isFormValid = false;
       errors.feeCurrency = 'Specify a valid fee currency!';
     }
 
-    if (!payload || !payload.hasOwnProperty('feeAmount') || typeof payload.feeAmount !== 'string' || !validator.isFloat(payload.feeAmount, { min: 0, max: 100 })) {
+    if (!payload || !payload.hasOwnProperty('feeAmount') || typeof payload.feeAmount !== 'string' || !validator.isFloat(payload.feeAmount, { min: 0, max: Number.MAX_SAFE_INTEGER })) {
       isFormValid = false;
       errors.feeAmount = 'Specify valid fee amount!';
     }
 
-    if (!payload || typeof payload.fromCurrency !== 'string' || !validator.isLength(payload.fromCurrency, { min: 1, max: 4 })) {
+    if (!payload || typeof payload.fromCurrency !== 'string' || !validator.isLength(payload.fromCurrency, { min: 3, max: 5 })) {
       isFormValid = false;
       errors.fromCurrency = 'Specify a valid paid or sent currency!';
     }
 
-    if (!payload || !payload.hasOwnProperty('fromAmount') || typeof payload.fromAmount !== 'string' || !validator.isFloat(payload.fromAmount, { min: 0, max: 100 })) {
+    if (!payload || !payload.hasOwnProperty('fromAmount') || typeof payload.fromAmount !== 'string' || !validator.isFloat(payload.fromAmount, { min: 0, max: Number.MAX_SAFE_INTEGER })) {
       isFormValid = false;
       errors.fromAmount = 'Specify valid paid or sent amount!';
     }
 
-    if (!payload || typeof payload.toCurrency !== 'string' || !validator.isLength(payload.toCurrency, { min: 1, max: 4 })) {
+    if (!payload || typeof payload.toCurrency !== 'string' || !validator.isLength(payload.toCurrency, { min: 3, max: 5 })) {
       isFormValid = false;
       errors.toCurrency = 'Specify a valid bought or received currency!';
     }
 
-    if (!payload || !payload.hasOwnProperty('toAmount') || typeof payload.toAmount !== 'string' || !validator.isFloat(payload.toAmount, { min: 0, max: 100 })) {
+    if (!payload || !payload.hasOwnProperty('toAmount') || typeof payload.toAmount !== 'string' || !validator.isFloat(payload.toAmount, { min: 0, max: Number.MAX_SAFE_INTEGER })) {
       isFormValid = false;
       errors.toAmount = 'Specify valid bought or received  amount!';
     }

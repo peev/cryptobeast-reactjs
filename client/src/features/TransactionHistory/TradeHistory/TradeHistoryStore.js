@@ -39,11 +39,11 @@ class TradeHistoryStore {
               break;
             case 5:
               // 6. Price
-              currentRow.push(Number(`${Math.round(`${trade.price}e2`)}e-2`));
+              currentRow.push(Number(`${Math.round(`${trade.price}e6`)}e-6`));
               break;
             case 6:
               // 7. Filled
-              currentRow.push(Number(`${Math.round(`${trade.volume}e2`)}e-2`));
+              currentRow.push(Number(`${Math.round(`${trade.volume}e6`)}e-6`));
               break;
             case 7:
               // 8. Fee
@@ -51,7 +51,7 @@ class TradeHistoryStore {
               break;
             case 8:
               // 9. Total
-              currentRow.push(currentRow[5] * currentRow[6]);
+              currentRow.push(`${Number(`${Math.round(`${currentRow[5] * currentRow[6]}e6`)}e-6`)} ${currentRow[3].slice(0, 3)}`);
               break;
             case 9:
             case 10:
@@ -120,7 +120,7 @@ class TradeHistoryStore {
           // 9. Total
           if (ind === 8) {
             const totalPrice = Number(`${Math.round(`${trade.totalPrice}e2`)}e-2`);
-            currentRow.push(`${totalPrice} ${trade.market} `);
+            currentRow.push(`${totalPrice} ${trade.market}`);
           }
           if (ind === 9) {
             currentRow.push('');

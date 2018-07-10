@@ -2,13 +2,14 @@ const { Router } = require('express');
 
 const attachTo = (app, data) => {
   const router = new Router();
-  const assetController = require('./asset-controller')(data);
+  const controller = require('./asset-controller')(data);
+  const validator = require('./asset-validator')();
 
   router
-    .post('/add', (req, res) => assetController.createAsset(req, res))
-    .put('/update/:id', (req, res) => assetController.updateAsset(req, res))
-    .post('/allocate', (req, res) => assetController.allocateAsset(req, res))
-    .delete('/delete/:id', (req, res) => assetController.removeAsset(req, res));
+    .post('/add', validator.addAsset, controller.createAsset)
+    .put('/update/:id', controller.updateAsset)
+    .post('/allocate', validator.allocate, controller.allocateAsset)
+    .delete('/delete/:id', controller.removeAsset);
 
   app.use('/asset', router);
 };

@@ -30,7 +30,7 @@ const style = {
 const TransactionHistory = ({ classes }: Object) =>
   (<Grid container>
     <ItemGrid xs={12} sm={12} md={12}>
-      <p>FILTERS</p>
+      {/* <p>FILTERS</p> */}
     </ItemGrid>
     <Grid container className={classes.itemsCardPosition}>
       <Grid item xs={12} sm={12} md={12}>

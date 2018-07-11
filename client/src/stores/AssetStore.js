@@ -191,7 +191,7 @@ class AssetStore {
       portfolioId: PortfolioStore.selectedPortfolioId,
       fromAmount: this.assetAllocationFromAmount,
       toCurrency: this.selectedCurrencyToAssetAllocation,
-      toAmount: this.assetAllocationToAmount,
+      toAmount: `${this.assetAllocationToAmount}`, // NOTE: DON'T TOUCH THIS STRING
       feeCurrency: this.selectedCurrencyForTransactionFee,
       feeAmount: this.assetAllocationFee,
     };

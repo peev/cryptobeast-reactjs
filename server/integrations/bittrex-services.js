@@ -95,18 +95,19 @@ const bittrexServices = () => {
         if (err) {
           reject(err);
         } else {
-          console.log('getOderHistory --->', data, data.result);
           if (data.result.length === 0) {
             resolve([]);
           }
 
           resolve(data.result.map((order) => {
-            const orderTypeUnderscore = order.Exchange.indexOf('_');
+            const orderTypeUnderscore = order.OrderType.indexOf('_');
             return {
               source: 'Bittrex',
+              sourceId: order.OrderUuid,
               pair: order.Exchange,
               time: order.TimeStamp,
-              type: order.OrderType.slice(orderTypeUnderscore),
+              entryDate: Date.now(),
+              type: order.OrderType.slice(orderTypeUnderscore + 1),
               orderType: order.OrderType.slice(0, orderTypeUnderscore),
               price: order.Price,
               fee: order.Commission,

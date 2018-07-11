@@ -1,4 +1,4 @@
-const requester = require('../services/requester');
+const requester = require('../services/requester-service');
 
 const baseURL = 'https://api.coinmarketcap.com/v2';
 

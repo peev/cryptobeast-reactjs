@@ -4,13 +4,12 @@ import { withStyles } from 'material-ui';
 import Typography from 'material-ui/Typography';
 import Checkbox from 'material-ui/Checkbox';
 import Modal from 'material-ui/Modal';
-import { Add } from '@material-ui/icons';
+import { Edit } from '@material-ui/icons';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import { inject, observer } from 'mobx-react';
+
 import Button from '../../CustomButtons/Button';
 import IconButton from '../../CustomButtons/IconButton';
-
-import SelectExchange from '../../Selectors/Asset/SelectExchange';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 
 
@@ -30,11 +29,6 @@ const styles = (theme: Object) => ({
     backgroundColor: theme.palette.background.paper,
     boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
     padding: '40px',
-  },
-  headerButtonContainer: {
-    float: 'right',
-    marginTop: '-35px',
-    marginRight: '40px',
   },
   modalTitle: {
     fontSize: '18px',
@@ -60,7 +54,7 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
-  AssetStore: Object,
+  apiId: string,
   PortfolioStore: Object,
   ApiAccountStore: Object,
   NotificationStore: Object,
@@ -70,35 +64,36 @@ type State = {
   open: boolean,
 };
 
-@inject('ApiAccountStore', 'PortfolioStore', 'AssetStore', 'NotificationStore')
+@inject('ApiAccountStore', 'PortfolioStore', 'NotificationStore')
 @observer
-class AddApiAccount extends React.Component<Props, State> {
+class UpdateApiAccount extends React.Component<Props, State> {
   constructor() {
     super();
+
     this.state = {
       open: false,
     };
     this.name = null;
-
-    this.handleExchangeCreateAccount = this.handleExchangeCreateAccount.bind(this);
   }
 
   componentWillUnmount() {
-    this.props.AssetStore.resetAsset();
+    this.props.ApiAccountStore.resetApiAccount();
   }
 
   handleOpen = () => {
     this.setState({ open: true });
+    this.props.ApiAccountStore.setApiAccountForEditing(this.props.apiId);
   };
 
   handleClose = () => {
     this.setState({ open: false });
+    this.props.ApiAccountStore.resetApiAccount();
   };
 
   handleInputValue = (propertyType: string, event: SyntheticEvent) => {
     event.preventDefault();
     const newValue = event.target.value;
-    this.props.ApiAccountStore.setNewApiAccountValues(propertyType, newValue);
+    this.props.ApiAccountStore.setApiAccountUpdateValues(propertyType, newValue);
   }
 
   handleActive = () => {
@@ -110,35 +105,32 @@ class AddApiAccount extends React.Component<Props, State> {
     const hasErrors = ApiAccountStore.handleCreateNewAccountErrors();
 
     if (PortfolioStore.selectedPortfolioId !== null && hasErrors) {
-      ApiAccountStore.addNewApiAccount();
+      ApiAccountStore.updateApiAccount(this.props.apiId);
       this.setState({ open: false });
     }
   };
 
-  handleExchangeCreateAccount = (value: any) => {
-    this.props.AssetStore.selectExchangeCreateAccount(value);
-  }
-
   render() {
-    const { classes, AssetStore, ApiAccountStore, NotificationStore } = this.props;
+    const { classes, ApiAccountStore, NotificationStore } = this.props;
+
     return (
-      <div className={classes.headerButtonContainer}>
+      <React.Fragment>
         <IconButton
+          customClass="edit"
           className={classes.headerButton}
           onClick={this.handleOpen}
           color="primary"
         >
-          <Add />
+          <Edit style={{ width: '.8em', height: '.8em' }} />
         </IconButton>
+
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
           <ValidatorForm
-            // ref="form"
             onSubmit={this.handleSave}
-            // onError={errors => console.log(errors)}
             style={getModalStyle()}
             className={classes.paper}
           >
@@ -149,7 +141,7 @@ class AddApiAccount extends React.Component<Props, State> {
                   id="modal-title"
                   className={classes.modalTitle}
                 >
-                  IMPORT FROM API
+                  Edit {ApiAccountStore.values.exchange} API
                 </Typography>
               </div>
               <div>
@@ -161,23 +153,9 @@ class AddApiAccount extends React.Component<Props, State> {
                 />
               </div>
             </div>
-            <div className={classes.container}>
-              <div className={classes.inputWrapper}>
-                <SelectExchange
-                  label="Select Exchange*"
-                  value={AssetStore.selectedExchangeCreateAccount}
-                  handleChange={this.handleExchangeCreateAccount}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
-                  style={{
-                    border: 'none',
-                    borderRadius: 0,
-                    borderBottom: '1px solid #757575',
-                  }}
-                />
-              </div>
 
-              <TextValidator
+            <div className={classes.container}>
+              {/* <TextValidator
                 name="email"
                 label="Account*"
                 className={classes.inputWrapper}
@@ -185,7 +163,7 @@ class AddApiAccount extends React.Component<Props, State> {
                 onChange={(e: SyntheticEvent) => this.handleInputValue('account', e)}
                 validators={['required', 'isEmail']}
                 errorMessages={['this field is required', 'email is not valid']}
-              />
+              /> */}
 
               <TextValidator
                 name="Api Key"
@@ -207,39 +185,34 @@ class AddApiAccount extends React.Component<Props, State> {
                 errorMessages={['this field is required']}
               />
             </div>
-            <br />
 
-            {/* Cancel BUTTON */}
             <Button
               style={{ display: 'inline-flex', marginRight: '50px', float: 'left' }}
               onClick={this.handleClose}
               color="primary"
             >
-              {' '}
               Cancel
             </Button>
 
-            {/* SAVE BUTTON */}
             <Button
               style={{ display: 'inline-flex', float: 'right' }}
-              // onClick={this.handleSave}
               color="primary"
               type="submit"
-              disabled={NotificationStore.getErrorsLength > 0 || AssetStore.selectedExchangeCreateAccount === ''
-                || ApiAccountStore.values.apiKey === '' || ApiAccountStore.values.apiSecret === ''}
+              disabled={NotificationStore.getErrorsLength > 0
+                || ApiAccountStore.values.apiKey === ''
+                || ApiAccountStore.values.apiSecret === ''}
             >
-              {' '}
               Save
             </Button>
           </ValidatorForm>
         </Modal>
         <NotificationSnackbar />
-      </div>
+      </React.Fragment>
     );
   }
 }
 
 // We need an intermediary variable for handling the recursive nesting.
-const AddApiAccountWrapped = withStyles(styles)(AddApiAccount);
+const UpdateApiAccountWrapped = withStyles(styles)(UpdateApiAccount);
 
-export default AddApiAccountWrapped;
+export default UpdateApiAccountWrapped;

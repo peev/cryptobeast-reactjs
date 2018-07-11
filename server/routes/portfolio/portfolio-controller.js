@@ -1,6 +1,8 @@
 // const { CronJob } = require('cron');
 const { responseHandler } = require('../utilities/response-handler');
+const AManagement = require('../../integrations/Auth0ManagementAPI');
 
+const Auth0ManagementApi = new AManagement();
 const modelName = 'Portfolio';
 
 const portfolioController = (repository, jobs) => {
@@ -28,37 +30,74 @@ const portfolioController = (repository, jobs) => {
       .catch(error => res.json(error));
   };
 
-  const searchItemsInCurrentPortfolio = (req, res) => {
+  const searchItemsInCurrentPortfolio = async (req, res) => {
     const searchedModelName = req.params.item;
-    repository.find({
-      modelName: searchedModelName,
-      options: {
-        where: {
-          portfolioId: req.params.portfolioId,
+    try {
+      if (searchedModelName === 'Trade') {
+        const tradeHistory = await repository.find({
+          modelName: searchedModelName,
+          options: {
+            where: {
+              portfolioId: req.params.portfolioId,
+            },
+          },
+        });
+
+        const apiTradeHistory = await repository.find({
+          modelName: 'ApiTradeHistory',
+          options: {
+            where: {
+              portfolioId: req.params.portfolioId,
+            },
+          },
+        });
+
+        res.status(200).send({ tradeHistory, apiTradeHistory });
+      }
+
+      const foundAssets = await repository.find({
+        modelName: searchedModelName,
+        options: {
+          where: {
+            portfolioId: req.params.portfolioId,
+          },
         },
-      },
-    })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
       });
+
+      res.status(200).send(foundAssets);
+    } catch (error) {
+      res.status(500).send(error);
+    }
   };
 
-  const getAllPortfolios = (req, res) => {
-    repository.find({
-      modelName,
-      options: {
-        where: { owner: req.user.email },
-      },
-    })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
+  const getAllPortfolios = async (req, res) => {
+    try {
+      const returnedUser = await Auth0ManagementApi.getUser(req);
+      const allProfilesFound = await repository.find({
+        modelName,
+        options: {
+          where: { owner: req.user.email },
+        },
       });
+
+      const userMetadata = returnedUser.user_metadata;
+      const userApis = {};
+      Object.keys(userMetadata).forEach(async (apiData) => {
+        if (apiData.includes('api_account')) {
+          // eslint-disable-next-line
+          return userApis[apiData] = {
+            exchange: userMetadata[apiData].exchange,
+            account: userMetadata[apiData].account,
+            isActive: userMetadata[apiData].isActive,
+            portfolioId: userMetadata[apiData].portfolioId,
+          };
+        }
+      });
+
+      res.status(200).send({ userApis, portfolios: allProfilesFound });
+    } catch (error) {
+      res.status(400).send(error);
+    }
   };
 
   const updatePortfolio = (req, res) => {

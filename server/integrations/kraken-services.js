@@ -58,11 +58,44 @@ const krakenServices = (key, secret) => {
     });
   };
 
+  const getOderHistory = (account, portfolioId) => {
+    kraken.config.key = account.apiKey;
+    kraken.config.secret = account.apiSecret;
+    return new Promise((resolve, reject) => {
+      kraken.api('TradesHistory', null, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          const ordersHistory = data.result;
+
+          if (ordersHistory.count === 0) {
+            resolve([]);
+          }
+
+          resolve(Object.keys(ordersHistory.trades).map((property, i) => ({
+            source: 'Kraken',
+            sourceId: Object.keys(ordersHistory.trades)[i],
+            pair: ordersHistory.trades[property].pair,
+            time: new Date(ordersHistory.trades[property].time * 1000), // converted from unix time stamp
+            entryDate: Date.now(),
+            type: ordersHistory.trades[property].type.toUpperCase(),
+            orderType: ordersHistory.trades[property].ordertype.toUpperCase(),
+            price: ordersHistory.trades[property].cost,
+            fee: ordersHistory.trades[property].fee,
+            volume: ordersHistory.trades[property].vol,
+            portfolioId,
+          })));
+        }
+      });
+    });
+  };
+
   return {
     getCurrencies,
     getTickers,
     getAllTickers,
     getBalance,
+    getOderHistory,
   };
 };
 

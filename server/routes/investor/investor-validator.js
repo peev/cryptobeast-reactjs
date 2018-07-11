@@ -30,7 +30,7 @@ const investorValidator = () => {
     }
 
     // Provided by developer
-    if (!payload || !payload.hasOwnProperty('dateOfEntry') || !validator.isLength(payload.dateOfEntry, { min: 10, max: 21 })) {
+    if (!payload || !payload.hasOwnProperty('dateOfEntry') || !validator.isLength(payload.dateOfEntry, { min: 10, max: 23 })) {
       isFormValid = false;
       errors.dateOfEntry = 'Provide a date of entry!';
     }

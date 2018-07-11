@@ -98,10 +98,10 @@ class CreatePortfolio extends React.Component<Props, State> {
     InvestorStore.setNewInvestorValues(propertyType, inputValue);
   }
 
-  handleSave = () => {
+  handleSave = (placeCalled: string) => {
     const hasErrors = this.props.PortfolioStore.handlePortfolioValidation();
     if (!hasErrors) {
-      this.props.PortfolioStore.createPortfolio();
+      this.props.PortfolioStore.createPortfolio(placeCalled);
       this.setState({ open: false });
     }
   };
@@ -143,7 +143,7 @@ class CreatePortfolio extends React.Component<Props, State> {
           open={this.state.open}
         >
           <ValidatorForm
-            onSubmit={() => this.handleSave()}
+            onSubmit={() => this.handleSave(place)}
             style={getModalStyle()}
             className={classes.paper}
           >
@@ -202,7 +202,7 @@ class CreatePortfolio extends React.Component<Props, State> {
                 type="submit"
               >
                 Save
-            </Button>
+              </Button>
             </div>
           </ValidatorForm>
         </Modal>

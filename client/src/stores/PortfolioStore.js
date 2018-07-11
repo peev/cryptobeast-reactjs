@@ -13,6 +13,7 @@ import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
 import AssetStore from './AssetStore';
 import Analytics from './Analytics';
+import history from '../services/History';
 
 class PortfolioStore {
   @observable fetchingPortfolios;
@@ -523,7 +524,7 @@ class PortfolioStore {
   }
 
   @action.bound
-  createPortfolio() {
+  createPortfolio(placeCalled) {
     const newPortfolio = {
       name: this.newPortfolioName,
     };
@@ -532,6 +533,10 @@ class PortfolioStore {
         this.selectedPortfolioId = result.data.id;
         InvestorStore.createDefaultInvestor(result.data.id);
         this.portfolios.push(result.data);
+
+        if (placeCalled === 'startScreen') {
+          history.push('/summary');
+        }
       }))
       .catch(err => console.log(err));
   }

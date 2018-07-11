@@ -16,33 +16,15 @@ import CreatePortfolioView from './views/CreatePortfolio/Index';
 import AuthService from './services/Authentication';
 import history from './services/History';
 
-import PortfolioStore from './stores/PortfolioStore';
-import AssetStore from './stores/AssetStore';
-import InvestorStore from './stores/InvestorStore';
-import MarketStore from './stores/MarketStore';
-import ApiAccountStore from './stores/ApiAccountStore';
-import UserStore from './stores/UserStore';
-import NotificationStore from './stores/NotificationStore';
-import Analytics from './stores/Analytics';
+import stores from './stores';
 
 if (AuthService.isAuthenticated()) {
-  PortfolioStore.setFetchingPortfolios(true);
+  stores.PortfolioStore.setFetchingPortfolios(true);
 } else {
   if (!AuthService.isSignedOut()) {
     AuthService.signOut();
   }
 }
-
-const stores = {
-  PortfolioStore,
-  AssetStore,
-  InvestorStore,
-  MarketStore,
-  ApiAccountStore,
-  UserStore,
-  NotificationStore,
-  Analytics,
-};
 
 // ====================================
 // For easier debugging MobX

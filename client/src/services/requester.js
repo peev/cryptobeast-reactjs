@@ -14,6 +14,7 @@ const requests = {
   get: url => axios.get(`${API_ROOT}${url}`, options),
   post: (url, body) => axios.post(`${API_ROOT}${url}`, body, options),
   put: (url, body) => axios.put(`${API_ROOT}${url}`, body, options),
+  patch: (url, body) => axios.patch(`${API_ROOT}${url}`, body, options),
   delete: url => axios.delete(`${API_ROOT}${url}`, options), // axios.delete doesn't support body in requests !!!
 };
 
@@ -50,6 +51,7 @@ const Market = {
   getBaseTickerHistory: requestParams => requests.post('/market/periodPriceHistory', requestParams),
 };
 
+// not used
 const ApiAccount = {
   addAccount: data => requests.post('/account/add', data),
   update: requestParams => requests.put('/account/update', requestParams),
@@ -78,6 +80,9 @@ const Asset = {
 
 const User = {
   updateClosingTime: data => requests.post('/user/updateClosingTime', data),
+  verifiedPatchUserMetadata: (id, data) => requests.patch(`/user/verifiedPatch/${id}`, data),
+  patchUserMetadata: (id, data) => requests.patch(`/user/patch/${id}`, data),
+  deleteUserMetadata: (id, data) => requests.patch(`/user/delete/${id}`, data),
 };
 
 export default {

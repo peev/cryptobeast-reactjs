@@ -35,6 +35,7 @@ const init = databaseConfig => new Promise((resolve) => {
       db.Currency = sequelize.import(path.join(__dirname, '/models/currency.js'));
       db.Transaction = sequelize.import(path.join(__dirname, '/models/transaction.js'));
       db.Trade = sequelize.import(path.join(__dirname, '/models/trade.js'));
+      db.ApiTradeHistory = sequelize.import(path.join(__dirname, '/models/apiTradeHistory.js'));
       db.SharePrice = sequelize.import(path.join(__dirname, '/models/sharePrice.js'));
       db.PortfolioPrice = sequelize.import(path.join(__dirname, '/models/portfolioPrice.js'));
       db.User = sequelize.import(path.join(__dirname, '/models/user.js'));
@@ -60,6 +61,9 @@ const init = databaseConfig => new Promise((resolve) => {
 
       db.Portfolio.hasMany(db.Trade);
       db.Trade.belongsTo(db.Portfolio);
+
+      db.Portfolio.hasMany(db.ApiTradeHistory);
+      db.ApiTradeHistory.belongsTo(db.Portfolio);
 
       db.Investor.hasMany(db.Transaction);
       db.Transaction.belongsTo(db.Investor);

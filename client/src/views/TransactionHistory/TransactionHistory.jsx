@@ -3,7 +3,7 @@ import React from 'react';
 import { withStyles, Grid } from 'material-ui';
 
 import { ItemGrid } from './../../components';
-import TradeHistory from '../../components/Cards/History/TradeHistory';
+import TradeHistory from '../../features/TransactionHistory/TradeHistoryWrapper';
 import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
 
 
@@ -29,15 +29,15 @@ const style = {
 };
 const TransactionHistory = ({ classes }: Object) =>
   (<Grid container>
-      <ItemGrid xs={12} sm={12} md={12}>
-        <p>FILTERS</p>
-      </ItemGrid>
-      <Grid container className={classes.itemsCardPosition}>
+    <ItemGrid xs={12} sm={12} md={12}>
+      {/* <p>FILTERS</p> */}
+    </ItemGrid>
+    <Grid container className={classes.itemsCardPosition}>
       <Grid item xs={12} sm={12} md={12}>
         <TradeHistory />
       </Grid>
-      </Grid>
-      <NotificationSnackbar />
+    </Grid>
+    <NotificationSnackbar />
    </Grid>);
 
 

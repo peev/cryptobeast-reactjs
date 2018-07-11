@@ -13,6 +13,8 @@ import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
 import AssetStore from './AssetStore';
 import Analytics from './Analytics';
+import ApiAccountStore from './ApiAccountStore';
+import history from '../services/History';
 
 class PortfolioStore {
   @observable fetchingPortfolios;
@@ -23,6 +25,7 @@ class PortfolioStore {
   @observable currentPortfolioInvestors;
   @observable currentPortfolioTransactions;
   @observable currentPortfolioTrades;
+  @observable currentPortfolioApiTradeHistory;
   @observable currentPortfolioPrices;
   @observable newPortfolioName;
 
@@ -35,6 +38,7 @@ class PortfolioStore {
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
     this.currentPortfolioTrades = [];
+    this.currentPortfolioApiTradeHistory = [];
     this.currentPortfolioPrices = [];
     this.newPortfolioName = '';
 
@@ -84,64 +88,6 @@ class PortfolioStore {
     }
 
     return 0;
-  }
-
-  @computed
-  get tradeHistory() {
-    const trades = this.currentPortfolioTrades;
-    const selectedPortfolioTrades = [];
-    trades.forEach((el) => {
-      const currentRow = [];
-      Object.keys(el).forEach((prop, ind) => {
-        // 1. Transaction date
-        if (ind === 0) {
-          currentRow.push(el.transactionDate);
-        }
-        // 2. Entry Date
-        if (ind === 1) {
-          currentRow.push(el.entryDate);
-        }
-        // 3. Source
-        if (ind === 2) {
-          currentRow.push(el.source);
-        }
-        // 4. Pair
-        if (ind === 3) {
-          currentRow.push(el.pair);
-        }
-        // 5. Type
-        if (ind === 4) {
-          const { type } = el;
-          currentRow.push(type.toUpperCase());
-        }
-        // 6. Price
-        if (ind === 5) {
-          const price = Number(`${Math.round(`${el.price}e2`)}e-2`);
-          currentRow.push(price);
-        }
-        // 7. Filled
-        if (ind === 6) {
-          currentRow.push(el.filled);
-        }
-        // 8. Fee
-        if (ind === 7) {
-          currentRow.push(`${el.fee} ${el.feeCurrency}`);
-        }
-        // 9. Total
-        if (ind === 8) {
-          const totalPrice = Number(`${Math.round(`${el.totalPrice}e2`)}e-2`);
-          currentRow.push(`${totalPrice} ${el.market}`);
-        }
-        if (ind === 9) {
-          currentRow.push('');
-        }
-        if (ind === 10) {
-          currentRow.push('');
-        }
-      });
-      selectedPortfolioTrades.push(currentRow);
-    });
-    return selectedPortfolioTrades;
   }
 
   @action
@@ -523,7 +469,7 @@ class PortfolioStore {
   }
 
   @action.bound
-  createPortfolio() {
+  createPortfolio(placeCalled) {
     const newPortfolio = {
       name: this.newPortfolioName,
     };
@@ -532,6 +478,10 @@ class PortfolioStore {
         this.selectedPortfolioId = result.data.id;
         InvestorStore.createDefaultInvestor(result.data.id);
         this.portfolios.push(result.data);
+
+        if (placeCalled === 'startScreen') {
+          history.push('/summary');
+        }
       }))
       .catch(err => console.log(err));
   }
@@ -624,7 +574,8 @@ class PortfolioStore {
     return new Promise((resolve, reject) => {
       requester.Portfolio.getAll()
         .then(action((result) => {
-          this.portfolios = result.data;
+          ApiAccountStore.initializeUserApis(result.data.userApis);
+          this.portfolios = result.data.portfolios;
           this.fetchingPortfolios = false;
           if (this.selectedPortfolioId > 0) {
             this.selectPortfolio(this.selectedPortfolioId);
@@ -695,7 +646,8 @@ class PortfolioStore {
     };
     requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
       .then(action((result) => {
-        this.currentPortfolioTrades = result.data;
+        this.currentPortfolioTrades = result.data.tradeHistory;
+        this.currentPortfolioApiTradeHistory = result.data.apiTradeHistory;
       }));
   }
 

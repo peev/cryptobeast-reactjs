@@ -1,3 +1,4 @@
+/* globals localStorage fetch */
 import Auth0Lock from 'auth0-lock';
 import history from './History';
 import { clientId, domain, redirectUrl } from './../variables/auth0';
@@ -11,7 +12,7 @@ const options = {
     responseType: 'token id_token',
     redirectUri: redirectUrl,
     audience: 'https://cryptobeast.eu.auth0.com/userinfo',
-    scope: 'openid',
+    scope: 'openid profile',
   },
   rememberLastLogin: false,
   autoParseHash: false,
@@ -49,7 +50,7 @@ class AuthService {
       if (error) console.log(error); // eslint-disable-line
       else {
         this.persistSession(authResult);
-        localStorage.setItem('profile', JSON.stringify(profile)); // eslint-disable-line
+        localStorage.setItem('profile', JSON.stringify(profile));
       }
     });
   }
@@ -82,19 +83,19 @@ class AuthService {
   persistSession = (authResult) => {
     // Access Token + ID Token + Expiry Time = SESSION
     const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-    localStorage.setItem('accessToken', authResult.accessToken); // eslint-disable-line
-    localStorage.setItem('id_token', authResult.idToken); // eslint-disable-line
-    localStorage.setItem('expires_at', expiresAt); // eslint-disable-line
+    localStorage.setItem('accessToken', authResult.accessToken);
+    localStorage.setItem('id_token', authResult.idToken);
+    localStorage.setItem('expires_at', expiresAt);
     // navigate to the home route
     history.push('/');
   }
 
   signOut = () => {
     // // Clear Access Token and ID Token from local storage
-    localStorage.removeItem('accessToken'); // eslint-disable-line
-    localStorage.removeItem('id_token'); // eslint-disable-line
-    localStorage.removeItem('expires_at'); // eslint-disable-line
-    localStorage.removeItem('profile'); // eslint-disable-line
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('id_token');
+    localStorage.removeItem('expires_at');
+    localStorage.removeItem('profile');
     this.lock.logout({
       returnTo: redirectUrl,
     });
@@ -103,11 +104,15 @@ class AuthService {
   isAuthenticated = () => {
     // Check whether the current time is past the
     // Access Token's expiry time
-    const expiresAt = JSON.parse(localStorage.getItem('expires_at')); // eslint-disable-line
+    const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
     return new Date().getTime() < expiresAt;
   }
 
-  isSignedOut = () => Boolean(!localStorage.getItem('accessToken') && !localStorage.getItem('profile')); // eslint-disable-line
+  isSignedOut = () => Boolean(!localStorage.getItem('accessToken') && !localStorage.getItem('profile'));
+
+  getUserIdToken = () => localStorage.getItem('id_token');
+
+  getUserProfile = () => JSON.parse(localStorage.getItem('profile'));
 }
 
 const authService = new AuthService();

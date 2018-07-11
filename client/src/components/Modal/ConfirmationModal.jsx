@@ -49,7 +49,7 @@ type Props = {
   classes: Object,
   onSave: Function,
   message: string
-  };
+};
 
 
 type State = {
@@ -83,7 +83,7 @@ class ConfirmationModal extends React.Component<Props, State> {
     } = this.props;
 
     return (
-      <div >
+      <React.Fragment>
         <IconButton
           // className={classes.headerButton}
           onClick={this.handleOpen}
@@ -137,7 +137,7 @@ class ConfirmationModal extends React.Component<Props, State> {
             </div>
           </ValidatorForm>
         </Modal>
-      </div>
+      </React.Fragment>
     );
   }
 }

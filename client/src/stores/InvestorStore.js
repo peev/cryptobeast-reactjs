@@ -413,7 +413,7 @@ class InvestorStore {
       email: 'default@email.com',
       telephone: '',
       dateOfEntry: (new Date()).toLocaleString(),
-      managementFee: 0,
+      managementFee: '0.0',
       portfolioId,
     };
     let depositData;

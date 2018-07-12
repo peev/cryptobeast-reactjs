@@ -120,7 +120,7 @@ const investorValidator = () => {
         errors.shares = 'Specify transaction total number of shares!';
       }
 
-      if (!transaction.hasOwnProperty('transactionDate') || typeof transaction.transactionDate !== 'string' || !validator.isLength(transaction.transactionDate, { min: 10, max: 10 })) {
+      if (!transaction.hasOwnProperty('transactionDate') || typeof transaction.transactionDate !== 'string' || !validator.isLength(transaction.transactionDate, { min: 10, max: 23 })) {
         isFormValid = false;
         errors.transactionDate = 'Specify transaction date!';
       }

@@ -50,7 +50,9 @@ class HistoryTable extends React.Component<Props, State> {
     const { tradeHistory, mapApiTradeHistory } = TradeHistoryStore;
     const trades = PortfolioStore.currentPortfolioTrades;
 
-    const emptyRows = this.state.rowsPerPage - Math.min(this.state.rowsPerPage, tradeHistory.length - (this.state.page * this.state.rowsPerPage));
+    //fills the table up with empty rows upto rowsPerPage
+    // const emptyRows = this.state.rowsPerPage - Math.min(this.state.rowsPerPage, tradeHistory.length - (this.state.page * this.state.rowsPerPage));
+    const emptyRows = 0;
 
     return (
       <div className={classes.tableResponsive}>

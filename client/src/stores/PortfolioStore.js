@@ -198,7 +198,7 @@ class PortfolioStore {
     if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0 &&
       MarketStore.baseCurrencies.length > 0 && MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
       const groupedAssets = Object.values(this.currentPortfolioAssets.reduce((grouped, asset) => {
-        if (!grouped[asset.currency]) {
+        if (!grouped[asset.currency] && asset.balance > 0) {
           grouped[asset.currency] = Object.assign({}, asset); // eslint-disable-line no-param-reassign
 
           return grouped;

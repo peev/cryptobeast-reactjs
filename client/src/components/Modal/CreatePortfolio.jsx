@@ -162,7 +162,7 @@ class CreatePortfolio extends React.Component<Props, State> {
               className={classes.inputWrapper}
               onChange={this.handleInputValue}
               value={PortfolioStore.newPortfolioName}
-              validators={['requirged']}
+              validators={['required']}
               errorMessages={['this field is required']}
             />
             <div className={classes.inputWrapper}>

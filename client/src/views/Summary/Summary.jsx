@@ -43,6 +43,7 @@ type Props = {
 
 const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
   const { classes, PortfolioStore } = props;
+
   const handleInfoMessage = () => {
     if (PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0) {
       return ('Please add new investor or edit your personal investment amount.');
@@ -52,6 +53,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
       return ('Please add new investor or edit your personal investment amount. Please add some assets to your portfolio.');
     }
   };
+
   return (
     <Grid container>
       <Grid container className={classes.container}>
@@ -67,7 +69,11 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={AscendantBarsIcon}
             iconColor="gray"
             title="Share price"
-            description={`$${PortfolioStore.currentPortfolioSharePrice.toFixed(2)}`}
+            description={PortfolioStore.summaryTotalNumberOfShares !== 0
+              ? `$${PortfolioStore.currentPortfolioSharePrice.toFixed(2)}`
+              : ''}
+            hasInfo={PortfolioStore.summaryTotalNumberOfShares === 0}
+            infoMessage="Please add an investment to see your current share price"
           />
 
           <SummaryCard
@@ -81,7 +87,9 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={CoinIcon}
             iconColor="gray"
             title="Total investment"
-            description={`$${PortfolioStore.summaryTotalInvestmentInUSD}`}
+            description={PortfolioStore.summaryTotalInvestmentInUSD !== 0
+              ? `$${PortfolioStore.summaryTotalInvestmentInUSD}`
+              : ''}
             hasInfo={PortfolioStore.summaryTotalInvestmentInUSD === 0}
             infoMessage="Please add new investor or edit your personal investment amount"
           />
@@ -90,12 +98,14 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={AnalyticsIcon}
             iconColor="gray"
             title="Total profit/loss"
-            description={PortfolioStore.summaryTotalProfitLoss > 0 ?
-              `+${PortfolioStore.summaryTotalProfitLoss}%` :
-              `${PortfolioStore.summaryTotalProfitLoss}%`}
-            hasInfo={(PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0) ||
-              (PortfolioStore.summaryTotalInvestmentInUSD > 0 && PortfolioStore.currentPortfolioCostInUSD === 0) ||
-              (PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD === 0)}
+            description={PortfolioStore.summaryTotalProfitLoss === 0
+              ? ''
+              : PortfolioStore.summaryTotalProfitLoss > 0
+                ? `+${PortfolioStore.summaryTotalProfitLoss}%`
+                : `${PortfolioStore.summaryTotalProfitLoss}%`}
+            hasInfo={(PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0)
+              || (PortfolioStore.summaryTotalInvestmentInUSD > 0 && PortfolioStore.currentPortfolioCostInUSD === 0)
+              || (PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD === 0)}
             infoMessage={handleInfoMessage()}
           />
         </Grid>

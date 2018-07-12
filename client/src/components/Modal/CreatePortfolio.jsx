@@ -162,7 +162,7 @@ class CreatePortfolio extends React.Component<Props, State> {
               className={classes.inputWrapper}
               onChange={this.handleInputValue}
               value={PortfolioStore.newPortfolioName}
-              validators={['required']}
+              validators={['requirged']}
               errorMessages={['this field is required']}
             />
             <div className={classes.inputWrapper}>
@@ -180,7 +180,7 @@ class CreatePortfolio extends React.Component<Props, State> {
               value={InvestorStore.newInvestorValues.depositedAmount}
               className={classes.inputWrapper}
               validators={['isPositive']}
-              errorMessages={['this field is required', 'value must be a positive number']}
+              errorMessages={['value must be a positive number']}
             />
             <br />
 

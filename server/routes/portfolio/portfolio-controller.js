@@ -80,21 +80,25 @@ const portfolioController = (repository, jobs) => {
         },
       });
 
-      const userMetadata = returnedUser.user_metadata;
-      const userApis = {};
-      Object.keys(userMetadata).forEach(async (apiData) => {
-        if (apiData.includes('api_account')) {
-          // eslint-disable-next-line
-          return userApis[apiData] = {
-            exchange: userMetadata[apiData].exchange,
-            account: userMetadata[apiData].account,
-            isActive: userMetadata[apiData].isActive,
-            portfolioId: userMetadata[apiData].portfolioId,
-          };
-        }
-      });
+      if (returnedUser.user_metadata) {
+        const userMetadata = returnedUser.user_metadata;
+        const userApis = {};
+        Object.keys(userMetadata).forEach(async (apiData) => {
+          if (apiData.includes('api_account')) {
+            // eslint-disable-next-line
+            return userApis[apiData] = {
+              exchange: userMetadata[apiData].exchange,
+              account: userMetadata[apiData].account,
+              isActive: userMetadata[apiData].isActive,
+              portfolioId: userMetadata[apiData].portfolioId,
+            };
+          }
+        });
 
-      res.status(200).send({ userApis, portfolios: allProfilesFound });
+        res.status(200).send({ userApis, portfolios: allProfilesFound });
+      }
+
+      res.status(200).send({ userApis: {}, portfolios: allProfilesFound });
     } catch (error) {
       res.status(400).send(error);
     }

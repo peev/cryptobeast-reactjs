@@ -9,7 +9,7 @@ module.exports = {
     client_secret: process.env.AUTH_CLIENT_SECRET || '2kof6xTX-lhEOXsD_w00rovVOtQFyo3VrBMOeAOwIa1TQGB3O9lMk3Dw8tRhIiJ0',
   },
   database: {
-    host: process.env.DBHOST || '127.0.0.1',
+    host: process.env.DBHOST || '52.21.230.27',
     port: process.env.DBPORT || 5432,
     name: process.env.DBNAME || 'cryptobeast',
     user: process.env.DBUSER || 'postgres',

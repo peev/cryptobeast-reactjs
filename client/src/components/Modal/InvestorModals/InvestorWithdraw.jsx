@@ -119,7 +119,7 @@ class InvestorWithdraw extends React.Component<Props, State> {
 
   handleWithdrawAllShares = () => {
     if (MarketStore.selectedBaseCurrency != null) {
-      this.props.InvestorStore.widthdrawAllShares();
+      this.props.InvestorStore.withdrawAllShares();
     }
   }
 

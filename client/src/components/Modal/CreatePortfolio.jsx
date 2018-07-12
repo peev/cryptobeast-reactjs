@@ -61,6 +61,7 @@ type Props = {
   InvestorStore: Object,
   NotificationStore: Object,
   PortfolioStore: Object,
+  MarketStore: Object,
   place: string,
 };
 
@@ -68,7 +69,7 @@ type State = {
   open: boolean,
 };
 
-@inject('InvestorStore', 'PortfolioStore', 'NotificationStore')
+@inject('InvestorStore', 'PortfolioStore', 'MarketStore', 'NotificationStore')
 @observer
 class CreatePortfolio extends React.Component<Props, State> {
   state = {
@@ -82,6 +83,7 @@ class CreatePortfolio extends React.Component<Props, State> {
   handleClose = () => {
     this.props.PortfolioStore.resetPortfolio();
     this.props.InvestorStore.reset();
+    this.props.MarketStore.selectedBaseCurrency = '';
     this.setState({ open: false });
   };
 

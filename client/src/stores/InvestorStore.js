@@ -406,7 +406,7 @@ class InvestorStore {
   }
 
   @action.bound
-  createDefaultInvestor(portfolioId) {
+  createDefaultInvestor(newPortfolio) {
     const newInvestor = {
       isFounder: true,
       fullName: 'default investor',
@@ -414,14 +414,14 @@ class InvestorStore {
       telephone: '',
       dateOfEntry: (new Date()).toLocaleString(),
       managementFee: '0.0',
-      portfolioId,
+      portfolioId: newPortfolio.id,
     };
     let depositData;
     if (MarketStore.selectedBaseCurrency) {
       depositData = {
         currency: MarketStore.selectedBaseCurrency.pair,
         balance: +this.newInvestorValues.depositedAmount,
-        portfolioId,
+        portfolioId: newPortfolio.id,
         transaction: {
           investorName: 'default investor',
           dateOfEntry: (new Date()).toLocaleString(),
@@ -429,7 +429,7 @@ class InvestorStore {
           amountInUSD: this.convertedUsdEquiv(),
           sharePrice: 1,
           shares: parseFloat(this.convertedUsdEquiv()),
-          portfolioId,
+          portfolioId: newPortfolio.id,
         },
       };
     }
@@ -442,9 +442,19 @@ class InvestorStore {
           Object.assign(depositData.transaction, { investorId: result.data.id });
           requester.Investor.addDeposit(depositData)
             .then(action((response) => {
-              PortfolioStore.selectedPortfolioId = portfolioId;
-              PortfolioStore.selectPortfolio(portfolioId);
+              // Update portfolios array
+              newPortfolio.shares = response.data.shares; // eslint-disable-line
+              PortfolioStore.portfolios.push(newPortfolio);
+
+              // Update current selected portfolio
+              PortfolioStore.selectPortfolio(newPortfolio.id);
+
+              // Update current selected portfolio transactions
               PortfolioStore.currentPortfolioTransactions.push(response.data);
+
+              NotificationStore.addMessage('successMessages', 'Successfully created portfolio');
+              PortfolioStore.resetPortfolio();
+              MarketStore.selectedBaseCurrency = '';
             }))
             .then(action(() => {
               this.reset();
@@ -452,7 +462,15 @@ class InvestorStore {
             }))
             .catch(err => console.log(err));
         } else {
+          // Update portfolios array
+          PortfolioStore.portfolios.push(newPortfolio);
+
+          // Update current selected portfolio
+          PortfolioStore.selectPortfolio(newPortfolio.id);
+
+          NotificationStore.addMessage('successMessages', 'Successfully created portfolio');
           PortfolioStore.resetPortfolio();
+          MarketStore.selectedBaseCurrency = '';
         }
       }))
       .catch(err => console.log(err));

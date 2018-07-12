@@ -475,12 +475,8 @@ class PortfolioStore {
     };
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {
-        InvestorStore.createDefaultInvestor(result.data.id);
-        this.portfolios.push(result.data);
+        InvestorStore.createDefaultInvestor(result.data);
 
-        // this.selectedPortfolioId = result.data.id;
-        // this.selectPortfolio(result.data.id);
-        console.log(result.data, this.portfolios)
         if (placeCalled === 'startScreen') {
           history.push('/summary');
         }

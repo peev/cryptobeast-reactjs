@@ -439,8 +439,8 @@ class PortfolioStore {
 
   @computed
   get currentPortfolioSharePrice() {
-    if (this.selectedPortfolio) {
-      return (this.currentPortfolioCostInUSD || 1) / (this.selectedPortfolio.shares || 1);
+    if (this.selectedPortfolio && this.selectedPortfolio.shares > 0) {
+      return (this.currentPortfolioCostInUSD || 1) / (this.selectedPortfolio.shares);
     }
     return 1;
   }
@@ -475,10 +475,12 @@ class PortfolioStore {
     };
     requester.Portfolio.create(newPortfolio)
       .then(action((result) => {
-        this.selectedPortfolioId = result.data.id;
         InvestorStore.createDefaultInvestor(result.data.id);
         this.portfolios.push(result.data);
 
+        // this.selectedPortfolioId = result.data.id;
+        // this.selectPortfolio(result.data.id);
+        console.log(result.data, this.portfolios)
         if (placeCalled === 'startScreen') {
           history.push('/summary');
         }

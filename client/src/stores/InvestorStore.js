@@ -442,6 +442,8 @@ class InvestorStore {
           Object.assign(depositData.transaction, { investorId: result.data.id });
           requester.Investor.addDeposit(depositData)
             .then(action((response) => {
+              PortfolioStore.selectedPortfolioId = portfolioId;
+              PortfolioStore.selectPortfolio(portfolioId);
               PortfolioStore.currentPortfolioTransactions.push(response.data);
             }))
             .then(action(() => {

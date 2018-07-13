@@ -408,24 +408,24 @@ class PortfolioStore {
     if (this.selectedPortfolio &&
       MarketStore.baseCurrencies.length > 0) {
       const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this is USD
-      return this.currentPortfolioAssets.reduce((accumulator, el) => {
+      return this.currentPortfolioAssets.reduce((accumulator, asset) => {
         let assetUSDValue;
-        switch (el.currency) {
+        switch (asset.currency) {
           case 'JPY':
           case 'EUR':
           case 'USD': {
-            const wantedCurrency = MarketStore.baseCurrencies.filter(x => x.pair === el.currency)[0];
-            assetUSDValue = (el.balance / wantedCurrency.last) * valueOfUSD;
+            const wantedCurrency = MarketStore.baseCurrencies.filter(x => x.pair === asset.currency)[0];
+            assetUSDValue = (asset.balance / wantedCurrency.last) * valueOfUSD;
             break;
           }
           case 'BTC': {
-            assetUSDValue = el.balance * valueOfUSD;
+            assetUSDValue = asset.balance * valueOfUSD;
             break;
           }
           default: {
-            const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${el.currency}`] ?
-              (MarketStore.marketSummaries[`BTC-${el.currency}`].Last * el.balance) :
-              0;
+            const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${asset.currency}`]
+              ? (MarketStore.marketSummaries[`BTC-${asset.currency}`].Last * asset.balance)
+              : 0;
             assetUSDValue = assetBTCEquiv * valueOfUSD;
             break;
           }
@@ -458,7 +458,7 @@ class PortfolioStore {
   // ======= Action =======
   // Portfolio -> Create, Update, Delete
   // #region Portfolio
-  @action
+  @action.bound
   addTransaction(transactionData) {
     this.currentPortfolioTransactions.push(transactionData);
   }

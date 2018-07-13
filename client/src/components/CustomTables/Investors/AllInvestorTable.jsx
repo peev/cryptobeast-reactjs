@@ -22,7 +22,9 @@ type Props = {
 };
 
 const AllInvestorTable = inject('PortfolioStore')(observer(({ ...props }: Props) => {
-  const { classes, tableHead, tableData, tableHeaderColor } = props;
+  const { classes, tableHead, tableData, tableHeaderColor, PortfolioStore } = props;
+
+  const findInvestorID = (transaction: Object) => PortfolioStore.currentPortfolioInvestors.findIndex((investor: Object) => investor.fullName === transaction.investorName);
 
   return (
     <div className={classes.tableResponsive}>
@@ -31,12 +33,12 @@ const AllInvestorTable = inject('PortfolioStore')(observer(({ ...props }: Props)
           <TableHead className={classes[`${tableHeaderColor}TableHeader`]}>
             <TableRow>
               {tableHead.map((prop: Object) => (
-                  <TableCell
-                    className={`${classes.tableCell} ${classes.tableHeadCell}`}
-                    key={uuid()}
-                  >
-                    {prop}
-                  </TableCell>
+                <TableCell
+                  className={`${classes.tableCell} ${classes.tableHeadCell}`}
+                  key={uuid()}
+                >
+                  {prop}
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -47,11 +49,20 @@ const AllInvestorTable = inject('PortfolioStore')(observer(({ ...props }: Props)
               {Object.keys(prop).map((el: Object, key: number) => {
                 if (key <= 6) {
                   return (
-                    <TableCell className={classes.tableCell} key={uuid()}>
+                    <TableCell className={`${classes.tableCell} ${prop.amountInUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
                       {prop[el]}
                     </TableCell>
                   );
+                } else if (key === 7) {
+                  return (
+                    <TableCell className={`${classes.tableCell} ${prop.amountInUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
+                      {findInvestorID(prop) > -1
+                        ? Math.abs((prop.amountInUSD * PortfolioStore.currentPortfolioInvestors[findInvestorID(prop)].managementFee) / 100)
+                        : 0}
+                    </TableCell>
+                  );
                 }
+
                 return null;
               })}
             </TableRow>

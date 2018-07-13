@@ -133,7 +133,7 @@ class InvestorWithdraw extends React.Component<Props, State> {
 
     if (hasErrors) {
       InvestorStore.withdrawalInvestor(InvestorStore.selectedInvestor.id);
-      this.handleClose();
+      this.setState({ open: false });
     }
   }
 

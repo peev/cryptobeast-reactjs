@@ -26,10 +26,10 @@ class IndividualSummaryWrapper extends Component<Props> {
   render() {
     const { classes, InvestorStore, PortfolioStore } = this.props;
 
-    const data = InvestorStore.selectedInvestorIndividualSummary ?
-      PortfolioStore.currentPortfolioTransactions
-        .filter((t: Object) => t.investorId === InvestorStore.selectedInvestorIndividualSummary.id) :
-      PortfolioStore.currentPortfolioTransactions;
+    const data = InvestorStore.selectedInvestorIndividualSummary
+      ? PortfolioStore.currentPortfolioTransactions
+        .filter((t: Object) => t.investorId === InvestorStore.selectedInvestorIndividualSummary.id)
+      : PortfolioStore.currentPortfolioTransactions;
 
     const investorsTable = (
       <AllInvestorTable
@@ -42,6 +42,7 @@ class IndividualSummaryWrapper extends Component<Props> {
           'Amount (USD)',
           'Share price',
           'Shares',
+          'Commission',
         ]}
       />
     );

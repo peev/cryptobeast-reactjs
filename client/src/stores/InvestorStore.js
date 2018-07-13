@@ -1,11 +1,6 @@
 /* eslint no-prototype-builtins: 0 */
 /* eslint no-console: 0 */
-import {
-  observable,
-  action,
-  computed,
-  toJS,
-} from 'mobx';
+import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
@@ -370,7 +365,7 @@ class InvestorStore {
 
   // Investor -> New, Update, Deposit, Withdraw
   // #region Investor
-  @action
+  @action.bound
   createNewInvestor(portfolioId) {
     const today = new Date().toISOString().substring(0, 10);
     const newInvestor = {
@@ -404,9 +399,11 @@ class InvestorStore {
         Object.assign(depositData.transaction, { investorId: createdInvestor.id });
         requester.Investor.addDeposit(depositData)
           .then(action((response) => {
+            createdInvestor.purchasedShares = response.data.shares;
             PortfolioStore.currentPortfolioInvestors.push(createdInvestor);
             PortfolioStore.currentPortfolioTransactions.push(response.data);
             PortfolioStore.selectedPortfolio.shares += response.data.shares;
+
             PortfolioStore.getCurrentPortfolioAssets();
           }))
           .catch(err => console.log(err));
@@ -490,7 +487,6 @@ class InvestorStore {
     const updatedValues = this.updateInvestorValues;
     const finalResult = {};
 
-
     // eslint-disable-next-line no-restricted-syntax
     for (const key in updatedValues) {
       if (updatedValues.hasOwnProperty(key) && (updatedValues[key] !== '')) {
@@ -517,11 +513,13 @@ class InvestorStore {
       .catch(err => console.log(err));
   }
 
-  @action
+  @action.bound
   createNewDepositInvestor(id) {
     const today = new Date().toISOString().substring(0, 10);
+    const selectedCurrencyName = MarketStore.selectedBaseCurrency.pair;
+    const depositedShares = parseFloat(this.newDepositValues.purchasedShares);
     const deposit = {
-      currency: MarketStore.selectedBaseCurrency.pair,
+      currency: selectedCurrencyName,
       balance: +this.newDepositValues.amount,
       portfolioId: PortfolioStore.selectedPortfolioId,
       investorId: id,
@@ -531,7 +529,7 @@ class InvestorStore {
         transactionDate: this.newDepositValues.transactionDate || today,
         amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
-        shares: parseFloat(this.newDepositValues.purchasedShares),
+        shares: depositedShares,
         portfolioId: PortfolioStore.selectedPortfolioId,
         investorId: id,
       },
@@ -540,15 +538,32 @@ class InvestorStore {
     requester.Investor.addDeposit(deposit)
       .then(action((result) => {
         PortfolioStore.addTransaction(result.data);
-        this.selectInvestor(result.data.investorId);
+        PortfolioStore.selectedPortfolio.shares += depositedShares;
+
+        const indexOfInvestor = PortfolioStore.currentPortfolioInvestors.findIndex(investor => investor.id === this.selectedInvestor.id);
+        if (indexOfInvestor > -1) {
+          PortfolioStore.currentPortfolioInvestors[indexOfInvestor].purchasedShares += depositedShares;
+        }
+
+        const assetToChange = PortfolioStore.currentPortfolioAssets.filter(el => el.currency === selectedCurrencyName)
+        if (assetToChange.length > 0) {
+          assetToChange[0].balance += depositedShares;
+        }
+
+        NotificationStore.addMessage('successMessages', 'Deposit completed successfully');
+        this.resetDeposit();
+        this.resetSelectedInvestor();
+        MarketStore.resetMarket();
       }));
   }
 
-  @action
+  @action.bound
   withdrawalInvestor(id) {
     const today = new Date().toISOString().substring(0, 10);
+    const selectedCurrencyName = MarketStore.selectedBaseCurrency.pair;
+    const withdrawnShares = this.withdrawalValues.purchasedShares;
     const withdrawal = {
-      currency: MarketStore.selectedBaseCurrency.pair,
+      currency: selectedCurrencyName,
       balance: +this.withdrawalValues.amount,
       portfolioId: PortfolioStore.selectedPortfolioId,
       investorId: id,
@@ -558,7 +573,7 @@ class InvestorStore {
         transactionDate: this.withdrawalValues.transactionDate || today,
         amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
-        shares: parseFloat(this.withdrawalValues.purchasedShares),
+        shares: parseFloat(withdrawnShares),
         portfolioId: PortfolioStore.selectedPortfolioId,
         investorId: id,
       },
@@ -567,8 +582,22 @@ class InvestorStore {
     requester.Investor.withdrawal(withdrawal)
       .then(action((result) => {
         PortfolioStore.addTransaction(result.data);
-        this.selectInvestor(result.data.investorId);
+        PortfolioStore.selectedPortfolio.shares -= withdrawnShares;
+
+        const indexOfInvestor = PortfolioStore.currentPortfolioInvestors.findIndex(investor => investor.id === this.selectedInvestor.id);
+        if (indexOfInvestor > -1) {
+          PortfolioStore.currentPortfolioInvestors[indexOfInvestor].purchasedShares -= withdrawnShares;
+        }
+
+        const assetToChange = PortfolioStore.currentPortfolioAssets.filter(el => el.currency === selectedCurrencyName)
+        if (assetToChange.length > 0) {
+          assetToChange[0].balance -= withdrawnShares;
+        }
+
         NotificationStore.addMessage('successMessages', 'Withdraw completed successfully');
+        this.resetWithdrawal();
+        this.resetSelectedInvestor();
+        MarketStore.resetMarket();
       }))
       .catch(err => console.log(err));
   }
@@ -642,7 +671,11 @@ class InvestorStore {
       noErrors = false;
     }
 
-    const availableAssets = toJS(PortfolioStore.currentPortfolioAssets);
+    if (MarketStore.selectedBaseCurrency.pair === undefined) {
+      NotificationStore.addMessage('errorMessages', 'Please select currency!');
+    }
+
+    const availableAssets = PortfolioStore.currentPortfolioAssets;
     const wantedAsset = availableAssets.filter(asset => asset.currency === MarketStore.selectedBaseCurrency.pair);
     if (wantedAsset.length === 0) {
       NotificationStore.addMessage('infoMessages', `You need to allocate 

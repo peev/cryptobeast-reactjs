@@ -117,7 +117,7 @@ class InvestorDeposit extends React.Component<Props, State> {
     if (noErrors) {
       InvestorStore.createNewDepositInvestor(InvestorStore.selectedInvestor.id);
       this.props.InvestorStore.resetSelectedInvestor();
-      this.handleClose();
+      this.setState({ open: false });
     }
   }
 
@@ -165,81 +165,81 @@ class InvestorDeposit extends React.Component<Props, State> {
 
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <SelectInvestor
-                  value={InvestorStore.selectedInvestorId || ''}
-                  handleChange={this.handleSelectInvestor}
-                  style={{
-                    marginTop: '12px',
-                    width: '95%',
-                    border: 'none',
-                    borderRadius: 0,
-                    borderBottom: '1px solid #757575',
-                }}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <SelectInvestor
+                    value={InvestorStore.selectedInvestorId || ''}
+                    handleChange={this.handleSelectInvestor}
+                    style={{
+                      marginTop: '12px',
+                      width: '95%',
+                      border: 'none',
+                      borderRadius: 0,
+                      borderBottom: '1px solid #757575',
+                    }}
+                  />
+                </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapperTransactionDate}>
-                <TextValidator
-                  name="date"
-                  type="date"
-                  // label="Transaction Date"
-                  onChange={this.handleDepositRequests('transactionDate')}
-                  value={InvestorStore.newDepositValues.transactionDate || today}
-                  className={classes.alignInput}
-                  validators={['required', 'isDateValid']}
-                  errorMessages={['this field is required', 'Date must be before today']}
-                />
-              </div>
+                <div className={classes.inputWrapperTransactionDate}>
+                  <TextValidator
+                    name="date"
+                    type="date"
+                    // label="Transaction Date"
+                    onChange={this.handleDepositRequests('transactionDate')}
+                    value={InvestorStore.newDepositValues.transactionDate || today}
+                    className={classes.alignInput}
+                    validators={['required', 'isDateValid']}
+                    errorMessages={['this field is required', 'Date must be before today']}
+                  />
+                </div>
               </Grid>
             </Grid>
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  name="amount"
-                  type="number"
-                  label="Amount*"
-                  onChange={this.handleDepositRequests('amount')}
-                  value={InvestorStore.newDepositValues.amount || ''}
-                  style={{ width: '95%' }}
-                  // className={classes.alignInputAfter}
-                  validators={['required', 'isPositive']}
-                  errorMessages={['this field is required', 'value must be a positive number']}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    name="amount"
+                    type="number"
+                    label="Amount*"
+                    onChange={this.handleDepositRequests('amount')}
+                    value={InvestorStore.newDepositValues.amount || ''}
+                    style={{ width: '95%' }}
+                    // className={classes.alignInputAfter}
+                    validators={['required', 'isPositive']}
+                    errorMessages={['this field is required', 'value must be a positive number']}
+                  />
+                </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapperSelectBaseCurrency}>
-                <SelectBaseCurrency />
-              </div>
+                <div className={classes.inputWrapperSelectBaseCurrency}>
+                  <SelectBaseCurrency />
+                </div>
               </Grid>
             </Grid>
 
             <Grid container>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  disabled
-                  name="share price"
-                  label="Share Price at Entry Date (USD)"
-                  className={classes.alignInputAfter}
-                  value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
-                  style={{ width: '95%' }}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    disabled
+                    name="share price"
+                    label="Share Price at Entry Date (USD)"
+                    className={classes.alignInputAfter}
+                    value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
+                    style={{ width: '95%' }}
+                  />
+                </div>
               </Grid>
               <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-              <div className={classes.inputWrapper}>
-                <TextValidator
-                  disabled
-                  name="purchased shares"
-                  placeholder="Purchased Shares"
-                  style={{ marginTop: '26px' }}
-                  value={InvestorStore.depositPurchasedShares || ''}
-                />
-              </div>
+                <div className={classes.inputWrapper}>
+                  <TextValidator
+                    disabled
+                    name="purchased shares"
+                    placeholder="Purchased Shares"
+                    style={{ marginTop: '26px' }}
+                    value={InvestorStore.depositPurchasedShares || ''}
+                  />
+                </div>
               </Grid>
             </Grid>
 
@@ -249,14 +249,15 @@ class InvestorDeposit extends React.Component<Props, State> {
                   color="primary"
                   onClick={this.handleClose}
                 >
-                Cancel
+                  Cancel
                 </Button>
               </div>
               <Button
                 type="submit"
                 color="primary"
-                disabled={InvestorStore.newDepositValues.amount === '' ||
-                MarketStore.selectedBaseCurrency == null || InvestorStore.selectedInvestorId === null}
+                disabled={InvestorStore.newDepositValues.amount === ''
+                  || MarketStore.selectedBaseCurrency == null
+                  || InvestorStore.selectedInvestorId === null}
               >
                 Save
               </Button>

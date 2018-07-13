@@ -73,6 +73,12 @@ const tableStyle = theme => ({
     marginTop: theme.spacing.unit * 3,
     overflowX: 'auto',
   },
+  positive: {
+    color: '#3ab693',
+  },
+  negative: {
+    color: '#eb4562',
+  },
 });
 
 export default tableStyle;

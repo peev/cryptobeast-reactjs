@@ -172,7 +172,7 @@ class InvestorStore {
 
   // #region Investor Individual Summary
   @computed
-  get individualSharesHeld() {
+  get selectedInvestorTotalSharesHeld() {
     if (this.selectedInvestorIndividualSummary) {
       if (this.selectedInvestorIndividualSummary.purchasedShares === null) {
         return 0;
@@ -185,9 +185,9 @@ class InvestorStore {
   }
 
   @action
-  widthdrawAllShares() {
+  withdrawAllShares() {
     if (MarketStore.selectedBaseCurrency && this.selectedInvestorIndividualSummary) {
-      const allSharesInUsd = this.individualSharesHeld * PortfolioStore.currentPortfolioSharePrice; // number
+      const allSharesInUsd = this.selectedInvestorTotalSharesHeld * PortfolioStore.currentPortfolioSharePrice; // number
       const currency = MarketStore.selectedBaseCurrency; // obj{last... pair...}
       let calculatedEquiv;
       switch (currency.pair) {
@@ -213,13 +213,22 @@ class InvestorStore {
 
   @computed
   get individualWeightedEntryPrice() {
-    if (this.selectedInvestorIndividualSummary && this.individualSharesHeld !== null) {
-      const calculatedIndividualWeightedEntryPrice = this.selectedInvestorIndividualSummaryTransactions.reduce((result, transaction) => {
-        result += (transaction.shares / this.individualSharesHeld) * transaction.sharePrice; // eslint-disable-line no-param-reassign
-        return result;
-      }, 0);
+    if (this.selectedInvestorIndividualSummary && this.selectedInvestorTotalSharesHeld !== null) {
+      let totalInvestmentValue = 0;
+      let totalSharesBought = 0;
+      this.selectedInvestorIndividualSummaryTransactions.forEach((transaction) => {
+        if (transaction.amountInUSD > 0) {
+          totalInvestmentValue += transaction.amountInUSD;
+          totalSharesBought += transaction.shares;
+        }
+      });
 
-      return calculatedIndividualWeightedEntryPrice;
+      if (totalSharesBought !== 0) {
+        const calculatedIndividualWeightedEntryPrice = totalInvestmentValue / totalSharesBought;
+        return calculatedIndividualWeightedEntryPrice;
+      }
+
+      return null;
     }
 
     return null;
@@ -228,7 +237,7 @@ class InvestorStore {
   @computed
   get individualUSDEquivalent() {
     if (this.selectedInvestorIndividualSummary) {
-      const calculatedIndividualUSDEquivalent = this.individualSharesHeld * PortfolioStore.currentPortfolioSharePrice;
+      const calculatedIndividualUSDEquivalent = this.selectedInvestorTotalSharesHeld * PortfolioStore.currentPortfolioSharePrice;
 
       return calculatedIndividualUSDEquivalent;
     }

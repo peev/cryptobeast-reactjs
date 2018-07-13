@@ -85,8 +85,8 @@ class IndividualSummary extends React.Component<Props> {
             <Grid item xs={12} sm={6} md={3}>
               <div className={classes.containerItems}>
                 <p>Shares Held:</p>
-                <span>{InvestorStore.individualSharesHeld !== null
-                  ? InvestorStore.individualSharesHeld
+                <span>{InvestorStore.selectedInvestorTotalSharesHeld !== null
+                  ? InvestorStore.selectedInvestorTotalSharesHeld
                   : ''}
                 </span>
               </div>

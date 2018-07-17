@@ -25,7 +25,7 @@ class Auth0ManagementApi {
       this.renewToken(access_token, JSON.stringify((expires_in * 1000) + new Date().getTime()));
       return access_token;
     } catch (error) {
-      console.log(error); // eslint-disable-line
+      return console.log(error); // eslint-disable-line
     }
   }
 
@@ -57,7 +57,7 @@ class Auth0ManagementApi {
 
       return res.status(404).send({ isSuccessful: false });
     } catch (error) {
-      res.status(404).send(error);
+      return res.status(500).send({ isSuccessful: false });
     }
   }
 }

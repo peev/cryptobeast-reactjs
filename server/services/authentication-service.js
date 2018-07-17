@@ -11,7 +11,7 @@ const authenticationService = () => {
       req.token = access_token;
       next();
     } catch (error) {
-      res.json(error);
+      res.status(500).send({ isSuccessful: false });
     }
   };
 

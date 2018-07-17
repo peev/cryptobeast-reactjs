@@ -19,7 +19,9 @@ import history from './services/History';
 import stores from './stores';
 
 if (AuthService.isAuthenticated()) {
-  stores.PortfolioStore.setFetchingPortfolios(true);
+  stores.PortfolioStore.getPortfolios().then(() => {
+    stores.MarketStore.init();
+  });
 } else {
   if (!AuthService.isSignedOut()) {
     AuthService.signOut();

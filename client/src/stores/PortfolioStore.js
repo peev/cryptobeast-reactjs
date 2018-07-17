@@ -16,6 +16,8 @@ import Analytics from './Analytics';
 import ApiAccountStore from './ApiAccountStore';
 import history from '../services/History';
 
+const persistedUserData = JSON.parse(window.localStorage.getItem('cb_user')); // eslint-disable-line
+
 class PortfolioStore {
   @observable fetchingPortfolios;
   @observable portfolios;
@@ -33,7 +35,7 @@ class PortfolioStore {
     this.portfolios = [];
     this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
-    this.selectedPortfolioId = 0;
+    this.selectedPortfolioId = persistedUserData ? persistedUserData.selectedPortfolio : 0;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
@@ -52,7 +54,9 @@ class PortfolioStore {
 
   @action
   setFetchingPortfolios(value) {
+    console.log('inside setFetchingPortfolios');
     this.fethingPortfolios = value;
+    console.log('setFetchingPortfolios: ' + this.fethingPortfolios);
   }
   // ======= Computed =======
   // #region Computed
@@ -574,11 +578,11 @@ class PortfolioStore {
         .then(action((result) => {
           ApiAccountStore.initializeUserApis(result.data.userApis);
           this.portfolios = result.data.portfolios;
-          this.fetchingPortfolios = false;
           if (this.selectedPortfolioId > 0) {
             this.selectPortfolio(this.selectedPortfolioId);
           }
           resolve(true);
+          this.fetchingPortfolios = false;
         }))
         .catch(action((err) => {
           this.fethingPortfolios = false;

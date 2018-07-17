@@ -10,6 +10,7 @@ import Button from '../../CustomButtons/Button';
 import InvestorCardButton from '../../CustomButtons/InvestorCardButton';
 import buttonStyle from '../../../variables/styles/buttonStyle';
 import InvestorPieChart from '../../HighCharts/InvestorPie';
+// import Portfolio from '../../Tabs/SummaryItems/Portfolio';
 
 const getModalStyle = () => {
   const top = 22;
@@ -59,12 +60,14 @@ class SharesInCirculation extends React.Component<Props, State> {
 
   render() {
     const { classes, PortfolioStore } = this.props;
-    const purchasedShares = PortfolioStore.currentPortfolioInvestors.filter((el: object) => el.purchasedShares > 0)
+    const purchasedShares = PortfolioStore.currentPortfolioInvestors.filter((el: object) => el.purchasedShares > 0);
+    const { selectedPortfolio } = PortfolioStore;
+    const portfolioShares = selectedPortfolio ? selectedPortfolio.shares : 0;
 
     return (
       <Grid container>
         <InvestorCardButton onClick={this.handleOpen}>
-          <InvestorCard headerText={PortfolioStore.selectedPortfolio.shares || 0} labelText="Shares in Circulation" />
+          <InvestorCard headerText={portfolioShares} labelText="Shares in Circulation" />
         </InvestorCardButton>
 
         <Modal
@@ -90,7 +93,7 @@ class SharesInCirculation extends React.Component<Props, State> {
               <Grid item xs={12} sm={12} md={12}>
                 <InvestorPieChart
                   investors={purchasedShares}
-                  portfolioShares={PortfolioStore.selectedPortfolio.shares}
+                  portfolioShares={portfolioShares}
                 />
               </Grid>
 

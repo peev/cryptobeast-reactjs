@@ -20,7 +20,7 @@ class CustomRoute extends React.Component<Props> {
       <Route
         {...rest}
         render={(props: Object) => (
-          PortfolioStore.portfolios.length > 0
+          ([...PortfolioStore.portfolios].length > 0 && PortfolioStore.selectedPortfolioId)
             ? <ComponentToRender {...props} />
             : <CustomRedirect to="/" />)
         }

@@ -37,7 +37,7 @@ class App extends React.Component<Props> {
   };
 
   componentDidMount() {
-    const { location, PortfolioStore, MarketStore, UserStore } = this.props;
+    const { location, UserStore } = this.props;
     UserStore.getUserProfile(); // tries to get user from local storage
     if (!AuthService.isAuthenticated()) {
       if (/access_token|id_token|error/.test(location.hash)) {
@@ -45,10 +45,6 @@ class App extends React.Component<Props> {
       } else {
         AuthService.signIn();
       }
-    } else {
-      PortfolioStore.getPortfolios().then(() => {
-        MarketStore.init();
-      });
     }
   }
 

@@ -13,7 +13,7 @@ const appStyles = (theme: object) => ({
   appBar: {
     position: 'fixed',
     height: '92px',
-    zIndex: theme.zIndex.drawer + 1,
+    // zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -84,23 +84,39 @@ const appStyles = (theme: object) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  divider: {
-    backgroundColor: '#fafafa',
-  },
-  dividerDisabled: {
-    backgroundColor: '#77787F',
-  },
-  sidebarClosed: {
-    borderBottom: '1px solid #fafafa',
-  },
-  disabledMenuIcon: {
+  disabledElement: {
     margin: '0 auto',
-    '&>g': {
+    '&>img': {
       fill: '#77787F',
       '&>path': {
         fill: '#77787F',
       },
     },
+  },
+  centerDisabledSidebarArrows: {
+    paddingLeft: '6px',
+    margin: '0 auto',
+  },
+  centerActiveSidebarArrows: {
+    marginLeft: '-3px',
+  },
+  logo: {
+    fontSize: '50px',
+  },
+  logoText: {
+    fontSize: '80px',
+    marginLeft: '20px',
+  },
+  combinedLogo: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  combnedLogoContainer: {
+    justifyContent: 'start',
+    marginLeft: '3px',
+  },
+  headerPortfolios: {
+    paddingLeft: '93px',
   },
 });
 

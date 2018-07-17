@@ -7,14 +7,14 @@ import Investors from './../views/Investors/Investors';
 import Analytics from './../views/Analytics/Analytics';
 import Settings from './../views/Settings/Settings';
 
-import InvestorsIcon from './../components/CustomIcons/InvestorsIcon';
-import SummaryIcon from './../components/CustomIcons/SummaryIcon';
-import SettingsIcon from './../components/CustomIcons/SettingsIcon';
-import SimulatorIcon from './../components/CustomIcons/SimulatorIcon';
-import AnalyticsIcon from './../components/CustomIcons/AnalyticsIcon';
-import HistoryIcon from './../components/CustomIcons/HistoryIcon';
-import LedgersIcon from './../components/CustomIcons/LedgersIcon';
-import MarketIcon from './../components/CustomIcons/MarketIcon';
+import InvestorsIcon from './../components/CustomIcons/Sidebar/InvestorsIcon';
+import SummaryIcon from './../components/CustomIcons/Sidebar/SummaryIcon';
+import SettingsIcon from './../components/CustomIcons/Sidebar/SettingsIcon';
+import SimulatorIcon from './../components/CustomIcons/Sidebar/SimulatorIcon';
+import AnalyticsIcon from './../components/CustomIcons/Sidebar/AnalyticsIcon';
+import TransactionHistoryIcon from './../components/CustomIcons/Sidebar/TransactionHistoryIcon';
+import LedgersIcon from './../components/CustomIcons/Sidebar/LedgersIcon';
+import AssetMovementsIcon from './../components/CustomIcons/Sidebar/AssetMovementsIcon';
 
 const appRoutes = [
   {
@@ -28,7 +28,7 @@ const appRoutes = [
     path: '/assetMovements',
     sidebarName: 'Asset Movements',
     navbarName: 'Asset Movements',
-    icon: MarketIcon,
+    icon: AssetMovementsIcon,
     component: AssetMovements,
   },
   {
@@ -49,7 +49,7 @@ const appRoutes = [
     path: '/TransactionHistory',
     sidebarName: 'Transaction History',
     navbarName: 'Transaction History',
-    icon: HistoryIcon,
+    icon: TransactionHistoryIcon,
     component: TransactionHistory,
   },
   {

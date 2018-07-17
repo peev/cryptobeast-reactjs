@@ -1,6 +1,6 @@
 import React from 'react';
 import SvgIcon from 'material-ui/SvgIcon';
-import './icon.css';
+import '../icon.css';
 
 
 const wrapSvgPath = (path, viewBox = '0 0 24 24') => props => (
@@ -10,11 +10,11 @@ const wrapSvgPath = (path, viewBox = '0 0 24 24') => props => (
 );
 
 const AnalyticsIcon = (
-  <svg viewBox="0 0 32.43 30.93">
-    <g data-name="Layer 2">
-      <g data-name="Layer 1">
-        <path d="M26.78,17.88H13.64V4.74A13.14,13.14,0,1,0,26.78,17.88Z" className="cls-1" />
-        <path d="M29.86,13.64H16.72V.5A13.14,13.14,0,0,1,29.86,13.64Z" className="cls-1" />
+  <svg>
+    <g id="Layer_2" data-name="Layer 2">
+      <g id="Layer_1-2" data-name="Layer 1">
+        <path className="cls-1" d="M19.44,13H10V3.55A9.47,9.47,0,1,0,19.44,13Z" />
+        <path className="cls-1" d="M21.65,10H12.19V.5A9.47,9.47,0,0,1,21.65,10Z" />
       </g>
     </g>
   </svg>

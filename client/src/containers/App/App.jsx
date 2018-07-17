@@ -7,16 +7,16 @@ import {
   Drawer,
   AppBar,
   Toolbar,
-  Divider,
   IconButton,
 } from 'material-ui';
 
 import appRoutes from './../../routes/app';
 import AuthService from './../../services/Authentication';
 import { Header, Sidebar } from './../../components';
-import MenuIcon from '../../components/CustomIcons/App/MenuIcon';
-import ChevronLeftIcon from '../../components/CustomIcons/App/ChevronLeftIcon';
-import ChevronRightIcon from '../../components/CustomIcons/App/ChevronRightIcon';
+import Logo from '../../components/CustomIcons/Sidebar/Logo';
+import LogoText from '../../components/CustomIcons/Sidebar/LogoText';
+import SidebarRightArrows from '../../components/CustomIcons/Sidebar/SidebarRightArrows';
+import SidebarLeftArrows from '../../components/CustomIcons/Sidebar/SidebarLeftArrows';
 import AppStyles from './AppStyles';
 
 type Props = {
@@ -73,18 +73,11 @@ class App extends React.Component<Props> {
             position="absolute"
             className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
           >
-            <Toolbar disableGutters={!this.state.open}>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={this.handleDrawerOpen}
-                className={classNames(classes.menuButton, this.state.open && classes.hide)}
-              >
-                <MenuIcon />
-              </IconButton>
+            <Toolbar className={classNames(!this.state.open && classes.headerPortfolios)}>
               <Header {...rest} />
             </Toolbar>
           </AppBar>)}
+
         <Drawer
           variant="permanent"
           classes={{
@@ -92,14 +85,12 @@ class App extends React.Component<Props> {
           }}
           open={this.state.open}
         >
-          <div className={classes.toolbar}>
-            {checkPortfolioNumber
-              ? <MenuIcon className={classes.disabledMenuIcon} />
-              : (<IconButton onClick={this.handleDrawerClose}>
-                {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-              </IconButton>)}
+          <div className={`${classes.toolbar} ${classes.combnedLogoContainer}`}>
+            <div className={classes.combinedLogo}>
+              <Logo className={classes.logo} />
+              <LogoText className={classes.logoText} />
+            </div>
           </div>
-          <Divider className={checkPortfolioNumber ? classes.dividerDisabled : classes.divider} />
           <Sidebar
             routes={appRoutes}
             handleDrawerToggle={this.handleDrawerToggle}
@@ -107,12 +98,29 @@ class App extends React.Component<Props> {
             closed={this.state.open}
             {...rest}
           />
+          <div className={classes.toolbar}>
+            {checkPortfolioNumber ?
+              <SidebarRightArrows className={classes.centerDisabledSidebarArrows} /> :
+              (checkPortfolioNumber === false && this.state.open === false) ?
+                <IconButton>
+                  <SidebarRightArrows
+                    className={classes.centerActiveSidebarArrows}
+                    onClick={this.handleDrawerOpen}
+                  />
+                </IconButton> :
+                (checkPortfolioNumber === false && this.state.open === true) ?
+                  <IconButton>
+                    <SidebarLeftArrows onClick={this.handleDrawerClose} />
+                  </IconButton>
+                  : null
+            }
+          </div>
         </Drawer>
         <main className={`${classes.content} ${this.state.open ? classes.contentOpen : classes.contentClose}`} >
           <div className={classes.toolbar} />
           {children}
         </main>
-      </div>
+      </div >
     );
   }
 }

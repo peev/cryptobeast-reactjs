@@ -135,14 +135,16 @@ const sidebarStyle = theme => ({
     listStyle: 'none',
   },
   item: {
-    margin: '0 15px',
-    paddingBottom: '20px',
+    padding: '0 15px',
     position: 'relative',
     display: 'block',
     textDecoration: 'none',
+    '&.active': {
+      borderLeft: '3px solid #366d72',
+      padding: '0 12px',
+    },
   },
   itemClosed: {
-    borderBottom: '1px solid #fafafa',
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -153,8 +155,7 @@ const sidebarStyle = theme => ({
     borderRadius: '3px',
     position: 'relative',
     display: 'block',
-    padding: '0',
-    paddingTop: '20px',
+    padding: '20px 0 10px 0',
     backgroundColor: 'transparent',
     ...defaultFont,
   },

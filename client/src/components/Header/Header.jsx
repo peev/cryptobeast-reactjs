@@ -17,7 +17,7 @@ const styles = () => ({
     flexGrow: 1,
     // position: 'fixed',
     width: '100%',
-    paddingLeft: '0px',
+    paddingLeft: '0',
     backgroundColor: '#22252f',
     zIndex: '1',
   },

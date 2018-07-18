@@ -17,15 +17,15 @@ import PortfolioSummaryTable from './../../components/CustomTables/PortfolioSumm
 
 const styles = () => ({
   container: {
-    marginTop: '20px',
+    // marginTop: '20px',
   },
   containerHeader: {
     display: 'flex',
     justifyContent: 'space-between',
-    margin: '0 30px',
+    margin: '0',
   },
   containerMiddle: {
-    margin: '20px 22px 0',
+    margin: '50px 0',
   },
   warningText: {
     marginTop: '35%',
@@ -86,7 +86,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
           <SummaryCard
             icon={CoinIcon}
             iconColor="gray"
-            title="Total investment"
+            title="Total purchase price"
             description={PortfolioStore.summaryTotalInvestmentInUSD !== 0
               ? `$${PortfolioStore.summaryTotalInvestmentInUSD}`
               : ''}
@@ -125,9 +125,9 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
               tableHead={[
                 'Ticker',
                 'Holdings',
-                'Price(BTC)',
-                'Price(USD)',
-                'Total Value(USD)',
+                'Price (BTC)',
+                'Price (USD)',
+                'Total Value (USD)',
                 'Asset Weight',
                 '24H Change',
                 '7D Change',

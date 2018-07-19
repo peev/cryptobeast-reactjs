@@ -79,6 +79,11 @@ const tableStyle = theme => ({
   negative: {
     color: '#eb4562',
   },
+  selectRoot: {
+    '&>div>:nth-child(3)>div': {
+      width: '50px',
+    },
+  },
 });
 
 export default tableStyle;

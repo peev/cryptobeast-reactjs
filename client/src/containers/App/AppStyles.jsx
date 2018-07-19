@@ -12,7 +12,7 @@ const appStyles = (theme: object) => ({
   },
   appBar: {
     position: 'fixed',
-    height: '92px',
+    height: '65px',
     // zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
@@ -111,12 +111,12 @@ const appStyles = (theme: object) => ({
     display: 'flex',
     alignItems: 'center',
   },
-  combnedLogoContainer: {
+  combinedLogoContainer: {
     justifyContent: 'start',
     marginLeft: '3px',
   },
   headerPortfolios: {
-    paddingLeft: '93px',
+    padding: '0 0 0 73px',
   },
 });
 

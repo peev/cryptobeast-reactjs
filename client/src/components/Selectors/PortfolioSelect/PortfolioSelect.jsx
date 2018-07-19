@@ -27,7 +27,6 @@ const styles = (theme: Object) => ({
     height: '100%',
     padding: '0 16px',
     backgroundColor: '#22252f',
-    // backgroundColor: 'rgba(34, 37, 47, 1) !important',
     opacity: '1',
     '&:hover': {
       backgroundColor: '#5B5F70 !important',
@@ -60,7 +59,7 @@ const styles = (theme: Object) => ({
   listItemDescriptionL: {
     margin: '0',
     marginRight: '20px',
-    color: '#3C7B69',
+    color: '#39b493',
     fontWeight: 'bolder',
   },
   listItemDescriptionR: {
@@ -85,10 +84,9 @@ const styles = (theme: Object) => ({
     width: '200px',
     height: '60px',
     padding: '0 32px',
-    marginTop: '16px',
-    marginBottom: '16px',
+    // marginTop: '16px',
+    // marginBottom: '16px',
     color: '#F6F6F6',
-    borderRight: '1px solid #F6F6F6',
     '&>div': {
       padding: '7px 25px',
       borderBottom: 'none',

@@ -85,7 +85,7 @@ class App extends React.Component<Props> {
           }}
           open={this.state.open}
         >
-          <div className={`${classes.toolbar} ${classes.combnedLogoContainer}`}>
+          <div className={`${classes.toolbar} ${classes.combinedLogoContainer}`}>
             <div className={classes.combinedLogo}>
               <Logo className={classes.logo} />
               <LogoText className={classes.logoText} />

@@ -17,7 +17,7 @@ const styles = () => ({
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     padding: '10px 23px',
     color: 'white',
-    backgroundColor: '#4c5265',
+    backgroundColor: '#133140',
     fontSize: '15px',
     fontWeight: '500',
     textTransform: 'uppercase',
@@ -25,6 +25,7 @@ const styles = () => ({
   },
   container: {
     height: '314px',
+    paddingRight: '80px',
   },
   containerParagraph: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
@@ -33,6 +34,9 @@ const styles = () => ({
   },
   paper: {
     marginLeft: '20px',
+  },
+  legend: {
+    transfrom: 'translateX(600)',
   },
 });
 
@@ -58,13 +62,13 @@ class AssetBreakdown extends React.Component<Props> {
               id="modal-title"
               className={classes.text}
             >
-              Asset Breakdown
+              Asset Allocation
             </Typography>
           </Grid>
 
           <Grid item xs={12} sm={12} md={12} id="main">
             <HighchartsChart className={classes.container}>
-              <Legend layout="vertical" align="right" verticalAlign="middle" />
+              <Legend layout="vertical" align="right" verticalAlign="middle" className={classes.legend} />
 
               <Tooltip />
 

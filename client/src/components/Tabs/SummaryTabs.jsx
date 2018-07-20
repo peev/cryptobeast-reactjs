@@ -21,7 +21,7 @@ const styles = () => ({
   navigation: {
     height: '41px',
     minHeight: '41px',
-    backgroundColor: '#4c5265',
+    backgroundColor: '#133140',
     color: '#FFF',
   },
   content: {
@@ -39,6 +39,7 @@ const styles = () => ({
     width: '50%',
     height: '41px',
     minHeight: '41px',
+    maxWidth: '100%',
   },
   removePaddingBottom: {
     paddingBottom: '0',

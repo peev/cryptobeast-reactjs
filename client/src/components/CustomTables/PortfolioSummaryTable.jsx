@@ -18,12 +18,18 @@ import DownArrowIcon from '../CustomIcons/Summary/DownArrowIcon';
 
 const styles = () => ({
   paper: {
-    margin: '40px 30px 0',
+    // margin: '40px 30px 0',
     padding: '20px 25px',
   },
   tableHead: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     borderBottom: '1px solid black',
+    '& th': {
+      // textTransform: 'uppercase',
+      fontSize: '14px',
+      fontWeight: '700',
+      color: '#212121',
+    },
   },
   tableCell: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
@@ -33,7 +39,7 @@ const styles = () => ({
   progressBar: {
     width: '100px',
     height: '25px',
-    backgroundColor: '#092749',
+    backgroundColor: '#757575',
     position: 'relative',
     '&:before': {
       top: '2px',
@@ -46,17 +52,23 @@ const styles = () => ({
     },
   },
   value: {
-    backgroundColor: '#3ab693',
+    backgroundColor: '#3ec39d',
     display: 'inline-block',
     height: '100%',
   },
   upArrow: {
-    paddingTop: '7px',
+    // paddingTop: '7px',
     fill: '#0eff00',
+    position: 'relative',
+    top: '3px',
+    left: '-1px',
   },
   downArrow: {
-    paddingTop: '7px',
+    // paddingTop: '7px',
     fill: '#ca3f58',
+    position: 'relative',
+    top: '3px',
+    left: '-1px',
   },
   change: {
     margin: '0',
@@ -123,7 +135,7 @@ const PortfolioSummaryTable = inject('PortfolioStore')(observer(({ ...props }: P
               {parseFloat(COL) > 0 ?
                 <UpArrowIcon className={classes.upArrow} /> :
                 <DownArrowIcon className={classes.downArrow} />}
-              <p className={classes.change}>{COL}</p>
+              <p className={classes.change}>{COL}%</p>
             </TableCell>
           );
         }

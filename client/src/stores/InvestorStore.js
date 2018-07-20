@@ -545,7 +545,7 @@ class InvestorStore {
           PortfolioStore.currentPortfolioInvestors[indexOfInvestor].purchasedShares += depositedShares;
         }
 
-        const assetToChange = PortfolioStore.currentPortfolioAssets.filter(el => el.currency === selectedCurrencyName)
+        const assetToChange = PortfolioStore.currentPortfolioAssets.filter(el => el.currency === selectedCurrencyName);
         if (assetToChange.length > 0) {
           assetToChange[0].balance += depositedShares;
         }
@@ -589,7 +589,7 @@ class InvestorStore {
           PortfolioStore.currentPortfolioInvestors[indexOfInvestor].purchasedShares -= withdrawnShares;
         }
 
-        const assetToChange = PortfolioStore.currentPortfolioAssets.filter(el => el.currency === selectedCurrencyName)
+        const assetToChange = PortfolioStore.currentPortfolioAssets.filter(el => el.currency === selectedCurrencyName);
         if (assetToChange.length > 0) {
           assetToChange[0].balance -= withdrawnShares;
         }
@@ -678,12 +678,12 @@ class InvestorStore {
     const availableAssets = PortfolioStore.currentPortfolioAssets;
     const wantedAsset = availableAssets.filter(asset => asset.currency === MarketStore.selectedBaseCurrency.pair);
     if (wantedAsset.length === 0) {
-      NotificationStore.addMessage('infoMessages', `You need to allocate 
+      NotificationStore.addMessage('infoMessages', `You need to allocate
       ${this.withdrawalValues.amount} ${MarketStore.selectedBaseCurrency.pair}`);
       noErrors = false;
     }
     if (wantedAsset.length > 0 && wantedAsset[0].balance < this.withdrawalValues.amount) {
-      NotificationStore.addMessage('infoMessages', `You need to allocate 
+      NotificationStore.addMessage('infoMessages', `You need to allocate
       ${this.withdrawalValues.amount - wantedAsset[0].balance} ${MarketStore.selectedBaseCurrency.pair}`);
       noErrors = false;
     }

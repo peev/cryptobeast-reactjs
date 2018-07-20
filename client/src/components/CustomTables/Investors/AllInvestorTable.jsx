@@ -47,7 +47,7 @@ const AllInvestorTable = inject('PortfolioStore')(observer(({ ...props }: Props)
           {tableData.map((prop: Object) => (
             <TableRow key={uuid()}>
               {Object.keys(prop).map((el: Object, key: number) => {
-                if (key <= 6) {
+                if (key > 0 && key <= 6) {
                   return (
                     <TableCell className={`${classes.tableCell} ${prop.amountInUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
                       {prop[el]}
@@ -56,7 +56,7 @@ const AllInvestorTable = inject('PortfolioStore')(observer(({ ...props }: Props)
                 } else if (key === 7) {
                   return (
                     <TableCell className={`${classes.tableCell} ${prop.amountInUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
-                      {findInvestorID(prop) > -1
+                      {findInvestorID(prop) > -1 && prop.amountInUSD < 0
                         ? Math.abs((prop.amountInUSD * PortfolioStore.currentPortfolioInvestors[findInvestorID(prop)].managementFee) / 100)
                         : 0}
                     </TableCell>

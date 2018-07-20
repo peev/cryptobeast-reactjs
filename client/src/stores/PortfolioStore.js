@@ -54,9 +54,7 @@ class PortfolioStore {
 
   @action
   setFetchingPortfolios(value) {
-    console.log('inside setFetchingPortfolios');
     this.fethingPortfolios = value;
-    console.log('setFetchingPortfolios: ' + this.fethingPortfolios);
   }
   // ======= Computed =======
   // #region Computed
@@ -566,7 +564,8 @@ class PortfolioStore {
         }
       });
       InvestorStore.selectedInvestorIndividualSummary = null;
-      Analytics.btcPriceHistoryForPeriod();
+      // Analytics.btcPriceHistoryForPeriod();
+      Analytics.getClosingSharePriceHistory();
     }
   }
 

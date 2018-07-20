@@ -69,15 +69,14 @@ const portfolioService = (repository) => {
     });
 
     if (portfolio.assets !== 0) {
-      return Promise.all(portfolio.assets.map((asset) => {
-        return updateAssetBTCEquivalent(asset);
-      }))
+      return Promise.all(portfolio.assets.map(asset => updateAssetBTCEquivalent(asset)))
         .then((assets) => {
           const cost = assets.reduce((acc, a) => acc + a.lastBTCEquivalent, 0);
           const updatedRecord = { id: portfolio.id, cost };
           return repository.update({ modelName, updatedRecord });
         });
     }
+    return Promise.resolve(); // just for the sake of eslint rule consistent-returns
   };
 
   const calcSharePrice = async (portfolioId) => {
@@ -92,22 +91,21 @@ const portfolioService = (repository) => {
     // const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
     // const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
     const [hours, minutes] = [23, 59];
-    const job = new CronJob(`${minutes} ${hours} * * *`, async () => {
-      // Load assets from pf here to get current values
-      try {
-        await updatePortfolioBTCEquivalent(portfolioId);
-      } catch (err) {
-        console.log(err); // eslint-disable-line
-      }
-      const sharePrice = await calcSharePrice(portfolioId);
-      repository.create({ modelName: 'SharePrice', newObject: { price: sharePrice, portfolioId, isClosingPrice: true } });
-    }, () => {
-      /* This function is executed when the job stops */
-      console.log('Save closing share price job stopped!');
-    }, true, /* Start the job right now */
-      // timeZone /* Time zone of this job. */
-    );
-    return job;
+    return new CronJob({
+      cronTime: `${minutes} ${hours} * * *`,
+      onTick: async () => {
+        // Load assets from pf here to get current values
+        try {
+          await updatePortfolioBTCEquivalent(portfolioId);
+        } catch (err) {
+          console.log(err); // eslint-disable-line
+        }
+        const sharePrice = await calcSharePrice(portfolioId);
+        repository.create({ modelName: 'SharePrice', newObject: { price: sharePrice, portfolioId, isClosingPrice: true } });
+      },
+      start: true,
+      // timeZone: 'America/Los_Angeles',
+    });
   };
 
   const createSaveOpeningSharePriceJob = async (portfolioId) => {
@@ -115,22 +113,21 @@ const portfolioService = (repository) => {
     // const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
     // const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
     const [hours, minutes] = [23, 59];
-    const job = new CronJob(`1 ${minutes} ${hours} * * *`, async () => { // 1 second after closing time
-      // Load assets from pf here to get current values
-      try {
-        await updatePortfolioBTCEquivalent(portfolioId);
-      } catch (err) {
-        console.log(err); // eslint-disable-line
-      }
-      const sharePrice = await calcSharePrice(portfolioId);
-      repository.create({ modelName: 'SharePrice', newObject: { price: sharePrice, portfolioId, isClosingPrice: false } });
-    }, () => {
-      /* This function is executed when the job stops */
-      console.log('Save opening share price job stopped!');
-    }, true, /* Start the job right now */
-      // timeZone /* Time zone of this job. */
-    );
-    return job;
+    return new CronJob({
+      cronTime: `1 ${minutes} ${hours} * * *`,
+      onTick: async () => {
+        // Load assets from pf here to get current values
+        try {
+          await updatePortfolioBTCEquivalent(portfolioId);
+        } catch (err) {
+          console.log(err); // eslint-disable-line
+        }
+        const sharePrice = await calcSharePrice(portfolioId);
+        repository.create({ modelName: 'SharePrice', newObject: { price: sharePrice, portfolioId, isClosingPrice: false } });
+      },
+      start: true,
+      // timeZone: 'America/Los_Angeles',
+    });
   };
 
   const createSaveClosingPortfolioCostJob = async (portfolioId) => {
@@ -138,22 +135,21 @@ const portfolioService = (repository) => {
     // const closingTime = await repository.findOne({ modelName: 'Setting', options: { where: { name: 'Closing time', userId } } });
     // const [hours, minutes] = closingTime ? closingTime.value.split(':') : [23, 59];
     const [hours, minutes] = [23, 59];
-    const job = new CronJob(`${minutes} ${hours} * * *`, async () => {
-      // Load assets from pf here to get current values
-      try {
-        await updatePortfolioBTCEquivalent(portfolioId);
-      } catch (err) {
-        console.log(err); // eslint-disable-line
-      }
-      const { cost } = await repository.findById({ modelName, id: portfolioId });
-      repository.create({ modelName: 'PortfolioPrice', newObject: { price: cost, portfolioId } });
-    }, () => {
-      /* This function is executed when the job stops */
-      console.log('Save closing portfolio cost job stopped!');
-    }, true, /* Start the job right now */
-      // timeZone /* Time zone of this job. */
-    );
-    return job;
+    return new CronJob({
+      cronTime: `${minutes} ${hours} * * *`,
+      onTick: async () => {
+        // Load assets from pf here to get current values
+        try {
+          await updatePortfolioBTCEquivalent(portfolioId);
+        } catch (err) {
+          console.log(err); // eslint-disable-line
+        }
+        const { cost } = await repository.findById({ modelName, id: portfolioId });
+        repository.create({ modelName: 'PortfolioPrice', newObject: { price: cost, portfolioId } });
+      },
+      start: true,
+      // timeZone: 'America/Los_Angeles',
+    });
   };
 
   const initializeAllJobs = async (createJobFunction) => {

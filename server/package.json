@@ -25,6 +25,8 @@
     "node-bittrex-api": "^0.8.3",
     "pg": "^7.4.2",
     "pg-hstore": "^2.3.2",
+    "request": "^2.87.0",
+    "requestretry": "^2.0.0",
     "sequelize": "^4.37.6",
     "validator": "^10.4.0"
   },

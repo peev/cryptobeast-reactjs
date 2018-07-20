@@ -11,6 +11,9 @@ import AllInvestorTable from './../../CustomTables/Investors/AllInvestorTable';
 const styles = () => ({
   tablePosition: {
     marginTop: '80px',
+    '& th': {
+      fontWeight: '700',
+    },
   },
 });
 
@@ -35,7 +38,7 @@ class IndividualSummaryWrapper extends Component<Props> {
       <AllInvestorTable
         tableData={data}
         tableHead={[
-          'ID',
+          // 'ID',
           'Name',
           'Date of Entry',
           'Transaction date',

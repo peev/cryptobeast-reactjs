@@ -13,7 +13,7 @@ const styles = () => ({
     padding: '0 20px',
   },
   containerItems: {
-    paddingTop: '20px',
+    padding: '30px 10px 0 10px',
     marginRight: '40px',
     display: 'flex',
     alignItems: 'baseline',
@@ -23,7 +23,6 @@ const styles = () => ({
       textTransform: 'uppercase',
       fontSize: '14px',
       margin: '0',
-      padding: '0',
     },
     '&>span': {
       fontSize: '14px',

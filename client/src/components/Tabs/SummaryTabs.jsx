@@ -50,7 +50,7 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  Analytics: Object,
+  // Analytics: Object,
 };
 
 type State = {

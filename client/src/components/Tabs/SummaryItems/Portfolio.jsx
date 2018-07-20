@@ -33,7 +33,7 @@ const Portfolio = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: 
   return (
     <Grid container className={classes.container}>
       <Grid item xs={12} sm={12} md={12} className={classes.gridItem}>
-        {Analytics.currentPortfolioPriceHistoryBreakdown.length > 0 ? <PerformanceChart /> : ''}
+        {Analytics.currentPortfolioClosingSharePricesBreakdown.length > 0 ? <PerformanceChart /> : ''}
       </Grid>
     </Grid>
   );

@@ -1,35 +1,58 @@
 const KrakenClient = require('kraken-api');
+const request = require('requestretry');
+
 
 const krakenServices = (key, secret) => {
   const kraken = new KrakenClient(key, secret);
+  const URL = 'https://api.kraken.com/0/public';
 
-  const getCurrencies = () => {
-    return kraken.api('Assets')
-      .then(response => response.result);
-  };
+  const getCurrencies = () => kraken.api('Assets')
+    .then(response => response.result)
+    .catch(err => console.log(err)); // eslint-disable-line
 
-  const getTickers = (request) => {
-    return kraken.api('Ticker', { pair: request }) // request = 'XXBTZUSD,DASHEUR' - comma separated
-      .then(response => response.result);
-  };
+  const getTickers = currencyPairs => request({
+    url: `${URL}/Ticker?pair=${currencyPairs}`,
+    json: true,
+    maxAttempts: 3,
+    retryDelay: 3100,
+    retryStrategy: request.RetryStrategies.HTTPOrNetworkError, // (default) retry on 5xx or network errors
+  }, (err, response, body) => {
+    if (err) return console.log(err);
+    if (body) return body.result;
+    return [];
+  });
 
-  const getAllTickers = () => {
-    return kraken.api('AssetPairs')
-      .then((allPairs) => {
-        const pairs = Object.keys(allPairs.result).filter(p => !p.endsWith('.d')).join(',');
-
-        return kraken.api('Ticker', { pair: pairs })
-          .then(response => response.result)
-          .then((tickers) => {
-            const mappedTickers = [];
-            Object.keys(tickers).forEach((key2) => {
-              mappedTickers.push({ pair: key2, last: tickers[key2].c[0] });
-            });
-
-            return mappedTickers;
+  const getAllTickers = () => request({
+    url: `${URL}/AssetPairs`,
+    json: true,
+    maxAttempts: 3,
+    retryDelay: 3100,
+    retryStrategy: request.RetryStrategies.HTTPOrNetworkError, // (default) retry on 5xx or network errors
+  }, (err, response, body) => {
+    if (err) return console.log(err);
+    if (body) {
+      const pairs = Object.keys(body.result).filter(p => !p.endsWith('.d')).join(',');
+      return request({
+        url: `${URL}/Ticker?pair=${pairs}`,
+        json: true,
+        maxAttempts: 3,
+        retryDelay: 3100,
+        retryStrategy: request.RetryStrategies.HTTPOrNetworkError, // (default) retry on 5xx or network errors
+      }, (error, res, data) => {
+        if (error) return console.log(error);
+        if (data) {
+          const tickers = data.result;
+          const mappedTickers = [];
+          Object.keys(tickers).forEach((key2) => {
+            mappedTickers.push({ pair: key2, last: tickers[key2].c[0] });
           });
+          return mappedTickers;
+        }
+        return [];
       });
-  };
+    }
+    return [];
+  });
 
   const getBalance = (account) => {
     kraken.config.key = account.apiKey;

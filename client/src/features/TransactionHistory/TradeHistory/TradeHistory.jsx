@@ -83,7 +83,7 @@ class HistoryTable extends React.Component<Props, State> {
                       return (
                         <TableCell className={classes.tableCellBuy} key={uuid()}>
                           {prop[el]}
-                          <ConfirmationModal onSave={() => this.handleRemove(trades[i])} message="Are you sure you want to delete this transaction?" />
+                          {/* <ConfirmationModal onSave={() => this.handleRemove(trades[i])} message="Are you sure you want to delete this transaction?" /> */}
                         </TableCell>
                       );
                     }
@@ -93,7 +93,7 @@ class HistoryTable extends React.Component<Props, State> {
                       return (
                         <TableCell className={classes.tableCellBuy} key={uuid()}>
                           {prop[el]}
-                          <UpdateTradeModal trade={trades[i]} />
+                          {/* <UpdateTradeModal trade={trades[i]} /> */}
                         </TableCell>
                       );
                     } else if (ind === 9 && prop[2] !== 'Manually Added') {

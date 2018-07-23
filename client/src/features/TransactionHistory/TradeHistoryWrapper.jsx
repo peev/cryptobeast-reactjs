@@ -8,7 +8,7 @@ import TradeHistory from './TradeHistory/TradeHistory';
 
 const styles = () => ({
   tablePosition: {
-    marginTop: '80px',
+    // marginTop: '80px',
   },
 });
 

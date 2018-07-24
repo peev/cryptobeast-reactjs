@@ -22,17 +22,35 @@ const styles = () => ({
   },
   containerTable: {
     textAlign: 'center',
+    padding: '0 20px',
+  },
+  tableHead: {
+    borderBottom: '1px solid #000',
   },
   tableCellHead: {
+    fontSize: '14px',
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
-    fontWeight: '900',
-    textTransform: 'uppercase',
+    fontWeight: '700',
+    color: '#000',
+    textAlign: 'center !important',
   },
   tableCell: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
-    paddingRight: '10px !important',
-    paddingLeft: '10px',
+    padding: '0 !important',
     borderBottom: 'none',
+    '& svg': {
+      position: 'relative',
+      top: '3px',
+      left: '-1px',
+    },
+  },
+  tableBody: {
+    '& td': {
+      textAlign: 'center !important',
+    },
+    '& td:first-child': {
+      paddingTop: '5px !important',
+    },
   },
   upArrow: {
     paddingTop: '7px',
@@ -48,16 +66,16 @@ const styles = () => ({
     verticalAlign: 'text-bottom',
   },
   titleBest: {
-    marginTop: '0',
+    marginTop: '20px',
     color: '#3ab693',
     textTransform: 'uppercase',
-    fontSize: '12px',
+    fontSize: '14px',
   },
   titleWorst: {
-    marginTop: '0',
+    marginTop: '20px',
     color: '#eb4562',
     textTransform: 'uppercase',
-    fontSize: '12px',
+    fontSize: '14px',
   },
 });
 
@@ -74,7 +92,7 @@ const Trending = inject('PortfolioStore')(observer(({ ...props }: Props) => {
   const lastItems = array.slice(array.length - 4).reverse();
 
   const tableHeaderGeneral = (
-    <TableHead>
+    <TableHead className={classes.tableHead} >
       <TableRow>
         {tableHead.map((prop: Object) => (
           <TableCell
@@ -137,7 +155,7 @@ const Trending = inject('PortfolioStore')(observer(({ ...props }: Props) => {
 
         <Table className={classes.table}>
           {tableHead !== undefined ? tableHeaderGeneral : null}
-          <TableBody>{tableBodyFirstItems}</TableBody>
+          <TableBody className={classes.tableBody}>{tableBodyFirstItems}</TableBody>
         </Table>
       </Grid>
 
@@ -145,7 +163,7 @@ const Trending = inject('PortfolioStore')(observer(({ ...props }: Props) => {
         <p className={classes.titleWorst}>Worst Performing Assets</p>
         <Table className={classes.table}>
           {tableHead !== undefined ? tableHeaderGeneral : null}
-          <TableBody>{tableBodyLastItems}</TableBody>
+          <TableBody className={classes.tableBody}>{tableBodyLastItems}</TableBody>
         </Table>
       </Grid>
     </Grid>

@@ -25,7 +25,6 @@ const styles = () => ({
     textTransform: 'uppercase',
   },
   containerItems: {
-    marginTop: '1px',
   },
   btnAdd: {
     float: 'right',
@@ -161,8 +160,8 @@ class AssetAllocation extends React.Component<Props> {
                   value={AssetStore.assetAllocationFromAmount}
                   className={classes.alignInputAfter}
                   onChange={this.handleRequests('assetAllocationFromAmount')}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
+                  validators={['required', 'isPositive']}
+                  errorMessages={['this field is required', 'value must be a positive number']}
                 />
               </Grid>
 
@@ -187,8 +186,8 @@ class AssetAllocation extends React.Component<Props> {
                   className={classes.alignInputAfter}
                   value={AssetStore.assetAllocationToAmount}
                   onChange={this.handleRequests('assetAllocationToAmount')}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
+                  validators={['required', 'isPositive']}
+                  errorMessages={['this field is required', 'value must be a positive number']}
                 />
               </Grid>
 
@@ -214,8 +213,8 @@ class AssetAllocation extends React.Component<Props> {
                   className={classes.alignInputAfter}
                   value={AssetStore.assetAllocationFee}
                   onChange={this.handleRequests('assetAllocationFee')}
-                  validators={['required', 'maxNumber:100']}
-                  errorMessages={['this field is required', 'must be a number between 0 and 100']}
+                  validators={['required', 'isPositive', 'maxNumber:100']}
+                  errorMessages={['this field is required', 'value must be a positive number', 'must be a number between 0 and 100']}
                 />
               </Grid>
             </Grid>

@@ -7,6 +7,8 @@ import {
   TableRow,
   TableBody,
   TableCell,
+  Tooltip,
+  TableSortLabel,
 } from 'material-ui';
 import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
@@ -27,10 +29,97 @@ type Props = {
   },
 };
 
+type State = {
+  order: string,
+  orderBy: string,
+};
+
+function getSorting(order: string, orderBy: string) {
+  return order === 'desc'
+    ? (a: Object, b: Object) => (b[orderBy] < a[orderBy] ? -1 : 1)
+    : (a: Object, b: Object) => (a[orderBy] < b[orderBy] ? -1 : 1);
+}
+
+function createPortfolioSortableObjectFromArray(portfolioAsArray: Array) {
+  if (portfolioAsArray.length === 7) {
+    return {
+      name: portfolioAsArray[0],
+      numShares: portfolioAsArray[1],
+      sharePrice: portfolioAsArray[2],
+      totalUSD: portfolioAsArray[3],
+      update: portfolioAsArray[4],
+      delete: portfolioAsArray[5],
+      id: portfolioAsArray[6],
+    };
+  }
+  return null;
+}
+
+const TableHeader = ({
+  onRequestSort,
+  order,
+  orderBy,
+  classes,
+  tableHead,
+  tableHeaderColor,
+}: {
+  onRequestSort: Function,
+  order: string,
+  orderBy: string,
+  classes: Object,
+  tableHead: Array<Object>,
+  tableHeaderColor: string,
+}) => {
+  const createSortHandler = (property: string) => (event: Object) => {
+    onRequestSort(event, property);
+  };
+  return (
+    <TableHead className={classes[`${tableHeaderColor}TableHeader`]}>
+      <TableRow>
+        {tableHead.map((headerItem: Object, index: number) => (
+          <TableCell
+            className={`${classes.tableCell} ${classes.tableHeadCell}`}
+            key={headerItem.id}
+            numeric={headerItem.numeric}
+            padding={headerItem.disablePadding ? 'none' : 'default'}
+            sortDirection={orderBy === headerItem.id ? order : false}
+          >
+            {(() => {
+              if (index > 1 && index < 6) {
+                return headerItem.label;
+              }
+              return (
+                <Tooltip
+                  title="Sort"
+                  placement={headerItem.numeric ? 'bottom-end' : 'bottom-start'}
+                  enterDelay={300}
+                >
+                  <TableSortLabel
+                    active={orderBy === headerItem.id}
+                    direction={order}
+                    onClick={createSortHandler(headerItem.id)}
+                  >
+                    {headerItem.label}
+                  </TableSortLabel>
+                </Tooltip>
+              );
+            })()}
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+};
+
 // TODO add Inject PortfolioStore and Remake function to const = () =>{}
 @inject('PortfolioStore')
 @observer
-class PortfoliosTable extends React.Component<Props> {
+class PortfoliosTable extends React.Component<Props, State> {
+  state = {
+    order: 'desc',
+    orderBy: 'numShares',
+  };
+
   handleRemove = (id: string) => {
     this.props.PortfolioStore.removePortfolio(id);
     // console.log(id);
@@ -40,6 +129,17 @@ class PortfoliosTable extends React.Component<Props> {
     this.props.PortfolioStore.updatePortfolio(newName, id);
   }
 
+  handleRequestSort = (event: Object, property: string) => {
+    const orderBy = property;
+    let order = 'desc';
+
+    if (this.state.orderBy === property && this.state.order === 'desc') {
+      order = 'asc';
+    }
+
+    this.setState({ order, orderBy });
+  };
+
   render() {
     const {
       classes,
@@ -48,63 +148,67 @@ class PortfoliosTable extends React.Component<Props> {
       PortfolioStore,
     } = this.props;
     const { portfolios } = PortfolioStore;
+    const { order, orderBy } = this.state;
 
-    const tableHeader = (
-      <TableHead className={classes[`${tableHeaderColor}TableHeader`]}>
-        <TableRow>
-          {tableHead.map((prop: Object) => (
-            <TableCell
-              className={`${classes.tableCell} ${classes.tableHeadCell}`}
-              key={uuid()}
-            >
-              {prop}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
+    const header = (
+      <TableHeader
+        order={order}
+        orderBy={orderBy}
+        onRequestSort={this.handleRequestSort}
+        tableHead={tableHead}
+        classes={classes}
+        tableHeaderColor={tableHeaderColor}
+      />
     );
 
     // const itemsToArray = Object.values(portfolios);
     const filteredItems = portfolios.map((obj: Object) => [
       obj.name,
       obj.shares,
-      null,
-      null,
-      null,
-      null,
+      null, // share price
+      null, // total USD
+      null, // remove
+      null, // delete
+      obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
     ]);
 
-    const tableInfo = filteredItems.map((prop: Object, key: number) => (
-      <TableRow key={uuid()}>
-        {prop.map((item: Object, ind: number) => {
-          if (ind === 4) {
-            return (
-              <TableCell className={classes.tableCell} key={uuid()}>
-                {item}
-                <UpdatePortfolioModal onUpdate={(newName: string) => this.handleUpdate(portfolios[key].id, newName)} />
-              </TableCell>
-            );
-          }
-          if (ind === 5) {
-            return (
-              <TableCell className={classes.tableCell} key={uuid()}>
-                {item}
-                <ConfirmationModal onSave={() => this.handleRemove(portfolios[key].id)} message="Are you shure you want to delete this portfolio?" />
-              </TableCell>
-            );
-          }
-          return (
-            <TableCell className={classes.tableCell} key={uuid()}>
-              {item}
-            </TableCell>
-          );
-        })}
-      </TableRow>
-    ));
+    const tableInfo = filteredItems
+      .map(createPortfolioSortableObjectFromArray)
+      .sort(getSorting(order, orderBy))
+      .map((portfolio: Object) => (
+        <TableRow key={uuid()}>
+          {Object.values(portfolio).map((item: Object, ind: number, arr: Array) => {
+            if (ind === 4) {
+              return (
+                <TableCell className={classes.tableCell} key={uuid()}>
+                  {item}
+                  <UpdatePortfolioModal onUpdate={(newName: string) => this.handleUpdate(arr[arr.length - 1], newName)} />
+                </TableCell>
+              );
+            }
+            if (ind === 5) {
+              return (
+                <TableCell className={classes.tableCell} key={uuid()}>
+                  {item}
+                  <ConfirmationModal onSave={() => this.handleRemove(arr[arr.length - 1])} message="Are you shure you want to delete this portfolio?" />
+                </TableCell>
+              );
+            }
+            if (ind < 6) {
+              return (
+                <TableCell className={classes.tableCell} key={uuid()}>
+                  {item}
+                </TableCell>
+              );
+            }
+            return null;
+          })}
+        </TableRow>
+      ));
     return (
       <div className={classes.tableResponsive}>
         <Table className={classes.table}>
-          {tableHead !== undefined ? tableHeader : null}
+          {tableHead !== undefined ? header : null}
           <TableBody>{tableInfo}</TableBody>
         </Table>
       </div>

@@ -38,14 +38,13 @@ class IndividualSummaryWrapper extends Component<Props> {
       <AllInvestorTable
         tableData={data}
         tableHead={[
-          // 'ID',
-          'Name',
-          'Date of Entry',
-          'Transaction date',
-          'Amount (USD)',
-          'Share price',
-          'Shares',
-          'Commission',
+          { id: 'name', numberic: false, disablePadding: false, label: 'Name' },
+          { id: 'dateEntry', numberic: true, disablePadding: false, label: 'Date of Entry' },
+          { id: 'transactionDate', numberic: true, disablePadding: false, label: 'Transaction date' },
+          { id: 'amountUSD', numberic: true, disablePadding: false, label: 'Amount (USD)' },
+          { id: 'sharePrice', numberic: true, disablePadding: false, label: 'Share price' },
+          { id: 'shares', numberic: true, disablePadding: false, label: 'Shares' },
+          { id: 'comission', numberic: true, disablePadding: false, label: 'Commission' },
         ]}
       />
     );

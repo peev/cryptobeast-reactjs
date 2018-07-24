@@ -48,12 +48,12 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
           content={
             <PortfoliosTable
               tableHead={[
-                'Name',
-                'Number of Shares',
-                'Current share price',
-                'Total Amount',
-                '',
-                '',
+                { id: 'name', numberic: false, disablePadding: false, label: 'Name' },
+                { id: 'numShares', numberic: true, disablePadding: false, label: 'Number of Shares' },
+                { id: 'sharePrice', numberic: true, disablePadding: false, label: 'Current share price' },
+                { id: 'totalUSD', numberic: true, disablePadding: false, label: 'Total Amount' },
+                { id: 'update', numberic: false, disablePadding: false, label: '' },
+                { id: 'delete', numberic: false, disablePadding: false, label: '' },
               ]}
             />
           }

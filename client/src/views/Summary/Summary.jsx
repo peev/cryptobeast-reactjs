@@ -123,14 +123,14 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
           <Grid item xs={12} sm={12} md={12}>
             <PortfolioSummaryTable
               tableHead={[
-                { id: 'ticker', numberic: false, disablePadding: false, label: 'Ticker' },
-                { id: 'holdings', numberic: true, disablePadding: false, label: 'Holdings' },
-                { id: 'priceBTC', numberic: true, disablePadding: false, label: 'Price (BTC)' },
-                { id: 'priceUSD', numberic: true, disablePadding: false, label: 'Price (USD)' },
-                { id: 'totalUSD', numberic: true, disablePadding: false, label: 'Total Value (USD)' },
-                { id: 'assetWeight', numberic: false, disablePadding: false, label: 'Asset Weight' },
-                { id: '24Change', numberic: true, disablePadding: false, label: '24H Change' },
-                { id: '7Change', numberic: true, disablePadding: false, label: '7D Change' },
+                { id: 'ticker', numeric: false, disablePadding: false, label: 'Ticker' },
+                { id: 'holdings', numeric: false, disablePadding: false, label: 'Holdings' },
+                { id: 'priceBTC', numeric: false, disablePadding: false, label: 'Price (BTC)' },
+                { id: 'priceUSD', numeric: false, disablePadding: false, label: 'Price (USD)' },
+                { id: 'totalUSD', numeric: false, disablePadding: false, label: 'Total Value (USD)' },
+                { id: 'assetWeight', numeric: false, disablePadding: false, label: 'Asset Weight' },
+                { id: '24Change', numeric: false, disablePadding: false, label: '24H Change' },
+                { id: '7Change', numeric: false, disablePadding: false, label: '7D Change' },
               ]}
             />
           </Grid>

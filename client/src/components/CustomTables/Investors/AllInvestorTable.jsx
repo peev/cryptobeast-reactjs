@@ -47,7 +47,8 @@ function getInvestorSortableObject(portfolioStore: Object) {
     amountUSD: investor.amountInUSD,
     sharePrice: investor.sharePrice,
     shares: investor.shares,
-    comission: Math.abs((investor.amountInUSD * portfolioStore.currentPortfolioInvestors[findInvestorID(investor)].managementFee) / 100),
+    comission: investor.amountInUSD < 0 ?
+      Math.abs((investor.amountInUSD * portfolioStore.currentPortfolioInvestors[findInvestorID(investor)].managementFee) / 100) : 0,
   });
 }
 

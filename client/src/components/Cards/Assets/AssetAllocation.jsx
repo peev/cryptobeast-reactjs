@@ -16,8 +16,8 @@ import '../../Selectors/Asset/SelectAllCurrency';
 const styles = () => ({
   container: {
     width: '100%',
-    margin: '40px 40px 0',
     padding: '20px 25px',
+    margin: '50px 0',
   },
   containerTitle: {
     margin: '0',
@@ -121,7 +121,7 @@ class AssetAllocation extends React.Component<Props> {
             onSubmit={this.handleSave}
           >
             <Grid container className={classes.containerItems}>
-              <Grid item xs={3}>
+              <Grid item xs={12} sm={6} md={3}>
                 <SelectExchange
                   label="Select Exchange (optional)"
                   value={AssetStore.selectedExchangeAssetAllocation}
@@ -145,7 +145,7 @@ class AssetAllocation extends React.Component<Props> {
                 />
               </Grid>
 
-              <Grid item xs={3}>
+              <Grid item xs={12} sm={6} md={3}>
                 <div className={classes.popOverContainer}>
                   <SelectPortfolioCurrency />
 
@@ -166,7 +166,7 @@ class AssetAllocation extends React.Component<Props> {
                 />
               </Grid>
 
-              <Grid item xs={3}>
+              <Grid item xs={12} sm={6} md={3}>
                 <Select
                   placeholder="Bought or received*"
                   name="currency-to-asset-allocation"
@@ -192,7 +192,7 @@ class AssetAllocation extends React.Component<Props> {
                 />
               </Grid>
 
-              <Grid item xs={3}>
+              <Grid item xs={12} sm={6} md={3}>
                 <Select
                   placeholder="Transaction Fee (optional)"
                   name="currency-for-asset-fee"

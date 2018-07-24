@@ -14,8 +14,11 @@ import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 const styles = () => ({
   container: {
     width: '100%',
-    margin: '40px 40px 0',
     padding: '20px 25px',
+  },
+  inputsContainer: {
+    display: 'flex',
+    flexDirection: 'column',
   },
   containerTitle: {
     margin: '0',
@@ -23,21 +26,38 @@ const styles = () => ({
     textTransform: 'uppercase',
   },
   containerItems: {
-    marginTop: '1px',
+    display: 'flex',
+    margin: '20px -20px',
+    width: 'auto',
   },
   containerButton: {
-    paddingLeft: '8px',
+    justifyContent: 'flex-end',
   },
   btnAdd: {
     float: 'right',
     margin: '0',
   },
-  input: {
-    width: '95%',
-    marginTop: '12px',
-  },
   font: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif, !important',
+    width: '100%',
+    '& input': {
+      margin: 0,
+      paddingLeft: '10px',
+      paddingRight: '10px',
+    },
+    '& label': {
+      position: 'absolute',
+      left: '10px',
+      top: '-15px',
+    },
+  },
+  removeMargin: {
+    '&>div>div': {
+      margin: '4px 0 0 0',
+    },
+  },
+  gridPadding: {
+    padding: '0 20px',
   },
 });
 
@@ -92,43 +112,42 @@ class AssetInput extends React.Component<Props> {
 
           <ValidatorForm
             onSubmit={this.handleSave}
+            className={classes.inputsContainer}
           >
             <Grid container className={classes.containerItems}>
-              <Grid item xs={4} sm={3} md={3}>
+              <Grid item xs={12} sm={6} md={4} className={classes.gridPadding}>
                 <Select
                   placeholder="Select currency*"
                   name="currency-to-asset-allocation"
                   value={AssetStore.selectedCurrencyBasicAsset || ''}
                   onChange={this.handleFromAllCurrenciesBasicAsset}
                   options={allCurrenciesCombined}
-                  className={classes.input}
                   style={{
                     border: 'none',
                     borderRadius: 0,
                     borderBottom: '1px solid #757575',
                   }}
                 />
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={4} className={`${classes.removeMargin} ${classes.gridPadding}`}>
                 <TextValidator
-                  className={classes.font}
                   name="Quantity"
                   label="Quantity*"
                   value={AssetStore.assetInputValue}
                   onChange={(e: SyntheticInputEvent) => this.handleRequest(e)}
-                  // className={classes.input}
                   validators={['required', 'isPositive']}
                   errorMessages={['this field is required', 'value must be a positive number']}
-                  style={{ width: '95%' }}
+                  className={classes.font}
                 />
               </Grid>
 
-              <Grid item xs={4} sm={3} md={3}>
+              <Grid item xs={12} sm={6} md={4} className={classes.gridPadding}>
                 <SelectExchange
                   label="Select Exchange (optional)"
                   value={AssetStore.selectedExchangeBasicInput}
                   handleChange={this.handleExchangeBasicInput}
                   style={{
-                    marginTop: '12px',
-                    width: '95%',
                     border: 'none',
                     borderRadius: 0,
                     borderBottom: '1px solid #757575',
@@ -144,6 +163,9 @@ class AssetInput extends React.Component<Props> {
                 className="btnAdd"
                 // onClick={this.handleSave}
                 disabled={AssetStore.assetInputValue === '' || AssetStore.selectedCurrencyBasicAsset === ''}
+                style={{
+                  margin: '0 25px 0 0',
+                }}
               >ADD
               </RegularButton>
             </Grid>

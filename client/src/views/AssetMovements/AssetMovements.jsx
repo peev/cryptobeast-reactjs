@@ -17,9 +17,9 @@ const AssetMovements = () => (
         tableHead={[
           'Ticker',
           'Holdings',
-          'Price(BTC)',
-          'Price(USD)',
-          'Total Value(USD)',
+          'Price (BTC)',
+          'Price (USD)',
+          'Total Value (USD)',
           'Asset Weight',
           '24H Change',
           '7D Change',

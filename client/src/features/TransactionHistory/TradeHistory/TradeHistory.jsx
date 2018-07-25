@@ -182,52 +182,69 @@ class HistoryTable extends React.Component<Props, State> {
               .sort(getSorting(order, orderBy))
               .map((obj: Object) => Object.values(obj))
               .slice(this.state.page * this.state.rowsPerPage, (this.state.page * this.state.rowsPerPage) + this.state.rowsPerPage)
-              .map((transation: Object, i: number) => (
-                <TableRow key={uuid()} >
-                  {Object.keys(transation).map((el: Object, ind: number) => {
-                    if (ind === 10 && transation.includes('Manually Added')) {
-                      return (
-                        <TableCell className={`${classes.tableCellBuy} ${classes.buttonsWidth}`} key={uuid()}>
-                          {transation[el]}
-                          <ConfirmationModal onSave={() => this.handleRemove(trades[i])} message="Are you sure you want to delete this transaction?" />
-                        </TableCell>
-                      );
-                    }
-                    if (ind === 9 && transation.includes('Manually Added')) {
-                      return (
-                        <TableCell className={`${classes.tableCellBuy} ${classes.buttonsWidth}`} key={uuid()}>
-                          {transation[el]}
-                          <UpdateTradeModal trade={trades[i]} />
-                        </TableCell>
-                      );
-                    } else if (ind === 9 && transation[2] !== 'Manually Added') {
-                      return (
-                        <TableCell className={classes.tableCellBuy} key={uuid()}>
-                          {transation[el]}
-                        </TableCell>
-                      );
-                    } else if (transation[4] === 'BUY') {
-                      return (
-                        <TableCell className={classes.tableCellBuy} key={uuid()}>
-                          {transation[el]}
-                        </TableCell>
-                      );
-                    } else if (ind === 0 || ind === 1) {
-                      return (
-                        <TableCell className={classes.tableCellSell} key={uuid()}>
-                          {moment(transation[el]).format('LLL')}
-                        </TableCell>
-                      );
-                    } else {
-                      return (
-                        <TableCell className={classes.tableCellSell} key={uuid()}>
-                          {transation[el]}
-                        </TableCell>
-                      );
-                    }
-                  })}
-                </TableRow>
-              ))}
+              .map((transaction: Object, i: number, allTransactions: Array) => {
+                const restOfTableRows = allTransactions.filter((t: Array, ti: number) => ti > i);
+                const displayDeleteButton = restOfTableRows.reduce((trueOrFalse: boolean, tArray: Array) => {
+                  if (tArray.includes('Manually Added')) {
+                    return false;
+                  }
+                  return true;
+                }, true);
+                return (
+                  <TableRow key={uuid()} >
+                    {Object.keys(transaction).map((el: Object, ind: number) => {
+                      if (ind === 10 && transaction.includes('Manually Added') && displayDeleteButton) {
+                        return (
+                          <TableCell className={`${classes.tableCellBuy} ${classes.buttonsWidth}`} key={uuid()}>
+                            {transaction[el]}
+                            <ConfirmationModal onSave={() => this.handleRemove(trades[i])} message="Are you sure you want to delete this transaction?" />
+                          </TableCell>
+                        );
+                      }
+                      if (ind === 9 && transaction.includes('Manually Added') && displayDeleteButton) {
+                        return (
+                          <TableCell className={`${classes.tableCellBuy} ${classes.buttonsWidth}`} key={uuid()}>
+                            {transaction[el]}
+                            <UpdateTradeModal trade={trades[i]} />
+                          </TableCell>
+                        );
+                      } else if (ind === 9 && transaction[2] !== 'Manually Added') {
+                        return (
+                          <TableCell className={classes.tableCellBuy} key={uuid()}>
+                            {transaction[el]}
+                          </TableCell>
+                        );
+                      } else if (transaction[4] === 'BUY') {
+                        if (ind === 0 || ind === 1) {
+                          return (
+                            <TableCell className={classes.tableCellBuy} key={uuid()}>
+                              {moment(transaction[el]).format('LLL')}
+                            </TableCell>
+                          );
+                        }
+                        return (
+                          <TableCell className={classes.tableCellBuy} key={uuid()}>
+                            {transaction[el]}
+                          </TableCell>
+                        );
+                      } else {
+                        if (ind === 0 || ind === 1) {
+                          return (
+                            <TableCell className={classes.tableCellSell} key={uuid()}>
+                              {moment(transaction[el]).format('LLL')}
+                            </TableCell>
+                          );
+                        }
+                        return (
+                          <TableCell className={classes.tableCellSell} key={uuid()}>
+                            {transaction[el]}
+                          </TableCell>
+                        );
+                      }
+                    })}
+                  </TableRow>
+                );
+              })}
             {emptyRows > 0 && (
               <TableRow style={{ height: 48 * emptyRows }}>
                 <TableCell colSpan={6} />

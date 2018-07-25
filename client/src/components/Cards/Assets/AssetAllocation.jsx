@@ -24,12 +24,6 @@ const styles = () => ({
     fontSize: '16px',
     textTransform: 'uppercase',
   },
-  containerItems: {
-  },
-  btnAdd: {
-    float: 'right',
-    margin: '0',
-  },
   alignInput: {
     width: '95%',
     marginTop: '25px',
@@ -72,9 +66,7 @@ const styles = () => ({
       display: 'none',
     },
     '& input[type=date]::-webkit-clear-button': {
-      position: 'relative',
-      right: '10px',
-      cursor: 'pointer',
+      display: 'none',
     },
     '& input[type=date]::-webkit-calendar-picker-indicator': {
       color: '#999',
@@ -159,13 +151,14 @@ class AssetAllocation extends React.Component<Props> {
                   value={AssetStore.selectedExchangeAssetAllocation}
                   handleChange={this.handleExchangeAssetAllocation}
                   style={{
-                    marginTop: '12px',
                     width: '95%',
+                    marginTop: '12px',
                     border: 'none',
                     borderRadius: 0,
                     borderBottom: '1px solid #757575',
                   }}
                 />
+
                 <TextValidator
                   name="date"
                   type="date"
@@ -257,12 +250,15 @@ class AssetAllocation extends React.Component<Props> {
                 <RegularButton
                   type="submit"
                   color="primary"
-                  className={classes.btnAdd}
                   // onClick={this.handleSave}
                   disabled={AssetStore.assetAllocationToAmount === ''
                     || AssetStore.selectedCurrencyToAssetAllocation === ''
                     || AssetStore.assetAllocationFromAmount === ''
                     || AssetStore.selectedCurrencyFromAssetAllocation === ''}
+                  style={{
+                    float: 'right',
+                    margin: '20px 25px 0 0',
+                  }}
                 >RECORD
                 </RegularButton>
               </Grid>

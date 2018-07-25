@@ -17,36 +17,32 @@ import IndividualSummaryWrapper from '../../components/Cards/Investors/Individua
 
 const styles = () => ({
   herderTopButton: {
+    padding: '25px 50px',
     '& button': {
       display: 'flex',
-      width: '200px',
+      width: '100%',
+      margin: '0',
     },
   },
   herderBottomButton: {
+    padding: '25px 50px',
     '& button': {
       display: 'flex',
-      width: '200px',
+      width: '100%',
       color: '#fff',
       backgroundColor: '#5e6779',
+      margin: '0',
       '&:hover': {
         backgroundColor: '#666666',
       },
     },
   },
   upperPart: {
-    marginBottom: '40px',
-    display: 'flex',
-    flexDirection: 'column',
+    justifyContent: 'center',
+    margin: '-25px 0 25px 0',
   },
-  infoBoxes: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  buttons: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
+  upperPartSingleRow: {
+    justifyContent: 'center',
   },
 });
 
@@ -54,39 +50,39 @@ const styles = () => ({
 const Investors = ({ classes }: Object) => (
   <Grid container>
     <Grid container className={classes.upperPart}>
-      <Grid className={classes.infoBoxes}>
-        <Grid xs={3} sm={3} md={3} className={classes.herderTopButton}>
+      <Grid container className={classes.upperPartSingleRow}>
+        <Grid item xs={12} sm={9} md={5} lg={3} className={classes.herderTopButton}>
           <TotalInvestorsWrapped />
         </Grid>
-        <Grid xs={3} sm={3} md={3} className={classes.herderTopButton}>
+        <Grid item xs={12} sm={9} md={5} lg={3} className={classes.herderTopButton}>
           <SharesInCirculationWrapped />
         </Grid>
-        <Grid xs={3} sm={3} md={3} className={classes.herderTopButton}>
+        <Grid item xs={12} sm={9} md={5} lg={3} className={classes.herderTopButton}>
           <CurrentSharePrice />
         </Grid>
-        <Grid xs={3} sm={3} md={3} className={classes.herderTopButton}>
+        <Grid item xs={12} sm={9} md={5} lg={3} className={classes.herderTopButton}>
           <TotalFeePotential />
         </Grid>
       </Grid>
 
-      <Grid className={classes.buttons}>
-        <Grid xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+      <Grid container className={classes.upperPartSingleRow}>
+        <Grid item xs={12} sm={9} md={5} lg={3} className={classes.herderBottomButton}>
           <AddInvestorWrapped />
         </Grid>
-        <Grid xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+        <Grid item xs={12} sm={9} md={5} lg={3} className={classes.herderBottomButton}>
           <InvestorDepositWrapped />
         </Grid>
-        <Grid xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+        <Grid item xs={12} sm={9} md={5} lg={3} className={classes.herderBottomButton}>
           <InvestorWithdrawWrapped />
         </Grid>
-        <Grid xs={3} sm={3} md={3} className={classes.herderBottomButton}>
+        <Grid item xs={12} sm={9} md={5} lg={3} className={classes.herderBottomButton}>
           <EditInvestorWrapped />
         </Grid>
       </Grid>
     </Grid>
 
     <Grid container>
-      <Grid xs={12} sm={12} md={12}>
+      <Grid item xs={12} sm={12} md={12}>
         <IndividualSummaryWrapper />
       </Grid>
     </Grid>

@@ -18,6 +18,11 @@ const styles = (theme: Object) => ({
     margin: theme.spacing.unit,
     width: '100%',
   },
+  dropDownContainer: {
+    '& .Select-menu-outer': {
+      width: '90.5%',
+    },
+  },
 });
 
 type Props = {
@@ -61,10 +66,14 @@ class SelectInvestor extends React.Component<Props> {
             // onOpen={this.handleOpen}
             onChange={this.handleChange}
             options={investorsToShow}
-            style={{ ...style, width: '90.5%' }}
+            style={{
+              ...style,
+              width: '90.5%',
+            }}
             inputProps={{
               id: 'controlled-open-select',
             }}
+            className={classes.dropDownContainer}
           />
         </FormControl>
       </div >

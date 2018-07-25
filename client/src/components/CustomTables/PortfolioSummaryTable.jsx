@@ -138,7 +138,7 @@ const TableHeader = ({
   return (
     <TableHead className={classes.tableHead}>
       <TableRow>
-        {tableHead.map((headerItem: Object) => (
+        {tableHead.map((headerItem: Object, index: number) => (
           <TableCell
             className={`${classes.tableCell} ${classes.tableHeadCell}`}
             key={headerItem.id}
@@ -146,19 +146,26 @@ const TableHeader = ({
             padding={headerItem.disablePadding ? 'none' : 'default'}
             sortDirection={orderBy === headerItem.id ? order : false}
           >
-            <Tooltip
-              title="Sort"
-              placement={headerItem.numeric ? 'bottom-end' : 'bottom-start'}
-              enterDelay={300}
-            >
-              <TableSortLabel
-                active={orderBy === headerItem.id}
-                direction={order}
-                onClick={createSortHandler(headerItem.id)}
-              >
-                {headerItem.label}
-              </TableSortLabel>
-            </Tooltip>
+            {(() => {
+              if (index === 7) {
+                return headerItem.label;
+              }
+              return (
+                <Tooltip
+                  title="Sort"
+                  placement={headerItem.numeric ? 'bottom-end' : 'bottom-start'}
+                  enterDelay={300}
+                >
+                  <TableSortLabel
+                    active={orderBy === headerItem.id}
+                    direction={order}
+                    onClick={createSortHandler(headerItem.id)}
+                  >
+                    {headerItem.label}
+                  </TableSortLabel>
+                </Tooltip>
+              );
+            })()}
           </TableCell>
         ))}
       </TableRow>

@@ -50,6 +50,10 @@ const styles = () => ({
       left: '10px',
       top: '-15px',
     },
+    '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
+      '-webkit-appearance': 'none',
+      margin: '0',
+    },
   },
   removeMargin: {
     '&>div>div': {
@@ -133,6 +137,7 @@ class AssetInput extends React.Component<Props> {
               <Grid item xs={12} sm={6} md={4} className={`${classes.removeMargin} ${classes.gridPadding}`}>
                 <TextValidator
                   name="Quantity"
+                  type="number"
                   label="Quantity*"
                   value={AssetStore.assetInputValue}
                   onChange={(e: SyntheticInputEvent) => this.handleRequest(e)}

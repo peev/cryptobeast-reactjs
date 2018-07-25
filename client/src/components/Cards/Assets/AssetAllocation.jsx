@@ -54,6 +54,39 @@ const styles = () => ({
     position: 'absolute',
     right: '20px',
   },
+  numberInputArrows: {
+    '& input, & label': {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+    },
+    '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+  },
+  dateInputArrows: {
+    '& input': {
+      paddingLeft: '10px',
+      paddingRight: '6px',
+    },
+    '& input[type=date]::-webkit-inner-spin-button, & input[type=date]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-clear-button': {
+      position: 'relative',
+      right: '10px',
+      cursor: 'pointer',
+    },
+    '& input[type=date]::-webkit-calendar-picker-indicator': {
+      color: '#999',
+      width: '10px',
+      fontSize: '11px',
+      '&:hover': {
+        backgroundColor: '#fff',
+        color: '#555',
+        cursor: 'pointer',
+      },
+    },
+  },
 });
 
 type Props = {
@@ -141,6 +174,7 @@ class AssetAllocation extends React.Component<Props> {
                   onChange={this.handleRequests('assetAllocationSelectedDate')}
                   validators={['required']}
                   errorMessages={['this field is required']}
+                  className={classes.dateInputArrows}
                 />
               </Grid>
 
@@ -158,7 +192,7 @@ class AssetAllocation extends React.Component<Props> {
                   type="number"
                   label="Quantity*"
                   value={AssetStore.assetAllocationFromAmount}
-                  className={classes.alignInputAfter}
+                  className={`${classes.alignInputAfter} ${classes.numberInputArrows}`}
                   onChange={this.handleRequests('assetAllocationFromAmount')}
                   validators={['required', 'isPositive']}
                   errorMessages={['this field is required', 'value must be a positive number']}
@@ -183,7 +217,7 @@ class AssetAllocation extends React.Component<Props> {
                   name="quantity3"
                   type="number"
                   label="Quantity*"
-                  className={classes.alignInputAfter}
+                  className={`${classes.alignInputAfter} ${classes.numberInputArrows}`}
                   value={AssetStore.assetAllocationToAmount}
                   onChange={this.handleRequests('assetAllocationToAmount')}
                   validators={['required', 'isPositive']}
@@ -207,14 +241,13 @@ class AssetAllocation extends React.Component<Props> {
                 />
                 <TextValidator
                   name="fee"
-                  label="Quantity"
                   type="number"
-                  placeholder="Quantity..."
-                  className={classes.alignInputAfter}
+                  label="Quantity"
+                  className={`${classes.alignInputAfter} ${classes.numberInputArrows}`}
                   value={AssetStore.assetAllocationFee}
                   onChange={this.handleRequests('assetAllocationFee')}
-                  validators={['required', 'isPositive', 'maxNumber:100']}
-                  errorMessages={['this field is required', 'value must be a positive number', 'must be a number between 0 and 100']}
+                  validators={['isPositive', 'maxNumber:100']}
+                  errorMessages={['value must be a positive number', 'must be a number between 0 and 100']}
                 />
               </Grid>
             </Grid>

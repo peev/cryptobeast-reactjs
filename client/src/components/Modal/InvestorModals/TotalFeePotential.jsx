@@ -10,7 +10,6 @@ const styles = () => ({
     boxSizing: 'border-box',
     width: '200px',
     padding: '8px 20px',
-    margin: '10px auto',
     backgroundColor: '#22252F',
     textTransform: 'uppercase',
     boxShadow: 'none',

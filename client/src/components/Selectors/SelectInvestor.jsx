@@ -1,13 +1,11 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
 import { withStyles } from 'material-ui/styles';
-import { InputLabel } from 'material-ui/Input';
+// import { InputLabel } from 'material-ui/Input';
+import Select from 'react-select';
+
 import { FormControl } from 'material-ui/Form';
-import { MenuItem } from 'material-ui/Menu';
-import Select from 'material-ui/Select';
-
-
-// import Select from 'react-select';
+// import Select from 'material-ui/Select';
 
 import { inject, observer } from 'mobx-react';
 
@@ -20,46 +18,30 @@ const styles = (theme: Object) => ({
     margin: theme.spacing.unit,
     width: '100%',
   },
-  select: {
-    width: '90%',
-    '& svg': {
-      right: '2px',
-    },
-    '&>div>div': {
-      paddingLeft: '10px',
-    },
-  },
-  selectLabel: {
-    paddingLeft: '10px',
-
-  },
 });
 
 type Props = {
   classes: Object,
   handleChange: PropTypes.func,
   PortfolioStore: Object,
+  value: string,
+  style: Object,
 };
 
 
 @inject('InvestorStore', 'PortfolioStore')
 @observer
 class SelectInvestor extends React.Component<Props> {
-  state = {
-    investorName: '',
-  };
-
   handleChange = (event: SyntheticEvent) => {
-    this.setState({ investorName: event.target.value || '' });
     if (event) {
-      this.props.handleChange(event.target.value);
+      this.props.handleChange(event.value);
     } else {
       this.props.handleChange('');
     }
   };
 
   render() {
-    const { classes, PortfolioStore } = this.props;
+    const { classes, PortfolioStore, value, style } = this.props;
     const { currentPortfolioInvestors } = PortfolioStore;
     const investorsToShow = [];
     currentPortfolioInvestors.map((investor: object) => ({ value: investor.id, label: investor.fullName }))
@@ -70,23 +52,20 @@ class SelectInvestor extends React.Component<Props> {
     return (
       <div autoComplete="off" >
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
-          <InputLabel htmlFor="age-simple" className={classes.selectLabel}>Select investor*</InputLabel>
           <Select
-            value={this.state.investorName}
+            name="investor"
+            placeholder="Select investor*"
+            // open={this.state.open}
+            value={value}
+            onClose={this.handleClose}
+            // onOpen={this.handleOpen}
             onChange={this.handleChange}
-            className={classes.select}
-          >
-            <MenuItem>
-              <em>All investors</em>
-            </MenuItem>
-            {investorsToShow.map((investor: object) => (
-              <MenuItem
-                key={investor.value}
-                value={investor.value}
-              >
-                {investor.label}
-              </MenuItem>))}
-          </Select>
+            options={investorsToShow}
+            style={{ ...style, width: '90.5%' }}
+            inputProps={{
+              id: 'controlled-open-select',
+            }}
+          />
         </FormControl>
       </div >
     );

@@ -16,20 +16,13 @@ import '../../Selectors/Asset/SelectAllCurrency';
 const styles = () => ({
   container: {
     width: '100%',
-    margin: '40px 40px 0',
     padding: '20px 25px',
+    margin: '50px 0',
   },
   containerTitle: {
     margin: '0',
     fontSize: '16px',
     textTransform: 'uppercase',
-  },
-  containerItems: {
-    marginTop: '1px',
-  },
-  btnAdd: {
-    float: 'right',
-    margin: '0',
   },
   alignInput: {
     width: '95%',
@@ -54,6 +47,37 @@ const styles = () => ({
   popOverButton: {
     position: 'absolute',
     right: '20px',
+  },
+  numberInputArrows: {
+    '& input, & label': {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+    },
+    '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+  },
+  dateInputArrows: {
+    '& input': {
+      paddingLeft: '10px',
+      paddingRight: '6px',
+    },
+    '& input[type=date]::-webkit-inner-spin-button, & input[type=date]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-clear-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-calendar-picker-indicator': {
+      color: '#999',
+      width: '10px',
+      fontSize: '11px',
+      '&:hover': {
+        backgroundColor: '#fff',
+        color: '#555',
+        cursor: 'pointer',
+      },
+    },
   },
 });
 
@@ -121,19 +145,20 @@ class AssetAllocation extends React.Component<Props> {
             onSubmit={this.handleSave}
           >
             <Grid container className={classes.containerItems}>
-              <Grid item xs={3}>
+              <Grid item xs={12} sm={6} md={3}>
                 <SelectExchange
                   label="Select Exchange (optional)"
                   value={AssetStore.selectedExchangeAssetAllocation}
                   handleChange={this.handleExchangeAssetAllocation}
                   style={{
-                    marginTop: '12px',
                     width: '95%',
+                    marginTop: '12px',
                     border: 'none',
                     borderRadius: 0,
                     borderBottom: '1px solid #757575',
                   }}
                 />
+
                 <TextValidator
                   name="date"
                   type="date"
@@ -142,10 +167,11 @@ class AssetAllocation extends React.Component<Props> {
                   onChange={this.handleRequests('assetAllocationSelectedDate')}
                   validators={['required']}
                   errorMessages={['this field is required']}
+                  className={classes.dateInputArrows}
                 />
               </Grid>
 
-              <Grid item xs={3}>
+              <Grid item xs={12} sm={6} md={3}>
                 <div className={classes.popOverContainer}>
                   <SelectPortfolioCurrency />
 
@@ -159,14 +185,14 @@ class AssetAllocation extends React.Component<Props> {
                   type="number"
                   label="Quantity*"
                   value={AssetStore.assetAllocationFromAmount}
-                  className={classes.alignInputAfter}
+                  className={`${classes.alignInputAfter} ${classes.numberInputArrows}`}
                   onChange={this.handleRequests('assetAllocationFromAmount')}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
+                  validators={['required', 'isPositive']}
+                  errorMessages={['this field is required', 'value must be a positive number']}
                 />
               </Grid>
 
-              <Grid item xs={3}>
+              <Grid item xs={12} sm={6} md={3}>
                 <Select
                   placeholder="Bought or received*"
                   name="currency-to-asset-allocation"
@@ -184,15 +210,15 @@ class AssetAllocation extends React.Component<Props> {
                   name="quantity3"
                   type="number"
                   label="Quantity*"
-                  className={classes.alignInputAfter}
+                  className={`${classes.alignInputAfter} ${classes.numberInputArrows}`}
                   value={AssetStore.assetAllocationToAmount}
                   onChange={this.handleRequests('assetAllocationToAmount')}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
+                  validators={['required', 'isPositive']}
+                  errorMessages={['this field is required', 'value must be a positive number']}
                 />
               </Grid>
 
-              <Grid item xs={3}>
+              <Grid item xs={12} sm={6} md={3}>
                 <Select
                   placeholder="Transaction Fee (optional)"
                   name="currency-for-asset-fee"
@@ -208,14 +234,13 @@ class AssetAllocation extends React.Component<Props> {
                 />
                 <TextValidator
                   name="fee"
-                  label="Quantity"
                   type="number"
-                  placeholder="Quantity..."
-                  className={classes.alignInputAfter}
+                  label="Quantity"
+                  className={`${classes.alignInputAfter} ${classes.numberInputArrows}`}
                   value={AssetStore.assetAllocationFee}
                   onChange={this.handleRequests('assetAllocationFee')}
-                  validators={['required', 'maxNumber:100']}
-                  errorMessages={['this field is required', 'must be a number between 0 and 100']}
+                  validators={['isPositive', 'maxNumber:100']}
+                  errorMessages={['value must be a positive number', 'must be a number between 0 and 100']}
                 />
               </Grid>
             </Grid>
@@ -225,12 +250,15 @@ class AssetAllocation extends React.Component<Props> {
                 <RegularButton
                   type="submit"
                   color="primary"
-                  className={classes.btnAdd}
                   // onClick={this.handleSave}
                   disabled={AssetStore.assetAllocationToAmount === ''
                     || AssetStore.selectedCurrencyToAssetAllocation === ''
                     || AssetStore.assetAllocationFromAmount === ''
                     || AssetStore.selectedCurrencyFromAssetAllocation === ''}
+                  style={{
+                    float: 'right',
+                    margin: '20px 25px 0 0',
+                  }}
                 >RECORD
                 </RegularButton>
               </Grid>

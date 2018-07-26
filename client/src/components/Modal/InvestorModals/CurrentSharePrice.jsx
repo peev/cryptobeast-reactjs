@@ -43,6 +43,28 @@ const styles = (theme: Object) => ({
   button: {
     float: 'right',
   },
+  buttonStyle: {
+    '& button': {
+      backgroundColor: '#fff',
+      boxShadow: '0px 1px 5px 0px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0, 0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.12)',
+    },
+    '& button:hover': {
+      backgroundColor: '#aaa',
+      '& h4, & p': {
+        color: '#fff',
+      },
+    },
+    '& h4': {
+      fontSize: '20px',
+      fontWeight: '700',
+      color: '#000',
+      marginBottom: '5px',
+    },
+    '& p': {
+      color: '#000',
+      fontSize: '13.3px',
+    },
+  },
 });
 
 type Props = {
@@ -76,7 +98,7 @@ class CurrentSharePrice extends React.Component<Props, State> {
     const { classes, PortfolioStore, Analytics } = this.props;
 
     return (
-      <Grid container>
+      <Grid container className={classes.buttonStyle}>
         <InvestorCardButton
           onClick={this.handleOpen}
         >

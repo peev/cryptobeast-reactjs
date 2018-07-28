@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "lint": "eslint --fix",
-    "start": "node ./bin/www"
+    "start": "node ./node_modules/nodemon/bin/nodemon -x 'node ./bin/www'"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -23,6 +23,7 @@
     "kraken-api": "^1.0.0",
     "morgan": "^1.9.0",
     "node-bittrex-api": "^0.8.3",
+    "nodemon": "^1.18.3",
     "pg": "^7.4.2",
     "pg-hstore": "^2.3.2",
     "request": "^2.87.0",

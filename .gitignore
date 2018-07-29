@@ -15,6 +15,7 @@
 
 # production
 /client/build
+/server/log
 
 # database
 CryptoBeast.db

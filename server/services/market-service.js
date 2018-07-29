@@ -5,25 +5,23 @@ const { coinMarketCapServices } = require('../integrations/coinMarketCap-service
 
 const marketService = (repository) => {
   const syncSummaries = async () => {
-    let newSummaries;
     try {
-      newSummaries = await bittrexServices().getSummaries();
+      const newSummaries = await bittrexServices().getSummaries();
+
+      await repository.removeAll({ modelName: 'MarketSummary' });
+      repository.createMany({ modelName: 'MarketSummary', newObjects: newSummaries });
     } catch (error) {
       console.log(error);
     }
-
-    await repository.removeAll({ modelName: 'MarketSummary' });
-    return repository.createMany({ modelName: 'MarketSummary', newObjects: newSummaries });
   };
 
   const saveSummariesToHistory = async () => {
-    let newSummaries;
     try {
-      newSummaries = await bittrexServices().getSummaries();
+      const newSummaries = await bittrexServices().getSummaries();
+      repository.createMany({ modelName: 'MarketSummaryHistory', newObjects: newSummaries });
     } catch (error) {
       console.log(error);
     }
-    repository.createMany({ modelName: 'MarketSummaryHistory', newObjects: newSummaries });
   };
 
   const getTickersFromKraken = async (currenciesToGet) => {
@@ -67,15 +65,14 @@ const marketService = (repository) => {
   };
 
   const syncCurrenciesFromApi = async () => {
-    let currencies;
     try {
-      currencies = await bittrexServices().getCurrencies();
+      const currencies = await bittrexServices().getCurrencies();
+
+      await repository.removeAll({ modelName: 'Currency' });
+      repository.createMany({ modelName: 'Currency', newObjects: currencies });
     } catch (error) {
       console.log(error);
     }
-
-    await repository.removeAll({ modelName: 'Currency' });
-    return repository.createMany({ modelName: 'Currency', newObjects: currencies });
   };
 
   const createMarketJob = (marketFunction, time) => {

@@ -2,7 +2,7 @@ node {
   try {
     def commit_id
     def out
-    def mailRecipients = "liubomir.markov@motionsoftware.eu,krasen.ilkov@motionsoftware.eu"
+    // def mailRecipients = "liubomir.markov@motionsoftware.eu,krasen.ilkov@motionsoftware.eu"
     def jobName = currentBuild.fullDisplayName
 
     stage('Preparation') {
@@ -52,21 +52,21 @@ node {
       sh 'docker run -d -p 3200:3200 --net="host" --restart unless-stopped --name cryptobeast cryptobeast'
     }
 
-    emailext body: '''${SCRIPT, template="groovy-html.template"}''',
-        mimeType: 'text/html',
-        subject: "[Jenkins] SUCCESS ${jobName}",
-        to: "${mailRecipients}",
-        replyTo: "${mailRecipients}",
-        recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+    // emailext body: '''${SCRIPT, template="groovy-html.template"}''',
+    //     mimeType: 'text/html',
+    //     subject: "[Jenkins] SUCCESS ${jobName}",
+    //     to: "${mailRecipients}",
+    //     replyTo: "${mailRecipients}",
+    //     recipientProviders: [[$class: 'CulpritsRecipientProvider']]
 
   } catch(e) {
 
-    emailext body: '''${SCRIPT, template="groovy-html.template"}''',
-        mimeType: 'text/html',
-        subject: "[Jenkins] FAILURE ${jobName}",
-        to: "${mailRecipients}",
-        replyTo: "${mailRecipients}",
-        recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+    // emailext body: '''${SCRIPT, template="groovy-html.template"}''',
+    //     mimeType: 'text/html',
+    //     subject: "[Jenkins] FAILURE ${jobName}",
+    //     to: "${mailRecipients}",
+    //     replyTo: "${mailRecipients}",
+    //     recipientProviders: [[$class: 'CulpritsRecipientProvider']]
 
     currentBuild.result = "FAILURE";
     throw e;

@@ -49,7 +49,7 @@ node {
       // #2 Build a new image
       sh 'cd server && touch .env && docker build -t cryptobeast .'
       // #3 Run the new image
-      sh 'docker run -d -p 3200:3200 --net="host" --restart unless-stopped --name cryptobeast cryptobeast'
+      sh 'docker run -d -p 3200:3200 --net="host" --restart on-failure --name cryptobeast cryptobeast'
     }
 
     // emailext body: '''${SCRIPT, template="groovy-html.template"}''',

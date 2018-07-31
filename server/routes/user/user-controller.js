@@ -50,31 +50,6 @@ const userController = (repository, jobs) => {
   };
 
   const verifiedPatchUserMetadata = async (req, res) => {
-    // Validations
-    if (!req.body.user_metadata) {
-      return res.status(400).send({ isSuccessful: false, message: 'No user metadata found' });
-    }
-    if (!req.body.user_metadata.api.exchange
-      || req.body.user_metadata.api.exchange === ''
-      || typeof req.body.user_metadata.api.exchange !== 'string') {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid exchange' });
-    }
-    if (!req.body.user_metadata.api.apiKey
-      || req.body.user_metadata.api.apiKey === ''
-      || typeof req.body.user_metadata.api.apiKey !== 'string') {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid apiKey' });
-    }
-    if (!req.body.user_metadata.api.apiSecret
-      || req.body.user_metadata.api.apiSecret === ''
-      || typeof req.body.user_metadata.api.apiSecret !== 'string') {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid apiSecret' });
-    }
-    if (!req.body.user_metadata.api.portfolioId
-      || req.body.user_metadata.api.portfolioId === ''
-      || typeof req.body.user_metadata.api.portfolioId !== 'number') {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid portfolioId' });
-    }
-
     try {
       const { exchange, apiKey, apiSecret, portfolioId } = req.body.user_metadata.api;
 
@@ -105,8 +80,6 @@ const userController = (repository, jobs) => {
         // Add found trade history to current selected portfolio
         await addTradeHistoryToPortfolio(returnedOrderHistory);
 
-        console.log( returnedOrderHistory); // for testing api response
-
         return returnedUser;
       }
 
@@ -118,16 +91,6 @@ const userController = (repository, jobs) => {
 
 
   const patchUserMetadata = async (req, res) => {
-    // Validations
-    if (!req.body.user_metadata) {
-      return res.status(200).send({ isSuccessful: false, message: 'No user metadata found' });
-    }
-    if (!req.body.user_metadata.api.id
-      || req.body.user_metadata.api.id === ''
-      || typeof req.body.user_metadata.api.id !== 'string') {
-      return res.status(200).send({ isSuccessful: false, message: 'Invalid api id' });
-    }
-
     const userMetadata = await Auth0ManagementApi.getUser(req);
 
     const apiId = req.body.user_metadata.api.id;

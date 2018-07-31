@@ -10,6 +10,8 @@ import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
+import DisplayInformation from '../../Cards/Investors/DisplayInformation';
+
 
 const getModalStyle = () => {
   const top = 35;
@@ -23,41 +25,62 @@ const getModalStyle = () => {
 const styles = (theme: Object) => ({
   paper: {
     position: 'absolute',
-    minWidth: '100px',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
-    padding: '40px',
-  },
-  containerDirection: {
     display: 'flex',
     flexDirection: 'column',
+    width: '550px',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
+    padding: '30px 30px',
   },
-  alignInput: {
+  paperContainer: {
+    margin: '0 -40px',
+  },
+  gridColumn: {
+    width: '50%',
+  },
+  gridRow: {
+    padding: '10px 40px 0 40px',
+  },
+  inputStyle: {
+    width: '100%',
+    textTransform: 'uppercase',
+    '& input, & label': {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+      fontSize: '14px',
+    },
+    '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+  },
+  dateOfEntry: {
     width: '100%',
     marginTop: '16px',
+    '& input': {
+      paddingLeft: '10px',
+      paddingRight: '6px',
+    },
+    '& input[type=date]::-webkit-inner-spin-button, & input[type=date]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-clear-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-calendar-picker-indicator': {
+      color: '#999',
+      width: '10px',
+      fontSize: '11px',
+      '&:hover': {
+        backgroundColor: '#fff',
+        color: '#555',
+        cursor: 'pointer',
+      },
+    },
   },
-  alignInputAfter: {
-    marginTop: '10px',
-  },
-  buttonsContainer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: '20px',
-  },
-  alignBtn: {
-    marginRight: '20px',
-  },
-  inputWrapper: {
-    width: '200px',
-    margin: '10px 20px 0',
-  },
-  inputWrapperTransactionDate: {
-    width: '192px',
-    margin: '10px 20px 0',
-  },
-  inputWrapperSelectBaseCurrency: {
-    width: '192px',
-    margin: '10px 20px 0',
+  selectBaseCurrency: {
+    width: '75%',
+    textTransform: 'uppercase',
+    fontSize: '13px',
   },
 });
 
@@ -151,117 +174,123 @@ class InvestorDeposit extends React.Component<Props, State> {
             style={getModalStyle()}
             className={classes.paper}
           >
-            <Grid container >
-              <Grid item xs={12} sm={12} md={12}>
-                <Typography
-                  variant="title"
-                  id="modal-title"
-                  style={{ marginLeft: '20px', fontSize: '18px', fontWeight: '400' }}
-                >
-                  Investor Deposit
-                </Typography>
+            <div className={classes.paperContainer}>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <Typography
+                      variant="title"
+                      id="modal-title"
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '400',
+                        // paddingLeft: '10px',
+                        fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Investor Deposit
+                    </Typography>
+                  </div>
+                </Grid>
               </Grid>
-            </Grid>
 
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <SelectInvestor
-                    value={InvestorStore.selectedInvestorId || ''}
-                    handleChange={this.handleSelectInvestor}
-                    style={{
-                      marginTop: '12px',
-                      width: '95%',
-                      border: 'none',
-                      borderRadius: 0,
-                      borderBottom: '1px solid #757575',
-                    }}
-                  />
-                </div>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <SelectInvestor
+                      value={InvestorStore.selectedInvestorId || ''}
+                      handleChange={this.handleSelectInvestor}
+                      style={{
+                        marginTop: '12px',
+                        border: 'none',
+                        borderRadius: 0,
+                        borderBottom: '1px solid #757575',
+                        textTransform: 'uppercase',
+                        fontSize: '13px',
+                      }}
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      name="date"
+                      type="date"
+                      // label="Transaction Date"
+                      onChange={this.handleDepositRequests('transactionDate')}
+                      value={InvestorStore.newDepositValues.transactionDate || today}
+                      className={`${classes.alignInput} ${classes.dateOfEntry}`}
+                      validators={['required', 'isDateValid']}
+                      errorMessages={['this field is required', 'Date must be before today']}
+                    />
+                  </div>
+                </Grid>
               </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapperTransactionDate}>
-                  <TextValidator
-                    name="date"
-                    type="date"
-                    // label="Transaction Date"
-                    onChange={this.handleDepositRequests('transactionDate')}
-                    value={InvestorStore.newDepositValues.transactionDate || today}
-                    className={classes.alignInput}
-                    validators={['required', 'isDateValid']}
-                    errorMessages={['this field is required', 'Date must be before today']}
-                  />
-                </div>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      name="amount"
+                      // type="number"
+                      label="Amount*"
+                      className={classes.inputStyle}
+                      onChange={this.handleDepositRequests('amount')}
+                      value={InvestorStore.newDepositValues.amount || ''}
+                      validators={['required', 'isPositive']}
+                      errorMessages={['this field is required', 'value must be a positive number']}
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={`${classes.selectBaseCurrency} ${classes.gridRow}`}>
+                    <SelectBaseCurrency />
+                  </div>
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    name="amount"
-                    type="number"
-                    label="Amount*"
-                    onChange={this.handleDepositRequests('amount')}
-                    value={InvestorStore.newDepositValues.amount || ''}
-                    style={{ width: '95%' }}
-                    // className={classes.alignInputAfter}
-                    validators={['required', 'isPositive']}
-                    errorMessages={['this field is required', 'value must be a positive number']}
-                  />
-                </div>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <DisplayInformation
+                      value={`$${Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100}`}
+                      placeholderText="Share Price at Entry Date"
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <DisplayInformation
+                      value={`${Math.round(InvestorStore.depositPurchasedShares * 1000000) / 1000000 || '0'}`}
+                      placeholderText="Purchased Shares"
+                    />
+                  </div>
+                </Grid>
               </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapperSelectBaseCurrency}>
-                  <SelectBaseCurrency />
-                </div>
-              </Grid>
-            </Grid>
 
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    disabled
-                    name="share price"
-                    label="Share Price at Entry Date (USD)"
-                    className={classes.alignInputAfter}
-                    value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
-                    style={{ width: '95%' }}
-                  />
-                </div>
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    disabled
-                    name="purchased shares"
-                    placeholder="Purchased Shares"
-                    style={{ marginTop: '26px' }}
-                    value={InvestorStore.depositPurchasedShares || ''}
-                  />
-                </div>
-              </Grid>
-            </Grid>
+              <Grid container justify="flex-end">
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow} style={{ textAlign: 'right' }}>
+                    <Button
+                      color="primary"
+                      onClick={this.handleClose}
+                    >
+                      Cancel
+                    </Button>
 
-            <Grid container className={classes.buttonsContainer}>
-              <div className={classes.alignBtn}>
-                <Button
-                  color="primary"
-                  onClick={this.handleClose}
-                >
-                  Cancel
-                </Button>
-              </div>
-              <Button
-                type="submit"
-                color="primary"
-                disabled={InvestorStore.newDepositValues.amount === ''
-                  || MarketStore.selectedBaseCurrency == null
-                  || InvestorStore.selectedInvestorId === null}
-              >
-                Save
-              </Button>
-            </Grid>
+                    <Button
+                      type="submit"
+                      color="primary"
+                      disabled={InvestorStore.newDepositValues.amount === ''
+                        || MarketStore.selectedBaseCurrency == null
+                        || InvestorStore.selectedInvestorId === null}
+                      style={{ marginLeft: '25px' }}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </Grid>
+              </Grid >
+            </div>
           </ValidatorForm>
         </Modal>
         <NotificationSnackbar />

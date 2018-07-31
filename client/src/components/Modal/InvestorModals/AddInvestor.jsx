@@ -10,6 +10,7 @@ import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import Button from '../../CustomButtons/Button';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
+import DisplayInformation from '../../Cards/Investors/DisplayInformation';
 
 const getModalStyle = () => {
   const top = 25;
@@ -25,44 +26,63 @@ const styles = (theme: Object) => ({
     position: 'absolute',
     display: 'flex',
     flexDirection: 'column',
-    minWidth: '100px',
+    width: '550px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
-    padding: '40px',
+    padding: '30px 30px',
   },
-  containerDirection: {
-    display: 'flex',
-    flexDirection: 'column',
+  paperContainer: {
+    margin: '0 -40px',
   },
-  alignInput: {
-    width: '98%',
+  gridColumn: {
+    width: '50%',
+  },
+  gridRow: {
+    padding: '10px 40px 0 40px',
+  },
+  inputStyle: {
+    width: '100%',
+    textTransform: 'uppercase',
+    '& input, & label': {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+      fontSize: '14px',
+    },
+    '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+  },
+  dateOfEntry: {
+    width: '100%',
     marginTop: '16px',
+    '& input': {
+      paddingLeft: '10px',
+      paddingRight: '6px',
+    },
+    '& input[type=date]::-webkit-inner-spin-button, & input[type=date]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-clear-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-calendar-picker-indicator': {
+      color: '#999',
+      width: '10px',
+      fontSize: '11px',
+      '&:hover': {
+        backgroundColor: '#fff',
+        color: '#555',
+        cursor: 'pointer',
+      },
+    },
   },
-  alignInputAfter: {
-    width: '98%',
-    marginTop: '10px',
-  },
-  buttonsContainer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: '20px',
-  },
-  alignBtn: {
-    marginRight: '20px',
-  },
-  width: {
-    width: '95%',
+  selectBaseCurrency: {
+    width: '75%',
+    textTransform: 'uppercase',
+    fontSize: '13px',
   },
   font: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
-  },
-  inputWrapper: {
-    width: '200px',
-    margin: '10px 20px 0',
-  },
-  inputWrapperSelectBaseCurrency: {
-    width: '190px',
-    margin: '10px 20px 0',
   },
 });
 
@@ -143,165 +163,175 @@ class AddInvestor extends React.Component<Props, State> {
             style={getModalStyle()}
             className={classes.paper}
           >
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6}>
-                <Typography
-                  variant="title"
-                  id="modal-title"
-                  style={{ marginLeft: '20px', fontSize: '18px', fontWeight: '400', fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}
-                >
-                  Add a new investor
-                </Typography>
+            <div className={classes.paperContainer}>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <Typography
+                      variant="title"
+                      id="modal-title"
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '400',
+                        // paddingLeft: '10px',
+                        fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Add a new investor
+                    </Typography>
+                  </div>
+                </Grid>
+                {/* <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    founder
+                    <input type="checkbox" />
+                  </div>
+                </Grid> */}
               </Grid>
-            </Grid>
 
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    label="Full Name*"
-                    onChange={this.handleRequests('fullName')}
-                    name="name"
-                    className={classes.width}
-                    value={InvestorStore.newInvestorValues.fullName}
-                    validators={['required']}
-                    errorMessages={['this field is required']}
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      label="Full Name*"
+                      onChange={this.handleRequests('fullName')}
+                      name="name"
+                      className={classes.inputStyle}
+                      value={InvestorStore.newInvestorValues.fullName}
+                      validators={['required']}
+                      errorMessages={['this field is required']}
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      label="Email address*"
+                      onChange={this.handleRequests('email')}
+                      name="email"
+                      className={classes.inputStyle}
+                      value={InvestorStore.newInvestorValues.email}
+                      validators={['required', 'isEmail']}
+                      errorMessages={['this field is required', 'email is not valid']}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      label="Telephone"
+                      onChange={this.handleRequests('telephone')}
+                      name="telephone"
+                      className={classes.inputStyle}
+                      value={InvestorStore.newInvestorValues.telephone}
+                      validators={['isNumber']}
+                      errorMessages={['telephone is not valid']}
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      onChange={this.handleRequests('dateOfEntry')}
+                      type="date"
+                      name="date"
+                      value={InvestorStore.newInvestorValues.dateOfEntry || today}
+                      validators={['required']}
+                      errorMessages={['this field is required']}
+                      className={classes.dateOfEntry}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={`${classes.selectBaseCurrency} ${classes.gridRow}`}>
+                    <SelectBaseCurrency />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      label="Deposited Amount*"
+                      onChange={this.handleRequests('depositedAmount')}
+                      name="depositedAmount"
+                      // type="number"
+                      className={classes.inputStyle}
+                      value={InvestorStore.newInvestorValues.depositedAmount}
+                      validators={['required', 'isPositive']}
+                      errorMessages={['this field is required', 'value must be a positive number']}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid className={classes.gridColumn}>
+                <div className={classes.gridRow}>
+                  <DisplayInformation
+                    value={`$${Math.round(InvestorStore.convertedUsdEquiv() * 100) / 100}`}
+                    placeholderText="deposited equivalent"
                   />
                 </div>
               </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    label="Email*"
-                    onChange={this.handleRequests('email')}
-                    name="email"
-                    value={InvestorStore.newInvestorValues.email}
-                    validators={['required', 'isEmail']}
-                    errorMessages={['this field is required', 'email is not valid']}
-                  />
-                </div>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      label="Management Fee (%)"
+                      onChange={this.handleRequests('managementFee')}
+                      name="fee"
+                      // type="number"
+                      className={classes.inputStyle}
+                      value={InvestorStore.newInvestorValues.managementFee || ''}
+                      validators={['isPositive', 'maxNumber:100']}
+                      errorMessages={['value must be a positive number', 'must be a number between 0 and 100']}
+                    />
+                  </div>
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    label="Telephone"
-                    onChange={this.handleRequests('telephone')}
-                    name="telephone"
-                    className={classes.width}
-                    value={InvestorStore.newInvestorValues.telephone}
-                    validators={['isNumber']}
-                    errorMessages={['telephone is not valid']}
-                  />
-                </div>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <DisplayInformation
+                      value={`$${Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100}`}
+                      placeholderText="share price at entry date"
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <DisplayInformation
+                      value={`${Math.round(InvestorStore.purchasedShares * 1000000) / 1000000 || '0'}`}
+                      placeholderText="purchased shares"
+                    />
+                  </div>
+                </Grid>
               </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    onChange={this.handleRequests('dateOfEntry')}
-                    type="date"
-                    name="date"
-                    value={InvestorStore.newInvestorValues.dateOfEntry || today}
-                    validators={['required']}
-                    errorMessages={['this field is required']}
-                    className={classes.alignInput}
-                  />
-                </div>
-              </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapperSelectBaseCurrency}>
-                  <SelectBaseCurrency />
-                </div>
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    label="Deposited Amount*"
-                    onChange={this.handleRequests('depositedAmount')}
-                    name="depositedAmount"
-                    value={InvestorStore.newInvestorValues.depositedAmount}
-                    validators={['required', 'isPositive']}
-                    errorMessages={['this field is required', 'value must be a positive number']}
-                  />
-                </div>
-              </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    disabled
-                    name="USD"
-                    label="Deposited USD Equiv."
-                    className={classes.width}
-                    value={Math.round(InvestorStore.convertedUsdEquiv * 100) / 100 || ''}
-                  />
-                </div>
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    type="number"
-                    label="Management Fee %*"
-                    onChange={this.handleRequests('managementFee')}
-                    name="fee"
-                    value={InvestorStore.newInvestorValues.managementFee || ''}
-                    validators={['required', 'maxNumber:100']}
-                    errorMessages={['this field is required', 'must be a number between 0 and 100']}
-                  />
-                </div>
-              </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    disabled
-                    name="share price"
-                    label="Share Price at Entry Date (USD)"
-                    className={classes.alignInputAfter}
-                    value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
-                    style={{ width: '95%' }}
-                  />
-                </div>
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    disabled
-                    name="shares"
-                    type="number"
-                    value={InvestorStore.purchasedShares || ''}
-                    label="Purchased Shares"
-                    className={classes.alignInputAfter}
-                  />
-                </div>
-              </Grid>
-            </Grid>
 
-            <Grid container className={classes.buttonsContainer}>
-              <div className={classes.alignBtn}>
+              <Grid container justify="flex-end">
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow} style={{ textAlign: 'right' }}>
+                    <Button
+                      color="primary"
+                      onClick={this.handleClose}
+                    >
+                      Cancel
+                    </Button>
 
-                <Button
-                  className={classes.alignBtn}
-                  color="primary"
-                  onClick={this.handleClose}
-                >
-                  Cancel
-                </Button>
-              </div>
-
-              <Button
-                type="submit"
-                color="primary"
-                disabled={NotificationStore.getErrorsLength > 0}
-              >
-                Save
-              </Button>
-            </Grid >
+                    <Button
+                      type="submit"
+                      color="primary"
+                      disabled={NotificationStore.getErrorsLength > 0}
+                      style={{ marginLeft: '25px' }}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </Grid>
+              </Grid >
+            </div>
           </ValidatorForm>
         </Modal>
 

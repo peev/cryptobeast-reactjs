@@ -22,36 +22,62 @@ const getModalStyle = () => {
 const styles = (theme: Object) => ({
   paper: {
     position: 'absolute',
-    minWidth: '100px',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
-    padding: '40px',
-  },
-  containerDirection: {
     display: 'flex',
     flexDirection: 'column',
+    width: '550px',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
+    padding: '30px 30px',
   },
-  alignInput: {
+  paperContainer: {
+    margin: '0 -40px',
+  },
+  gridColumn: {
+    width: '50%',
+  },
+  gridRow: {
+    padding: '10px 40px 0 40px',
+  },
+  inputStyle: {
+    width: '100%',
+    textTransform: 'uppercase',
+    '& input, & label': {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+      fontSize: '14px',
+    },
+    '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+  },
+  dateOfEntry: {
+    width: '100%',
     marginTop: '16px',
+    '& input': {
+      paddingLeft: '10px',
+      paddingRight: '6px',
+    },
+    '& input[type=date]::-webkit-inner-spin-button, & input[type=date]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-clear-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-calendar-picker-indicator': {
+      color: '#999',
+      width: '10px',
+      fontSize: '11px',
+      '&:hover': {
+        backgroundColor: '#fff',
+        color: '#555',
+        cursor: 'pointer',
+      },
+    },
   },
-  alignInputAfter: {
-    marginTop: '10px',
-  },
-  buttonsContainer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: '20px',
-  },
-  alignBtn: {
-    marginRight: '20px',
-  },
-  inputWrapper: {
-    width: '200px',
-    margin: '0px 20px',
-  },
-  inputWrapperTop: {
-    width: '206px',
-    margin: '10px 20px 0',
+  selectBaseCurrency: {
+    width: '75%',
+    textTransform: 'uppercase',
+    fontSize: '13px',
   },
 });
 
@@ -121,118 +147,129 @@ class EditInvestor extends React.Component<Props, State> {
             style={getModalStyle()}
             className={classes.paper}
           >
-            <Grid container >
-              <Grid item xs={12} sm={12} md={12}>
-                <Typography
-                  variant="title"
-                  id="modal-title"
-                  style={{ marginLeft: '20px', fontSize: '18px', fontWeight: '400' }}
-                >
-                  Edit Investor
-                </Typography>
+            <div className={classes.paperContainer}>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <Typography
+                      variant="title"
+                      id="modal-title"
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '400',
+                        // paddingLeft: '10px',
+                        fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Edit Investor
+                    </Typography>
+                  </div>
+                </Grid>
               </Grid>
-            </Grid>
 
-            <Grid container >
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapperTop}>
-                  <SelectInvestor
-                    value={InvestorStore.selectedInvestorId || ''}
-                    handleChange={this.handleSelectInvestor}
-                    style={{
-                      marginTop: '12px',
-                      width: '95%',
-                      border: 'none',
-                      borderRadius: 0,
-                      borderBottom: '1px solid #757575',
-                    }}
-                  />
-                </div>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <SelectInvestor
+                      value={InvestorStore.selectedInvestorId || ''}
+                      handleChange={this.handleSelectInvestor}
+                      style={{
+                        marginTop: '12px',
+                        border: 'none',
+                        borderRadius: 0,
+                        borderBottom: '1px solid #757575',
+                        textTransform: 'uppercase',
+                        fontSize: '13px',
+                      }}
+                    />
+                  </div>
+                </Grid>
               </Grid>
-            </Grid>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      name="name"
+                      // type="text"
+                      label="Full name"
+                      value={InvestorStore.updateInvestorValues.fullName}
+                      onChange={this.handleEditRequests('fullName')}
+                      className={classes.inputStyle}
+                      autoFocus
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      name="email"
+                      // type="email"
+                      label="Email Address"
+                      value={InvestorStore.updateInvestorValues.email}
+                      onChange={this.handleEditRequests('email')}
+                      className={classes.inputStyle}
+                      validators={['isEmail']}
+                      errorMessages={['email is not valid']}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      name="phone"
+                      // type="number"
+                      label="Telephone"
+                      value={InvestorStore.updateInvestorValues.telephone}
+                      onChange={this.handleEditRequests('telephone')}
+                      className={classes.inputStyle}
+                      validators={['isNumber']}
+                      errorMessages={['telephone is not valid']}
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      name="fee"
+                      // type="number"
+                      label="Management Fee (%)"
+                      value={InvestorStore.updateInvestorValues.managementFee}
+                      onChange={this.handleEditRequests('managementFee')}
+                      className={classes.inputStyle}
+                      validators={['isPositive', 'maxNumber:100']}
+                      errorMessages={['Fee must be a positive number', 'must be a number between 0 and 100']}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
 
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    name="name"
-                    type="text"
-                    label="Full name"
-                    value={InvestorStore.updateInvestorValues.fullName}
-                    onChange={this.handleEditRequests('fullName')}
-                    className={classes.alignInputAfter}
-                    autoFocus
-                  />
-                </div>
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    name="email"
-                    type="email"
-                    label="Email Address"
-                    value={InvestorStore.updateInvestorValues.email}
-                    onChange={this.handleEditRequests('email')}
-                    className={classes.alignInputAfter}
-                    validators={['isEmail']}
-                    errorMessages={['email is not valid']}
-                  />
-                </div>
-              </Grid>
-            </Grid>
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    name="phone"
-                    type="number"
-                    label="Telephone"
-                    value={InvestorStore.updateInvestorValues.telephone}
-                    onChange={this.handleEditRequests('telephone')}
-                    className={classes.alignInput}
-                    validators={['isNumber']}
-                    errorMessages={['telephone is not valid']}
-                  />
-                </div>
-              </Grid>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    name="fee"
-                    type="number"
-                    label="Management Fee %"
-                    value={InvestorStore.updateInvestorValues.managementFee}
-                    onChange={this.handleEditRequests('managementFee')}
-                    className={classes.alignInput}
-                    validators={['isPositive', 'maxNumber:100']}
-                    errorMessages={['Fee must be a positive number', 'must be a number between 0 and 100']}
-                  />
-                </div>
-              </Grid>
-            </Grid>
+              <Grid container justify="flex-end">
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow} style={{ textAlign: 'right' }}>
+                    <Button
+                      color="primary"
+                      onClick={this.handleClose}
+                    >
+                      Cancel
+                    </Button>
 
-            <Grid container className={classes.buttonsContainer}>
-              <div className={classes.alignBtn}>
-
-                <Button
-                  className={classes.alignBtn}
-                  color="primary"
-                  onClick={this.handleClose}
-                >
-                  Cancel
-                </Button>
-              </div>
-
-              <Button
-                type="submit"
-                color="primary"
-              >
-                Save
-              </Button>
-            </Grid>
+                    <Button
+                      type="submit"
+                      color="primary"
+                      style={{ marginLeft: '25px' }}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </Grid>
+              </Grid >
+            </div>
           </ValidatorForm>
         </Modal>
-      </Grid>
+      </Grid >
     );
   }
 }

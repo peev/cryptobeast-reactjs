@@ -9,6 +9,9 @@ import { FormControl } from 'material-ui/Form';
 
 import { inject, observer } from 'mobx-react';
 
+import DropDownArrow from '../CustomIcons/DropDown/DropDownArrow';
+
+
 const styles = (theme: Object) => ({
   button: {
     display: 'block',
@@ -17,12 +20,33 @@ const styles = (theme: Object) => ({
   formControl: {
     margin: theme.spacing.unit,
     width: '100%',
-  },
-  dropDownContainer: {
-    '& .Select-menu-outer': {
-      width: '90.5%',
+    '& .is-open > .Select-control .Select-arrow-zone svg': {
+      position: 'relative',
+      left: '-8px',
+      transform: 'rotate(180deg)',
     },
   },
+  select: {
+    '& .Select-placeholder': {
+      top: '2px',
+    },
+    '& .Select-clear': {
+      position: 'relative',
+      top: '2px',
+      right: '5px',
+    },
+    '& .Select-arrow-zone svg': {
+      fontSize: '15px',
+      paddingRight: '8px',
+      position: 'relative',
+      top: '4px',
+    },
+  },
+  // dropDownContainer: {
+  //   '& .Select-menu-outer': {
+  //     width: '90.5%',
+  //   },
+  // },
 });
 
 type Props = {
@@ -44,6 +68,10 @@ class SelectInvestor extends React.Component<Props> {
       this.props.handleChange('');
     }
   };
+
+  arrowRenderer = () => (
+    <DropDownArrow />
+  );
 
   render() {
     const { classes, PortfolioStore, value, style } = this.props;
@@ -68,12 +96,13 @@ class SelectInvestor extends React.Component<Props> {
             options={investorsToShow}
             style={{
               ...style,
-              width: '90.5%',
+              width: '100%',
             }}
             inputProps={{
               id: 'controlled-open-select',
             }}
-            className={classes.dropDownContainer}
+            arrowRenderer={this.arrowRenderer}
+            className={classes.select}
           />
         </FormControl>
       </div >

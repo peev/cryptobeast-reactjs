@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js . --fix",
-    "start": "node ./node_modules/nodemon/bin/nodemon ./bin/www.js",
+    "start": "node ./bin/www.js",
+    "dev": "node ./node_modules/nodemon/bin/nodemon ./bin/www.js",
     "forever": "mkdir -p log && node ./node_modules/forever/bin/forever start -p ./log -a --silent --uid cryptobeast  ./bin/www.js",
     "clear:forever": "node ./node_modules/forever/bin/forever stop cryptobeast && rm -rf log/",
     "list:forever": "node ./node_modules/forever/bin/forever list"

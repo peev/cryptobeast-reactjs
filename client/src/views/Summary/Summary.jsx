@@ -80,7 +80,12 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
+            // description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
+            description={PortfolioStore.currentPortfolioCostInUSD !== 0
+              ? `$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2)}`
+              : ''}
+            hasInfo={PortfolioStore.currentPortfolioCostInUSD === 0}
+            infoMessage="Please add assets to your portfolio"
           />
 
           <SummaryCard

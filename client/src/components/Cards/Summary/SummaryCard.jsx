@@ -58,20 +58,17 @@ const styles = () => ({
   },
   cardDescriptionNormal: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
-    // paddingTop: '7px',
     fontSize: '20px',
     fontWeight: '700',
   },
   cardDescriptionPositive: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
-    // paddingTop: '7px',
     color: '#70A800',
     fontSize: '20px',
     fontWeight: '700',
   },
   cardDescriptionNegative: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
-    // paddingTop: '7px',
     color: '#B94A48',
     fontSize: '20px',
     fontWeight: '700',
@@ -79,17 +76,13 @@ const styles = () => ({
   input: {
     width: '100%',
   },
-  // info: {
-  //   width: '100%',
-  //   display: 'flex',
-  //   justifyContent: 'flex-end',
-  // },
   paper: {
     padding: '20px',
   },
   popover: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     pointerEvents: 'none',
+    marginTop: '15px',
   },
   popperClose: {
     pointerEvents: 'none',
@@ -100,6 +93,12 @@ const styles = () => ({
   },
   color: {
     color: '#3BB3E4',
+    position: 'relative',
+    top: '-11px',
+  },
+  infoMessage: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
+    fontSize: '13.3px',
   },
 });
 
@@ -192,7 +191,7 @@ class SummaryCard extends React.Component<Props> {
               onClose={this.handlePopoverClose}
               disableRestoreFocus
             >
-              <Typography className={classes.cardTitle}>{infoMessage}</Typography>
+              <Typography className={classes.infoMessage}>{infoMessage}</Typography>
             </Popover>
             <Typography
               type="headline"

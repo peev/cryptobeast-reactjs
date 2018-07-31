@@ -25,43 +25,60 @@ const marketService = (repository) => {
   };
 
   const getTickersFromKraken = async (currenciesToGet) => {
-    const baseCurrencies = currenciesToGet || 'XETHXXBT,XXBTZEUR,XXBTZJPY,XXBTZUSD';
-    const currencyDictionary = {
-      XETHXXBT: 'ETH',
-      XXBTZEUR: 'EUR',
-      XXBTZJPY: 'JPY',
-      XXBTZUSD: 'USD',
-    };
-    const tickers = await krakenServices().getTickers(baseCurrencies);
-    const currentTickerPairs = [];
-    Object.keys(tickers).forEach((currency) => {
-      currentTickerPairs.push({
-        pair: currencyDictionary[currency],
-        last: tickers[currency].c[0],
+    try {
+      const baseCurrencies = currenciesToGet || 'XETHXXBT,XXBTZEUR,XXBTZJPY,XXBTZUSD';
+      const currencyDictionary = {
+        XETHXXBT: 'ETH',
+        XXBTZEUR: 'EUR',
+        XXBTZJPY: 'JPY',
+        XXBTZUSD: 'USD',
+      };
+      const tickers = await krakenServices().getTickers(baseCurrencies);
+      const currentTickerPairs = [];
+      Object.keys(tickers).forEach((currency) => {
+        currentTickerPairs.push({
+          pair: currencyDictionary[currency],
+          last: tickers[currency].c[0],
+        });
       });
-    });
 
-    return currentTickerPairs;
+      return currentTickerPairs;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
   };
 
   const syncTickersFromKraken = async (currenciesToGet) => {
-    const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
-    await repository.removeAll({ modelName: 'Ticker' });
+    try {
+      const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
+      await repository.removeAll({ modelName: 'Ticker' });
 
-    return repository.createMany({ modelName: 'Ticker', newObjects: currentTickerPairs });
+      repository.createMany({ modelName: 'Ticker', newObjects: currentTickerPairs });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const saveTickersFromKrakenToHistory = async (currenciesToGet) => {
-    const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
+    try {
+      const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
 
-    return repository.createMany({ modelName: 'TickerHistory', newObjects: currentTickerPairs });
+      repository.createMany({ modelName: 'TickerHistory', newObjects: currentTickerPairs });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const syncTickersFromCoinMarketCap = async (convertCurrency = 'BTC') => {
-    const tickers = await coinMarketCapServices().getTickers(convertCurrency);
+    try {
+      const tickers = await coinMarketCapServices().getTickers(convertCurrency);
 
-    await repository.removeAll({ modelName: 'MarketPriceHistory' });
-    return repository.createMany({ modelName: 'MarketPriceHistory', newObjects: tickers });
+      await repository.removeAll({ modelName: 'MarketPriceHistory' });
+      repository.createMany({ modelName: 'MarketPriceHistory', newObjects: tickers });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const syncCurrenciesFromApi = async () => {

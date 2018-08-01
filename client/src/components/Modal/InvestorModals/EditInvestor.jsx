@@ -11,7 +11,7 @@ import SelectInvestor from '../../Selectors/SelectInvestor';
 
 
 const getModalStyle = () => {
-  const top = 20;
+  const top = 25;
   const left = 35;
   return {
     top: `${top}%`,
@@ -196,7 +196,7 @@ class EditInvestor extends React.Component<Props, State> {
                       value={InvestorStore.updateInvestorValues.fullName}
                       onChange={this.handleEditRequests('fullName')}
                       className={classes.inputStyle}
-                      autoFocus
+                    // autoFocus
                     />
                   </div>
                 </Grid>

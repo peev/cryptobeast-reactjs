@@ -15,7 +15,7 @@ import DisplayInformation from '../../Cards/Investors/DisplayInformation';
 
 
 const getModalStyle = () => {
-  const top = 35;
+  const top = 25;
   const left = 35;
   return {
     top: `${top}%`,

@@ -24,6 +24,9 @@ const styles = (theme: Object) => ({
     '& .Select-placeholder': {
       top: '2px',
     },
+    '& .Select-placeholder:hover, &.is-focused': {
+      borderBottom: '1px solid #000',
+    },
     '& .Select-clear': {
       position: 'relative',
       top: '2px',

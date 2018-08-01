@@ -8,15 +8,20 @@ import { inject, observer } from 'mobx-react';
 const styles = () => ({
   paper: {
     boxSizing: 'border-box',
-    width: '200px',
-    padding: '8px 20px',
-    margin: '10px auto',
-    backgroundColor: '#22252F',
+    // width: '100%',
+    padding: '12px',
     textTransform: 'uppercase',
-    boxShadow: 'none',
+    backgroundColor: '#fff',
+    boxShadow: '0px 1px 5px 0px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0, 0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.12)',
   },
   title: {
-    fontSize: '16px',
+    fontSize: '20px',
+    fontWeight: '700',
+    color: '#000',
+  },
+  label: {
+    color: '#000',
+    fontSize: '13.3px',
   },
 });
 
@@ -32,7 +37,7 @@ const TotalInvestors = inject('PortfolioStore')(observer(({ ...props }: Props) =
       <Grid item xs={12} sm={12} md={12}>
         <Paper className={classes.paper}>
           <h4 className={`headingText ${classes.title}`}>{PortfolioStore.currentPortfolioInvestorsCount}</h4>
-          <p className="labelText">Total Investors</p>
+          <p className={`labelText ${classes.label}`}>Total Investors</p>
         </Paper>
       </Grid >
     </Grid >

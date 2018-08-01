@@ -17,50 +17,64 @@ import statsCardStyle from './../../../variables/styles/statsCardStyle';
 const styles = () => ({
   cardContainer: {
     width: '18%',
-    marginTop: '20px',
+    minWidth: '150px',
+    height: 'auto',
     overflow: 'unset',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    '& path': {
+      fill: '#133140',
+    },
   },
   cardHeader: {
-    float: 'left',
-    margin: '0 10px',
-    marginTop: '-10px',
-    backgroundColor: '#272B3F',
-    '& :first-child': {
-      height: '24px',
-      margin: '0 auto',
-    },
+    position: 'relative',
+    top: '-20px',
+    left: '15px',
+    height: '60px',
+    width: '60px',
+    backgroundColor: '#fff',
+    border: '1px solid #133140',
+    padding: '0',
   },
   icon: {
     color: 'white',
+    fontSize: '35px',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
   },
   cardContent: {
-    paddingTop: '10px',
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '20px 15px 0 15px',
     textAlign: 'right',
   },
   cardTitle: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
+    fontSize: '13.3px',
+    marginBottom: '35px',
   },
   cardDescriptionNormal: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
-    paddingTop: '7px',
+    fontSize: '20px',
+    fontWeight: '700',
   },
   cardDescriptionPositive: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
-    paddingTop: '7px',
     color: '#70A800',
+    fontSize: '20px',
+    fontWeight: '700',
   },
   cardDescriptionNegative: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
-    paddingTop: '7px',
     color: '#B94A48',
+    fontSize: '20px',
+    fontWeight: '700',
   },
   input: {
     width: '100%',
-  },
-  info: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'flex-end',
   },
   paper: {
     padding: '20px',
@@ -68,15 +82,23 @@ const styles = () => ({
   popover: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
     pointerEvents: 'none',
+    marginTop: '15px',
   },
   popperClose: {
     pointerEvents: 'none',
   },
   hidden: {
-    visibility: 'hidden',
+    // visibility: 'hidden',
+    display: 'none',
   },
   color: {
     color: '#3BB3E4',
+    position: 'relative',
+    top: '-11px',
+  },
+  infoMessage: {
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
+    fontSize: '13.3px',
   },
 });
 
@@ -113,7 +135,7 @@ class SummaryCard extends React.Component<Props> {
       description,
       hasInfo,
       infoMessage,
-    // iconColor,
+      // iconColor,
     } = this.props;
     const { anchorEl } = this.state;
     const open = !!anchorEl;
@@ -130,57 +152,57 @@ class SummaryCard extends React.Component<Props> {
     };
 
     return (
-    <Card className={classes.cardContainer}>
-      <CardHeader
-        className={classes.cardHeader}
-        avatar={<this.props.icon className={classes.icon} />}
-      />
-      <CardContent className={classes.cardContent}>
-        <Typography component="p" className={classes.cardTitle}>
-          {title}
-        </Typography>
-        <div className={classes.info}>
-        <IconButton
-          className={hasInfo ? classes.color : classes.hidden}
-        >
-            <Info
-              fill="#3BB3E4"
-              onMouseOver={this.handlePopoverOpen}
-              onFocus={this.handlePopoverOpen}
-              onMouseOut={this.handlePopoverClose}
-              onBlur={this.handlePopoverClose}
-            />
-        </IconButton>
-        <Popover
-          className={classes.popover}
-          classes={{
-            paper: classes.paper,
-          }}
-          open={open}
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-          onClose={this.handlePopoverClose}
-          disableRestoreFocus
-        >
-          <Typography className={classes.cardTitle}>{infoMessage}</Typography>
-        </Popover>
-        <Typography
-          type="headline"
-          component="h2"
-          className={title === 'Total profit/loss' ? totalProfitLoss() : classes.cardDescriptionNormal}
-        >
-          {description}
-        </Typography>
-        </div>
-      </CardContent>
-    </Card>
+      <Card className={classes.cardContainer}>
+        <CardHeader
+          className={classes.cardHeader}
+          avatar={<this.props.icon className={classes.icon} />}
+        />
+        <CardContent className={classes.cardContent}>
+          <Typography component="p" className={classes.cardTitle}>
+            {title}
+          </Typography>
+          <div className={classes.info}>
+            <IconButton
+              className={hasInfo ? classes.color : classes.hidden}
+            >
+              <Info
+                fill="#3BB3E4"
+                onMouseOver={this.handlePopoverOpen}
+                onFocus={this.handlePopoverOpen}
+                onMouseOut={this.handlePopoverClose}
+                onBlur={this.handlePopoverClose}
+              />
+            </IconButton>
+            <Popover
+              className={classes.popover}
+              classes={{
+                paper: classes.paper,
+              }}
+              open={open}
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+              onClose={this.handlePopoverClose}
+              disableRestoreFocus
+            >
+              <Typography className={classes.infoMessage}>{infoMessage}</Typography>
+            </Popover>
+            <Typography
+              type="headline"
+              component="h2"
+              className={title === 'Total profit/loss' ? totalProfitLoss() : classes.cardDescriptionNormal}
+            >
+              {description}
+            </Typography>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 }

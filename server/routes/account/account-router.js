@@ -12,7 +12,7 @@ const attachTo = (app, data) => {
     .post('/createTrade', (req, res) => accountController.createTrade(req, res))
     .put('/updateTrade/:id', (req, res) => accountController.updateTrade(req, res))
     .delete('/deleteTrade/:id', (req, res) => accountController.removeTrade(req, res))
-    .get('/allTrades', (req, res) => accountController.getAllTrades(req, res))
+    .get('/allTrades', (req, res) => accountController.getAllTrades(req, res));
 
   app.use('/account', router);
 };

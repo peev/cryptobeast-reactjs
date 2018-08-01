@@ -12,6 +12,11 @@ const styles = () => ({
     margin: 0,
     minWidth: '100%',
   },
+  dropDownContainer: {
+    '& .Select-menu-outer': {
+      width: '95%',
+    },
+  },
 });
 
 type Props = {
@@ -54,6 +59,7 @@ class SelectPortfolioCurrency extends React.Component<Props> {
               marginTop: '12px',
               width: '95%',
             }}
+            className={classes.dropDownContainer}
           />
         </FormControl>
       </div>

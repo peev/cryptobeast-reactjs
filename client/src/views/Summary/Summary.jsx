@@ -17,15 +17,15 @@ import PortfolioSummaryTable from './../../components/CustomTables/PortfolioSumm
 
 const styles = () => ({
   container: {
-    marginTop: '20px',
+    // marginTop: '20px',
   },
   containerHeader: {
     display: 'flex',
     justifyContent: 'space-between',
-    margin: '0 30px',
+    margin: '0',
   },
   containerMiddle: {
-    margin: '20px 22px 0',
+    margin: '50px 0',
   },
   warningText: {
     marginTop: '35%',
@@ -80,13 +80,18 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
+            // description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
+            description={PortfolioStore.currentPortfolioCostInUSD !== 0
+              ? `$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2)}`
+              : ''}
+            hasInfo={PortfolioStore.currentPortfolioCostInUSD === 0}
+            infoMessage="Please add assets to your portfolio"
           />
 
           <SummaryCard
             icon={CoinIcon}
             iconColor="gray"
-            title="Total investment"
+            title="Total purchase price"
             description={PortfolioStore.summaryTotalInvestmentInUSD !== 0
               ? `$${PortfolioStore.summaryTotalInvestmentInUSD}`
               : ''}
@@ -123,14 +128,14 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
           <Grid item xs={12} sm={12} md={12}>
             <PortfolioSummaryTable
               tableHead={[
-                'Ticker',
-                'Holdings',
-                'Price(BTC)',
-                'Price(USD)',
-                'Total Value(USD)',
-                'Asset Weight',
-                '24H Change',
-                '7D Change',
+                { id: 'ticker', numeric: false, disablePadding: false, label: 'Ticker' },
+                { id: 'holdings', numeric: false, disablePadding: false, label: 'Holdings' },
+                { id: 'priceBTC', numeric: false, disablePadding: false, label: 'Price (BTC)' },
+                { id: 'priceUSD', numeric: false, disablePadding: false, label: 'Price (USD)' },
+                { id: 'totalUSD', numeric: false, disablePadding: false, label: 'Total Value (USD)' },
+                { id: 'assetWeight', numeric: false, disablePadding: false, label: 'Asset Weight' },
+                { id: '24Change', numeric: false, disablePadding: false, label: '24H Change' },
+                { id: '7Change', numeric: false, disablePadding: false, label: '7D Change' },
               ]}
             />
           </Grid>
@@ -139,5 +144,6 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
     </Grid>
   );
 }));
+
 
 export default withStyles(styles, summaryStyle)(Summary);

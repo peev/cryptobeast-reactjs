@@ -52,7 +52,7 @@ const portfolioController = (repository, jobs) => {
           },
         });
 
-        res.status(200).send({ tradeHistory, apiTradeHistory });
+        return res.status(200).send({ tradeHistory, apiTradeHistory });
       }
 
       const foundAssets = await repository.find({
@@ -64,9 +64,9 @@ const portfolioController = (repository, jobs) => {
         },
       });
 
-      res.status(200).send(foundAssets);
+      return res.status(200).send(foundAssets);
     } catch (error) {
-      res.status(500).send(error);
+      return res.status(500).send(error);
     }
   };
 
@@ -86,7 +86,7 @@ const portfolioController = (repository, jobs) => {
         Object.keys(userMetadata).forEach(async (apiData) => {
           if (apiData.includes('api_account')) {
             // eslint-disable-next-line
-            return userApis[apiData] = {
+            userApis[apiData] = {
               exchange: userMetadata[apiData].exchange,
               account: userMetadata[apiData].account,
               isActive: userMetadata[apiData].isActive,
@@ -95,12 +95,12 @@ const portfolioController = (repository, jobs) => {
           }
         });
 
-        res.status(200).send({ userApis, portfolios: allProfilesFound });
+        return res.status(200).send({ userApis, portfolios: allProfilesFound });
       }
 
-      res.status(200).send({ userApis: {}, portfolios: allProfilesFound });
+      return res.status(200).send({ userApis: {}, portfolios: allProfilesFound });
     } catch (error) {
-      res.status(400).send(error);
+      return res.status(400).send(error);
     }
   };
 

@@ -7,7 +7,6 @@ import Select from 'react-select';
 import { FormControl } from 'material-ui/Form';
 // import Select from 'material-ui/Select';
 
-
 import { inject, observer } from 'mobx-react';
 
 const styles = (theme: Object) => ({
@@ -18,6 +17,11 @@ const styles = (theme: Object) => ({
   formControl: {
     margin: theme.spacing.unit,
     width: '100%',
+  },
+  dropDownContainer: {
+    '& .Select-menu-outer': {
+      width: '90.5%',
+    },
   },
 });
 
@@ -41,7 +45,6 @@ class SelectInvestor extends React.Component<Props> {
     }
   };
 
-
   render() {
     const { classes, PortfolioStore, value, style } = this.props;
     const { currentPortfolioInvestors } = PortfolioStore;
@@ -63,13 +66,17 @@ class SelectInvestor extends React.Component<Props> {
             // onOpen={this.handleOpen}
             onChange={this.handleChange}
             options={investorsToShow}
-            style={style}
+            style={{
+              ...style,
+              width: '90.5%',
+            }}
             inputProps={{
               id: 'controlled-open-select',
             }}
+            className={classes.dropDownContainer}
           />
         </FormControl>
-      </div>
+      </div >
     );
   }
 }

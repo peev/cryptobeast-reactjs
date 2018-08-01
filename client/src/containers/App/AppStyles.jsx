@@ -1,5 +1,6 @@
 // @flow
 const drawerWidth = 240;
+const headerHeight = 92;
 
 const appStyles = (theme: object) => ({
   root: {
@@ -12,7 +13,7 @@ const appStyles = (theme: object) => ({
   },
   appBar: {
     position: 'fixed',
-    height: '65px',
+    height: headerHeight,
     // zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
@@ -57,7 +58,7 @@ const appStyles = (theme: object) => ({
   },
   toolbar: {
     display: 'flex',
-    height: '92px',
+    height: headerHeight,
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: '0 8px',
@@ -67,7 +68,9 @@ const appStyles = (theme: object) => ({
     overflow: 'auto',
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    // padding: theme.spacing.unit * 3,
+    padding: '50px',
+    marginTop: headerHeight,
   },
   contentOpen: {
     width: '100%',

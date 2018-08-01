@@ -117,7 +117,6 @@ class App extends React.Component<Props> {
           </div>
         </Drawer>
         <main className={`${classes.content} ${this.state.open ? classes.contentOpen : classes.contentClose}`} >
-          <div className={classes.toolbar} />
           {children}
         </main>
       </div >

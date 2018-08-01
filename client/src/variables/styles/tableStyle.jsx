@@ -57,14 +57,14 @@ const tableStyle = theme => ({
   tableCellBuy: {
     ...defaultFont,
     lineHeight: '1.42857143',
-    padding: '12px 8px',
+    padding: '12px 9.05px',
     verticalAlign: 'middle',
     color: '#3ab693',
   },
   tableCellSell: {
     ...defaultFont,
     lineHeight: '1.42857143',
-    padding: '12px 8px',
+    padding: '12px 9.05px',
     verticalAlign: 'middle',
     color: '#eb4562',
   },
@@ -78,6 +78,15 @@ const tableStyle = theme => ({
   },
   negative: {
     color: '#eb4562',
+  },
+  selectRoot: {
+    '&>div>:nth-child(3)>div': {
+      width: '50px',
+    },
+  },
+  buttonsWidth: {
+    width: '40px',
+    padding: '0 !important',
   },
 });
 

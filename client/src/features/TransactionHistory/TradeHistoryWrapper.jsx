@@ -8,7 +8,7 @@ import TradeHistory from './TradeHistory/TradeHistory';
 
 const styles = () => ({
   tablePosition: {
-    marginTop: '80px',
+    // marginTop: '80px',
   },
 });
 
@@ -25,17 +25,17 @@ const TradeHistoryWrapper = ({ classes }: Props) => (
         <div className={classes.tablePosition}>
           <TradeHistory
             tableHead={[
-              'Trade Date',
-              'Entry date',
-              'Source',
-              'Pair',
-              'Type',
-              'Price',
-              'Filled',
-              'Fee',
-              'Total',
-              '',
-              '',
+              { id: 'tradeDate', numeric: false, disablePadding: false, label: 'Trade Date' },
+              { id: 'entryDate', numeric: false, disablePadding: false, label: 'Entry date' },
+              { id: 'source', numeric: false, disablePadding: false, label: 'Source' },
+              { id: 'pair', numeric: false, disablePadding: false, label: 'Pair' },
+              { id: 'type', numeric: false, disablePadding: false, label: 'Type' },
+              { id: 'price', numeric: false, disablePadding: false, label: 'Price' },
+              { id: 'filled', numeric: false, disablePadding: false, label: 'Filled' },
+              { id: 'fee', numeric: false, disablePadding: false, label: 'Fee' },
+              { id: 'total', numeric: false, disablePadding: false, label: 'Total' },
+              { id: 'edit', numeric: false, disablePadding: false, label: '' },
+              { id: 'remove', numeric: false, disablePadding: false, label: '' },
             ]}
           />
         </div>

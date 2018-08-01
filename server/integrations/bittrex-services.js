@@ -9,62 +9,48 @@ const bittrexServices = () => {
     });
   };
 
-  const getSummaries = () => {
-    return new Promise((resolve, reject) => {
-      bittrex.getmarketsummaries((data, err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data.result);
-        }
-      });
+  const getSummaries = () => new Promise((resolve, reject) => {
+    bittrex.getmarketsummaries((data, err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data.result);
+      }
     });
-  };
+  });
 
-  const getTicker = (marketName) => {
-    return new Promise((resolve, reject) => {
-      bittrex.getticker({ market: marketName }, (ticker) => {
-        resolve({ pair: marketName, last: (ticker ? ticker.result.Last : null) });
-      });
+  const getTicker = marketName => new Promise((resolve) => {
+    bittrex.getticker({ market: marketName }, (ticker) => {
+      resolve({ pair: marketName, last: (ticker ? ticker.result.Last : null) });
     });
-  };
+  });
 
-  const getAllTickers = () => {
-    return new Promise((resolve, reject) => {
-      getSummaries()
-        .then((data) => {
-          return Promise.all(data.map(d => getTicker(d.MarketName)));
-        })
-        .then((tickers) => {
-          resolve(tickers);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    });
-  };
-
-  const getCurrencies = () => {
-    return new Promise((resolve, reject) => {
-      bittrex.getcurrencies((data, err) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(data.result.map((c) => {
-          return {
-            currency: c.Currency,
-            currencyLong: c.CurrencyLong,
-            minConfirmation: c.MinConfirmation,
-            txFee: c.TxFee,
-            isActive: c.IsActive,
-            coinType: c.CoinType,
-            baseAddress: c.BaseAddress,
-            timestamps: c.Timestamps,
-          };
-        }));
+  const getAllTickers = () => new Promise((resolve) => {
+    getSummaries()
+      .then(data => Promise.all(data.map(d => getTicker(d.MarketName))))
+      .then(tickers => resolve(tickers))
+      .catch((error) => {
+        console.log(error);
       });
+  });
+
+  const getCurrencies = () => new Promise((resolve, reject) => {
+    bittrex.getcurrencies((data, err) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(data.result.map(c => ({
+        currency: c.Currency,
+        currencyLong: c.CurrencyLong,
+        minConfirmation: c.MinConfirmation,
+        txFee: c.TxFee,
+        isActive: c.IsActive,
+        coinType: c.CoinType,
+        baseAddress: c.BaseAddress,
+        timestamps: c.Timestamps,
+      })));
     });
-  };
+  });
 
   const getBalance = (account) => {
     setOptions(account.apiKey, account.apiSecret);
@@ -73,16 +59,14 @@ const bittrexServices = () => {
         if (err) {
           reject(err);
         } else {
-          resolve(data.result.map((c) => {
-            return {
-              currency: c.Currency,
-              balance: c.Balance,
-              available: c.Available,
-              pending: c.Pending,
-              cryptoAddress: c.CryptoAddress,
-              origin: 'Bittrex',
-            };
-          }));
+          resolve(data.result.map(c => ({
+            currency: c.Currency,
+            balance: c.Balance,
+            available: c.Available,
+            pending: c.Pending,
+            cryptoAddress: c.CryptoAddress,
+            origin: 'Bittrex',
+          })));
         }
       });
     });

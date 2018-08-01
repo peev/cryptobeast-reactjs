@@ -5,76 +5,105 @@ const { coinMarketCapServices } = require('../integrations/coinMarketCap-service
 
 const marketService = (repository) => {
   const syncSummaries = async () => {
-    const newSummaries = await bittrexServices().getSummaries();
-    await repository.removeAll({ modelName: 'MarketSummary' });
+    try {
+      const newSummaries = await bittrexServices().getSummaries();
 
-    return repository.createMany({ modelName: 'MarketSummary', newObjects: newSummaries });
-  }
+      await repository.removeAll({ modelName: 'MarketSummary' });
+      repository.createMany({ modelName: 'MarketSummary', newObjects: newSummaries });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const saveSummariesToHistory = async () => {
-    const newSummaries = await bittrexServices().getSummaries();
-    repository.createMany({ modelName: 'MarketSummaryHistory', newObjects: newSummaries });
-  }
+    try {
+      const newSummaries = await bittrexServices().getSummaries();
+      repository.createMany({ modelName: 'MarketSummaryHistory', newObjects: newSummaries });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getTickersFromKraken = async (currenciesToGet) => {
-    const baseCurrencies = currenciesToGet || 'XETHXXBT,XXBTZEUR,XXBTZJPY,XXBTZUSD';
-    const currencyDictionary = {
-      XETHXXBT: 'ETH',
-      XXBTZEUR: 'EUR',
-      XXBTZJPY: 'JPY',
-      XXBTZUSD: 'USD',
-    };
-    const tickers = await krakenServices().getTickers(baseCurrencies);
-    const currentTickerPairs = [];
-    Object.keys(tickers).map((currency) => {
-      currentTickerPairs.push({
-        pair: currencyDictionary[currency],
-        last: tickers[currency].c[0],
+    try {
+      const baseCurrencies = currenciesToGet || 'XETHXXBT,XXBTZEUR,XXBTZJPY,XXBTZUSD';
+      const currencyDictionary = {
+        XETHXXBT: 'ETH',
+        XXBTZEUR: 'EUR',
+        XXBTZJPY: 'JPY',
+        XXBTZUSD: 'USD',
+      };
+      const tickers = await krakenServices().getTickers(baseCurrencies);
+      const currentTickerPairs = [];
+      Object.keys(tickers).forEach((currency) => {
+        currentTickerPairs.push({
+          pair: currencyDictionary[currency],
+          last: tickers[currency].c[0],
+        });
       });
-    });
 
-    return currentTickerPairs;
-  }
+      return currentTickerPairs;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
 
   const syncTickersFromKraken = async (currenciesToGet) => {
-    const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
-    await repository.removeAll({ modelName: 'Ticker' });
+    try {
+      const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
+      await repository.removeAll({ modelName: 'Ticker' });
 
-    return repository.createMany({ modelName: 'Ticker', newObjects: currentTickerPairs });
-  }
+      repository.createMany({ modelName: 'Ticker', newObjects: currentTickerPairs });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const saveTickersFromKrakenToHistory = async (currenciesToGet) => {
-    const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
+    try {
+      const currentTickerPairs = await getTickersFromKraken(currenciesToGet);
 
-    return repository.createMany({ modelName: 'TickerHistory', newObjects: currentTickerPairs });
-  }
+      repository.createMany({ modelName: 'TickerHistory', newObjects: currentTickerPairs });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const syncTickersFromCoinMarketCap = async (convertCurrency = 'BTC') => {
-    const tickers = await coinMarketCapServices().getTickers(convertCurrency);
+    try {
+      const tickers = await coinMarketCapServices().getTickers(convertCurrency);
 
-    await repository.removeAll({ modelName: 'MarketPriceHistory' });
-    return repository.createMany({ modelName: 'MarketPriceHistory', newObjects: tickers });
-  }
+      await repository.removeAll({ modelName: 'MarketPriceHistory' });
+      repository.createMany({ modelName: 'MarketPriceHistory', newObjects: tickers });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const syncCurrenciesFromApi = async () => {
-    await repository.removeAll({ modelName: 'Currency' });
-    const currencies = await bittrexServices().getCurrencies();
+    try {
+      const currencies = await bittrexServices().getCurrencies();
 
-    return repository.createMany({ modelName: 'Currency', newObjects: currencies });
-  }
+      await repository.removeAll({ modelName: 'Currency' });
+      repository.createMany({ modelName: 'Currency', newObjects: currencies });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const createMarketJob = (marketFunction, time) => {
     // const time = { second: 1 } // every first second of each minute
     const { hour = '*', minute = '*', second = '*' } = time;
-    const job = new CronJob(`${second} ${minute} ${hour} * * *`, () => {
-      marketFunction();
-    }, () => {
-      /* This function is executed when the job stops */
-      console.log('Save closing share price job stopped!');
-    }, true, /* Start the job right now */
-      // timeZone /* Time zone of this job. */
-    );
-    return job;
+
+    return new CronJob({
+      cronTime: `${second} ${minute} ${hour} * * *`,
+      onTick: () => {
+        marketFunction();
+      },
+      start: true,
+      // timeZone: 'America/Los_Angeles',
+    });
   };
 
   return {

@@ -27,7 +27,7 @@ const styles = (theme: Object) => ({
     width: '550px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
-    padding: '30px 30px',
+    padding: '30px',
   },
   paperContainer: {
     margin: '0 -40px',

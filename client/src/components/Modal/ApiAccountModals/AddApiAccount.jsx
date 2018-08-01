@@ -26,10 +26,10 @@ function getModalStyle() {
 const styles = (theme: Object) => ({
   paper: {
     position: 'absolute',
-    minWidth: '200px',
+    width: '350px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
-    padding: '40px',
+    padding: '30px',
   },
   headerButtonContainer: {
     float: 'right',
@@ -40,10 +40,7 @@ const styles = (theme: Object) => ({
     fontSize: '18px',
     fontWeight: '200',
     textAlign: 'left',
-  },
-  inputWrapper: {
-    marginTop: '15px',
-    width: '300px',
+    textTransform: 'uppercase',
   },
   container: {
     display: 'flex',
@@ -55,6 +52,33 @@ const styles = (theme: Object) => ({
     display: 'flex',
     alignItems: 'baseline',
     justifyContent: 'space-between',
+    '& span': {
+      width: '16px',
+      position: 'relative',
+      top: '1px',
+    },
+    '& svg': {
+      fontSize: '18px',
+    },
+  },
+  inputStyle: {
+    width: '100%',
+    textTransform: 'uppercase',
+    '& input, & label': {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+      fontSize: '14px',
+    },
+  },
+  rowItem: {
+    width: '100%',
+    marginTop: '10px',
+  },
+  activeCheckbox: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '20%',
   },
 });
 
@@ -149,11 +173,11 @@ class AddApiAccount extends React.Component<Props, State> {
                   id="modal-title"
                   className={classes.modalTitle}
                 >
-                  IMPORT FROM API
+                  import from api
                 </Typography>
               </div>
-              <div>
-                Active
+              <div className={classes.activeCheckbox}>
+                active
                 <Checkbox
                   onChange={() => this.handleActive('isActive')}
                   color="primary"
@@ -162,7 +186,7 @@ class AddApiAccount extends React.Component<Props, State> {
               </div>
             </div>
             <div className={classes.container}>
-              <div className={classes.inputWrapper}>
+              <div className={classes.rowItem} style={{ width: '100%' }}>
                 <SelectExchange
                   label="Select Exchange*"
                   value={AssetStore.selectedExchangeCreateAccount}
@@ -173,64 +197,72 @@ class AddApiAccount extends React.Component<Props, State> {
                     border: 'none',
                     borderRadius: 0,
                     borderBottom: '1px solid #757575',
+                    textTransform: 'uppercase',
+                    fontSize: '14px',
                   }}
                 />
               </div>
 
-              <TextValidator
-                name="email"
-                label="Account*"
-                className={classes.inputWrapper}
-                value={ApiAccountStore.values.account}
-                onChange={(e: SyntheticEvent) => this.handleInputValue('account', e)}
-                validators={['required', 'isEmail']}
-                errorMessages={['this field is required', 'email is not valid']}
-              />
+              <div className={classes.rowItem}>
+                <TextValidator
+                  name="email"
+                  label="Account*"
+                  className={classes.inputStyle}
+                  value={ApiAccountStore.values.account}
+                  onChange={(e: SyntheticEvent) => this.handleInputValue('account', e)}
+                  validators={['required', 'isEmail']}
+                  errorMessages={['this field is required', 'email is not valid']}
+                />
+              </div>
 
-              <TextValidator
-                name="Api Key"
-                label="Api Key*"
-                className={classes.inputWrapper}
-                value={ApiAccountStore.values.apiKey}
-                onChange={(e: SyntheticEvent) => this.handleInputValue('apiKey', e)}
-                validators={['required']}
-                errorMessages={['this field is required']}
-              />
+              <div className={classes.rowItem}>
+                <TextValidator
+                  name="Api Key"
+                  label="Api Key*"
+                  className={classes.inputStyle}
+                  value={ApiAccountStore.values.apiKey}
+                  onChange={(e: SyntheticEvent) => this.handleInputValue('apiKey', e)}
+                  validators={['required']}
+                  errorMessages={['this field is required']}
+                />
+              </div>
 
-              <TextValidator
-                name="Api Secret"
-                label="Api Secret*"
-                className={classes.inputWrapper}
-                value={ApiAccountStore.values.apiSecret}
-                onChange={(e: SyntheticEvent) => this.handleInputValue('apiSecret', e)}
-                validators={['required']}
-                errorMessages={['this field is required']}
-              />
+              <div className={classes.rowItem}>
+                <TextValidator
+                  name="Api Secret"
+                  label="Api Secret*"
+                  className={classes.inputStyle}
+                  value={ApiAccountStore.values.apiSecret}
+                  onChange={(e: SyntheticEvent) => this.handleInputValue('apiSecret', e)}
+                  validators={['required']}
+                  errorMessages={['this field is required']}
+                />
+              </div>
             </div>
             <br />
 
-            {/* Cancel BUTTON */}
-            <Button
-              style={{ display: 'inline-flex', marginRight: '50px', float: 'left' }}
-              onClick={this.handleClose}
-              color="primary"
-            >
-              {' '}
-              Cancel
-            </Button>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              {/* Cancel BUTTON */}
+              <Button
+                onClick={this.handleClose}
+                color="primary"
+              >
+                {' '}
+                Cancel
+              </Button>
 
-            {/* SAVE BUTTON */}
-            <Button
-              style={{ display: 'inline-flex', float: 'right' }}
-              // onClick={this.handleSave}
-              color="primary"
-              type="submit"
-              disabled={NotificationStore.getErrorsLength > 0 || AssetStore.selectedExchangeCreateAccount === ''
-                || ApiAccountStore.values.apiKey === '' || ApiAccountStore.values.apiSecret === ''}
-            >
-              {' '}
-              Save
-            </Button>
+              {/* SAVE BUTTON */}
+              <Button
+                // onClick={this.handleSave}
+                color="primary"
+                type="submit"
+                disabled={NotificationStore.getErrorsLength > 0 || AssetStore.selectedExchangeCreateAccount === ''
+                  || ApiAccountStore.values.apiKey === '' || ApiAccountStore.values.apiSecret === ''}
+              >
+                {' '}
+                Save
+              </Button>
+            </div>
           </ValidatorForm>
         </Modal>
         <NotificationSnackbar />

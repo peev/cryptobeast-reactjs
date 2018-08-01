@@ -30,7 +30,7 @@ const styles = (theme: Object) => ({
     '& .Select-placeholder': {
       top: '2px',
     },
-    '& .Select-placeholder:hover, &.is-focused': {
+    '& .Select-placeholder:hover': {
       borderBottom: '1px solid #000',
     },
     '& .Select-clear': {
@@ -45,11 +45,6 @@ const styles = (theme: Object) => ({
       top: '4px',
     },
   },
-  // dropDownContainer: {
-  //   '& .Select-menu-outer': {
-  //     width: '90.5%',
-  //   },
-  // },
 });
 
 type Props = {

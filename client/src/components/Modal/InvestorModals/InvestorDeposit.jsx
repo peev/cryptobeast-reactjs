@@ -30,7 +30,7 @@ const styles = (theme: Object) => ({
     width: '550px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
-    padding: '30px 30px',
+    padding: '30px',
   },
   paperContainer: {
     margin: '0 -40px',
@@ -58,7 +58,7 @@ const styles = (theme: Object) => ({
     marginTop: '16px',
     '& input': {
       paddingLeft: '10px',
-      paddingRight: '6px',
+      paddingRight: '13px',
     },
     '& input[type=date]::-webkit-inner-spin-button, & input[type=date]::-webkit-outer-spin-button': {
       display: 'none',
@@ -67,12 +67,16 @@ const styles = (theme: Object) => ({
       display: 'none',
     },
     '& input[type=date]::-webkit-calendar-picker-indicator': {
-      color: '#999',
-      width: '10px',
-      fontSize: '11px',
+      position: 'relative',
+      fontSize: '12px',
+      top: '-4px',
+      padding: '1px',
+      color: 'transparent',
+      border: 'solid #999',
+      borderWidth: '0 1px 1px 0',
+      transform: 'rotate(45deg)',
       '&:hover': {
         backgroundColor: '#fff',
-        color: '#555',
         cursor: 'pointer',
       },
     },

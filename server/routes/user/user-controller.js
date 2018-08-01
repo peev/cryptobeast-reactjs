@@ -105,7 +105,7 @@ const userController = (repository, jobs) => {
         // Add found trade history to current selected portfolio
         await addTradeHistoryToPortfolio(returnedOrderHistory);
 
-        console.log( returnedOrderHistory); // for testing api response
+        console.log(returnedOrderHistory); // for testing api response
 
         return returnedUser;
       }
@@ -115,7 +115,6 @@ const userController = (repository, jobs) => {
       return res.status(404).send({ isSuccessful: false, message: error });
     }
   };
-
 
   const patchUserMetadata = async (req, res) => {
     // Validations
@@ -150,6 +149,64 @@ const userController = (repository, jobs) => {
 
   const deleteUserMetadata = async (req, res) => Auth0ManagementApi.patchUser(req, res);
 
+  const syncUserApiData = async (req, res) => {
+    const portfolioId = parseInt(req.params.portfolioId, 10);
+    const userMetadata = await Auth0ManagementApi.getUser(req, res);
+
+    // console.log(portfolioId);
+    // .filter(property => userMetadata.user_metadata[property].portfolioId === portfolioId);
+    const currentPortfolioApis = [];
+    const returnedAssets = [];
+    const returnedOrderHistory = [];
+    try {
+      Object.keys(userMetadata.user_metadata).forEach(async (property) => {
+        const currentProperty = userMetadata.user_metadata[property];
+        const currentApiKey = currentProperty.apiKey;
+        const currentApiSecret = currentProperty.apiSecret;
+        const currentPortfolioId = currentProperty.portfolioId;
+        const currentExchange = currentProperty.exchange;
+
+        if (currentPortfolioId === portfolioId) {
+          currentPortfolioApis.push(currentProperty);
+
+          console.log(currentProperty);
+          let currentApiAssets;
+          let currentApiHistory;
+          switch (currentExchange) {
+            case 'Bittrex':
+              currentApiAssets = await bittrexServices().getBalance({ currentApiKey, currentApiSecret });
+              currentApiHistory = await bittrexServices().getOderHistory({ currentApiKey, currentApiSecret }, currentPortfolioId);
+              break;
+            case 'Kraken':
+              currentApiAssets = await krakenServices().getBalance({ currentApiKey, currentApiSecret });
+              currentApiHistory = await krakenServices().getOderHistory({ currentApiKey, currentApiSecret }, currentPortfolioId);
+              break;
+            default:
+              console.log('There is no such api');
+              break;
+          }
+
+          returnedAssets.push(currentApiAssets);
+          returnedOrderHistory.push(currentApiHistory);
+          console.log('>>>>>>>>', currentApiAssets, currentApiHistory);
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      // return error;
+    }
+    // const findPortfolio = await repository.find({
+    //   modelName: 'ApiTradeHistory',
+    //   options: { where: { portfolioId } },
+    // });
+
+    // console.log(findPortfolio.length);
+    // findPortfolio.forEach(el => console.log(el.price));
+    console.log(currentPortfolioApis, returnedAssets, returnedOrderHistory);
+
+    return res.status(200).send({ isSuccessful: true, message: 'Assets updated' });
+  };
+
   //  Utility functions
   const addAssetsToPortfolio = async (assetsFromApi, portfolioId) => {
     try {
@@ -181,7 +238,10 @@ const userController = (repository, jobs) => {
     verifiedPatchUserMetadata,
     patchUserMetadata,
     deleteUserMetadata,
+    syncUserApiData,
   };
 };
 
 module.exports = userController;
+
+// userController().syncUserApiData();

@@ -155,6 +155,17 @@ class ApiAccountStore {
       }));
   }
 
+  @action.bound
+  // eslint-disable-next-line
+  syncUserApiData() {
+    const portfolioId = PortfolioStore.selectedPortfolioId;
+    // const currentUserAuthId = Authentication.getUserProfile().sub;
+
+    requester.User.syncUserApiData(portfolioId)
+      .then((response: object) => console.log(response))
+      .catch((error: object) => console.log(error));
+  }
+
   @computed
   get convertUserApis() {
     const returnApis = [];

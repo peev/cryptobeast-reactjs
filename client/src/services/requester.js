@@ -83,6 +83,7 @@ const User = {
   verifiedPatchUserMetadata: (id, data) => requests.patch(`/user/verifiedPatch/${id}`, data),
   patchUserMetadata: (id, data) => requests.patch(`/user/patch/${id}`, data),
   deleteUserMetadata: (id, data) => requests.patch(`/user/delete/${id}`, data),
+  syncUserApiData: id => requests.put(`/user/syncApiData/${id}`),
 };
 
 export default {

@@ -92,9 +92,9 @@ class ApiAccountStore {
         }
       }))
       .catch((error: object) => {
-        if (!error.response.data.isSuccessful) {
-          if (error.response.data.message.message) {
-            NotificationStore.addMessage('errorMessages', error.response.data.message.message);
+        if (error.response && !error.response.data.isSuccessful) {
+          if (error.response.data.message) {
+            NotificationStore.addMessage('errorMessages', error.response.data.message);
           } else if (selectedExchangeName === 'Kraken'
             && Object.keys(error.response.data.message).length === 0) {
             NotificationStore.addMessage('errorMessages', 'Invalid Api Key or Secret');
@@ -106,7 +106,7 @@ class ApiAccountStore {
   @action
   updateApiAccount(apiID: string) {
     const currentUserAuthId = Authentication.getUserProfile().sub;
-    Object.assign(this.updateValues, { isActive: this.values.isActive });
+    // Object.assign(this.updateValues, { isActive: this.values.isActive });
     const updatedApiAccount = {
       user_metadata: {
         [apiID]: this.updateValues,
@@ -120,20 +120,17 @@ class ApiAccountStore {
     requester.User.patchUserMetadata(currentUserAuthId, updatedApiAccount)
       .then(action((result: object) => {
         if (result.data.isSuccessful) {
-          const selectedUserAPi = this.userApis.get(apiID);
-          // const accountResult = this.updateValues.account
-          //   ? this.updateValues.account
-          //   : this.values.account;
-          const isActiveResult = this.updateValues.isActive
-            ? this.updateValues.isActive
-            : this.values.isActive;
-
-          Object.assign(selectedUserAPi, { isActive: isActiveResult });
+          this.userApis.get(apiID);
 
           NotificationStore.addMessage('successMessages', 'Successfully updated API');
           this.resetApiAccount();
         }
-      }));
+      }))
+      .catch((error: object) => {
+        if (error.response && !error.response.data.isSuccessful) {
+          NotificationStore.addMessage('errorMessages', error.response.data.message);
+        }
+      });
   }
 
   @action
@@ -152,7 +149,12 @@ class ApiAccountStore {
 
           this.userApis.set(apiID, {});
         }
-      }));
+      }))
+      .catch((error: object) => {
+        if (error.response && !error.response.data.isSuccessful) {
+          NotificationStore.addMessage('errorMessages', error.response.data.message);
+        }
+      });
   }
 
   @computed

@@ -2,7 +2,6 @@
 import React, { SyntheticEvent } from 'react';
 import { withStyles } from 'material-ui';
 import Typography from 'material-ui/Typography';
-import Checkbox from 'material-ui/Checkbox';
 import Modal from 'material-ui/Modal';
 import { Edit } from '@material-ui/icons';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
@@ -96,10 +95,6 @@ class UpdateApiAccount extends React.Component<Props, State> {
     this.props.ApiAccountStore.setApiAccountUpdateValues(propertyType, newValue);
   }
 
-  handleActive = () => {
-    this.props.ApiAccountStore.setIsActive();
-  }
-
   handleSave = () => {
     const { ApiAccountStore, PortfolioStore } = this.props;
     const hasErrors = ApiAccountStore.handleCreateNewAccountErrors();
@@ -135,36 +130,16 @@ class UpdateApiAccount extends React.Component<Props, State> {
             className={classes.paper}
           >
             <div className={classes.isActiveCheckbox}>
-              <div>
-                <Typography
-                  variant="title"
-                  id="modal-title"
-                  className={classes.modalTitle}
-                >
-                  Edit {ApiAccountStore.values.exchange} API
-                </Typography>
-              </div>
-              <div>
-                Active
-                <Checkbox
-                  onChange={() => this.handleActive('isActive')}
-                  color="primary"
-                  checked={ApiAccountStore.values.isActive}
-                />
-              </div>
+              <Typography
+                variant="title"
+                id="modal-title"
+                className={classes.modalTitle}
+              >
+                Edit {ApiAccountStore.values.exchange} API
+              </Typography>
             </div>
 
             <div className={classes.container}>
-              {/* <TextValidator
-                name="email"
-                label="Account*"
-                className={classes.inputWrapper}
-                value={ApiAccountStore.values.account}
-                onChange={(e: SyntheticEvent) => this.handleInputValue('account', e)}
-                validators={['required', 'isEmail']}
-                errorMessages={['this field is required', 'email is not valid']}
-              /> */}
-
               <TextValidator
                 name="Api Key"
                 label="Api Key*"

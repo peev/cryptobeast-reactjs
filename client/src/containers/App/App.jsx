@@ -72,6 +72,7 @@ class App extends React.Component<Props> {
           : (<AppBar
             position="absolute"
             className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
+            style={{ backgroundColor: '#143141' }}
           >
             <Toolbar className={classNames(!this.state.open && classes.headerPortfolios)}>
               <Header {...rest} />

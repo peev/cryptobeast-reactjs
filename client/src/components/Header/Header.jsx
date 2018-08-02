@@ -18,7 +18,6 @@ const styles = () => ({
     // position: 'fixed',
     width: '100%',
     padding: '0',
-    backgroundColor: '#143141',
     zIndex: '1',
   },
   logoutButton: {

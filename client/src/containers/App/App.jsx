@@ -71,7 +71,7 @@ class App extends React.Component<Props> {
           ? null
           : (<AppBar
             position="absolute"
-            className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
+            className={classNames(classes.appBar, this.state.open && classes.appBarShift, this.state.open && classes.appBarNoPadding)}
             style={{ backgroundColor: '#143141' }}
           >
             <Toolbar className={classNames(!this.state.open && classes.headerPortfolios)}>

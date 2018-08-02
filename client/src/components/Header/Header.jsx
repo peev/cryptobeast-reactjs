@@ -7,6 +7,7 @@ import AuthService from './../../services/Authentication';
 import PortfolioSelect from '../Selectors/PortfolioSelect/PortfolioSelect';
 import buttonStyle from '../../variables/styles/buttonStyle';
 import headerStyle from '../../variables/styles/headerStyle';
+import LogoutIcon from '../CustomIcons/LogoutIcon/LogoutIcon';
 
 
 const styles = () => ({
@@ -56,7 +57,8 @@ class Header extends Component<Props> {
           className={classes.logoutButton}
           onClick={() => handleLogout()}
         >
-          Log out
+          Logout
+          <LogoutIcon style={{ marginLeft: '10px' }} />
         </Button>
       </Toolbar>
     );

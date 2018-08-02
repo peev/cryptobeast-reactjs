@@ -4,6 +4,7 @@ import Select from 'react-select';
 import { withStyles } from 'material-ui/styles';
 import { FormControl } from 'material-ui/Form';
 import { inject, observer } from 'mobx-react';
+import DropDownArrow from '../CustomIcons/DropDown/DropDownArrow';
 
 const styles = (theme: Object) => ({
   button: {
@@ -13,6 +14,30 @@ const styles = (theme: Object) => ({
   formControl: {
     margin: theme.spacing.unit,
     minWidth: '100%',
+    '& .is-open > .Select-control .Select-arrow-zone svg': {
+      position: 'relative',
+      left: '-8px',
+      transform: 'rotate(180deg)',
+    },
+  },
+  select: {
+    '& .Select-placeholder': {
+      top: '2px',
+    },
+    '& .Select-placeholder:hover, &.is-focused': {
+      borderBottom: '1px solid #000',
+    },
+    '& .Select-clear': {
+      position: 'relative',
+      top: '2px',
+      right: '5px',
+    },
+    '& .Select-arrow-zone svg': {
+      fontSize: '15px',
+      paddingRight: '8px',
+      position: 'relative',
+      top: '4px',
+    },
   },
 });
 
@@ -36,6 +61,10 @@ class SelectBaseCurrency extends React.Component<Props, State> {
     baseCurrency: '',
   };
 
+  arrowRenderer = () => (
+    <DropDownArrow />
+  );
+
   handleOpen = () => {
     this.setState({ open: true });
   };
@@ -48,7 +77,7 @@ class SelectBaseCurrency extends React.Component<Props, State> {
     if (event) {
       this.props.MarketStore.selectBaseCurrency(event.value);
       // What Does This Do?
-    this.props.InvestorStore.convertedUsdEquiv; // eslint-disable-line
+      this.props.InvestorStore.convertedUsdEquiv; // eslint-disable-line
 
       this.setState({ baseCurrency: event.value });
     } else {
@@ -86,6 +115,8 @@ class SelectBaseCurrency extends React.Component<Props, State> {
               name: 'baseCurrencyId',
               id: 'controlled-open-select',
             }}
+            arrowRenderer={this.arrowRenderer}
+            className={classes.select}
           />
         </FormControl>
       </div>

@@ -7,17 +7,13 @@ import SelectInvestor from '../../Selectors/SelectInvestor';
 
 
 const styles = () => ({
-  container: {
-    width: '100%',
-    marginTop: '20px',
-    padding: '0 20px',
+  gridColumn: {
+    padding: '30px 25px 0 25px',
   },
-  containerItems: {
-    padding: '30px 10px 0 10px',
-    marginRight: '40px',
+  item: {
     display: 'flex',
-    alignItems: 'baseline',
     justifyContent: 'space-between',
+    padding: '0 10px',
     borderBottom: '1px solid black',
     '&>p': {
       textTransform: 'uppercase',
@@ -27,11 +23,7 @@ const styles = () => ({
     '&>span': {
       fontSize: '14px',
       fontWeight: '600',
-      whiteSpace: 'nowrap',
     },
-  },
-  overrideGrid: {
-    padding: '12px',
   },
   positiveValue: {
     color: '#70A800',
@@ -65,99 +57,104 @@ class IndividualSummary extends React.Component<Props> {
         onSubmit={() => { }}
       >
         <Grid container>
-          <Grid container className={classes.container}>
-            <Grid item xs={6} sm={6} md={3}>
-              <SelectInvestor
-                value={InvestorStore.selectedInvestorIndividualSummaryId || ''}
-                handleChange={this.handleSelectInvestorForSummary}
-                style={{
-                  width: '95%',
-                  border: 'none',
-                  borderRadius: 0,
-                  borderBottom: '1px solid #757575',
-                }}
-              />
-            </Grid>
+          <Grid item xs={12} md={6} lg={3} className={classes.gridColumn} style={{ marginBottom: '20px' }}>
+            <SelectInvestor
+              value={InvestorStore.selectedInvestorIndividualSummaryId || ''}
+              handleChange={this.handleSelectInvestorForSummary}
+              style={{
+                border: 'none',
+                borderRadius: 0,
+                borderBottom: '1px solid #757575',
+              }}
+            />
+          </Grid>
+        </Grid>
+
+        <Grid container>
+          <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>
+            <div className={classes.item}>
+              <p>Shares Held:</p>
+              <span>{InvestorStore.selectedInvestorTotalSharesHeld !== null
+                ? InvestorStore.selectedInvestorTotalSharesHeld
+                : ''}
+              </span>
+            </div>
           </Grid>
 
-          <Grid container className={classes.container}>
-            <Grid item xs={12} sm={6} md={3}>
-              <div className={classes.containerItems}>
-                <p>Shares Held:</p>
-                <span>{InvestorStore.selectedInvestorTotalSharesHeld !== null
-                  ? InvestorStore.selectedInvestorTotalSharesHeld
-                  : ''}
-                </span>
-              </div>
+          <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>
+            <div className={classes.item}>
+              <p>Weighted entry price:</p>
+              <span>{InvestorStore.individualWeightedEntryPrice !== null
+                ? `$ ${InvestorStore.nearZeroRounding(InvestorStore.individualWeightedEntryPrice, 2)}`
+                : ''}
+              </span>
+            </div>
+          </Grid>
 
-              <div className={classes.containerItems}>
-                <p>Weighted entry price:</p>
-                <span>{InvestorStore.individualWeightedEntryPrice !== null
-                  ? `$ ${InvestorStore.nearZeroRounding(InvestorStore.individualWeightedEntryPrice, 2)}`
-                  : ''}
-                </span>
-              </div>
-            </Grid>
+          <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>
+            <div className={classes.item}>
+              <p>USD Equivalent:</p>
+              <span>{InvestorStore.individualUSDEquivalent !== null
+                ? InvestorStore.nearZeroRounding(InvestorStore.individualUSDEquivalent, 2)
+                : ''}
+              </span>
+            </div>
+          </Grid>
 
-            <Grid item xs={12} sm={6} md={3}>
-              <div className={classes.containerItems}>
-                <p>USD Equivalent:</p>
-                <span>{InvestorStore.individualUSDEquivalent !== null
-                  ? InvestorStore.nearZeroRounding(InvestorStore.individualUSDEquivalent, 2)
-                  : ''}
-                </span>
-              </div>
+          <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>
+            <div className={classes.item}>
+              <p>BTC Equivalent:</p>
+              <span>{InvestorStore.individualBTCEquivalent !== null
+                ? InvestorStore.nearZeroRounding(InvestorStore.individualBTCEquivalent, 2)
+                : ''}
+              </span>
+            </div>
+          </Grid>
 
-              <div className={classes.containerItems}>
-                <p>BTC Equivalent:</p>
-                <span>{InvestorStore.individualBTCEquivalent !== null
-                  ? InvestorStore.nearZeroRounding(InvestorStore.individualBTCEquivalent, 2)
-                  : ''}
-                </span>
-              </div>
-            </Grid>
+          <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>
+            <div className={classes.item}>
+              <p>Investment Period:</p>
+              <span>{InvestorStore.individualInvestmentPeriod !== null
+                ? `${InvestorStore.individualInvestmentPeriod} DAYS`
+                : ''}
+              </span>
+            </div>
+          </Grid>
 
-            <Grid item xs={12} sm={6} md={3}>
-              <div className={classes.containerItems}>
-                <p>Investment Period:</p>
-                <span>{InvestorStore.individualInvestmentPeriod !== null
-                  ? `${InvestorStore.individualInvestmentPeriod} DAYS`
+          <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>
+            <div className={classes.item}>
+              <p>Profit:</p>
+              <span className={InvestorStore.individualProfit > 0
+                ? classes.positiveValue
+                : InvestorStore.individualProfit < 0
+                  ? classes.negativeValue
                   : ''}
-                </span>
-              </div>
-
-              <div className={classes.containerItems}>
-                <p>Profit:</p>
-                <span className={InvestorStore.individualProfit > 0
-                  ? classes.positiveValue
-                  : InvestorStore.individualProfit < 0
-                    ? classes.negativeValue
-                    : ''}
-                >
-                  {InvestorStore.individualProfit !== null
-                    ? `${InvestorStore.nearZeroRounding(InvestorStore.individualProfit, 2)} %`
-                    : ''}
-                </span>
-              </div>
-            </Grid>
-
-            <Grid item xs={12} sm={6} md={3}>
-              <div className={classes.containerItems}>
-                <p>ETH Equivalent:</p>
-                <span>{InvestorStore.individualETHEquivalent !== null
-                  ? InvestorStore.nearZeroRounding(InvestorStore.individualETHEquivalent, 2)
+              >
+                {InvestorStore.individualProfit !== null
+                  ? `${InvestorStore.nearZeroRounding(InvestorStore.individualProfit, 2)} %`
                   : ''}
-                </span>
-              </div>
+              </span>
+            </div>
+          </Grid>
 
-              <div className={classes.containerItems}>
-                <p>Fee Potential:</p>
-                <span>{InvestorStore.individualFeePotential !== null
-                  ? `$ ${InvestorStore.nearZeroRounding(InvestorStore.individualFeePotential, 2)}`
-                  : ''}
-                </span>
-              </div>
-            </Grid>
+          <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>
+            <div className={classes.item}>
+              <p>ETH Equivalent:</p>
+              <span>{InvestorStore.individualETHEquivalent !== null
+                ? InvestorStore.nearZeroRounding(InvestorStore.individualETHEquivalent, 2)
+                : ''}
+              </span>
+            </div>
+          </Grid>
+
+          <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>
+            <div className={classes.item}>
+              <p>Fee Potential:</p>
+              <span>{InvestorStore.individualFeePotential !== null
+                ? `$ ${InvestorStore.nearZeroRounding(InvestorStore.individualFeePotential, 2)}`
+                : ''}
+              </span>
+            </div>
           </Grid>
         </Grid>
       </ValidatorForm>

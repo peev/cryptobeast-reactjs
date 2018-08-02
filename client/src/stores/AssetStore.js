@@ -30,12 +30,12 @@ class AssetStore {
     this.selectedCurrencyBasicAsset = '';
     this.selectedCurrencyFromAssetAllocation = '';
     this.selectedCurrencyToAssetAllocation = '';
-    this.selectedCurrencyForTransactionFee = 'BTC';
+    this.selectedCurrencyForTransactionFee = '';
     this.assetInputValue = '';
     this.assetAllocationSelectedDate = '';
     this.assetAllocationFromAmount = '';
     this.assetAllocationToAmount = '';
-    this.assetAllocationFee = '0';
+    this.assetAllocationFee = '';
   }
 
   @computed
@@ -211,7 +211,7 @@ class AssetStore {
         if (!error.response.data.isSuccessful) {
           NotificationStore.addMessage('errorMessages', 'Error occurred, please try again.');
         }
-        console.log(error.response);
+        // console.log(error.response);
       });
   }
 
@@ -304,11 +304,11 @@ class AssetStore {
     this.assetAllocationSelectedDate = '';
     this.assetAllocationFromAmount = '';
     this.assetAllocationToAmount = '';
-    this.assetAllocationFee = '0';
+    this.assetAllocationFee = '';
     this.selectedCurrencyBasicAsset = '';
     this.selectedCurrencyFromAssetAllocation = '';
     this.selectedCurrencyToAssetAllocation = '';
-    this.selectedCurrencyForTransactionFee = 'BTC';
+    this.selectedCurrencyForTransactionFee = '';
     this.selectedCurrencyIdFromAssetAllocation = '';
   }
 

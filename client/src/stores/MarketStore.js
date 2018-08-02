@@ -130,7 +130,7 @@ class MarketStore {
 
   @action.bound
   selectBaseCurrency(currency: object) {
-    if (currency !== '') {
+    if (currency !== '' && this.baseCurrencies.length > 0) {
       [this.selectedBaseCurrency] = this.baseCurrencies.filter((item: object) => item.pair === currency);
     } else {
       this.resetMarket();

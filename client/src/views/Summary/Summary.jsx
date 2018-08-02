@@ -70,8 +70,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             iconColor="gray"
             title="Share price"
             description={PortfolioStore.summaryTotalNumberOfShares !== 0
-              ? `$${PortfolioStore.currentPortfolioSharePrice.toFixed(2)}`
-              : ''}
+              ? `$${Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100}` : ''}
             hasInfo={PortfolioStore.summaryTotalNumberOfShares === 0}
             infoMessage="Please add an investment to see your current share price"
           />

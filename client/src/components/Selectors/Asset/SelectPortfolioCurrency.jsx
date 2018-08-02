@@ -3,6 +3,8 @@ import React from 'react';
 import { withStyles, FormControl } from 'material-ui';
 import { inject, observer } from 'mobx-react';
 import Select from 'react-select';
+import DropDownArrow from '../../CustomIcons/DropDown/DropDownArrow';
+
 
 const styles = () => ({
   container: {
@@ -11,10 +13,29 @@ const styles = () => ({
   formControl: {
     margin: 0,
     minWidth: '100%',
+    '& .is-open > .Select-control .Select-arrow-zone svg': {
+      position: 'relative',
+      left: '-8px',
+      transform: 'rotate(180deg)',
+    },
   },
-  dropDownContainer: {
-    '& .Select-menu-outer': {
-      width: '95%',
+  select: {
+    '& .Select-placeholder': {
+      top: '2px',
+    },
+    '& .Select-placeholder:hover': {
+      borderBottom: '1px solid #000',
+    },
+    '& .Select-clear': {
+      position: 'relative',
+      top: '2px',
+      right: '5px',
+    },
+    '& .Select-arrow-zone svg': {
+      fontSize: '15px',
+      paddingRight: '8px',
+      position: 'relative',
+      top: '4px',
     },
   },
 });
@@ -34,6 +55,10 @@ class SelectPortfolioCurrency extends React.Component<Props> {
       this.props.AssetStore.resetCurrency();
     }
   };
+
+  arrowRenderer = () => (
+    <DropDownArrow />
+  );
 
   render() {
     const { classes, AssetStore } = this.props;
@@ -57,9 +82,9 @@ class SelectPortfolioCurrency extends React.Component<Props> {
               borderRadius: 0,
               borderBottom: '1px solid #757575',
               marginTop: '12px',
-              width: '95%',
             }}
-            className={classes.dropDownContainer}
+            arrowRenderer={this.arrowRenderer}
+            className={classes.select}
           />
         </FormControl>
       </div>

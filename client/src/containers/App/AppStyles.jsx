@@ -1,6 +1,5 @@
 // @flow
 const drawerWidth = 240;
-const headerHeight = 92;
 
 const appStyles = (theme: object) => ({
   root: {
@@ -13,7 +12,6 @@ const appStyles = (theme: object) => ({
   },
   appBar: {
     position: 'fixed',
-    height: headerHeight,
     // zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
@@ -21,6 +19,11 @@ const appStyles = (theme: object) => ({
     }),
     '&>div': {
       height: '100%',
+    },
+  },
+  appBarNoPadding: {
+    '&>div': {
+      padding: '0',
     },
   },
   appBarShift: {
@@ -58,7 +61,6 @@ const appStyles = (theme: object) => ({
   },
   toolbar: {
     display: 'flex',
-    height: headerHeight,
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: '0 8px',
@@ -70,7 +72,7 @@ const appStyles = (theme: object) => ({
     backgroundColor: theme.palette.background.default,
     // padding: theme.spacing.unit * 3,
     padding: '50px',
-    marginTop: headerHeight,
+    marginTop: '80px',
   },
   contentOpen: {
     width: '100%',
@@ -114,12 +116,12 @@ const appStyles = (theme: object) => ({
     display: 'flex',
     alignItems: 'center',
   },
-  combnedLogoContainer: {
+  combinedLogoContainer: {
     justifyContent: 'start',
     marginLeft: '3px',
   },
   headerPortfolios: {
-    paddingLeft: '93px',
+    padding: '0 0 0 73px',
   },
 });
 

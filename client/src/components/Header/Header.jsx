@@ -7,6 +7,7 @@ import AuthService from './../../services/Authentication';
 import PortfolioSelect from '../Selectors/PortfolioSelect/PortfolioSelect';
 import buttonStyle from '../../variables/styles/buttonStyle';
 import headerStyle from '../../variables/styles/headerStyle';
+import LogoutIcon from '../CustomIcons/LogoutIcon/LogoutIcon';
 
 
 const styles = () => ({
@@ -17,25 +18,18 @@ const styles = () => ({
     flexGrow: 1,
     // position: 'fixed',
     width: '100%',
-    paddingLeft: '0',
-    backgroundColor: '#22252f',
+    padding: '0',
     zIndex: '1',
   },
   logoutButton: {
     position: 'fixed',
     right: 50,
-    width: 100,
-    padding: 0,
-    height: 40,
-    color: 'white',
-    backgroundColor: 'rgba(0,0,0,0)',
-    border: 'none',
-    fontSize: '14px',
+    // width: 100,
+    // padding: 0,
+    // height: 40,
+    color: '#dee0e2',
+    fontSize: '12px',
     textTransform: 'uppercase',
-    boxShadow: '0px 1px 6px 0px rgba(255, 255, 255, 0.2)',
-    '&:hover': {
-      boxShadow: '0px 2px 12px 0px rgba(255, 255, 255, 0.4)',
-    },
   },
 });
 
@@ -63,7 +57,8 @@ class Header extends Component<Props> {
           className={classes.logoutButton}
           onClick={() => handleLogout()}
         >
-          Log out
+          Logout
+          <LogoutIcon style={{ marginLeft: '10px' }} />
         </Button>
       </Toolbar>
     );

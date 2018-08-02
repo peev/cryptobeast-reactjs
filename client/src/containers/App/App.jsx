@@ -71,7 +71,8 @@ class App extends React.Component<Props> {
           ? null
           : (<AppBar
             position="absolute"
-            className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
+            className={classNames(classes.appBar, this.state.open && classes.appBarShift, this.state.open && classes.appBarNoPadding)}
+            style={{ backgroundColor: '#143141' }}
           >
             <Toolbar className={classNames(!this.state.open && classes.headerPortfolios)}>
               <Header {...rest} />
@@ -85,7 +86,7 @@ class App extends React.Component<Props> {
           }}
           open={this.state.open}
         >
-          <div className={`${classes.toolbar} ${classes.combnedLogoContainer}`}>
+          <div className={`${classes.toolbar} ${classes.combinedLogoContainer}`}>
             <div className={classes.combinedLogo}>
               <Logo className={classes.logo} />
               <LogoText className={classes.logoText} />

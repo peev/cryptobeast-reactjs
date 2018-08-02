@@ -192,8 +192,8 @@ class AssetStore {
       fromAmount: this.assetAllocationFromAmount,
       toCurrency: this.selectedCurrencyToAssetAllocation,
       toAmount: `${this.assetAllocationToAmount}`, // NOTE: DON'T TOUCH THIS STRING
-      feeCurrency: this.selectedCurrencyForTransactionFee,
-      feeAmount: this.assetAllocationFee,
+      feeCurrency: this.selectedCurrencyForTransactionFee || 'BTC',
+      feeAmount: this.assetAllocationFee || 0,
     };
 
     // NOTE: allocation request has update, create and delete.

@@ -26,10 +26,10 @@ class ApiAccountStore {
     this.selectedApi = {};
   }
 
-  @action
-  setIsActive() {
-    this.values.isActive = !this.values.isActive;
-  }
+  // @action
+  // setIsActive() {
+  //   this.values.isActive = !this.values.isActive;
+  // }
 
   @action
   handleCreateNewAccountErrors() {

@@ -2,7 +2,6 @@
 import React, { SyntheticEvent } from 'react';
 import { withStyles } from 'material-ui';
 import Typography from 'material-ui/Typography';
-import Checkbox from 'material-ui/Checkbox';
 import Modal from 'material-ui/Modal';
 import { Add } from '@material-ui/icons';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
@@ -101,9 +100,9 @@ class AddApiAccount extends React.Component<Props, State> {
     this.props.ApiAccountStore.setNewApiAccountValues(propertyType, newValue);
   }
 
-  handleActive = () => {
-    this.props.ApiAccountStore.setIsActive();
-  }
+  // handleActive = () => {
+  //   this.props.ApiAccountStore.setIsActive();
+  // }
 
   handleSave = () => {
     const { ApiAccountStore, PortfolioStore } = this.props;
@@ -143,23 +142,23 @@ class AddApiAccount extends React.Component<Props, State> {
             className={classes.paper}
           >
             <div className={classes.isActiveCheckbox}>
-              <div>
-                <Typography
-                  variant="title"
-                  id="modal-title"
-                  className={classes.modalTitle}
-                >
-                  IMPORT FROM API
-                </Typography>
-              </div>
-              <div>
+              {/* <div> */}
+              <Typography
+                variant="title"
+                id="modal-title"
+                className={classes.modalTitle}
+              >
+                IMPORT FROM API
+              </Typography>
+              {/* </div> */}
+              {/* <div>
                 Active
                 <Checkbox
                   onChange={() => this.handleActive('isActive')}
                   color="primary"
                   checked={ApiAccountStore.values.isActive}
                 />
-              </div>
+              </div> */}
             </div>
             <div className={classes.container}>
               <div className={classes.inputWrapper}>

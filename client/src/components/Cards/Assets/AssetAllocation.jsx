@@ -12,6 +12,8 @@ import RegularButton from '../../CustomButtons/Button';
 import SelectExchange from '../../Selectors/Asset/SelectExchange';
 import SelectPortfolioCurrency from '../../Selectors/Asset/SelectPortfolioCurrency';
 import '../../Selectors/Asset/SelectAllCurrency';
+import DropDownArrow from '../../CustomIcons/DropDown/DropDownArrow';
+
 
 const styles = () => ({
   container: {
@@ -24,25 +26,16 @@ const styles = () => ({
     fontSize: '16px',
     textTransform: 'uppercase',
   },
-  alignInput: {
-    width: '95%',
-    marginTop: '25px',
+  gridContainer: {
+    margin: '20px -20px',
   },
-  alignInputAfter: {
-    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
-    width: '95%',
-    marginTop: '5px',
-  },
-  alignInputAfter2: {
-    width: '95%',
-    marginTop: '12px',
-  },
-  alignInputWidth: {
-    width: '95%',
+  gridItemPadding: {
+    padding: '0 20px',
   },
   popOverContainer: {
     display: 'flex',
     position: 'relative',
+    top: '-12px',
   },
   popOverButton: {
     position: 'absolute',
@@ -60,7 +53,7 @@ const styles = () => ({
   dateInputArrows: {
     '& input': {
       paddingLeft: '10px',
-      paddingRight: '6px',
+      paddingRight: '16px',
     },
     '& input[type=date]::-webkit-inner-spin-button, & input[type=date]::-webkit-outer-spin-button': {
       display: 'none',
@@ -69,14 +62,44 @@ const styles = () => ({
       display: 'none',
     },
     '& input[type=date]::-webkit-calendar-picker-indicator': {
-      color: '#999',
-      width: '10px',
-      fontSize: '11px',
+      position: 'relative',
+      fontSize: '12px',
+      top: '-3px',
+      padding: '1px',
+      color: 'transparent',
+      border: 'solid #999',
+      borderWidth: '0 1px 1px 0',
+      transform: 'rotate(45deg)',
       '&:hover': {
         backgroundColor: '#fff',
-        color: '#555',
         cursor: 'pointer',
       },
+    },
+  },
+  select: {
+    '& .Select-placeholder': {
+      top: '2px',
+    },
+    '& .Select-placeholder:hover': {
+      borderBottom: '1px solid #000',
+    },
+    '& .Select-clear': {
+      position: 'relative',
+      top: '2px',
+      right: '5px',
+    },
+    '& .Select-arrow-zone svg': {
+      fontSize: '15px',
+      paddingRight: '8px',
+      position: 'relative',
+      top: '4px',
+    },
+  },
+  selectArrowAnimation: {
+    '& .is-open > .Select-control .Select-arrow-zone svg': {
+      position: 'relative',
+      left: '-8px',
+      transform: 'rotate(180deg)',
     },
   },
 });
@@ -127,6 +150,10 @@ class AssetAllocation extends React.Component<Props> {
     }
   }
 
+  arrowRenderer = () => (
+    <DropDownArrow />
+  );
+
   render() {
     const {
       classes,
@@ -144,128 +171,134 @@ class AssetAllocation extends React.Component<Props> {
           <ValidatorForm
             onSubmit={this.handleSave}
           >
-            <Grid container className={classes.containerItems}>
-              <Grid item xs={12} sm={6} md={3}>
-                <SelectExchange
-                  label="Select Exchange (optional)"
-                  value={AssetStore.selectedExchangeAssetAllocation}
-                  handleChange={this.handleExchangeAssetAllocation}
-                  style={{
-                    width: '95%',
-                    marginTop: '12px',
-                    border: 'none',
-                    borderRadius: 0,
-                    borderBottom: '1px solid #757575',
-                  }}
-                />
+            <div className={classes.gridContainer}>
+              <Grid container className={classes.containerItems}>
+                <Grid item xs={12} md={6} lg={3} className={classes.gridItemPadding}>
+                  <SelectExchange
+                    label="Select Exchange (optional)"
+                    value={AssetStore.selectedExchangeAssetAllocation}
+                    handleChange={this.handleExchangeAssetAllocation}
+                    style={{
+                      border: 'none',
+                      borderRadius: 0,
+                      borderBottom: '1px solid #757575',
+                    }}
+                  />
 
-                <TextValidator
-                  name="date"
-                  type="date"
-                  style={{ marginTop: '21px', width: '95%' }}
-                  value={AssetStore.assetAllocationSelectedDate || today}
-                  onChange={this.handleRequests('assetAllocationSelectedDate')}
-                  validators={['required']}
-                  errorMessages={['this field is required']}
-                  className={classes.dateInputArrows}
-                />
+                  <TextValidator
+                    name="date"
+                    type="date"
+                    value={AssetStore.assetAllocationSelectedDate || today}
+                    onChange={this.handleRequests('assetAllocationSelectedDate')}
+                    validators={['required']}
+                    errorMessages={['this field is required']}
+                    style={{ marginTop: '31px', width: '100%' }}
+                    className={classes.dateInputArrows}
+                  />
+                </Grid>
+
+                <Grid item xs={12} md={6} lg={3} className={classes.gridItemPadding}>
+                  <div className={classes.popOverContainer}>
+                    <SelectPortfolioCurrency />
+
+                    {PortfolioStore.currentPortfolioAssets.length === 0
+                      ? <ClickablePopup />
+                      : ''}
+                  </div>
+
+                  <TextValidator
+                    name="quantity2"
+                    type="number"
+                    label="Quantity*"
+                    value={AssetStore.assetAllocationFromAmount}
+                    className={classes.numberInputArrows}
+                    onChange={this.handleRequests('assetAllocationFromAmount')}
+                    validators={['required', 'isPositive']}
+                    errorMessages={['this field is required', 'value must be a positive number']}
+                    style={{ width: '100%', position: 'relative', top: '-12px', marginTop: '15px' }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} md={6} lg={3} className={`${classes.selectArrowAnimation} ${classes.gridItemPadding}`}>
+                  <Select
+                    placeholder="Bought or received*"
+                    name="currency-to-asset-allocation"
+                    value={AssetStore.selectedCurrencyToAssetAllocation}
+                    onChange={this.handleCurrencyToAssetAllocation}
+                    options={allCurrenciesCombined}
+                    style={{
+                      border: 'none',
+                      borderRadius: 0,
+                      borderBottom: '1px solid #757575',
+                    }}
+                    arrowRenderer={this.arrowRenderer}
+                    className={classes.select}
+                  />
+                  <TextValidator
+                    name="quantity3"
+                    type="number"
+                    label="Quantity*"
+                    className={classes.numberInputArrows}
+                    value={AssetStore.assetAllocationToAmount}
+                    onChange={this.handleRequests('assetAllocationToAmount')}
+                    validators={['required', 'isPositive']}
+                    errorMessages={['this field is required', 'value must be a positive number']}
+                    style={{ width: '100%', marginTop: '15px' }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} md={6} lg={3} className={`${classes.selectArrowAnimation} ${classes.gridItemPadding}`}>
+                  <Select
+                    placeholder="Transaction Fee (optional)"
+                    name="currency-for-asset-fee"
+                    value={AssetStore.selectedCurrencyForTransactionFee}
+                    onChange={this.handleCurrencyForTransactionFee}
+                    options={allCurrenciesCombined}
+                    className={classes.select}
+                    style={{
+                      border: 'none',
+                      borderRadius: 0,
+                      borderBottom: '1px solid #757575',
+                    }}
+                    arrowRenderer={this.arrowRenderer}
+                  />
+                  <TextValidator
+                    name="fee"
+                    type="number"
+                    label="Quantity"
+                    className={classes.numberInputArrows}
+                    value={AssetStore.assetAllocationFee}
+                    onChange={this.handleRequests('assetAllocationFee')}
+                    validators={['isPositive', 'maxNumber:100']}
+                    errorMessages={['value must be a positive number', 'must be a number between 0 and 100']}
+                    style={{ width: '100%', marginTop: '15px' }}
+                  />
+                </Grid>
               </Grid>
 
-              <Grid item xs={12} sm={6} md={3}>
-                <div className={classes.popOverContainer}>
-                  <SelectPortfolioCurrency />
-
-                  {PortfolioStore.currentPortfolioAssets.length === 0
-                    ? <ClickablePopup />
-                    : ''}
-                </div>
-
-                <TextValidator
-                  name="quantity2"
-                  type="number"
-                  label="Quantity*"
-                  value={AssetStore.assetAllocationFromAmount}
-                  className={`${classes.alignInputAfter} ${classes.numberInputArrows}`}
-                  onChange={this.handleRequests('assetAllocationFromAmount')}
-                  validators={['required', 'isPositive']}
-                  errorMessages={['this field is required', 'value must be a positive number']}
-                />
+              <Grid container style={{ marginTop: '10px' }}>
+                <Grid
+                  item
+                  xs={12}
+                  className={classes.gridItemPadding}
+                  style={{ textAlign: 'right' }}
+                >
+                  <RegularButton
+                    type="submit"
+                    color="primary"
+                    // onClick={this.handleSave}
+                    disabled={AssetStore.assetAllocationToAmount === ''
+                      || AssetStore.selectedCurrencyToAssetAllocation === ''
+                      || AssetStore.assetAllocationFromAmount === ''
+                      || AssetStore.selectedCurrencyFromAssetAllocation === ''}
+                  >RECORD
+                  </RegularButton>
+                </Grid>
               </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <Select
-                  placeholder="Bought or received*"
-                  name="currency-to-asset-allocation"
-                  value={AssetStore.selectedCurrencyToAssetAllocation}
-                  onChange={this.handleCurrencyToAssetAllocation}
-                  options={allCurrenciesCombined}
-                  className={classes.alignInputAfter2}
-                  style={{
-                    border: 'none',
-                    borderRadius: 0,
-                    borderBottom: '1px solid #757575',
-                  }}
-                />
-                <TextValidator
-                  name="quantity3"
-                  type="number"
-                  label="Quantity*"
-                  className={`${classes.alignInputAfter} ${classes.numberInputArrows}`}
-                  value={AssetStore.assetAllocationToAmount}
-                  onChange={this.handleRequests('assetAllocationToAmount')}
-                  validators={['required', 'isPositive']}
-                  errorMessages={['this field is required', 'value must be a positive number']}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <Select
-                  placeholder="Transaction Fee (optional)"
-                  name="currency-for-asset-fee"
-                  value={AssetStore.selectedCurrencyForTransactionFee}
-                  onChange={this.handleCurrencyForTransactionFee}
-                  options={allCurrenciesCombined}
-                  className={classes.alignInputAfter2}
-                  style={{
-                    border: 'none',
-                    borderRadius: 0,
-                    borderBottom: '1px solid #757575',
-                  }}
-                />
-                <TextValidator
-                  name="fee"
-                  type="number"
-                  label="Quantity"
-                  className={`${classes.alignInputAfter} ${classes.numberInputArrows}`}
-                  value={AssetStore.assetAllocationFee}
-                  onChange={this.handleRequests('assetAllocationFee')}
-                  validators={['isPositive', 'maxNumber:100']}
-                  errorMessages={['value must be a positive number', 'must be a number between 0 and 100']}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid container>
-              <Grid item xs={12}>
-                <RegularButton
-                  type="submit"
-                  color="primary"
-                  // onClick={this.handleSave}
-                  disabled={AssetStore.assetAllocationToAmount === ''
-                    || AssetStore.selectedCurrencyToAssetAllocation === ''
-                    || AssetStore.assetAllocationFromAmount === ''
-                    || AssetStore.selectedCurrencyFromAssetAllocation === ''}
-                  style={{
-                    float: 'right',
-                    margin: '20px 25px 0 0',
-                  }}
-                >RECORD
-                </RegularButton>
-              </Grid>
-            </Grid>
+            </div>
           </ValidatorForm>
         </Paper>
-      </Grid>
+      </Grid >
     );
   }
 }

@@ -7,18 +7,29 @@
     fill: #FFF;
 }
 
-/* STYLE for the LOGO colors */
+/* STYLE for LOGO colors */
 .cls-3{fill:url(#linear-gradient)}
 .cls-4{fill:url(#linear-gradient-2)}
 .cls-5{fill:url(#linear-gradient-3)}
 .cls-6{fill:url(#linear-gradient-4)}
-/*  */
+/*-----*/
 
-/* STYLE for the LOGO TEXT */
+/* STYLE for LOGO TEXT */
 .cls-7{fill:#fff;}
-/*  */
+/*-----*/
 
-/* STYLE for the Тable's arrows */
+/* STYLE for Тable's arrows */
 .cls-8{fill:#3ec39d;}
 .cls-9{fill:#ca3f58;}
-/*  */
+/*-----*/
+
+/* STYLE for DropDown arrow */
+.cls-10{fill:none;stroke:#aaa;stroke-miterlimit:10}
+/*-----*/
+
+/* LOGOUT */
+.cls-11,.cls-12,.cls-13{fill:none;stroke-miterlimit:10;stroke-width:.75px}
+.cls-11{stroke:url(#linear-gradient-5)}
+.cls-12{stroke:url(#linear-gradient-6)}
+.cls-13{stroke:url(#linear-gradient-7)}
+/*-----*/

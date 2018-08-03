@@ -23,9 +23,11 @@ const styles = () => ({
     minHeight: '41px',
     backgroundColor: '#133140',
     color: '#FFF',
+    marginBottom: '6px',
+    boxShadow: '0 5px 10px -5px rgba(0,0,0,0.6)',
   },
   content: {
-    height: '314px',
+    height: '320px',
     minHeight: '314px',
     '&>div': {
       height: '100%',
@@ -40,12 +42,19 @@ const styles = () => ({
     height: '41px',
     minHeight: '41px',
     maxWidth: '100%',
+    '& span': {
+      textTransform: 'none',
+      fontSize: '16px',
+    },
   },
   removePaddingBottom: {
     paddingBottom: '0',
   },
   paper: {
     marginRight: '20px',
+  },
+  indicator: {
+    backgroundColor: 'white',
   },
 });
 
@@ -81,7 +90,9 @@ class SummaryTabs extends React.Component<Props, State> {
               value={this.state.value}
               onChange={this.handleChange}
               centered={centered}
-              indicatorColor="primary"
+              classes={{
+                indicator: classes.indicator,
+              }}
             >
               <Tab label="Portfolio" value={this.value} className={classes.tabItem} />
               <Tab label="Trending" className={classes.tabItem} />
@@ -103,7 +114,7 @@ class SummaryTabs extends React.Component<Props, State> {
             </SwipeableViews>
           </Grid>
         </Grid>
-      </Paper>
+      </Paper >
     );
   }
 }

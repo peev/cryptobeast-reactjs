@@ -70,8 +70,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             iconColor="gray"
             title="Share price"
             description={PortfolioStore.summaryTotalNumberOfShares !== 0
-              ? `$${PortfolioStore.currentPortfolioSharePrice.toFixed(2)}`
-              : ''}
+              ? `$${Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100}` : ''}
             hasInfo={PortfolioStore.summaryTotalNumberOfShares === 0}
             infoMessage="Please add an investment to see your current share price"
           />
@@ -80,7 +79,12 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
+            // description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
+            description={PortfolioStore.currentPortfolioCostInUSD !== 0
+              ? `$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2)}`
+              : ''}
+            hasInfo={PortfolioStore.currentPortfolioCostInUSD === 0}
+            infoMessage="Please add assets to your portfolio"
           />
 
           <SummaryCard

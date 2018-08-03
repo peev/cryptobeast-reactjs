@@ -3,10 +3,36 @@ import React, { SyntheticEvent } from 'react';
 import { withStyles, FormControl } from 'material-ui';
 import Select from 'react-select';
 import constants from '../../../variables/constants.json';
+import DropDownArrow from '../../CustomIcons/DropDown/DropDownArrow';
+
 
 const styles = () => ({
   formControl: {
     minWidth: '100%',
+    '& .is-open > .Select-control .Select-arrow-zone svg': {
+      position: 'relative',
+      left: '-8px',
+      transform: 'rotate(180deg)',
+    },
+  },
+  select: {
+    '& .Select-placeholder': {
+      top: '2px',
+    },
+    '& .Select-placeholder:hover': {
+      borderBottom: '1px solid #000',
+    },
+    '& .Select-clear': {
+      position: 'relative',
+      top: '2px',
+      right: '5px',
+    },
+    '& .Select-arrow-zone svg': {
+      fontSize: '15px',
+      paddingRight: '8px',
+      position: 'relative',
+      top: '4px',
+    },
   },
 });
 
@@ -43,6 +69,10 @@ class SelectExchange extends React.Component<Props, State> {
     }
   };
 
+  arrowRenderer = () => (
+    <DropDownArrow />
+  );
+
   render() {
     const { classes, value, label, style } = this.props;
     const allExchanges = constants.services.map((name: string) => ({ value: name, label: name }));
@@ -68,6 +98,8 @@ class SelectExchange extends React.Component<Props, State> {
             }}
             options={allExchanges}
             style={style}
+            arrowRenderer={this.arrowRenderer}
+            className={classes.select}
           />
         </FormControl>
       </div>

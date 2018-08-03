@@ -15,8 +15,8 @@ const attachTo = (app, repository, jobs) => {
       validator.verifiedPatchUserMetadataValidateInternals,
       userController.verifiedPatchUserMetadata)
     .patch('/patch/:id', validator.patchUserMetadataValidateRequest, authenticationService.checkAuthManagementToken, userController.patchUserMetadata)
-    .put('/syncApiData/:portfolioId', authenticationService.checkAuthManagementToken, userController.syncUserApiData)
-    .patch('/delete/:id', authenticationService.checkAuthManagementToken, userController.deleteUserMetadata);
+    .patch('/delete/:id', authenticationService.checkAuthManagementToken, userController.deleteUserMetadata)
+    .put('/syncApiData/:portfolioId', authenticationService.checkAuthManagementToken, userController.syncUserApiData);
 
   app.use('/user', router);
 };

@@ -54,21 +54,7 @@ const userController = (repository, jobs) => {
       const { exchange, apiKey, apiSecret, portfolioId } = req.body.user_metadata.api;
 
       // Check user api key and secret, be requesting account balance
-      let returnedAssets;
-      let returnedOrderHistory;
-      switch (exchange) {
-        case 'Bittrex':
-          returnedAssets = await bittrexServices().getBalance({ apiKey, apiSecret });
-          returnedOrderHistory = await bittrexServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
-          break;
-        case 'Kraken':
-          returnedAssets = await krakenServices().getBalance({ apiKey, apiSecret });
-          returnedOrderHistory = await krakenServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
-          break;
-        default:
-          console.log('There is no such api');
-          break;
-      }
+      const { returnedAssets, returnedOrderHistory } = await getUserApiData(exchange, apiKey, apiSecret, portfolioId);
 
       if (returnedAssets) {
         // Add given api key and secret to auth0
@@ -114,63 +100,140 @@ const userController = (repository, jobs) => {
 
   const syncUserApiData = async (req, res) => {
     const portfolioId = parseInt(req.params.portfolioId, 10);
-    const userMetadata = await Auth0ManagementApi.getUser(req, res);
+    const auth0User = await Auth0ManagementApi.getUser(req, res);
+    const userMetadata = auth0User.user_metadata;
 
-    // console.log(portfolioId);
-    // .filter(property => userMetadata.user_metadata[property].portfolioId === portfolioId);
     const currentPortfolioApis = [];
-    const returnedAssets = [];
-    const returnedOrderHistory = [];
-    try {
-      Object.keys(userMetadata.user_metadata).forEach(async (property) => {
-        const currentProperty = userMetadata.user_metadata[property];
+    const currentPortfolioApiAssets = [];
+    const currentPortfolioApiHistory = [];
+
+    const promises = [];
+
+
+    // Get User Api Data
+    Object.keys(userMetadata).forEach(async (property) => {
+      const currentProperty = userMetadata[property];
+      const currentPortfolioId = currentProperty.portfolioId;
+      if (currentPortfolioId === portfolioId && property !== 'api') {
+        const currentExchange = currentProperty.exchange;
         const currentApiKey = currentProperty.apiKey;
         const currentApiSecret = currentProperty.apiSecret;
-        const currentPortfolioId = currentProperty.portfolioId;
-        const currentExchange = currentProperty.exchange;
 
-        if (currentPortfolioId === portfolioId) {
-          currentPortfolioApis.push(currentProperty);
+        currentPortfolioApis.push(currentExchange);
 
-          console.log(currentProperty);
-          let currentApiAssets;
-          let currentApiHistory;
-          switch (currentExchange) {
-            case 'Bittrex':
-              currentApiAssets = await bittrexServices().getBalance({ currentApiKey, currentApiSecret });
-              currentApiHistory = await bittrexServices().getOderHistory({ currentApiKey, currentApiSecret }, currentPortfolioId);
-              break;
-            case 'Kraken':
-              currentApiAssets = await krakenServices().getBalance({ currentApiKey, currentApiSecret });
-              currentApiHistory = await krakenServices().getOderHistory({ currentApiKey, currentApiSecret }, currentPortfolioId);
-              break;
-            default:
-              console.log('There is no such api');
-              break;
-          }
+        promises.push(getUserApiData(currentExchange, currentApiKey, currentApiSecret, currentPortfolioId));
+      }
+    });
 
-          returnedAssets.push(currentApiAssets);
-          returnedOrderHistory.push(currentApiHistory);
-          console.log('>>>>>>>>', currentApiAssets, currentApiHistory);
-        }
+    await Promise.all(promises)
+      .then((apiResult) => {
+        apiResult.forEach((item) => {
+          const { returnedAssets, returnedOrderHistory } = item;
+          currentPortfolioApiAssets.push(returnedAssets);
+          currentPortfolioApiHistory.push(returnedOrderHistory);
+        });
       });
-    } catch (error) {
-      console.log(error)
-      // return error;
-    }
-    // const findPortfolio = await repository.find({
-    //   modelName: 'ApiTradeHistory',
-    //   options: { where: { portfolioId } },
-    // });
 
-    // console.log(findPortfolio.length);
-    // findPortfolio.forEach(el => console.log(el.price));
-    console.log(currentPortfolioApis, returnedAssets, returnedOrderHistory);
+
+    // Get User Data from database
+    const currentPortfolioAssets = await repository.find({
+      modelName: 'Asset',
+      options: { where: { portfolioId } },
+    });
+
+
+    // Compare values
+    let resultAssets;
+    let resultPortfolioAssets;
+    let newerApiHistoryToAdd;
+    currentPortfolioApis.forEach(async (apiName) => {
+      resultAssets = currentPortfolioApiAssets[0].reduce((accumulator, currentValue) => {
+        if (currentValue.origin === apiName) {
+          // console.log('<<<', currentValue, currentValue.origin, apiName);
+          return accumulator + parseFloat(currentValue.balance);
+        }
+        return accumulator;
+      }, 0);
+
+      resultPortfolioAssets = currentPortfolioAssets.reduce((accumulator, currentValue) => {
+        if (currentValue.origin === apiName) {
+          // console.log('>>>', accumulator, currentValue.balance, currentValue.origin);
+          return accumulator + parseFloat(currentValue.balance);
+        }
+        return accumulator;
+      }, 0);
+
+
+      // ==================
+      const lastAddedTradeHistory = await repository.findOne({
+        modelName: 'ApiTradeHistory',
+        options: {
+          where: {
+            portfolioId,
+            source: apiName,
+          },
+          order: [['time', 'DESC']],
+        },
+      });
+
+      newerApiHistoryToAdd = currentPortfolioApiHistory.map(async (api) => {
+        return api.filter((transaction) => {
+          if (new Date(lastAddedTradeHistory.time).getTime() < new Date(transaction.time).getTime()) {
+            return transaction;
+          }
+        });
+      });
+
+      // const resultPortfolioHistory = currentPortfolioHistory.reduce((accumulator, currentValue) => {
+      //   if (currentValue.source === apiName) {
+      //     console.log('>>>', currentValue, currentValue.source, apiName);
+      //     return accumulator + parseFloat(currentValue.volume);
+      //   }
+      //   return accumulator;
+      // }, 0);
+
+      // console.log('<<>>', resultAssets, resultPortfolioAssets);
+      // console.log('<<>>', newerApiHistoryToAdd);
+    });
+
+
+    // Update
+    // console.log('<<>>', resultAssets);
+    // console.log('<<>>', resultPortfolioAssets);
+    // console.log('<<>>', newerApiHistoryToAdd);
+    newerApiHistoryToAdd.map((el) => {
+      console.log(el);
+    })
+    // console.log('<<>>', currentPortfolioApiAssets[0].length, currentPortfolioAssets.length);
+    // console.log('<<>>', currentPortfolioApiHistory);
+
+    // console.log(returnedAssets, returnedOrderHistory);
 
     return res.status(200).send({ isSuccessful: true, message: 'Assets updated' });
   };
 
   //  Utility functions
+  const getUserApiData = async (exchange, apiKey, apiSecret, portfolioId) => {
+    // const { exchange, apiKey, apiSecret } = user;
+    let returnedAssets;
+    let returnedOrderHistory;
+    switch (exchange) {
+      case 'Bittrex':
+        returnedAssets = await bittrexServices().getBalance({ apiKey, apiSecret });
+        returnedOrderHistory = await bittrexServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
+        break;
+      case 'Kraken':
+        returnedAssets = await krakenServices().getBalance({ apiKey, apiSecret });
+        returnedOrderHistory = await krakenServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
+        break;
+      default:
+        console.log('There is no such api');
+        break;
+    }
+
+    return { returnedAssets, returnedOrderHistory };
+  };
+
   const addAssetsToPortfolio = async (assetsFromApi, portfolioId) => {
     try {
       const formatedAssets = Object.keys(assetsFromApi).map(property => ({

@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     balance: {
       type: DataTypes.DOUBLE,
+      allowNull: true,
     },
     available: {
       type: DataTypes.DOUBLE,
@@ -36,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     lastBTCEquivalent: {
       type: DataTypes.DOUBLE,
+      allowNull: true,
     },
   });
 };

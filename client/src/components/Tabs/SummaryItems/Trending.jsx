@@ -60,6 +60,9 @@ const styles = () => ({
     paddingTop: '7px',
     fill: '#ca3f58',
   },
+  oneDigitNumber: {
+    left: '-5px !important',
+  },
   change: {
     margin: '0',
     display: 'inline-block',
@@ -112,8 +115,13 @@ const Trending = inject('PortfolioStore')(observer(({ ...props }: Props) => {
         if (ind > 0) {
           return (
             <TableCell className={classes.tableCell} key={uuid()} >
-              {item ? <UpArrowIcon className={classes.upArrow} /> : ''}
-              <p className={classes.change}> {item ? `${item}%` : 'n/a'}</p>
+              {item < 0
+                ? <UpArrowIcon className={classes.upArrow} />
+                : item < 10
+                  ? <UpArrowIcon className={`${classes.upArrow} ${classes.oneDigitNumber}`} />
+                  : <UpArrowIcon className={classes.upArrow} />
+              }
+              <p className={classes.change}> {item ? `${item.toFixed(2)}%` : 'n/a'}</p>
             </TableCell>
           );
         }
@@ -133,8 +141,13 @@ const Trending = inject('PortfolioStore')(observer(({ ...props }: Props) => {
         if (ind > 0) {
           return (
             <TableCell className={classes.tableCell} key={uuid()} >
-              {item ? <DownArrowIcon className={classes.downArrow} /> : ''}
-              <p className={classes.change}> {item ? `${item}%` : 'n/a'}</p>
+              {item < 0
+                ? <DownArrowIcon className={classes.downArrow} />
+                : item > -10
+                  ? <DownArrowIcon className={`${classes.downArrow} ${classes.oneDigitNumber}`} />
+                  : <DownArrowIcon className={classes.downArrow} />
+              }
+              <p className={classes.change}> {item ? `${(item.toFixed(2))}%` : 'n/a'}</p>
             </TableCell>
           );
         }

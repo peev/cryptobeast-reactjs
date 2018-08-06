@@ -257,7 +257,7 @@ class InvestorWithdraw extends React.Component<Props, State> {
                   <div className={classes.gridRow}>
                     <DisplayInformation
                       value={`$${Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100}`}
-                      placeholderText="share price at entry date"
+                      placeholderText="share price at exit date"
                     />
                   </div>
                 </Grid>

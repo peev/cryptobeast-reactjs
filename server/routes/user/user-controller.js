@@ -109,110 +109,91 @@ const userController = (repository, jobs) => {
 
     const promises = [];
 
-
     // Get User Api Data
-    Object.keys(userMetadata).forEach(async (property) => {
-      const currentProperty = userMetadata[property];
-      const currentPortfolioId = currentProperty.portfolioId;
-      if (currentPortfolioId === portfolioId && property !== 'api') {
-        const currentExchange = currentProperty.exchange;
-        const currentApiKey = currentProperty.apiKey;
-        const currentApiSecret = currentProperty.apiSecret;
+    try {
+      Object.keys(userMetadata).forEach(async (property) => {
+        const currentProperty = userMetadata[property];
+        const currentPortfolioId = currentProperty.portfolioId;
 
-        currentPortfolioApis.push(currentExchange);
+        if (currentPortfolioId === portfolioId && property !== 'api') {
+          const currentExchange = currentProperty.exchange;
+          const currentApiKey = currentProperty.apiKey;
+          const currentApiSecret = currentProperty.apiSecret;
 
-        promises.push(getUserApiData(currentExchange, currentApiKey, currentApiSecret, currentPortfolioId));
-      }
-    });
+          currentPortfolioApis.push(currentExchange);
 
-    await Promise.all(promises)
-      .then((apiResult) => {
-        apiResult.forEach((item) => {
-          const { returnedAssets, returnedOrderHistory } = item;
-          currentPortfolioApiAssets.push(returnedAssets);
-          currentPortfolioApiHistory.push(returnedOrderHistory);
+          promises.push(getUserApiData(currentExchange, currentApiKey, currentApiSecret, currentPortfolioId));
+        }
+      });
+
+      await Promise.all(promises)
+        .then((apiResult) => {
+          apiResult.forEach((item) => {
+            const { returnedAssets, returnedOrderHistory } = item;
+            currentPortfolioApiAssets.push(returnedAssets);
+            currentPortfolioApiHistory.push(returnedOrderHistory);
+          });
         });
-      });
+    } catch (error) {
+      return res.status(404).send({ isSuccessful: false, message: error });
+    }
 
 
-    // Get User Data from database
-    const currentPortfolioAssets = await repository.find({
-      modelName: 'Asset',
-      options: { where: { portfolioId } },
-    });
+    // Check apis for syncing
+    let updatedAssets = null;
+    let updatedHistory = null;
+    try {
+      (async () => {
+        await Promise.all(currentPortfolioApis.map(async (apiName, index) => {
+          if (currentPortfolioApiAssets[index].length > 0) {
+            const result = await syncPortfolioAssets(apiName, portfolioId, currentPortfolioApiAssets, index);
 
-
-    // Compare values
-    let resultAssets;
-    let resultPortfolioAssets;
-    let newerApiHistoryToAdd;
-    currentPortfolioApis.forEach(async (apiName) => {
-      resultAssets = currentPortfolioApiAssets[0].reduce((accumulator, currentValue) => {
-        if (currentValue.origin === apiName) {
-          // console.log('<<<', currentValue, currentValue.origin, apiName);
-          return accumulator + parseFloat(currentValue.balance);
-        }
-        return accumulator;
-      }, 0);
-
-      resultPortfolioAssets = currentPortfolioAssets.reduce((accumulator, currentValue) => {
-        if (currentValue.origin === apiName) {
-          // console.log('>>>', accumulator, currentValue.balance, currentValue.origin);
-          return accumulator + parseFloat(currentValue.balance);
-        }
-        return accumulator;
-      }, 0);
-
-
-      // ==================
-      const lastAddedTradeHistory = await repository.findOne({
-        modelName: 'ApiTradeHistory',
-        options: {
-          where: {
-            portfolioId,
-            source: apiName,
-          },
-          order: [['time', 'DESC']],
-        },
-      });
-
-      newerApiHistoryToAdd = currentPortfolioApiHistory.map(async (api) => {
-        return api.filter((transaction) => {
-          if (new Date(lastAddedTradeHistory.time).getTime() < new Date(transaction.time).getTime()) {
-            return transaction;
+            if (result > 0) {
+              updatedAssets = await repository.find({
+                modelName: 'Asset',
+                options: {
+                  where: {
+                    portfolioId,
+                  },
+                  raw: true,
+                },
+              });
+              console.log('>>>>>>>> currentPortfolioApiAssets');
+            }
           }
+
+          if (currentPortfolioApiHistory[index].length > 0) {
+            const result = await syncPortfolioHistory(apiName, portfolioId, currentPortfolioApiHistory);
+
+            if (result > 0) {
+              updatedHistory = await repository.find({
+                modelName: 'ApiTradeHistory',
+                options: {
+                  where: {
+                    portfolioId,
+                  },
+                },
+              });
+              console.log('>>>>>>>> currentPortfolioApiHistory');
+            }
+          }
+        }))
+
+        console.log('>>>>>>>> end');
+        return res.status(200).send({
+          isSuccessful: true,
+          updatedAssets,
+          updatedHistory,
         });
-      });
-
-      // const resultPortfolioHistory = currentPortfolioHistory.reduce((accumulator, currentValue) => {
-      //   if (currentValue.source === apiName) {
-      //     console.log('>>>', currentValue, currentValue.source, apiName);
-      //     return accumulator + parseFloat(currentValue.volume);
-      //   }
-      //   return accumulator;
-      // }, 0);
-
-      // console.log('<<>>', resultAssets, resultPortfolioAssets);
-      // console.log('<<>>', newerApiHistoryToAdd);
-    });
-
-
-    // Update
-    // console.log('<<>>', resultAssets);
-    // console.log('<<>>', resultPortfolioAssets);
-    // console.log('<<>>', newerApiHistoryToAdd);
-    newerApiHistoryToAdd.map((el) => {
-      console.log(el);
-    })
-    // console.log('<<>>', currentPortfolioApiAssets[0].length, currentPortfolioAssets.length);
-    // console.log('<<>>', currentPortfolioApiHistory);
-
-    // console.log(returnedAssets, returnedOrderHistory);
-
-    return res.status(200).send({ isSuccessful: true, message: 'Assets updated' });
+      })();
+    } catch (error) {
+      return res.status(404).send({ isSuccessful: false, message: error });
+    }
   };
 
-  //  Utility functions
+  // =================
+  // Utility functions
+  // =================
   const getUserApiData = async (exchange, apiKey, apiSecret, portfolioId) => {
     // const { exchange, apiKey, apiSecret } = user;
     let returnedAssets;
@@ -259,6 +240,93 @@ const userController = (repository, jobs) => {
     }
   };
 
+  const syncPortfolioAssets = async (apiName, portfolioId, currentPortfolioApiAssets, index) => {
+    // Get User Assets from database
+    const currentPortfolioAssets = await repository.find({
+      modelName: 'Asset',
+      options: {
+        where: {
+          origin: apiName,
+          portfolioId,
+        },
+        raw: true,
+      },
+    });
+
+    if (currentPortfolioAssets) {
+      // Compare Assets
+      const resultAssets = currentPortfolioApiAssets[index].reduce((accumulator, currentValue) => {
+        if (currentValue.origin === apiName) {
+          return accumulator + parseFloat(currentValue.balance);
+        }
+        return accumulator;
+      }, 0);
+
+      const resultPortfolioAssets = currentPortfolioAssets.reduce((accumulator, currentValue) => {
+        if (currentValue.origin === apiName) {
+          return accumulator + parseFloat(currentValue.balance);
+        }
+        return accumulator;
+      }, 0);
+
+
+      // Add new Assets
+      if ((resultAssets !== resultPortfolioAssets)
+        || (currentPortfolioApiAssets[index].length !== currentPortfolioAssets.length)) {
+        await repository.removeAll({
+          modelName: 'Asset',
+          options: {
+            origin: apiName,
+            portfolioId,
+          },
+        });
+
+        await addAssetsToPortfolio(currentPortfolioApiAssets[index], portfolioId);
+
+        return 1;
+      }
+
+      return 0;
+    }
+
+    return 0;
+  };
+
+  const syncPortfolioHistory = async (apiName, portfolioId, currentPortfolioApiHistory) => {
+    // Get User Api History from database
+    const lastAddedTradeHistory = await repository.findOne({
+      modelName: 'ApiTradeHistory',
+      options: {
+        where: {
+          source: apiName,
+          portfolioId,
+        },
+        order: [['time', 'DESC']],
+      },
+    });
+
+      const newerApiHistoryToAdd = currentPortfolioApiHistory.map((api) => {
+        return api.filter(transaction =>
+          (new Date(lastAddedTradeHistory.time).getTime() < new Date(transaction.time).getTime()));
+      });
+
+
+      // Add newer Api History
+      let updated = 0;
+      // eslint-disable-next-line
+      (async () => {
+        await Promise.all(newerApiHistoryToAdd.map(async (apiHistory) => {
+          if (apiHistory.length > 0) {
+            console.log(apiHistory);
+            await addTradeHistoryToPortfolio(apiHistory);
+            updated += 1;
+          }
+        }));
+      });
+
+      return updated;
+  };
+
   return {
     updateClosingTime,
     verifiedPatchUserMetadata,
@@ -269,5 +337,3 @@ const userController = (repository, jobs) => {
 };
 
 module.exports = userController;
-
-// userController().syncUserApiData();

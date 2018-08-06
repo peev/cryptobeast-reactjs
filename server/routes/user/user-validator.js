@@ -73,10 +73,21 @@ const userValidator = () => {
     return next();
   };
 
+  const syncUserApiDataRequest = (req, res, next) => {
+    const payload = req.params;
+
+    if (!req.params || !payload) {
+      return res.status(400).send({ isSuccessful: false, message: 'No portfolio specified' });
+    }
+
+    return next();
+  };
+
   return {
     verifiedPatchUserMetadataValidateRequest,
     verifiedPatchUserMetadataValidateInternals,
     patchUserMetadataValidateRequest,
+    syncUserApiDataRequest,
   };
 };
 

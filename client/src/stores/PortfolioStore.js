@@ -444,7 +444,7 @@ class PortfolioStore {
     if (this.selectedPortfolio && this.selectedPortfolio.shares > 0) {
       return (this.currentPortfolioCostInUSD || 1) / (this.selectedPortfolio.shares);
     }
-    return 1;
+    return 0;
   }
 
   @computed

@@ -33,7 +33,7 @@ const init = (db) => {
 
   const removeAll = request =>
     db[request.modelName].destroy({
-      where: {},
+      where: request.options || {},
     });
 
   const rawQuery = request =>

@@ -89,7 +89,7 @@ const bittrexServices = () => {
               source: 'Bittrex',
               sourceId: order.OrderUuid,
               pair: order.Exchange,
-              time: order.TimeStamp,
+              time: new Date(order.TimeStamp).toISOString(),
               entryDate: Date.now(),
               type: order.OrderType.slice(orderTypeUnderscore + 1),
               orderType: order.OrderType.slice(0, orderTypeUnderscore),

@@ -13,10 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     time: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
     },
     entryDate: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
     },
     type: {
       type: DataTypes.STRING,

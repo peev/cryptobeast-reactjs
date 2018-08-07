@@ -1,20 +1,28 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+/client/node_modules
+/server/node_modules
+
+# lockFiles
+/client/package-lock.json
+/client/yarn.lock
+/server/package-lock.json
+/server/yarn.lock
 
 # testing
-/coverage
+/client/coverage
 
 # production
-/build
+/client/build
+/server/log
 
 # database
 CryptoBeast.db
 *.db
 
-# vscode
-.vscode
+#environment
+/server/.env
 
 # misc
 .DS_Store
@@ -26,3 +34,6 @@ CryptoBeast.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# db config
+server/bin/config/db.js

@@ -1,0 +1,71 @@
+.auth0-lock.auth0-lock.auth0-lock-opened .auth0-lock-header-bg .auth0-lock-header-bg-blur {
+  opacity: 1 !important;
+  transition: unset !important;
+  background: #22252F !important;
+  filter: unset !important;
+}
+
+.auth0-lock.auth0-lock .auth0-lock-header {
+  color: white !important;
+  height: 135px !important;
+  border-radius: 0px !important;
+}
+
+.auth0-lock.auth0-lock .auth0-lock-header-bg {
+  height: 125px !important;
+}
+
+.auth0-lock.auth0-lock .auth0-lock-header-bg .auth0-lock-header-bg-blur {
+  border-radius: 0px !important;
+}
+
+
+.auth0-lock.auth0-lock .auth0-lock-widget {
+  width: 350px !important;
+  font-family: "Lato", "Helvetica", "Arial", sans-serif  !important;
+}
+
+.auth0-lock.auth0-lock .auth0-lock-cred-pane {
+  min-height: 470px !important;
+  border-radius: 0px !important;
+}
+
+
+.auth0-lock.auth0-lock .auth0-lock-tabs-container {
+  margin: -8px -20px 35px !important;
+  font-variant: small-caps !important;
+}
+
+.auth0-lock.auth0-lock .auth0-lock-tabs {
+  padding: 0px 25% 0px 25% !important;
+  box-shadow: none !important;
+}
+
+.auth0-lock.auth0-lock .auth0-lock-tabs li a {
+  padding: 11px 0px 4px 0px !important;
+  font-size: 15px;
+}
+
+.auth0-lock.auth0-lock .auth0-lock-input-wrap.auth0-lock-input-wrap-with-icon {
+  padding-left: 0px !important;
+  width: 75% !important;
+  margin: auto !important;
+}
+
+.auth0-lock.auth0-lock .auth0-lock-input-wrap .auth0-lock-input {
+  border-bottom: 1px solid #22252F !important;
+  border-radius: 0px !important;
+}
+
+.auth0-lock.auth0-lock .auth0-lock-submit {
+  width: 150px !important;
+  height: 40px !important;
+  margin: 0px auto 40px !important;
+  border-radius: 0px !important;
+  padding: 0px !important;
+  box-shadow: 0px 3px 21px 0px rgba(0, 0, 0, 0.4) !important;
+}
+
+.auth0-lock.auth0-lock .auth0-lock-form .auth0-lock-alternative .auth0-lock-alternative-link {
+  color: rgba(0,0,0,0.7) !important;
+}

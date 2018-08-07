@@ -157,6 +157,26 @@ class ApiAccountStore {
       });
   }
 
+  @action.bound
+  // eslint-disable-next-line
+  syncUserApiData() {
+    const portfolioId = PortfolioStore.selectedPortfolioId;
+    // const currentUserAuthId = Authentication.getUserProfile().sub;
+
+    requester.User.syncUserApiData(portfolioId)
+      .then(action((response: object) => {
+        const res = response.data;
+
+        if (res.updatedAssets !== null) {
+          PortfolioStore.currentPortfolioAssets = res.updatedAssets;
+        }
+        if (res.updatedHistory !== null) {
+          PortfolioStore.currentPortfolioApiTradeHistory = res.updatedHistory;
+        }
+      }))
+      .catch((error: object) => console.log(error));
+  }
+
   @computed
   get convertUserApis() {
     const returnApis = [];

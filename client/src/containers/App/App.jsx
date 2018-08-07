@@ -29,7 +29,7 @@ type Props = {
   children?: React.Node
 };
 
-@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore')
+@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'ApiAccountStore')
 @observer
 class App extends React.Component<Props> {
   state = {

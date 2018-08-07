@@ -108,8 +108,8 @@ const krakenServices = (key, secret) => {
             source: 'Kraken',
             sourceId: Object.keys(ordersHistory.trades)[i],
             pair: ordersHistory.trades[property].pair,
-            time: new Date(ordersHistory.trades[property].time * 1000), // converted from unix time stamp
-            entryDate: Date.now(),
+            time: new Date(ordersHistory.trades[property].time * 1000).toISOString(), // converted from unix time stamp
+            dateOfEntry: Date.now(),
             type: ordersHistory.trades[property].type.toUpperCase(),
             orderType: ordersHistory.trades[property].ordertype.toUpperCase(),
             price: ordersHistory.trades[property].cost,

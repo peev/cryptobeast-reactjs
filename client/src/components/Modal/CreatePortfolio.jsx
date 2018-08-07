@@ -24,10 +24,10 @@ function getModalStyle() {
 const styles = (theme: Object) => ({
   paper: {
     position: 'absolute',
-    minWidth: '300px',
+    width: '350px',
     backgroundColor: theme.palette.background.paper,
     boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
-    padding: theme.spacing.unit * 4,
+    padding: '30px',
   },
   buttonSettings: {
     float: 'right',
@@ -49,10 +49,20 @@ const styles = (theme: Object) => ({
     fontSize: '18px',
     fontWeight: '400',
     textAlign: 'center',
+    textTransform: 'uppercase',
   },
   inputWrapper: {
     marginTop: '15px',
-    width: '300px',
+    width: '100%',
+  },
+  inputStyle: {
+    width: '100%',
+    textTransform: 'uppercase',
+    '& input, & label': {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+      fontSize: '14px',
+    },
   },
 });
 
@@ -161,7 +171,7 @@ class CreatePortfolio extends React.Component<Props, State> {
               name="Portfolio Name"
               label="Portfolio name*"
               style={{ width: '100%' }}
-              className={classes.inputWrapper}
+              className={`${classes.inputWrapper} ${classes.inputStyle}`}
               onChange={this.handleInputValue}
               value={PortfolioStore.newPortfolioName}
               validators={['required']}
@@ -172,6 +182,7 @@ class CreatePortfolio extends React.Component<Props, State> {
                 className={classes.inputWrapper}
                 label="Select currency"
                 validators={['isPositive']}
+                style={{ textTransform: 'uppercase', fontSize: '14px' }}
               />
             </div>
             <TextValidator
@@ -180,7 +191,7 @@ class CreatePortfolio extends React.Component<Props, State> {
               onChange={this.handleRequests('depositedAmount')}
               name="depositedAmount"
               value={InvestorStore.newInvestorValues.depositedAmount}
-              className={classes.inputWrapper}
+              className={`${classes.inputWrapper} ${classes.inputStyle}`}
               validators={['isPositive']}
               errorMessages={['value must be a positive number']}
             />

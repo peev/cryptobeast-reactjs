@@ -3,6 +3,7 @@ import React, { SyntheticEvent } from 'react';
 import { withStyles, MenuItem, FormControl } from 'material-ui';
 import Select from 'material-ui/Select';
 import { inject, observer } from 'mobx-react';
+import DropDownArrow from '../../CustomIcons/DropDown/DropDownArrow';
 
 const styles = (theme: Object) => ({
   button: {
@@ -11,65 +12,47 @@ const styles = (theme: Object) => ({
   },
   formControl: {
     minWidth: 150,
-    float: 'left',
-  },
-  inputLabel: {
-    color: '#F6F6F6',
-    padding: '8px 27px',
-    width: '100%',
-    borderBottom: '1px solid #F6F6F6',
-    '& div p': {
-      margin: '10px 0',
-    },
+    // float: 'left',
+    paddingLeft: '48px',
   },
   listItem: {
-    display: 'flex',
     height: '100%',
-    padding: '0 16px',
+    padding: '15px 15px 15px 30px',
     backgroundColor: '#22252f',
-    // backgroundColor: 'rgba(34, 37, 47, 1) !important',
-    opacity: '1',
     '&:hover': {
-      backgroundColor: '#5B5F70 !important',
-    },
-    '&:last-child>div': {
-      borderBottom: 'none',
+      backgroundColor: '#143141 !important',
     },
   },
   selectedListItem: {
-    backgroundColor: '#414555 !important',
-    '&:hover': {
-      backgroundColor: '#414555 !important',
-    },
+    backgroundColor: '#143141 !important',
   },
   listItemContainer: {
-    display: 'flex',
     width: '100%',
-    padding: '16px 0',
-    paddingLeft: '25px',
-    borderBottom: '1px solid #F6F6F6',
+    display: 'flex',
     flexDirection: 'column',
   },
   listItemName: {
     color: '#F6F6F6',
-    margin: '0',
+    margin: '0 0 10px 0',
   },
   listItemDescription: {
     display: 'flex',
-  },
-  listItemDescriptionL: {
-    margin: '0',
-    marginRight: '20px',
-    color: '#3C7B69',
-    fontWeight: 'bolder',
-  },
-  listItemDescriptionR: {
-    margin: '0',
-    color: '#D0D0D0',
-    fontSize: '14px',
+    justifyContent: 'flex-start',
+    marginLeft: '-15px',
+    '& div': {
+      margin: '0',
+    },
+    '& :first-child': {
+      color: '#39b493',
+      fontWeight: '700',
+    },
+    '& :last-child': {
+      color: '#D0D0D0',
+      fontSize: '14px',
+    },
   },
   menuItemContainer: {
-    zIndex: '1',
+    marginTop: '64px',
     '&>ul': {
       padding: '0',
     },
@@ -78,24 +61,37 @@ const styles = (theme: Object) => ({
     '&>svg': {
       paddingRight: '10px',
       fill: '#F6F6F6',
-      top: '34px',
+      top: '14px',
     },
   },
   select: {
-    width: '200px',
+    display: 'flex',
+    alignItems: 'center',
     height: '60px',
-    padding: '0 32px',
-    marginTop: '16px',
-    marginBottom: '16px',
+    // width: '150px',
+    padding: '10px 30px',
     color: '#F6F6F6',
-    borderRight: '1px solid #F6F6F6',
     '&>div': {
-      padding: '7px 25px',
+      width: '100%',
+      padding: '0',
       borderBottom: 'none',
     },
   },
-  flex: {
-    flex: 1,
+  upArrow: {
+    position: 'relative',
+    top: '1px',
+    transform: 'rotate(180deg)',
+    padding: '0 7px',
+    '& polyline': {
+      stroke: '#39b493',
+    },
+  },
+  dropDownArrow: {
+    position: 'absolute',
+    right: '-5px',
+    pointerEvents: 'none',
+    fontSize: '17px',
+    top: '19px !important',
   },
 });
 
@@ -127,17 +123,20 @@ class PortfolioSelect extends React.Component<Props> {
       // select={i === 1 ? el.id : undefined}
       >
         <div className={classes.listItemContainer}>
-          <p className={classes.listItemName}>{el.name}</p>
+          <div className={classes.listItemName}>{el.name}</div>
           <div className={classes.listItemDescription}>
-            <p className={classes.listItemDescriptionL}>^4{0.45 + i}%</p>
-            <p className={classes.listItemDescriptionR}>{103.90 + i}</p>
+            <div style={{ padding: '0 15px', margin: '0 -7px' }}>
+              <DropDownArrow className={classes.upArrow} />
+              4{0.45 + i}%
+            </div>
+            <div>{103.90 + i}</div>
           </div>
         </div>
       </MenuItem>
     ));
 
     return (
-      <form autoComplete="off" className={classes.flex}>
+      <form autoComplete="off">
         <FormControl className={classes.formControl}>
           <Select
             classes={{
@@ -152,6 +151,7 @@ class PortfolioSelect extends React.Component<Props> {
               name: 'selectedPortfolioId',
               id: 'controlled-open-select',
             }}
+            IconComponent={() => <DropDownArrow className={classes.dropDownArrow} />}
           >
             {portfoliosToShow}
           </Select>

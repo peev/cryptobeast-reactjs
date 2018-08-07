@@ -679,6 +679,12 @@ class InvestorStore {
   handleWithdrawalInvestorErrors() {
     let noErrors = true;
 
+    if (PortfolioStore.currentPortfolioAssets.length === 0) {
+      NotificationStore.addMessage('errorMessages', 'Please select Investor!');
+      noErrors = false;
+      return noErrors;
+    }
+
     const hasInputShares = this.selectedInvestor !== null ? this.selectedInvestor.purchasedShares : 0;
     const hasEnoughShares = hasInputShares >= this.withdrawalValues.purchasedShares;
     if (!hasEnoughShares) {
@@ -686,8 +692,10 @@ class InvestorStore {
       noErrors = false;
     }
 
-    if (MarketStore.selectedBaseCurrency.pair === undefined) {
+    if (MarketStore.selectedBaseCurrency === null) {
       NotificationStore.addMessage('errorMessages', 'Please select currency!');
+      noErrors = false;
+      return noErrors;
     }
 
     const availableAssets = PortfolioStore.currentPortfolioAssets;

@@ -4,6 +4,7 @@ const { Router } = require('express');
 const attachTo = (app, repository, jobs) => {
   const router = new Router();
   const userController = require('./user-controller')(repository, jobs);
+  const validator = require('./user-validator')();
   const authenticationService = require('./../../services/authentication-service')();
 
   router
@@ -26,6 +27,7 @@ const attachTo = (app, repository, jobs) => {
       authenticationService.checkAuthManagementToken,
       userController.deleteUserMetadata,
     );
+
 
   app.use('/user', router);
 };

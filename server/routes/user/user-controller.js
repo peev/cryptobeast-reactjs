@@ -100,12 +100,12 @@ const userController = (repository, jobs) => {
         const returnedUser = await Auth0ManagementApi.patchUser(req, res);
 
         // Add found balance to current selected portfolio
-        await addAssetsToPortfolio(returnedAssets, portfolioId);
+        await addAssetsToPortfolio(returnedAssets, portfolioId); // eslint-disable-line
 
         // Add found trade history to current selected portfolio
-        await addTradeHistoryToPortfolio(returnedOrderHistory);
+        await addTradeHistoryToPortfolio(returnedOrderHistory); // eslint-disable-line
 
-        console.log( returnedOrderHistory); // for testing api response
+        console.log(returnedOrderHistory); // for testing api response
 
         return returnedUser;
       }
@@ -150,7 +150,7 @@ const userController = (repository, jobs) => {
 
   const deleteUserMetadata = async (req, res) => Auth0ManagementApi.patchUser(req, res);
 
-  //  Utility functions
+  // TODO: Normalize returned data to match DB model
   const addAssetsToPortfolio = async (assetsFromApi, portfolioId) => {
     try {
       const formatedAssets = Object.keys(assetsFromApi).map(property => ({
@@ -166,6 +166,7 @@ const userController = (repository, jobs) => {
     }
   };
 
+  // TODO: Normalize returned data to match DB model
   const addTradeHistoryToPortfolio = async (orderHistoryFromApi) => {
     try {
       if (orderHistoryFromApi.length > 0) {

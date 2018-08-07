@@ -26,7 +26,6 @@ const TradeHistoryWrapper = ({ classes }: Props) => (
           <TradeHistory
             tableHead={[
               { id: 'tradeDate', numeric: false, disablePadding: false, label: 'Trade Date' },
-              { id: 'entryDate', numeric: false, disablePadding: false, label: 'Entry date' },
               { id: 'source', numeric: false, disablePadding: false, label: 'Source' },
               { id: 'pair', numeric: false, disablePadding: false, label: 'Pair' },
               { id: 'type', numeric: false, disablePadding: false, label: 'Type' },

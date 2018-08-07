@@ -146,40 +146,14 @@ const userController = (repository, jobs) => {
       (async () => {
         await Promise.all(currentPortfolioApis.map(async (apiName, index) => {
           if (currentPortfolioApiAssets[index].length > 0) {
-            const result = await syncPortfolioAssets(apiName, portfolioId, currentPortfolioApiAssets, index);
-
-            if (result > 0) {
-              updatedAssets = await repository.find({
-                modelName: 'Asset',
-                options: {
-                  where: {
-                    portfolioId,
-                  },
-                  raw: true,
-                },
-              });
-              console.log('>>>>>>>> currentPortfolioApiAssets');
-            }
+            updatedAssets = await syncPortfolioAssets(apiName, portfolioId, currentPortfolioApiAssets, index);
           }
 
           if (currentPortfolioApiHistory[index].length > 0) {
-            const result = await syncPortfolioHistory(apiName, portfolioId, currentPortfolioApiHistory);
-
-            if (result > 0) {
-              updatedHistory = await repository.find({
-                modelName: 'ApiTradeHistory',
-                options: {
-                  where: {
-                    portfolioId,
-                  },
-                },
-              });
-              console.log('>>>>>>>> currentPortfolioApiHistory');
-            }
+            updatedHistory = await syncPortfolioHistory(apiName, portfolioId, currentPortfolioApiHistory);
           }
-        }))
+        }));
 
-        console.log('>>>>>>>> end');
         return res.status(200).send({
           isSuccessful: true,
           updatedAssets,
@@ -230,7 +204,6 @@ const userController = (repository, jobs) => {
     }
   };
 
-  // TODO: Normalize returned data to match DB model
   const addTradeHistoryToPortfolio = async (orderHistoryFromApi) => {
     try {
       if (orderHistoryFromApi.length > 0) {
@@ -284,13 +257,23 @@ const userController = (repository, jobs) => {
 
         await addAssetsToPortfolio(currentPortfolioApiAssets[index], portfolioId);
 
-        return 1;
+        const updatedAssets = await repository.find({
+          modelName: 'Asset',
+          options: {
+            where: {
+              portfolioId,
+            },
+            raw: true,
+          },
+        });
+
+        return updatedAssets;
       }
 
-      return 0;
+      return null;
     }
 
-    return 0;
+    return null;
   };
 
   const syncPortfolioHistory = async (apiName, portfolioId, currentPortfolioApiHistory) => {
@@ -323,9 +306,22 @@ const userController = (repository, jobs) => {
           updated += 1;
         }
       }));
-    });
+    })();
 
-    return updated;
+    if (updated > 0) {
+      const updatedHistory = await repository.find({
+        modelName: 'ApiTradeHistory',
+        options: {
+          where: {
+            portfolioId,
+          },
+        },
+      });
+
+      return updatedHistory;
+    }
+
+    return null;
   };
 
   return {

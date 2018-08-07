@@ -19,11 +19,11 @@ class TradeHistoryStore {
           switch (i) {
             case 0:
               // 1. Transaction date
-              currentRow.push(trade.time);
+              currentRow.push(trade.dateOfEntry);
               break;
             case 1:
               // 2. Entry Date
-              currentRow.push(trade.entryDate);
+              // currentRow.push(trade.dateOfEntry);
               break;
             case 2:
               // 3. Source
@@ -59,7 +59,7 @@ class TradeHistoryStore {
               currentRow.push('');
               break;
             default:
-              console.log('index not found');
+              console.log('index not found'); // eslint-disable-line
               break;
           }
         }
@@ -85,11 +85,11 @@ class TradeHistoryStore {
         Object.keys(trade).forEach((property: string, ind: number) => {
           // 1. Transaction date
           if (ind === 0) {
-            currentRow.push(trade.transactionDate);
+            currentRow.push(trade.dateOfEntry);
           }
           // 2. Entry Date
           if (ind === 1) {
-            currentRow.push(trade.entryDate);
+            // currentRow.push(trade.dateOfEntry);
           }
           // 3. Source
           if (ind === 2) {

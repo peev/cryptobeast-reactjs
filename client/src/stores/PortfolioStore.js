@@ -92,6 +92,7 @@ class PortfolioStore {
     return 0;
   }
 
+  // TODO: I am 90% sure this is deprecated
   @action
   createTrade(fromAsset, toAsset) {
     const selectedExchange = AssetStore.selectedExchangeAssetAllocation !== '' ?
@@ -131,8 +132,15 @@ class PortfolioStore {
         break;
     }
 
+    let dateOfEntry = null;
+    if (newAssetAllocation.selectedDate) {
+      dateOfEntry = new Date(newAssetAllocation.selectedDate).toISOString();
+    } else {
+      dateOfEntry = new Date().toISOString();
+    }
+
     const trade = {
-      transactionDate: newAssetAllocation.selectedDate,
+      dateOfEntry,
       source: newAssetAllocation.selectedExchange,
       pair: `${newAssetAllocation.fromCurrency}-${newAssetAllocation.toCurrency}`,
       fromAssetId: fromAsset.id,
@@ -635,6 +643,7 @@ class PortfolioStore {
     };
     requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
       .then(action((result) => {
+        // console.log(result.data);
         this.currentPortfolioTransactions = result.data;
       }));
   }

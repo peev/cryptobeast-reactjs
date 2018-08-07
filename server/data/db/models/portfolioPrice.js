@@ -1,7 +1,5 @@
-module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('portfolioPrice', {
-    price: { // In USD
-      type: DataTypes.DOUBLE,
-    },
-  });
-};
+module.exports = (sequelize, DataTypes) => sequelize.define('portfolioPrice', {
+  price: { // In USD
+    type: DataTypes.DOUBLE,
+  },
+});

@@ -61,10 +61,10 @@ const userController = (repository, jobs) => {
         const returnedUser = await Auth0ManagementApi.patchUser(req, res);
 
         // Add found balance to current selected portfolio
-        await addAssetsToPortfolio(returnedAssets, portfolioId);
+        await addAssetsToPortfolio(returnedAssets, portfolioId); // eslint-disable-line
 
         // Add found trade history to current selected portfolio
-        await addTradeHistoryToPortfolio(returnedOrderHistory);
+        await addTradeHistoryToPortfolio(returnedOrderHistory); // eslint-disable-line
 
         return returnedUser;
       }
@@ -230,6 +230,7 @@ const userController = (repository, jobs) => {
     }
   };
 
+  // TODO: Normalize returned data to match DB model
   const addTradeHistoryToPortfolio = async (orderHistoryFromApi) => {
     try {
       if (orderHistoryFromApi.length > 0) {
@@ -305,26 +306,26 @@ const userController = (repository, jobs) => {
       },
     });
 
-      const newerApiHistoryToAdd = currentPortfolioApiHistory.map((api) => {
-        return api.filter(transaction =>
-          (new Date(lastAddedTradeHistory.time).getTime() < new Date(transaction.time).getTime()));
-      });
+    const newerApiHistoryToAdd = currentPortfolioApiHistory.map((api) => {
+      return api.filter(transaction =>
+        (new Date(lastAddedTradeHistory.time).getTime() < new Date(transaction.time).getTime()));
+    });
 
 
-      // Add newer Api History
-      let updated = 0;
-      // eslint-disable-next-line
-      (async () => {
-        await Promise.all(newerApiHistoryToAdd.map(async (apiHistory) => {
-          if (apiHistory.length > 0) {
-            console.log(apiHistory);
-            await addTradeHistoryToPortfolio(apiHistory);
-            updated += 1;
-          }
-        }));
-      });
+    // Add newer Api History
+    let updated = 0;
+    // eslint-disable-next-line
+    (async () => {
+      await Promise.all(newerApiHistoryToAdd.map(async (apiHistory) => {
+        if (apiHistory.length > 0) {
+          console.log(apiHistory);
+          await addTradeHistoryToPortfolio(apiHistory);
+          updated += 1;
+        }
+      }));
+    });
 
-      return updated;
+    return updated;
   };
 
   return {

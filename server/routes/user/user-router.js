@@ -8,18 +8,33 @@ const attachTo = (app, repository, jobs) => {
   const authenticationService = require('./../../services/authentication-service')();
 
   router
-    .post('/updateClosingTime', (req, res) => userController.updateClosingTime(req, res))
-    .patch('/verifiedPatch/:id',
-      validator.verifiedPatchUserMetadataValidateRequest,
+    .post(
+      '/updateClosingTime',
+      (req, res) => userController.updateClosingTime(req, res),
+    )
+    .patch(
+      '/verifiedPatch/:id',
       authenticationService.checkAuthManagementToken,
       validator.verifiedPatchUserMetadataValidateInternals,
-      userController.verifiedPatchUserMetadata)
-    .patch('/patch/:id', validator.patchUserMetadataValidateRequest, authenticationService.checkAuthManagementToken, userController.patchUserMetadata)
-    .patch('/delete/:id', authenticationService.checkAuthManagementToken, userController.deleteUserMetadata)
-    .put('/syncApiData/:portfolioId',
+      userController.verifiedPatchUserMetadata,
+    )
+    .patch(
+      '/patch/:id',
+      validator.patchUserMetadataValidateRequest,
+      authenticationService.checkAuthManagementToken,
+      userController.patchUserMetadata,
+    )
+    .patch(
+      '/delete/:id',
+      authenticationService.checkAuthManagementToken,
+      userController.deleteUserMetadata,
+    )
+    .put(
+      '/syncApiData/:portfolioId',
       validator.syncUserApiDataRequest,
       authenticationService.checkAuthManagementToken,
-      userController.syncUserApiData);
+      userController.syncUserApiData,
+    );
 
   app.use('/user', router);
 };

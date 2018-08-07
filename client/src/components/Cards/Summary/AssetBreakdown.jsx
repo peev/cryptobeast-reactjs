@@ -24,8 +24,7 @@ const styles = () => ({
     height: '21px',
   },
   container: {
-    minHeight: '314px',
-    height: '100%',
+    height: '320px',
     paddingRight: '80px',
     paddingTop: '6px',
     boxShadow: 'inset 0 7.5px 9px -7px rgba(0,0,0,0.6)',

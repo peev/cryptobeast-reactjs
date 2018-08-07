@@ -42,19 +42,18 @@ function getSorting(order: string, orderBy: string) {
 }
 
 function getTransationSortableObject(transationAsArray: Object) {
-  if (transationAsArray.length === 11) {
+  if (transationAsArray.length === 10) {
     return Object.assign({}, {
       tradeDate: transationAsArray[0],
-      entryDate: transationAsArray[1],
-      source: transationAsArray[2],
-      pair: transationAsArray[3],
-      type: transationAsArray[4],
-      price: transationAsArray[5],
-      filled: transationAsArray[6],
-      fee: transationAsArray[7],
-      total: transationAsArray[8],
-      edit: transationAsArray[9],
-      remove: transationAsArray[10],
+      source: transationAsArray[1],
+      pair: transationAsArray[2],
+      type: transationAsArray[3],
+      price: transationAsArray[4],
+      filled: transationAsArray[5],
+      fee: transationAsArray[6],
+      total: transationAsArray[7],
+      edit: transationAsArray[8],
+      remove: transationAsArray[9],
     });
   }
   return null;
@@ -91,7 +90,7 @@ const TableHeader = ({
             sortDirection={orderBy === headerItem.id ? order : false}
           >
             {(() => {
-              if (index > 8) {
+              if (index > 7) {
                 return headerItem.label;
               }
               return (
@@ -193,7 +192,7 @@ class HistoryTable extends React.Component<Props, State> {
                 return (
                   <TableRow key={uuid()} >
                     {Object.keys(transaction).map((el: Object, ind: number) => {
-                      if (ind === 10 && transaction.includes('Manually Added') && displayDeleteButton) {
+                      if (ind === 9 && transaction.includes('Manually Added') && displayDeleteButton) {
                         return (
                           <TableCell className={`${classes.tableCellBuy} ${classes.buttonsWidth}`} key={uuid()}>
                             {transaction[el]}
@@ -208,17 +207,17 @@ class HistoryTable extends React.Component<Props, State> {
                             <UpdateTradeModal trade={trades[i]} />
                           </TableCell>
                         );
-                      } else if (ind === 9 && transaction[2] !== 'Manually Added') {
+                      } else if (ind === 8 && transaction[1] !== 'Manually Added') {
                         return (
                           <TableCell className={classes.tableCellBuy} key={uuid()}>
                             {transaction[el]}
                           </TableCell>
                         );
-                      } else if (transaction[4] === 'BUY') {
-                        if (ind === 0 || ind === 1) {
+                      } else if (transaction[3] === 'BUY') {
+                        if (ind === 0) {
                           return (
                             <TableCell className={classes.tableCellBuy} key={uuid()}>
-                              {moment(transaction[el]).format('LLL')}
+                              {moment(transaction[el]).format('LL')}
                             </TableCell>
                           );
                         }
@@ -228,10 +227,10 @@ class HistoryTable extends React.Component<Props, State> {
                           </TableCell>
                         );
                       } else {
-                        if (ind === 0 || ind === 1) {
+                        if (ind === 0) {
                           return (
                             <TableCell className={classes.tableCellSell} key={uuid()}>
-                              {moment(transaction[el]).format('LLL')}
+                              {moment(transaction[el]).format('LL')}
                             </TableCell>
                           );
                         }

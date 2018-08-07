@@ -57,13 +57,13 @@ const init = async (repository) => {
 
 
   // Initialize market summaries, base tickers and their sync jobs
-  const currencies = await repository.find({ modelName: 'Currency' });
-  if (!currencies) {
-    marketService.syncCurrenciesFromApi();
-    marketService.syncSummaries();
-    marketService.syncTickersFromKraken();
-    marketService.syncTickersFromCoinMarketCap();
-  }
+  // const currencies = await repository.find({ modelName: 'Currency' });
+  // if (!currencies) {
+  //   marketService.syncCurrenciesFromApi();
+  //   marketService.syncSummaries();
+  //   marketService.syncTickersFromKraken();
+  //   marketService.syncTickersFromCoinMarketCap();
+  // }
 
   // Market jobs
   marketService.createMarketJob(marketService.syncCurrenciesFromApi, { hour: 23, minute: 59 });

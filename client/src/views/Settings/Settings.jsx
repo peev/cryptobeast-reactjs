@@ -41,7 +41,7 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
         />
       </ItemGrid>
 
-      <ItemGrid xs={12} sm={12} md={12}>
+      <ItemGrid xs={12} sm={12} md={12} style={{ margin: '50px 0' }}>
         <RegularCard
           cardTitle="Portfolios"
           button={<CreatePortfolio place="settings" />}
@@ -60,7 +60,7 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
         />
       </ItemGrid>
 
-      <ItemGrid xs={12} sm={12} md={12}>
+      <ItemGrid xs={12} sm={12} md={12} style={{ marginBottom: '20px' }}>
         <RegularCard
           cardTitle="Time Settings"
           content={<TimeSettings />}

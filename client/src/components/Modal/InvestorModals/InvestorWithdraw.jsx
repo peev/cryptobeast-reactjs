@@ -4,20 +4,18 @@ import { withStyles, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
 import { inject, observer } from 'mobx-react';
-import IconButton from 'material-ui/IconButton';
-import Input, { InputAdornment } from 'material-ui/Input';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import KeyboardArrowUp from '@material-ui/icons/KeyboardArrowUp';
 
 import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 import MarketStore from '../../../stores/MarketStore';
+import DisplayInformation from '../../Cards/Investors/DisplayInformation';
 
 
 const getModalStyle = () => {
-  const top = 35;
+  const top = 25;
   const left = 35;
   return {
     top: `${top}%`,
@@ -28,44 +26,66 @@ const getModalStyle = () => {
 const styles = (theme: Object) => ({
   paper: {
     position: 'absolute',
-    minWidth: '100px',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
-    padding: '40px',
-  },
-  headerContainer: {
-    fontSize: '19px',
-  },
-  containerDirection: {
     display: 'flex',
     flexDirection: 'column',
+    width: '550px',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: '-1px 13px 57px 16px rgba(0,0,0,0.21)',
+    padding: '30px',
   },
-  alignInput: {
+  paperContainer: {
+    margin: '0 -40px',
+  },
+  gridColumn: {
+    width: '50%',
+  },
+  gridRow: {
+    padding: '10px 40px 0 40px',
+  },
+  inputStyle: {
+    width: '100%',
+    textTransform: 'uppercase',
+    '& input, & label': {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+      fontSize: '14px',
+    },
+    '& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+  },
+  dateOfEntry: {
     width: '100%',
     marginTop: '16px',
+    '& input': {
+      paddingLeft: '10px',
+      paddingRight: '13px',
+    },
+    '& input[type=date]::-webkit-inner-spin-button, & input[type=date]::-webkit-outer-spin-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-clear-button': {
+      display: 'none',
+    },
+    '& input[type=date]::-webkit-calendar-picker-indicator': {
+      position: 'relative',
+      fontSize: '12px',
+      top: '-4px',
+      padding: '1px',
+      color: 'transparent',
+      border: 'solid #999',
+      borderWidth: '0 1px 1px 0',
+      transform: 'rotate(45deg)',
+      '&:hover': {
+        backgroundColor: '#fff',
+        cursor: 'pointer',
+      },
+    },
   },
-  alignInputAfter: {
-    marginTop: '10px',
-  },
-  buttonsContainer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: '20px',
-  },
-  alignBtn: {
-    marginRight: '20px',
-  },
-  inputWrapper: {
-    width: '200px',
-    margin: '10px 20px 0',
-  },
-  inputWrapperBalancer: {
-    width: '200px',
-    margin: '5px 20px 0',
-  },
-  inputWrapperSelectBaseCurrency: {
-    width: '192px',
-    margin: '5px 20px 0',
+  selectBaseCurrency: {
+    width: '75%',
+    textTransform: 'uppercase',
+    fontSize: '13px',
   },
 });
 
@@ -158,141 +178,129 @@ class InvestorWithdraw extends React.Component<Props, State> {
             style={getModalStyle()}
             className={classes.paper}
           >
-            <Grid container >
-              <Grid item xs={12} sm={12} md={12} className={classes.headerContainer}>
-                <Typography
-                  variant="title"
-                  id="modal-title"
-                  style={{ marginLeft: '20px', fontSize: '18px', fontWeight: '400' }}
-                >
-                  Investor Withdrawal
-                </Typography>
+            <div className={classes.paperContainer}>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <Typography
+                      variant="title"
+                      id="modal-title"
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '400',
+                        // paddingLeft: '10px',
+                        fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Investor Withdrawal
+                    </Typography>
+                  </div>
+                </Grid>
               </Grid>
-            </Grid>
 
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <SelectInvestor
-                    value={InvestorStore.selectedInvestorId || ''}
-                    handleChange={this.handleSelectInvestor}
-                    style={{
-                      marginTop: '12px',
-                      width: '95%',
-                      border: 'none',
-                      borderRadius: 0,
-                      borderBottom: '1px solid #757575',
-                    }}
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <SelectInvestor
+                      value={InvestorStore.selectedInvestorId || ''}
+                      handleChange={this.handleSelectInvestor}
+                      style={{
+                        marginTop: '12px',
+                        border: 'none',
+                        borderRadius: 0,
+                        borderBottom: '1px solid #757575',
+                        textTransform: 'uppercase',
+                        fontSize: '13px',
+                      }}
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      name="date"
+                      type="date"
+                      // label="Transaction Date"
+                      onChange={this.handleWithdrawRequests('transactionDate')}
+                      value={InvestorStore.withdrawalValues.transactionDate || today}
+                      className={`${classes.alignInput} ${classes.dateOfEntry}`}
+                      validators={['required', 'isDateValid']}
+                      errorMessages={['this field is required', 'Date must be before today']}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={`${classes.selectBaseCurrency} ${classes.gridRow}`}>
+                    <SelectBaseCurrency />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextValidator
+                      label="Amount*"
+                      onChange={this.handleWithdrawRequests('amount')}
+                      name="amount"
+                      // type="number"
+                      className={classes.inputStyle}
+                      value={InvestorStore.withdrawalValues.amount || ''}
+                      validators={['required', 'isPositive']}
+                      errorMessages={['this field is required', 'value must be a positive number']}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <DisplayInformation
+                      value={`$${Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100}`}
+                      placeholderText="share price at exit date"
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <DisplayInformation
+                      value={`${Math.round(InvestorStore.withdrawPurchasedShares * 1000000) / 1000000 || '0'}`}
+                      placeholderText="shares"
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid className={classes.gridColumn}>
+                <div className={classes.gridRow}>
+                  <DisplayInformation
+                    value={`$${Math.round((InvestorStore.convertedUsdEquiv() / 100) * InvestorStore.withdrawManagementFee * 100) / 100 || '0'}`}
+                    placeholderText="Management Fee"
                   />
                 </div>
               </Grid>
 
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <TextValidator
-                    name="date"
-                    type="date"
-                    // label="Transaction Date"
-                    onChange={this.handleWithdrawRequests('transactionDate')}
-                    value={InvestorStore.withdrawalValues.transactionDate || today}
-                    className={classes.alignInput}
-                    validators={['required', 'isDateValid']}
-                    errorMessages={['this field is required', 'Date must be before today']}
-                  />
-                </div>
-              </Grid>
-            </Grid>
+              <Grid container justify="flex-end">
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow} style={{ textAlign: 'right' }}>
+                    <Button
+                      color="primary"
+                      onClick={this.handleClose}
+                    >
+                      Cancel
+                    </Button>
 
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapperSelectBaseCurrency}>
-                  <SelectBaseCurrency />
-                </div>
-              </Grid>
-
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapper}>
-                  <Input
-                    name="amount"
-                    type="number"
-                    placeholder="Amount*"
-                    onChange={this.handleWithdrawRequests('amount')}
-                    value={InvestorStore.withdrawalValues.amount || ''}
-                    className={classes.alignInput}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="Toggle password visibility"
-                          onClick={this.handleWithdrawAllShares}
-                        >
-                          {<KeyboardArrowUp />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </div>
-              </Grid>
-            </Grid>
-
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapperBalancer}>
-                  <TextValidator
-                    disabled
-                    name="share price"
-                    label="Share Price at Entry Date (USD)"
-                    className={classes.alignInput}
-                    value={Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100 || ''}
-                    style={{ width: '95%' }}
-                  />
-                </div>
-              </Grid>
-
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapperBalancer}>
-                  <TextValidator
-                    disabled
-                    name="shares2"
-                    type="number"
-                    label="Shares"
-                    value={InvestorStore.withdrawPurchasedShares || ''}
-                    className={classes.alignInput}
-                  />
-                </div>
-              </Grid>
-            </Grid>
-
-            <Grid container>
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection} />
-              <Grid item xs={6} sm={6} md={6} className={classes.containerDirection}>
-                <div className={classes.inputWrapperBalancer}>
-                  <TextValidator
-                    disabled
-                    name="fee"
-                    label="Management Fee"
-                    value={`$${Math.round((InvestorStore.convertedUsdEquiv / 100) * InvestorStore.withdrawManagementFee * 100) / 100 || ''}`}
-                    className={classes.alignInput}
-                  />
-                </div>
-              </Grid>
-            </Grid>
-
-            <Grid container className={classes.buttonsContainer}>
-              <div className={classes.alignBtn}>
-                <Button
-                  color="primary"
-                  onClick={this.handleClose}
-                >Cancel
-                </Button>
-              </div>
-              <Button
-                type="submit"
-                color="primary"
-                disabled={NotificationStore.getErrorsLength > 0 || InvestorStore.withdrawalValues.amount === '' ||
-                  InvestorStore.selectedInvestorId === null || NotificationStore.getInfoLength > 0}
-              >Save
-              </Button>
-            </Grid>
+                    <Button
+                      type="submit"
+                      color="primary"
+                      disabled={NotificationStore.getErrorsLength > 0}
+                      style={{ marginLeft: '25px' }}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </Grid>
+              </Grid >
+            </div>
           </ValidatorForm>
         </Modal>
 

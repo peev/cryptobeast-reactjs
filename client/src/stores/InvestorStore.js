@@ -367,15 +367,21 @@ class InvestorStore {
   // #region Investor
   @action.bound
   createNewInvestor(portfolioId) {
-    const today = new Date().toISOString().substring(0, 10);
+    let dateOfEntry = null;
+    if (this.newInvestorValues.dateOfEntry) {
+      dateOfEntry = new Date(this.newInvestorValues.dateOfEntry).toISOString();
+    } else {
+      dateOfEntry = new Date().toISOString();
+    }
+
     const newInvestor = {
+      portfolioId,
+      dateOfEntry,
       isFounder: this.newInvestorValues.isFounder,
       fullName: this.newInvestorValues.fullName,
       email: this.newInvestorValues.email,
       telephone: this.newInvestorValues.telephone,
-      dateOfEntry: this.newInvestorValues.dateOfEntry || today,
       managementFee: this.newInvestorValues.managementFee,
-      portfolioId,
     };
 
     const depositData = {
@@ -383,13 +389,12 @@ class InvestorStore {
       balance: +this.newInvestorValues.depositedAmount,
       portfolioId,
       transaction: {
+        portfolioId,
+        dateOfEntry,
         investorName: this.newInvestorValues.fullName,
-        dateOfEntry: (new Date()).toLocaleString(),
-        transactionDate: this.newInvestorValues.dateOfEntry || today,
         amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(this.newInvestorValues.purchasedShares),
-        portfolioId,
       },
     };
 
@@ -418,7 +423,7 @@ class InvestorStore {
       fullName: 'default investor',
       email: 'default@email.com',
       telephone: '',
-      dateOfEntry: (new Date()).toLocaleString(),
+      dateOfEntry: new Date().toISOString(),
       managementFee: '0.0',
       portfolioId: newPortfolio.id,
     };
@@ -430,8 +435,8 @@ class InvestorStore {
         portfolioId: newPortfolio.id,
         transaction: {
           investorName: 'default investor',
-          dateOfEntry: (new Date()).toLocaleString(),
-          transactionDate: (new Date()).toLocaleString(),
+          dateOfEntry: new Date().toISOString(),
+          // transactionDate: (new Date()).toLocaleString(),
           amountInUSD: this.convertedUsdEquiv(),
           sharePrice: 1,
           shares: parseFloat(this.convertedUsdEquiv()),
@@ -515,7 +520,12 @@ class InvestorStore {
 
   @action.bound
   createNewDepositInvestor(id) {
-    const today = new Date().toISOString().substring(0, 10);
+    let dateOfEntry = null;
+    if (this.newDepositValues.transactionDate) {
+      dateOfEntry = new Date(this.newDepositValues.transactionDate).toISOString();
+    } else {
+      dateOfEntry = new Date().toISOString();
+    }
     const selectedCurrencyName = MarketStore.selectedBaseCurrency.pair;
     const depositedShares = parseFloat(this.newDepositValues.purchasedShares);
     const deposit = {
@@ -524,9 +534,9 @@ class InvestorStore {
       portfolioId: PortfolioStore.selectedPortfolioId,
       investorId: id,
       transaction: {
+        dateOfEntry,
         investorName: this.selectedInvestor.fullName,
-        dateOfEntry: (new Date()).toLocaleString(),
-        transactionDate: this.newDepositValues.transactionDate || today,
+        // transactionDate: this.newDepositValues.transactionDate || today,
         amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: depositedShares,
@@ -559,7 +569,12 @@ class InvestorStore {
 
   @action.bound
   withdrawalInvestor(id) {
-    const today = new Date().toISOString().substring(0, 10);
+    let dateOfEntry = null;
+    if (this.withdrawalValues.transactionDate) {
+      dateOfEntry = new Date(this.withdrawalValues.transactionDate).toISOString();
+    } else {
+      dateOfEntry = new Date().toISOString();
+    }
     const selectedCurrencyName = MarketStore.selectedBaseCurrency.pair;
     const withdrawnShares = this.withdrawalValues.purchasedShares;
     const withdrawal = {
@@ -568,9 +583,9 @@ class InvestorStore {
       portfolioId: PortfolioStore.selectedPortfolioId,
       investorId: id,
       transaction: {
+        dateOfEntry,
         investorName: this.selectedInvestor.fullName,
-        dateOfEntry: (new Date()).toLocaleString(),
-        transactionDate: this.withdrawalValues.transactionDate || today,
+        // transactionDate: this.withdrawalValues.transactionDate || today,
         amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
         shares: parseFloat(withdrawnShares),

@@ -24,7 +24,7 @@ const init = databaseConfig => new Promise((resolve) => {
 
       // TODO: Add new models here
       db.Portfolio = sequelize.import(path.join(__dirname, '/models/portfolio.js'));
-      db.Account = sequelize.import(path.join(__dirname, '/models/account.js'));
+      // db.Account = sequelize.import(path.join(__dirname, '/models/account.js'));
       db.Asset = sequelize.import(path.join(__dirname, '/models/asset.js'));
       db.Investor = sequelize.import(path.join(__dirname, '/models/investor.js'));
       db.MarketSummary = sequelize.import(path.join(__dirname, '/models/marketSummary.js'));
@@ -38,18 +38,18 @@ const init = databaseConfig => new Promise((resolve) => {
       db.ApiTradeHistory = sequelize.import(path.join(__dirname, '/models/apiTradeHistory.js'));
       db.SharePrice = sequelize.import(path.join(__dirname, '/models/sharePrice.js'));
       db.PortfolioPrice = sequelize.import(path.join(__dirname, '/models/portfolioPrice.js'));
-      db.User = sequelize.import(path.join(__dirname, '/models/user.js'));
-      db.Setting = sequelize.import(path.join(__dirname, '/models/setting.js'));
+      // db.User = sequelize.import(path.join(__dirname, '/models/user.js'));
+      // db.Setting = sequelize.import(path.join(__dirname, '/models/setting.js'));
       // TODO: Configure model connections here (one-to-one/one-to-many etc.)
 
-      db.User.hasMany(db.Portfolio);
-      db.Portfolio.belongsTo(db.User);
+      // db.User.hasMany(db.Portfolio);
+      // db.Portfolio.belongsTo(db.User);
 
-      db.User.hasMany(db.Setting);
-      db.Setting.belongsTo(db.User);
+      // db.User.hasMany(db.Setting);
+      // db.Setting.belongsTo(db.User);
 
-      db.Portfolio.hasMany(db.Account);
-      db.Account.belongsTo(db.Portfolio);
+      // db.Portfolio.hasMany(db.Account);
+      // db.Account.belongsTo(db.Portfolio);
 
       db.Portfolio.hasMany(db.Asset);
       db.Asset.belongsTo(db.Portfolio);

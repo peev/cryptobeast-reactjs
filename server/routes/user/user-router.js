@@ -8,14 +8,26 @@ const attachTo = (app, repository, jobs) => {
   const authenticationService = require('./../../services/authentication-service')();
 
   router
-    .post('/updateClosingTime', (req, res) => userController.updateClosingTime(req, res))
-    .patch('/verifiedPatch/:id',
-      validator.verifiedPatchUserMetadataValidateRequest,
+    .post(
+      '/updateClosingTime',
+      (req, res) => userController.updateClosingTime(req, res),
+    )
+    .patch(
+      '/verifiedPatch/:id',
       authenticationService.checkAuthManagementToken,
-      validator.verifiedPatchUserMetadataValidateInternals,
-      userController.verifiedPatchUserMetadata)
-    .patch('/patch/:id', validator.patchUserMetadataValidateRequest, authenticationService.checkAuthManagementToken, userController.patchUserMetadata)
-    .patch('/delete/:id', authenticationService.checkAuthManagementToken, userController.deleteUserMetadata);
+      userController.verifiedPatchUserMetadata,
+    )
+    .patch(
+      '/patch/:id',
+      authenticationService.checkAuthManagementToken,
+      userController.patchUserMetadata,
+    )
+    .patch(
+      '/delete/:id',
+      authenticationService.checkAuthManagementToken,
+      userController.deleteUserMetadata,
+    );
+
 
   app.use('/user', router);
 };

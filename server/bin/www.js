@@ -41,6 +41,6 @@ const config = require('./config');
       });
   } catch (er) {
     console.log(er);
-    process.exit(1);
+    // process.exit(1);
   }
 })();

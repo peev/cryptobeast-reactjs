@@ -42,8 +42,8 @@ function getInvestorSortableObject(portfolioStore: Object) {
     .findIndex((investor: Object) => investor.fullName === transaction.investorName);
   return (investor: Object) => Object.assign({}, {
     name: investor.investorName,
-    dateEntry: new Date(investor.dateOfEntry).getTime(),
-    transactionDate: new Date(investor.createdAt).getTime(),
+    dateOfEntry: investor.dateOfEntry,
+    // transactionDate: new Date(investor.createdAt).getTime(),
     amountUSD: investor.amountInUSD,
     sharePrice: investor.sharePrice,
     shares: investor.shares,
@@ -107,7 +107,7 @@ const TableHeader = ({
 class AllInvestorTable extends React.Component<Props, State> {
   state = {
     order: 'desc',
-    orderBy: 'transactionDate',
+    orderBy: 'dateOfEntry',
   };
 
   handleRequestSort = (event: Object, property: string) => {
@@ -148,11 +148,11 @@ class AllInvestorTable extends React.Component<Props, State> {
               .map((prop: Object) => (
               <TableRow key={uuid()}>
                 {Object.keys(prop).map((el: Object, key: number) => {
-                  if (key > 7) return null;
-                  if (key === 1 || key === 2) {
+                  if (key > 6) return null;
+                  if (key === 1) {
                     return (
                       <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
-                        {moment(prop[el]).format('LLL')}
+                        {moment(prop[el]).format('LL')}
                       </TableCell>
                     );
                   } else {

@@ -46,8 +46,6 @@ class App extends React.Component<Props> {
         AuthService.signIn();
       }
     }
-    // console.log(this.props.PortfolioStore.selectedPortfolioId)
-    setInterval(() => this.props.ApiAccountStore.syncUserApiData(), 30000);
   }
 
   handleDrawerOpen = () => {

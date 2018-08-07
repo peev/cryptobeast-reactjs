@@ -165,6 +165,7 @@ const userController = (repository, jobs) => {
     }
   };
 
+
   // =================
   // Utility functions
   // =================
@@ -301,9 +302,8 @@ const userController = (repository, jobs) => {
     (async () => {
       await Promise.all(newerApiHistoryToAdd.map(async (apiHistory) => {
         if (apiHistory.length > 0) {
-          console.log(apiHistory);
-          await addTradeHistoryToPortfolio(apiHistory);
           updated += 1;
+          await addTradeHistoryToPortfolio(apiHistory);
         }
       }));
     })();

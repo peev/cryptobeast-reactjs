@@ -54,7 +54,11 @@ const userController = (repository, jobs) => {
       const { exchange, apiKey, apiSecret, portfolioId } = req.body.user_metadata.api;
 
       // Check user api key and secret, be requesting account balance
-      const { returnedAssets, returnedOrderHistory } = await getUserApiData(exchange, apiKey, apiSecret, portfolioId);
+      const { error, returnedAssets, returnedOrderHistory } = await getUserApiData(exchange, apiKey, apiSecret, portfolioId);
+
+      if (error) {
+        res.status(400).send({ isSuccessful: false, message: error.message });
+      }
 
       if (returnedAssets) {
         // Add given api key and secret to auth0
@@ -70,8 +74,8 @@ const userController = (repository, jobs) => {
       }
 
       return res.status(200).send({ isSuccessful: false, message: 'No assets found' });
-    } catch (error) {
-      return res.status(404).send({ isSuccessful: false, message: error });
+    } catch (err) {
+      return res.status(404).send({ isSuccessful: false, message: err });
     }
   };
 
@@ -170,24 +174,28 @@ const userController = (repository, jobs) => {
   // Utility functions
   // =================
   const getUserApiData = async (exchange, apiKey, apiSecret, portfolioId) => {
-    // const { exchange, apiKey, apiSecret } = user;
-    let returnedAssets;
-    let returnedOrderHistory;
-    switch (exchange) {
-      case 'Bittrex':
-        returnedAssets = await bittrexServices().getBalance({ apiKey, apiSecret });
-        returnedOrderHistory = await bittrexServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
-        break;
-      case 'Kraken':
-        returnedAssets = await krakenServices().getBalance({ apiKey, apiSecret });
-        returnedOrderHistory = await krakenServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
-        break;
-      default:
-        console.log('There is no such api');
-        break;
-    }
+    try {
+      // const { exchange, apiKey, apiSecret } = user;
+      let returnedAssets;
+      let returnedOrderHistory;
+      switch (exchange) {
+        case 'Bittrex':
+          returnedAssets = await bittrexServices().getBalance({ apiKey, apiSecret });
+          returnedOrderHistory = await bittrexServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
+          break;
+        case 'Kraken':
+          returnedAssets = await krakenServices().getBalance({ apiKey, apiSecret });
+          returnedOrderHistory = await krakenServices().getOderHistory({ apiKey, apiSecret }, portfolioId);
+          break;
+        default:
+          console.log('There is no such api');
+          break;
+      }
 
-    return { returnedAssets, returnedOrderHistory };
+      return { returnedAssets, returnedOrderHistory };
+    } catch (e) {
+      return { error: { response: e, message: 'Could not fetch account balance. Probably due to invalid API key.' } };
+    }
   };
 
   const addAssetsToPortfolio = async (assetsFromApi, portfolioId) => {

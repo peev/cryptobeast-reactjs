@@ -84,7 +84,7 @@ class PortfolioStore {
 
   @computed
   get summaryTotalProfitLoss() {
-    if (this.selectedPortfolio && this.currentPortfolioTransactions.length > 0) {
+    if (this.selectedPortfolio && this.currentPortfolioTransactions.length > 0 && this.summaryTotalInvestmentInUSD !== 0) {
       const result = ((this.currentPortfolioCostInUSD - this.summaryTotalInvestmentInUSD) / this.summaryTotalInvestmentInUSD) * 100;
       return result.toFixed(2);
     }

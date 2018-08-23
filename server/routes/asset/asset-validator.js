@@ -46,7 +46,7 @@ const assetValidator = () => {
       errors.feeCurrency = 'Specify a valid fee currency!';
     }
 
-    if (!payload || !payload.hasOwnProperty('feeAmount') || typeof payload.feeAmount !== 'string' || !validator.isFloat(payload.feeAmount, { min: 0, max: Number.MAX_SAFE_INTEGER })) {
+    if (!payload || !payload.hasOwnProperty('feeAmount') || typeof payload.feeAmount !== 'number' || payload.feeAmount < 0 || payload.feeAmount > 99) {
       isFormValid = false;
       errors.feeAmount = 'Specify valid fee amount!';
     }

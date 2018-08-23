@@ -146,8 +146,9 @@ const userController = (repository, jobs) => {
     // Check apis for syncing
     let updatedAssets = null;
     let updatedHistory = null;
-    try {
-      (async () => {
+
+    (async () => {
+      try {
         await Promise.all(currentPortfolioApis.map(async (apiName, index) => {
           if (currentPortfolioApiAssets[index].length > 0) {
             updatedAssets = await syncPortfolioAssets(apiName, portfolioId, currentPortfolioApiAssets, index);
@@ -163,10 +164,10 @@ const userController = (repository, jobs) => {
           updatedAssets,
           updatedHistory,
         });
-      })();
-    } catch (error) {
-      return res.status(404).send({ isSuccessful: false, message: error });
-    }
+      } catch (error) {
+        return res.status(404).send({ isSuccessful: false, message: error });
+      }
+    })();
   };
 
 

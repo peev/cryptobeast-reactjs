@@ -3,7 +3,7 @@ import React from 'react';
 import {
   withStyles,
   IconButton,
-} from 'material-ui';
+} from '@material-ui/core';
 import FirstPageIcon from '../../../../components/CustomIcons/TablePagination/FirstPageIcon';
 import LastPageIcon from '../../../../components/CustomIcons/TablePagination/LastPageIcon';
 import KeyboardArrowLeft from '../../../../components/CustomIcons/TablePagination/KeyboardArrowLeft';

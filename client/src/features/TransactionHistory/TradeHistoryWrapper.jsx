@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core';
 
 import { RegularCard } from '../../components';
 import TradeHistory from './TradeHistory/TradeHistory';

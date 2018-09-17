@@ -1,8 +1,8 @@
 // @flow
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
-import Modal from 'material-ui/Modal';
-import Typography from 'material-ui/Typography';
+import { withStyles, Grid } from '@material-ui/core';
+import Modal from '@material-ui/core/Modal';
+import Typography from '@material-ui/core/Typography';
 import { inject, observer } from 'mobx-react';
 
 import InvestorCard from '../../CustomElements/InvestorCard';

@@ -5,7 +5,7 @@ import {
   Tabs,
   Tab,
   withStyles,
-} from 'material-ui';
+} from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import Volatility from './AnalyticsItems/Volatility';
 import Performance from './AnalyticsItems/Performance';

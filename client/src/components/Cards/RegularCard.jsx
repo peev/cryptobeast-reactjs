@@ -6,7 +6,7 @@ import {
   CardContent,
   CardHeader,
   // CardActions,
-} from 'material-ui';
+} from '@material-ui/core';
 import cx from 'classnames';
 
 import regularCardStyle from './../../variables/styles/regularCardStyle';

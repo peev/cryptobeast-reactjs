@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from 'material-ui';
+import { Grid } from '@material-ui/core';
 import AssetInput from './../../components/Cards/Assets/AssetInput';
 import AssetAllocation from './../../components/Cards/Assets/AssetAllocation';
 import PortfolioSummaryTable from './../../components/CustomTables/PortfolioSummaryTable';

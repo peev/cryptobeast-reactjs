@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
-import Typography from 'material-ui/Typography';
-import { withStyles, Grid } from 'material-ui';
+import Typography from '@material-ui/core/Typography';
+import { withStyles, Grid } from '@material-ui/core';
 import {
   HighchartsStockChart,
   withHighcharts,
@@ -17,7 +17,7 @@ import {
 import Highcharts from 'highcharts/highstock';
 import { inject, observer } from 'mobx-react';
 
-import Modal from 'material-ui/Modal';
+import Modal from '@material-ui/core/Modal';
 import InvestorCard from '../../CustomElements/InvestorCard';
 import Button from '../../CustomButtons/Button';
 import InvestorCardButton from '../../CustomButtons/InvestorCardButton';

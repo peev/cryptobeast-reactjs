@@ -8,7 +8,7 @@ import {
   AppBar,
   Toolbar,
   IconButton,
-} from 'material-ui';
+} from '@material-ui/core';
 
 import appRoutes from './../../routes/app';
 import AuthService from './../../services/Authentication';

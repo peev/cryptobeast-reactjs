@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid } from '@material-ui/core';
 
 const style = {
   grid: {

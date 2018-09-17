@@ -10,7 +10,7 @@ import {
   Paper,
   Tooltip,
   TableSortLabel,
-} from 'material-ui';
+} from '@material-ui/core';
 import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
 import tableStyle from '../../variables/styles/tableStyle';

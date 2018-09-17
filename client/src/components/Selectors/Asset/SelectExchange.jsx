@@ -1,6 +1,6 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, FormControl } from 'material-ui';
+import { withStyles, FormControl } from '@material-ui/core';
 import Select from 'react-select';
 import constants from '../../../variables/constants.json';
 import DropDownArrow from '../../CustomIcons/DropDown/DropDownArrow';

@@ -1,8 +1,8 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
 import Select from 'react-select';
-import { withStyles } from 'material-ui/styles';
-import { FormControl } from 'material-ui/Form';
+import { withStyles } from '@material-ui/core/styles';
+import FormControl from '@material-ui/core/FormControl';
 import { inject, observer } from 'mobx-react';
 import DropDownArrow from '../CustomIcons/DropDown/DropDownArrow';
 
@@ -50,7 +50,7 @@ type Props = {
 
 type State = {
   open: boolean,
-  baseCurrency: ?string,
+  baseCurrency: ?Object,
 };
 
 @inject('MarketStore', 'InvestorStore')
@@ -79,10 +79,20 @@ class SelectBaseCurrency extends React.Component<Props, State> {
       // What Does This Do?
       this.props.InvestorStore.convertedUsdEquiv; // eslint-disable-line
 
-      this.setState({ baseCurrency: event.value });
+      this.setState({ 
+        baseCurrency: {
+          label: event.value,
+          value: event.value
+        }
+      });
     } else {
       this.props.MarketStore.selectBaseCurrency('');
-      this.setState({ baseCurrency: '' });
+      this.setState({ 
+        baseCurrency: {
+          label: '',
+          value: ''
+        } 
+      });
     }
   };
 
@@ -93,7 +103,6 @@ class SelectBaseCurrency extends React.Component<Props, State> {
     baseCurrencies.forEach((currency: object) => {
       currenciesToShow.push(currency);
     });
-
     return (
       <div autoComplete="off">
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
@@ -104,7 +113,7 @@ class SelectBaseCurrency extends React.Component<Props, State> {
             value={this.state.baseCurrency}
             options={currenciesToShow}
             onClose={this.handleClose}
-            onChange={this.handleChange}
+            onChange={this.handleChange.bind(this)}
             style={{
               marginTop: '12px',
               border: 'none',

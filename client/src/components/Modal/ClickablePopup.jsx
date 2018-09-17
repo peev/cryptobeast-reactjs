@@ -1,9 +1,9 @@
 /* globals document */
 // @flow
 import React from 'react';
-import { withStyles, Grid, IconButton } from 'material-ui';
+import { withStyles, Grid, IconButton } from '@material-ui/core';
 import { Info } from '@material-ui/icons';
-import Paper from 'material-ui/Paper';
+import Paper from '@material-ui/core/Paper';
 import history from '../../services/History';
 
 const styles = () => ({

@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { withStyles, Toolbar, Button } from 'material-ui';
+import { withStyles, Toolbar, Button } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import AuthService from './../../services/Authentication';

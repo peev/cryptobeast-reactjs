@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles, FormControl } from 'material-ui';
+import { withStyles, FormControl } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import Select from 'react-select';
 import DropDownArrow from '../../CustomIcons/DropDown/DropDownArrow';

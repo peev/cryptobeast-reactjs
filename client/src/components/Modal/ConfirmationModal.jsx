@@ -1,8 +1,8 @@
 // @flow
 import React from 'react';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
-import Modal from 'material-ui/Modal';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import Modal from '@material-ui/core/Modal';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 
 import { Close } from '@material-ui/icons';

@@ -8,7 +8,7 @@ import {
   withStyles,
   Grid,
   Paper,
-} from 'material-ui';
+} from '@material-ui/core';
 
 import Portfolio from './SummaryItems/Portfolio';
 import Trending from './SummaryItems/Trending';

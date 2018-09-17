@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { withStyles, Grid, Paper } from 'material-ui';
+import { withStyles, Grid, Paper } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import selectFromPortfoliosStyles from './SelectFromPortfoliosStyles';
 import CreatePortfolio from '../../../components/Modal/CreatePortfolio';

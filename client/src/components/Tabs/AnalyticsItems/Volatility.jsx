@@ -1,6 +1,6 @@
 import React from 'react';
-import Paper from 'material-ui/Paper';
-import { Grid } from 'material-ui';
+import Paper from '@material-ui/core/Paper';
+import { Grid } from '@material-ui/core';
 
 import Button from '../../CustomButtons/Button';
 import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';

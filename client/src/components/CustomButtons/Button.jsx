@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { withStyles, Button } from 'material-ui';
+import { withStyles, Button } from '@material-ui/core';
 import cx from 'classnames';
 
 import buttonStyle from './../../variables/styles/buttonStyle';

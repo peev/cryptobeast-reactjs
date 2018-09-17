@@ -9,7 +9,7 @@ import {
   TableCell,
   Tooltip,
   TableSortLabel,
-} from 'material-ui';
+} from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import uuid from 'uuid/v4';
 import moment from 'moment';

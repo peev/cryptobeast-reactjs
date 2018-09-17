@@ -1,8 +1,8 @@
 // @flow
 import React from 'react';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core';
 
-import Paper from 'material-ui/Paper';
+import Paper from '@material-ui/core/Paper';
 
 import buttonStyle from './../../variables/styles/buttonStyle';
 import './CustomStyles/InvestorCard.css';

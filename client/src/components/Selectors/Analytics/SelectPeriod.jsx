@@ -4,14 +4,15 @@ import { withStyles } from '@material-ui/core/styles';
 import { InputLabel } from '@material-ui/core/Input';
 import { MenuItem } from '@material-ui/core/Menu';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import Select from 'react-select';
 import { inject, observer } from 'mobx-react';
 
 const styles = () => ({
   formControl: {
     margin: '0',
     minWidth: '100%',
-  },
+    minHeight: '70px'
+  }
 });
 
 type Props = {
@@ -48,23 +49,17 @@ class SelectBenchmark extends React.Component<Props, State> {
     const { classes, Analytics } = this.props;
     const data = ['1d', '1m', '1y'];
 
-    const display = data.map((el: Object, i: number) => {
-      return (
-        <MenuItem
-          key={i}
-          value={el}
-          index={i}
-        >
-          <em>{el}</em>
-        </MenuItem>
-      );
-    });
+    const options = [
+      { value: '1d', label: '1d' },
+      { value: '1m', label: '1m' },
+      { value: '1y', label: '1y' }
+    ];
 
     return (
       <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="controlled-open-select">
+        <label htmlFor="period">
           Select Period
-        </InputLabel>
+        </label>
 
         <Select
           value={Analytics.selectedTimeInPerformance}
@@ -72,10 +67,9 @@ class SelectBenchmark extends React.Component<Props, State> {
           onOpen={this.handleOpen}
           onClose={this.handleClose}
           onChange={this.handleChange}
-          // inputProps={{ name: 'benchMark', id: 'controlled-open-select' }}
-        >
-          {display}
-        </Select>
+          options={options}
+          inputProps={{ id: 'period' }}
+        />
       </FormControl>
     );
   }

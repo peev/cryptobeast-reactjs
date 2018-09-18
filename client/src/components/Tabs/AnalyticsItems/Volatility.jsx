@@ -1,6 +1,7 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
-import { Grid } from '@material-ui/core';
+import { withStyles, Grid } from '@material-ui/core';
+import { inject, observer } from 'mobx-react';
 
 import Button from '../../CustomButtons/Button';
 import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
@@ -10,20 +11,49 @@ import VolatilityAndRisk from '../../HighCharts/VolatilityAndRisk';
 import VolatilityTable from '../../CustomTables/VolatilityTable';
 import VolatilitySpider from '../../HighCharts/VolatilitySpider';
 
+const styles = () => ({
+  marginTop: {
+    marginTop: '40px',
+  },
+  marginRight: {
+    marginRight: '75px',
+  },
+  header: {
+    color: 'red',
+    margin: '20px 0',
+  },
+  flex: {
+    display: 'flex',
+    'flex-direction': 'column',
+    'text-align': 'center',
+  },
+  flexCenter: {
+    'justify-content': 'center'
+  },
+  flexBottom: {
+    'justify-content': 'flex-end'
+  }
+});
 
-const Volatility = () => { // eslint-disable-line
+type Props = {
+  classes: Object,
+};
+
+const Volatility = inject('Analytics')(observer(({ ...props }: Props) => {
+  const { classes, Analytics } = props;
+
   return (
     <Grid container>
       <Grid container>
-        <Grid item xs={3}>
+        <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
           <SelectPeriod />
         </Grid>
 
-        <Grid item xs={3}>
+        <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
           <SelectBenchmark />
         </Grid>
 
-        <Grid item xs={1}>
+        <Grid item xs={1} className={[classes.flex, classes.flexBottom].join(' ')}>
           <Button>Apply</Button>
         </Grid>
       </Grid>
@@ -62,6 +92,6 @@ const Volatility = () => { // eslint-disable-line
       </Grid>
     </Grid>
   );
-};
+}));
 
-export default Volatility;
+export default withStyles(styles)(Volatility);

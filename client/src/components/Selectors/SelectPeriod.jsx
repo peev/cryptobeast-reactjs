@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { InputLabel } from '@material-ui/core/Input';
 import { MenuItem } from '@material-ui/core/Menu';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import Select from 'react-select';
 import { inject, observer } from 'mobx-react';
 
 const styles = (theme: Object) => ({
@@ -20,6 +20,7 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
+  muiname: 'SelectPeriod'
 };
 
 type State = {
@@ -45,25 +46,25 @@ class SelectPeriod extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
+    const options = [
+      { value: 'None', label: 'None' }
+    ];
 
     return (
       <div autoComplete="off">
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
-          <InputLabel htmlFor="controlled-open-select">
+          <label htmlFor="SelectPeriod">
             Select Period
-          </InputLabel>
+          </label>
 
           <Select
             value={this.state.value}
             open={this.state.open}
             onOpen={this.handleOpen}
             onClose={this.handleClose}
-            inputProps={{ name: 'benchMark', id: 'controlled-open-select' }}
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-          </Select>
+            options={options}
+            inputProps={{ name: 'SelectPeriod', id: 'SelectPeriod' }}
+          />
         </FormControl>
       </div>
     );

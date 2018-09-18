@@ -40,7 +40,7 @@ function enableDevtools() {
 }
 if (process.env.NODE_ENV === 'development') {
   configure({
-    enforceActions: true,
+    enforceActions: 'always',
     computedRequiresReaction: true,
     disableErrorBoundaries: true,
   });

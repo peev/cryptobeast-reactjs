@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { InputLabel } from '@material-ui/core/Input';
 import { MenuItem } from '@material-ui/core/Menu';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import Select from 'react-select';
 import { inject, observer } from 'mobx-react';
 
 const styles = () => ({
@@ -15,10 +15,14 @@ const styles = () => ({
     margin: '0',
     minWidth: '100%',
   },
+  formGroup: {
+    minHeight: '70px'
+  }
 });
 
 type Props = {
   classes: Object,
+  muiname: 'SelectBenchmark'
 };
 
 type State = {
@@ -45,25 +49,24 @@ class SelectBenchmark extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
+    const options = [
+      { value: 'None', label: 'None' }
+    ];
 
     return (
-      <div autoComplete="off">
+      <div autoComplete="off" className={classes.formGroup}>
         <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="controlled-open-select">
+          <label htmlFor="benchMark">
             Select Benchmark
-          </InputLabel>
-
+          </label>
           <Select
             value={this.state.value}
             open={this.state.open}
             onOpen={this.handleOpen}
             onClose={this.handleClose}
-            inputProps={{ name: 'benchMark', id: 'controlled-open-select' }}
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-          </Select>
+            options={options}
+            inputProps={{ id: 'benchMark' }}
+          />
         </FormControl>
       </div>
     );

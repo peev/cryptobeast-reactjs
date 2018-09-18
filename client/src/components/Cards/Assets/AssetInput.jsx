@@ -117,12 +117,18 @@ class AssetInput extends React.Component<Props> {
   }
 
   handleExchangeBasicInput = (value: *) => {
-    this.props.AssetStore.selectExchangeBasicInput(value);
+    this.props.AssetStore.selectExchangeBasicInput({
+      label: value,
+      value: value
+    });
   }
 
   handleFromAllCurrenciesBasicAsset = (event: SyntheticInputEvent) => {
     if (event) {
-      this.props.AssetStore.selectCurrencyBasicAsset(event.value);
+      this.props.AssetStore.selectCurrencyBasicAsset({
+        label: event.value,
+        value: event.value
+      });
     } else {
       this.props.AssetStore.selectCurrencyBasicAsset('');
     }
@@ -135,7 +141,6 @@ class AssetInput extends React.Component<Props> {
   render() {
     const { classes, AssetStore, MarketStore } = this.props;
     const { allCurrenciesCombined } = MarketStore;
-
     return (
       <Grid container >
         <Paper className={classes.container}>

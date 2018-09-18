@@ -136,7 +136,10 @@ class AssetAllocation extends React.Component<Props> {
 
   handleCurrencyToAssetAllocation = (input: Object) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyToAssetAllocation(input.value);
+      this.props.AssetStore.selectCurrencyToAssetAllocation({
+        label: input.value,
+        value: input.value
+      });
     } else {
       this.props.AssetStore.selectCurrencyToAssetAllocation('');
     }
@@ -144,7 +147,10 @@ class AssetAllocation extends React.Component<Props> {
 
   handleCurrencyForTransactionFee = (input: Object) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyForTransactionFee(input.value);
+      this.props.AssetStore.selectCurrencyForTransactionFee({
+        label: input.value,
+        value: input.value
+      });
     } else {
       this.props.AssetStore.selectCurrencyForTransactionFee('');
     }

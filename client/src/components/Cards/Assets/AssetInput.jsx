@@ -117,10 +117,7 @@ class AssetInput extends React.Component<Props> {
   }
 
   handleExchangeBasicInput = (value: *) => {
-    this.props.AssetStore.selectExchangeBasicInput({
-      label: value,
-      value: value
-    });
+    this.props.AssetStore.selectExchangeBasicInput(value);
   }
 
   handleFromAllCurrenciesBasicAsset = (event: SyntheticInputEvent) => {

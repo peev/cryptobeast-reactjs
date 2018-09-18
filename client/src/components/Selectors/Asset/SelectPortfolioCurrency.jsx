@@ -50,7 +50,10 @@ type Props = {
 class SelectPortfolioCurrency extends React.Component<Props> {
   handleChange = (event: SyntheticInputEvent) => {
     if (event) {
-      this.props.AssetStore.selectCurrencyFromAssetAllocation(event.value);
+      this.props.AssetStore.selectCurrencyFromAssetAllocation({
+        label: event.value,
+        value: event.value
+      });
     } else {
       this.props.AssetStore.resetCurrency();
     }

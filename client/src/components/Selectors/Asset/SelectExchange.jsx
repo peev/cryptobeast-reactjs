@@ -63,7 +63,10 @@ class SelectExchange extends React.Component<Props, State> {
 
   handleChange = (event: SyntheticEvent) => {
     if (event) {
-      this.props.handleChange(event.value);
+      this.props.handleChange({
+        label: event.value,
+        value: event.value
+      });
     } else {
       this.props.handleChange('');
     }

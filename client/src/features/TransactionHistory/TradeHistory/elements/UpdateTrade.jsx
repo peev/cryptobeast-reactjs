@@ -75,7 +75,10 @@ class UpdateTradeModal extends React.Component<Props, State> {
 
   handleCurrencyToAssetAllocation = (input: Object) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyToAssetAllocation(input.value);
+      this.props.AssetStore.selectCurrencyToAssetAllocation({
+        label: input.value,
+        value: input.value
+      });
     } else {
       this.props.AssetStore.selectCurrencyToAssetAllocation('');
     }
@@ -83,7 +86,10 @@ class UpdateTradeModal extends React.Component<Props, State> {
 
   handleCurrencyForTransactionFee = (input: Object) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyForTransactionFee(input.value);
+      this.props.AssetStore.selectCurrencyForTransactionFee({
+        label: input.value,
+        value: input.value
+      });
     } else {
       this.props.AssetStore.selectCurrencyForTransactionFee('');
     }

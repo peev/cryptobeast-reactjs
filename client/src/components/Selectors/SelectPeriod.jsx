@@ -1,8 +1,6 @@
 // @flow
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { InputLabel } from '@material-ui/core/Input';
-import { MenuItem } from '@material-ui/core/Menu';
 import FormControl from '@material-ui/core/FormControl';
 import Select from 'react-select';
 import { inject, observer } from 'mobx-react';

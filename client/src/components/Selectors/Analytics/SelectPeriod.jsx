@@ -1,8 +1,6 @@
 // @flow
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { InputLabel } from '@material-ui/core/Input';
-import { MenuItem } from '@material-ui/core/Menu';
 import FormControl from '@material-ui/core/FormControl';
 import Select from 'react-select';
 import { inject, observer } from 'mobx-react';
@@ -27,7 +25,7 @@ type State = {
 
 @inject('Analytics')
 @observer
-class SelectBenchmark extends React.Component<Props, State> {
+class SelectPeriod extends React.Component<Props, State> {
   state = {
     open: false,
   };
@@ -47,8 +45,6 @@ class SelectBenchmark extends React.Component<Props, State> {
 
   render() {
     const { classes, Analytics } = this.props;
-    const data = ['1d', '1m', '1y'];
-
     const options = [
       { value: '1d', label: '1d' },
       { value: '1m', label: '1m' },
@@ -76,4 +72,4 @@ class SelectBenchmark extends React.Component<Props, State> {
 }
 
 
-export default withStyles(styles)(SelectBenchmark);
+export default withStyles(styles)(SelectPeriod);

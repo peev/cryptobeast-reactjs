@@ -1,8 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
-import Select from 'react-select';
+import { FormControl, InputLabel, Select, MenuItem, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 const styles = () => ({
@@ -45,17 +43,24 @@ class SelectPeriod extends React.Component<Props, State> {
 
   render() {
     const { classes, Analytics } = this.props;
-    const options = [
-      { value: '1d', label: '1d' },
-      { value: '1m', label: '1m' },
-      { value: '1y', label: '1y' }
-    ];
+    const data = ['1d', '1m', '1y'];
+    const display = data.map((el: Object, i: number) => {
+      return (
+        <MenuItem
+          key={i}
+          value={el}
+          index={i}
+        >
+          <em>{el}</em>
+        </MenuItem>
+      );
+    });
 
     return (
       <FormControl className={classes.formControl}>
-        <label htmlFor="period">
+        <InputLabel htmlFor="period">
           Select Period
-        </label>
+        </InputLabel>
 
         <Select
           value={Analytics.selectedTimeInPerformance}
@@ -63,9 +68,10 @@ class SelectPeriod extends React.Component<Props, State> {
           onOpen={this.handleOpen}
           onClose={this.handleClose}
           onChange={this.handleChange}
-          options={options}
           inputProps={{ id: 'period' }}
-        />
+        >
+          {display}
+        </Select>
       </FormControl>
     );
   }

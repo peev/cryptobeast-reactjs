@@ -1,8 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
-import Select from 'react-select';
+import { FormControl, InputLabel, Select, MenuItem, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 const styles = () => ({
@@ -47,9 +45,6 @@ class SelectBenchmark extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    const options = [
-      { value: 'None', label: 'None' }
-    ];
 
     return (
       <div autoComplete="off" className={classes.formGroup}>
@@ -62,9 +57,12 @@ class SelectBenchmark extends React.Component<Props, State> {
             open={this.state.open}
             onOpen={this.handleOpen}
             onClose={this.handleClose}
-            options={options}
             inputProps={{ id: 'benchMark' }}
-          />
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+          </Select>
         </FormControl>
       </div>
     );

@@ -1,8 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
-import Select from 'react-select';
+import { FormControl, InputLabel, Select, MenuItem, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 const styles = (theme: Object) => ({
@@ -43,28 +41,28 @@ class SelectPeriod extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
-    const options = [
-      { value: 'None', label: 'None' }
-    ];
+    const { classes } = this.props
 
     return (
       <div autoComplete="off">
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
-          <label htmlFor="SelectPeriod">
+          <InputLabel htmlFor="SelectPeriod">
             Select Period
-          </label>
+          </InputLabel>
 
           <Select
             value={this.state.value}
             open={this.state.open}
             onOpen={this.handleOpen}
             onClose={this.handleClose}
-            options={options}
             inputProps={{ name: 'SelectPeriod', id: 'SelectPeriod' }}
-          />
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+          </Select>
         </FormControl>
-      </div>
+      </div >
     );
   }
 }

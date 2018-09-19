@@ -1,17 +1,14 @@
 // @flow
 import React from 'react';
-import { withStyles } from 'material-ui/styles';
-import { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
-import Select from 'material-ui/Select';
+import { FormControl, InputLabel, Select, MenuItem, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 const styles = () => ({
   formControl: {
     margin: '0',
     minWidth: '100%',
-  },
+    minHeight: '70px'
+  }
 });
 
 type Props = {
@@ -26,7 +23,7 @@ type State = {
 
 @inject('Analytics')
 @observer
-class SelectBenchmark extends React.Component<Props, State> {
+class SelectPeriod extends React.Component<Props, State> {
   state = {
     open: false,
   };
@@ -47,7 +44,6 @@ class SelectBenchmark extends React.Component<Props, State> {
   render() {
     const { classes, Analytics } = this.props;
     const data = ['1d', '1m', '1y'];
-
     const display = data.map((el: Object, i: number) => {
       return (
         <MenuItem
@@ -62,7 +58,7 @@ class SelectBenchmark extends React.Component<Props, State> {
 
     return (
       <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="controlled-open-select">
+        <InputLabel htmlFor="period">
           Select Period
         </InputLabel>
 
@@ -72,7 +68,7 @@ class SelectBenchmark extends React.Component<Props, State> {
           onOpen={this.handleOpen}
           onClose={this.handleClose}
           onChange={this.handleChange}
-          // inputProps={{ name: 'benchMark', id: 'controlled-open-select' }}
+          inputProps={{ id: 'period' }}
         >
           {display}
         </Select>
@@ -82,4 +78,4 @@ class SelectBenchmark extends React.Component<Props, State> {
 }
 
 
-export default withStyles(styles)(SelectBenchmark);
+export default withStyles(styles)(SelectPeriod);

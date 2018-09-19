@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles, Grid, Paper, Typography } from 'material-ui';
+import { withStyles, Grid, Paper, Typography } from '@material-ui/core';
 import Highcharts from 'highcharts';
 import {
   withHighcharts,

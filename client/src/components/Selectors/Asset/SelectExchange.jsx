@@ -1,6 +1,6 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, FormControl } from 'material-ui';
+import { withStyles, FormControl } from '@material-ui/core';
 import Select from 'react-select';
 import constants from '../../../variables/constants.json';
 import DropDownArrow from '../../CustomIcons/DropDown/DropDownArrow';
@@ -63,7 +63,10 @@ class SelectExchange extends React.Component<Props, State> {
 
   handleChange = (event: SyntheticEvent) => {
     if (event) {
-      this.props.handleChange(event.value);
+      this.props.handleChange({
+        label: event.value,
+        value: event.value
+      });
     } else {
       this.props.handleChange('');
     }

@@ -8,7 +8,7 @@ import {
   Typography,
   IconButton,
   Popover,
-} from 'material-ui';
+} from '@material-ui/core';
 import { Info } from '@material-ui/icons';
 
 

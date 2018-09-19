@@ -1,9 +1,9 @@
 // @flow
 import React from 'react';
 import { Edit } from '@material-ui/icons';
-import { withStyles, Grid, Input } from 'material-ui';
-import Typography from 'material-ui/Typography';
-import Modal from 'material-ui/Modal';
+import { withStyles, Grid, Input } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import Modal from '@material-ui/core/Modal';
 import { inject, observer } from 'mobx-react';
 
 import Button from '../CustomButtons/Button';

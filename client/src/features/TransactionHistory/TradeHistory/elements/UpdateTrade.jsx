@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
-import Paper from 'material-ui/Paper';
+import { withStyles, Grid } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
@@ -9,7 +9,7 @@ import { toJS } from 'mobx';
 import Select from 'react-select';
 
 import { Edit } from '@material-ui/icons';
-import Modal from 'material-ui/Modal';
+import Modal from '@material-ui/core/Modal';
 import IconButton from '../../../../components/CustomButtons/IconButton';
 
 import Button from '../../../../components/CustomButtons/Button';
@@ -75,7 +75,10 @@ class UpdateTradeModal extends React.Component<Props, State> {
 
   handleCurrencyToAssetAllocation = (input: Object) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyToAssetAllocation(input.value);
+      this.props.AssetStore.selectCurrencyToAssetAllocation({
+        label: input.value,
+        value: input.value
+      });
     } else {
       this.props.AssetStore.selectCurrencyToAssetAllocation('');
     }
@@ -83,7 +86,10 @@ class UpdateTradeModal extends React.Component<Props, State> {
 
   handleCurrencyForTransactionFee = (input: Object) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyForTransactionFee(input.value);
+      this.props.AssetStore.selectCurrencyForTransactionFee({
+        label: input.value,
+        value: input.value
+      });
     } else {
       this.props.AssetStore.selectCurrencyForTransactionFee('');
     }

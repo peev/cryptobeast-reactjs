@@ -37,3 +37,5 @@ yarn-error.log*
 
 # db config
 server/bin/config/db.js
+node_modules/@material-ui/icons/Battery80.js
+node_modules/

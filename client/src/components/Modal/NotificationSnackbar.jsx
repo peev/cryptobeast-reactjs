@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import { Warning, Done, Info } from '@material-ui/icons';
 import { Snackbar } from './../../components';

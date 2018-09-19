@@ -9,7 +9,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from 'material-ui';
+} from '@material-ui/core';
 import SidebarStyle from './SidebarStyle';
 
 type Props = {

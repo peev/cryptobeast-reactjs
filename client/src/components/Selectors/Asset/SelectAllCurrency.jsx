@@ -1,15 +1,14 @@
 /* eslint-disable react/prop-types */
 import React, { Component } from 'react';
-import { withStyles, MenuItem } from 'material-ui';
-import Typography from 'material-ui/Typography';
-import Input from 'material-ui/Input';
+import { withStyles, MenuItem } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import Input from '@material-ui/core/Input';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ClearIcon from '@material-ui/icons/Clear';
-import Chip from 'material-ui/Chip';
+import Chip from '@material-ui/core/Chip';
 import Select from 'react-select';
-import 'react-select/dist/react-select.css';
 
 // import SelectWrapped from './SelectWrapped';
 

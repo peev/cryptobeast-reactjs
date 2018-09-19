@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles, FormControl } from 'material-ui';
+import { withStyles, FormControl } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import Select from 'react-select';
 import DropDownArrow from '../../CustomIcons/DropDown/DropDownArrow';
@@ -50,7 +50,10 @@ type Props = {
 class SelectPortfolioCurrency extends React.Component<Props> {
   handleChange = (event: SyntheticInputEvent) => {
     if (event) {
-      this.props.AssetStore.selectCurrencyFromAssetAllocation(event.value);
+      this.props.AssetStore.selectCurrencyFromAssetAllocation({
+        label: event.value,
+        value: event.value
+      });
     } else {
       this.props.AssetStore.resetCurrency();
     }

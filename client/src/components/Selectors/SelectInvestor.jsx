@@ -1,11 +1,11 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles } from 'material-ui/styles';
-// import { InputLabel } from 'material-ui/Input';
+import { withStyles } from '@material-ui/core/styles';
+// import { InputLabel } from '@material-ui/core/Input';
 import Select from 'react-select';
 
-import { FormControl } from 'material-ui/Form';
-// import Select from 'material-ui/Select';
+import FormControl from '@material-ui/core/FormControl';
+// import Select from '@material-ui/core/Select';
 
 import { inject, observer } from 'mobx-react';
 
@@ -61,7 +61,10 @@ type Props = {
 class SelectInvestor extends React.Component<Props> {
   handleChange = (event: SyntheticEvent) => {
     if (event) {
-      this.props.handleChange(event.value);
+      this.props.handleChange({
+        label: event.value,
+        value: event.value
+      });
     } else {
       this.props.handleChange('');
     }

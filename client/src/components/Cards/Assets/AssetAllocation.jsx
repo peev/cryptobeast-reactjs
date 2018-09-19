@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
-import Paper from 'material-ui/Paper';
+import { withStyles, Grid } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
@@ -136,7 +136,10 @@ class AssetAllocation extends React.Component<Props> {
 
   handleCurrencyToAssetAllocation = (input: Object) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyToAssetAllocation(input.value);
+      this.props.AssetStore.selectCurrencyToAssetAllocation({
+        label: input.value,
+        value: input.value
+      });
     } else {
       this.props.AssetStore.selectCurrencyToAssetAllocation('');
     }
@@ -144,7 +147,10 @@ class AssetAllocation extends React.Component<Props> {
 
   handleCurrencyForTransactionFee = (input: Object) => {
     if (input) {
-      this.props.AssetStore.selectCurrencyForTransactionFee(input.value);
+      this.props.AssetStore.selectCurrencyForTransactionFee({
+        label: input.value,
+        value: input.value
+      });
     } else {
       this.props.AssetStore.selectCurrencyForTransactionFee('');
     }

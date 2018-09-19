@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
+import { withStyles, Grid } from '@material-ui/core';
 
 import TotalInvestorsWrapped from '../../components/Modal/InvestorModals/TotalInvestors';
 import SharesInCirculationWrapped from '../../components/Modal/InvestorModals/SharesInCirculation';

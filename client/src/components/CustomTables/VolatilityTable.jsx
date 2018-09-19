@@ -1,13 +1,15 @@
 // @flow
 import React from 'react';
-import { withStyles } from 'material-ui/styles';
-import Table, {
-  TableBody,
-  TableCell,
+import {
+  withStyles,
+  Grid,
+  Table,
   TableHead,
   TableRow,
-} from 'material-ui/Table';
-import Paper from 'material-ui/Paper';
+  TableBody,
+  TableCell,
+} from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import uuid from 'uuid/v4';
 
 const styles = (theme: Object) => ({
@@ -43,10 +45,10 @@ function VolatilityTable(props: Props) {
         <TableHead>
           <TableRow>
             <TableCell>TICKER</TableCell>
-            <TableCell numeric>ALPHA</TableCell>
-            <TableCell numeric>R^2</TableCell>
-            <TableCell numeric>ADJUSTED R</TableCell>
-            <TableCell numeric>EST.VARIANCE</TableCell>
+            <TableCell string>ALPHA</TableCell>
+            <TableCell string>R^2</TableCell>
+            <TableCell string>ADJUSTED R</TableCell>
+            <TableCell string>EST.VARIANCE</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

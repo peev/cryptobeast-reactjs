@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import { Redirect } from 'react-router-dom';
 

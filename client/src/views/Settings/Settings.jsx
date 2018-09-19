@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { Grid } from 'material-ui';
+import { Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import { RegularCard, ItemGrid } from './../../components';

@@ -3,7 +3,7 @@ import React from 'react';
 import {
   Paper,
   withStyles,
-} from 'material-ui';
+} from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 const styles = () => ({

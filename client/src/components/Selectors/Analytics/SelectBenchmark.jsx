@@ -1,10 +1,6 @@
 // @flow
 import React from 'react';
-import { withStyles } from 'material-ui/styles';
-import { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
-import Select from 'material-ui/Select';
+import { FormControl, InputLabel, Select, MenuItem, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 const styles = () => ({
@@ -15,10 +11,14 @@ const styles = () => ({
     margin: '0',
     minWidth: '100%',
   },
+  formGroup: {
+    minHeight: '70px'
+  }
 });
 
 type Props = {
   classes: Object,
+  muiname: 'SelectBenchmark'
 };
 
 type State = {
@@ -47,18 +47,17 @@ class SelectBenchmark extends React.Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <div autoComplete="off">
+      <div autoComplete="off" className={classes.formGroup}>
         <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="controlled-open-select">
+          <label htmlFor="benchMark">
             Select Benchmark
-          </InputLabel>
-
+          </label>
           <Select
             value={this.state.value}
             open={this.state.open}
             onOpen={this.handleOpen}
             onClose={this.handleClose}
-            inputProps={{ name: 'benchMark', id: 'controlled-open-select' }}
+            inputProps={{ id: 'benchMark' }}
           >
             <MenuItem value="">
               <em>None</em>

@@ -1,8 +1,8 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles } from 'material-ui';
-import Typography from 'material-ui/Typography';
-import Modal from 'material-ui/Modal';
+import { withStyles } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import Modal from '@material-ui/core/Modal';
 import { Add } from '@material-ui/icons';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import { inject, observer } from 'mobx-react';

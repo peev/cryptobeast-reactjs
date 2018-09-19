@@ -1,8 +1,8 @@
 // @flow
 import React from 'react';
-import { withStyles, Grid } from 'material-ui';
-import Typography from 'material-ui/Typography';
-import Checkbox from 'material-ui/Checkbox';
+import { withStyles, Grid } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+import Checkbox from '@material-ui/core/Checkbox';
 import { inject, observer } from 'mobx-react';
 
 import ChangeTime from '../Modal/ChangeTime';

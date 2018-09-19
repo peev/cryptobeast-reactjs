@@ -1,7 +1,7 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, MenuItem, FormControl } from 'material-ui';
-import Select from 'material-ui/Select';
+import { withStyles, MenuItem, FormControl } from '@material-ui/core';
+import Select from '@material-ui/core/Select';
 import { inject, observer } from 'mobx-react';
 import DropDownArrow from '../../CustomIcons/DropDown/DropDownArrow';
 import portfolioSelectStyles from './PortfolioSelectStyles';

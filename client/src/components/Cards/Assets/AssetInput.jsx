@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
-import { withStyles, Grid } from 'material-ui';
-import Paper from 'material-ui/Paper';
+import { withStyles, Grid } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import Select from 'react-select';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
@@ -122,7 +122,10 @@ class AssetInput extends React.Component<Props> {
 
   handleFromAllCurrenciesBasicAsset = (event: SyntheticInputEvent) => {
     if (event) {
-      this.props.AssetStore.selectCurrencyBasicAsset(event.value);
+      this.props.AssetStore.selectCurrencyBasicAsset({
+        label: event.value,
+        value: event.value
+      });
     } else {
       this.props.AssetStore.selectCurrencyBasicAsset('');
     }
@@ -135,7 +138,6 @@ class AssetInput extends React.Component<Props> {
   render() {
     const { classes, AssetStore, MarketStore } = this.props;
     const { allCurrenciesCombined } = MarketStore;
-
     return (
       <Grid container >
         <Paper className={classes.container}>

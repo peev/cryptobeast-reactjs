@@ -124,8 +124,12 @@ class Analytics {
       const date = new Date();
       date.setDate(date.getDate() - 7);
       const result = currentArray.filter(el => date <= new Date(el.createdAt));
-
-      return (((result[result.length - 1].price - result[0].price) / result[0].price) / 7) * 100;
+      if(!result[0]) {
+        console.log('NO RESULT PRICE!!!!')
+        return 0;
+      } else {
+        return (((result[result.length - 1].price - result[0].price) / result[0].price) / 7) * 100;
+      }
     }
 
     return 0;

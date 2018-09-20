@@ -41,7 +41,7 @@ function enableDevtools() {
 if (process.env.NODE_ENV === 'development') {
   configure({
     // TODO: Use this when stabilize the project... it blows up non stop
-    // enforceActions: 'never',
+    // enforceActions: 'always',
     // computedRequiresReaction: true,
     // disableErrorBoundaries: true,
   });

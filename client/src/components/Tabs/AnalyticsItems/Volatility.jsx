@@ -12,11 +12,34 @@ import VolatilityTable from '../../CustomTables/VolatilityTable';
 import VolatilitySpider from '../../HighCharts/VolatilitySpider';
 
 const styles = () => ({
+  overflowNone: {
+    'overflow-x': 'hidden'
+  },
   marginTop: {
     marginTop: '40px',
   },
   marginRight: {
     marginRight: '75px',
+  },
+  topItem: {
+    height: 'auto',
+    paddingBottom: '20px'
+  },
+  leftTopItem: {
+    'padding-right': '50px',
+  },
+  topHeight: {
+    height: '100%',
+  },
+  maxWidth: {
+    width: '100%',
+    'overflow-x': 'hidden'
+  },
+  smallTopPadding: {
+    marginTop: '20px'
+  },
+  bigTopPadding: {
+    marginTop: '40px'
   },
   header: {
     color: 'red',
@@ -32,6 +55,12 @@ const styles = () => ({
   },
   flexBottom: {
     'justify-content': 'flex-end'
+  },
+  padding: {
+    padding: '20px'
+  },
+  noMargin: {
+    marginTop: 0
   }
 });
 
@@ -43,7 +72,7 @@ const Volatility = inject('Analytics')(observer(({ ...props }: Props) => {
   const { classes, Analytics } = props;
 
   return (
-    <Grid container>
+    <Grid container className={classes.overflowNone}>
       <Grid container>
         <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
           <SelectPeriod />
@@ -58,21 +87,23 @@ const Volatility = inject('Analytics')(observer(({ ...props }: Props) => {
         </Grid>
       </Grid>
 
-      <Grid container>
-        <Grid item xs={8}>
-          <VolatilityTable style={{ width: '100%' }} />
+      <Grid container className={classes.smallTopPadding}>
+        <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
+          <Paper className={classes.topHeight}>
+            <VolatilityTable style={{ width: '100%' }}  className={[classes.flex, classes.flexCenter].join(' ')} />
+          </Paper>
         </Grid>
 
-        <Grid item xs={4}>
-          <Paper>
+        <Grid item xs={5} className={[classes.topItem, classes.topHeight].join(' ')}>
+          <Paper className={classes.padding}>
             <VolatilitySpider style={{ width: '100%' }} />
           </Paper>
         </Grid>
       </Grid>
 
-      <Grid container>
-        <Paper className="VolatilityPaper">
-          <h5>PORTFOLIO VOLATILITY AND RISK</h5>
+      <Grid container className={classes.bigTopPadding}>
+        <Paper className="VolatilityPaper" className={[classes.maxWidth, classes.padding].join(' ')}>
+          <h5 className={classes.noMargin}>PORTFOLIO VOLATILITY AND RISK</h5>
 
           <Grid container>
             <Grid item xs={3}><p>STANDARD DEVIATION: <b>2.63</b></p></Grid>
@@ -85,8 +116,8 @@ const Volatility = inject('Analytics')(observer(({ ...props }: Props) => {
         </Paper>
       </Grid>
 
-      <Grid container>
-        <Paper>
+      <Grid container className={classes.bigTopPadding}>
+        <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
           <VolatilityColumnChart />
         </Paper>
       </Grid>

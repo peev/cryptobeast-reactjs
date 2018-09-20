@@ -11,12 +11,13 @@ import Volatility from './AnalyticsItems/Volatility';
 import Performance from './AnalyticsItems/Performance';
 
 const styles = () => ({
+  // TODO: Refactor this
   navigation: {
     backgroundColor: '#33435d',
     color: '#FFF',
-    marginTop: '-10px',
-    marginLeft: '-30px',
-    marginRight: '-30px',
+    marginTop: '-20px',
+    marginLeft: '-50px',
+    marginRight: '0',
     position: 'fixed',
     width: '100%',
     zIndex: 1,

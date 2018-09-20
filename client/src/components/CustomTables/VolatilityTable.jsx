@@ -15,7 +15,7 @@ import uuid from 'uuid/v4';
 const styles = (theme: Object) => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    height: '100%',
     overflowX: 'auto',
   },
   table: {

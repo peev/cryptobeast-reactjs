@@ -69,7 +69,7 @@ type Props = {
 };
 
 const Volatility = inject('Analytics')(observer(({ ...props }: Props) => {
-  const { classes, Analytics } = props;
+  const { classes } = props;
 
   return (
     <Grid container className={classes.overflowNone}>
@@ -102,7 +102,7 @@ const Volatility = inject('Analytics')(observer(({ ...props }: Props) => {
       </Grid>
 
       <Grid container className={classes.bigTopPadding}>
-        <Paper className="VolatilityPaper" className={[classes.maxWidth, classes.padding].join(' ')}>
+        <Paper className={['VolatilityPaper', classes.maxWidth, classes.padding].join(' ')}>
           <h5 className={classes.noMargin}>PORTFOLIO VOLATILITY AND RISK</h5>
 
           <Grid container>

@@ -21,6 +21,12 @@ const styles = (theme: Object) => ({
   table: {
     minWidth: 700,
   },
+  center: {
+    textAlign: 'center'
+  },
+  right: {
+    textAlign: 'right'
+  }
 });
 
 const data = [
@@ -45,10 +51,10 @@ function VolatilityTable(props: Props) {
         <TableHead>
           <TableRow>
             <TableCell>TICKER</TableCell>
-            <TableCell string>ALPHA</TableCell>
-            <TableCell string>R^2</TableCell>
-            <TableCell string>ADJUSTED R</TableCell>
-            <TableCell string>EST.VARIANCE</TableCell>
+            <TableCell className={classes.right}>ALPHA</TableCell>
+            <TableCell className={classes.right}>R^2</TableCell>
+            <TableCell className={classes.right}>ADJUSTED R</TableCell>
+            <TableCell className={classes.right}>EST.VARIANCE</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

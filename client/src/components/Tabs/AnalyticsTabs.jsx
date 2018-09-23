@@ -9,6 +9,9 @@ import {
 import { inject, observer } from 'mobx-react';
 import Volatility from './AnalyticsItems/Volatility';
 import Performance from './AnalyticsItems/Performance';
+import ProfitLoss from './AnalyticsItems/ProfitLoss';
+import Liquidity from './AnalyticsItems/Liquidity';
+import CorrelationMatrix from './AnalyticsItems/CorrelationMatrix';
 
 const styles = () => ({
   // TODO: Refactor this
@@ -73,17 +76,12 @@ class AnalyticsTabs extends React.Component<Props, State> {
 
           <Volatility />
 
-          <div>
-            <h2>Profit/Loss</h2>
-          </div>
+          <ProfitLoss />
 
-          <div>
-            <h2>Liquidity</h2>
-          </div>
+          <Liquidity />
 
-          <div>
-            <h2>Correlation matrix</h2>
-          </div>
+          <CorrelationMatrix />
+
         </SwipeableViews>
       </div>
     );

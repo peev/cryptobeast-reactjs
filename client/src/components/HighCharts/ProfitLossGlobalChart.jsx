@@ -12,7 +12,7 @@ import {
   Title,
 } from 'react-jsx-highcharts';
 
-class ProfitLossChart extends Component {
+class ProfitLossGlobalChart extends Component {
   state = {};
 
   render() {
@@ -20,19 +20,23 @@ class ProfitLossChart extends Component {
       <HighchartsChart>
         <Chart />
 
-        <Title>DAILY PROFIT AND LOSS</Title>
+        <Title>PROFIT AND LOSS OF EACH ASSET</Title>
 
-        <Legend />
+        <Legend 
+          enabled={false}
+        />
 
-        <XAxis />
+        <XAxis
+          categories={['BTC', 'ETH', 'XRP', 'NEO', 'BNB', 'EOS']}
+        />
 
         <YAxis id="number">
           <YAxis.Title>Profit and Loss in %</YAxis.Title>
-          <ColumnSeries id="jane" name="BTC" data={[6, 4.5, 8.2, 4, -8.2, 7]} />
+          <ColumnSeries name="asd" data={[6, 4.5, 8.2, 4, -8.2, 7]} />
         </YAxis>
       </HighchartsChart>
     );
   }
 }
 
-export default withHighcharts(ProfitLossChart, Highcharts);
+export default withHighcharts(ProfitLossGlobalChart, Highcharts);

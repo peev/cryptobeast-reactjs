@@ -199,3 +199,7 @@ div[class^="MuiInput"] {
 div[class^="MuiFormControl"] {
     font-family: "Lato", "Helvetica", "Arial", sans-serif !important;
 }
+
+.highcharts-negative {
+  fill: rgb(230, 0, 0) !important;
+}

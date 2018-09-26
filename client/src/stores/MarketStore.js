@@ -11,6 +11,9 @@ class MarketStore {
   @observable allTickers;
   @observable baseCurrencyInUSD;
   @observable selectedBaseCurrency;
+  @observable profitLoss;
+  @observable liquidity;
+  @observable correlationMatrix;
 
   constructor() {
     this.marketSummaries = {};
@@ -20,6 +23,9 @@ class MarketStore {
     this.allTickers = [];
     this.baseCurrencyInUSD = null;
     this.selectedBaseCurrency = null;
+    this.profitLoss = {};
+    this.liquidity = [];
+    this.correlationMatrix = [];
   }
 
   init() {
@@ -52,6 +58,21 @@ class MarketStore {
     requester.Market.getMarketPriceHistory()
       .then(this.convertMarketPriceHistory)
       .catch((err: object) => console.log(err));
+    
+    // get profit and loss history from database (Coin Market Cap)
+    requester.Market.getProfitAndLossHistory()
+      .then(this.getCurrenciesHistory)
+      .catch((err: object) => console.log(err));
+    
+    // get liquidity history from database (Coin Market Cap)
+    requester.Market.getLiquidityHistory()
+      .then(action(result => this.liquidity = result.data))
+      .catch((err: object) => console.log(err));
+    
+    // get correlation matrix history from database (Coin Market Cap)
+    requester.Market.getCorrelationMatrixHistory()
+      .then(action(result => this.correlationMatrix = result.data))
+      .catch((err: object) => console.log(err));
   }
 
   @computed
@@ -63,6 +84,19 @@ class MarketStore {
     const clonedAllCurrencies = Array.from(this.allCurrencies);
     nonRepeatingBaseCurrencies.forEach((element: object) => clonedAllCurrencies.push(element));
     return clonedAllCurrencies;
+  }
+
+  @action.bound
+  getCurrenciesHistory(response: object) {
+    let builder = {};
+    response.data.forEach((data: object) => {
+      if(!builder[data.Symbol]) {
+        builder[data.Symbol] = [];
+      }
+      builder[data.Symbol].push(data);
+    });
+    builder.ready = true;
+    this.profitLoss = builder;
   }
 
   @action.bound

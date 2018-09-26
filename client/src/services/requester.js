@@ -49,6 +49,9 @@ const Market = {
   syncMarketPriceHistory: convertCurrency => requests.post('/market/syncMarketPriceHistory', convertCurrency),
   getMarketPriceHistory: () => requests.get('/market/getMarketPriceHistory'),
   getBaseTickerHistory: requestParams => requests.post('/market/periodPriceHistory', requestParams),
+  getProfitAndLossHistory: requestParams => requests.get('/market/profitAndLossHistory', requestParams),
+  getLiquidityHistory: requestParams => requests.get('/market/liquidityHistory', requestParams),
+  getCorrelationMatrixHistory: requestParams => requests.get('/market/correlationMatrixHistory', requestParams),
 };
 
 // not used

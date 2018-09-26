@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
 import Highcharts from 'highcharts';
 import {
   HighchartsChart,
@@ -12,23 +13,37 @@ import {
   Title,
 } from 'react-jsx-highcharts';
 
-class ProfitLossChart extends Component {
-  state = {};
-
+class ProfitLossChart extends React.Component<Props, State> {
   render() {
+    const { currency, data, days } = this.props;
+    if(!data.ready || !currency.length) {
+      return null;
+    }
+    let currencyData = data[currency].map((val) => {
+      return parseFloat(val['Daily Profit and Loss']);
+    });
+    let dates = data[currency].map((val) => {
+      return val.Date;
+    });
+    currencyData.length = days;
+    dates = dates.reverse();
+    currencyData = currencyData.reverse();
     return (
       <HighchartsChart>
         <Chart />
 
-        <Title>DAILY PROFIT AND LOSS</Title>
+        <Title>PROFIT AND LOSS</Title>
 
         <Legend />
 
-        <XAxis />
+
+        <XAxis
+          categories={dates}
+        />
 
         <YAxis id="number">
           <YAxis.Title>Profit and Loss in %</YAxis.Title>
-          <ColumnSeries id="jane" name="BTC" data={[6, 4.5, 8.2, 4, -8.2, 7]} />
+          <ColumnSeries name={currency || 'BTC'} data={currencyData} />
         </YAxis>
       </HighchartsChart>
     );

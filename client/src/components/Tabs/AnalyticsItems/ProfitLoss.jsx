@@ -74,26 +74,92 @@ type Props = {
   classes: Object,
 };
 
-@inject('MarketStore', 'InvestorStore')
+@inject('MarketStore')
 @observer
 class ProfitLoss extends React.Component<Props, State> {
+  state = {
+    value: '',
+    selectPeriod: '',
+    globalSelectPeriod: '',
+  };
+
+  constructor(props) {
+    super(props);
+    this.handleSelectPeriod = this.handleSelectPeriod.bind(this);
+    this.handleGlobalSelectPeriod = this.handleGlobalSelectPeriod.bind(this);
+  }
+
+  getPeriodInDays(val) {
+    let days = 0;
+    switch (val) {
+      case '1d':
+        days = 1;
+        break;
+      case '1w':
+        days = 7;
+        break;
+      case '1m':
+        days = 30;
+        break;
+      case '1y':
+        days = 365
+        break;
+    }
+    return days;
+  }
+
+  handleSelectPeriod(data) {
+    if (!data) {
+      return;
+    }
+    this.setState({
+      selectPeriod: this.getPeriodInDays(data)
+    });
+  }
+
+  handleGlobalSelectPeriod(data) {
+    if (!data) {
+      return;
+    }
+    this.setState({
+      globalSelectPeriod: this.getPeriodInDays(data)
+    });
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, MarketStore } = this.props;
+    const { selectPeriod, globalSelectPeriod } = this.state;
+    let currencies = MarketStore.baseCurrencies;
+    let profitLoss = MarketStore.profitLoss;
+
+    let globalData = [];
+    let selectedCurrency = 'BTC';
+    let localSelectPeriod = selectPeriod || 30;
+    let localGlobalSelectPeriod = globalSelectPeriod || 30;
+
+    if (MarketStore.selectedBaseCurrency !== null) {
+      selectedCurrency = MarketStore.selectedBaseCurrency.pair;
+    }
 
     return (
       <Grid container className={classes.overflowNone}>
         <Grid container>
+          <Grid item xs={6} className={[classes.flex, classes.flexCenter].join(' ')}>
+            <SelectPeriod defaultValueIndex={0} selectedValue={this.handleGlobalSelectPeriod} />
+          </Grid>
+        </Grid>
+
+        <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <ProfitLossGlobalChart />
+            <ProfitLossGlobalChart currencies={currencies} data={profitLoss} days={localGlobalSelectPeriod}/>
           </Paper>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
-          <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
-            <SelectPeriod />
+          <Grid item xs={6} className={[classes.flex, classes.flexCenter].join(' ')}>
+            <SelectPeriod defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['1w', '1m', '1y']} />
           </Grid>
-
-          <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
+          <Grid item xs={6} className={[classes.paddingLeft, classes.flex, classes.flexCenter].join(' ')}>
             <SelectBaseCurrency
               className={classes.inputWrapper}
               label="Select currency"
@@ -101,19 +167,15 @@ class ProfitLoss extends React.Component<Props, State> {
               style={{ textTransform: 'uppercase', fontSize: '14px' }}
             />
           </Grid>
-
-          <Grid item xs={1} className={[classes.flex, classes.flexBottom].join(' ')}>
-            <Button>Apply</Button>
-          </Grid>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <ProfitLossChart />
+            <ProfitLossChart currency={selectedCurrency} data={profitLoss} days={localSelectPeriod} />
           </Paper>
         </Grid>
 
-        <Grid container className={classes.bigTopPadding}>
+        {/* <Grid container className={classes.bigTopPadding}>
           <Grid item xs={6} className={[classes.paddingRight].join(' ')}>
             <Paper>
               <ProfitLossTable asc={true} />
@@ -124,7 +186,7 @@ class ProfitLoss extends React.Component<Props, State> {
               <ProfitLossTable asc={false} />
             </Paper>
           </Grid>
-        </Grid>
+        </Grid> */}
       </Grid>
     );
   }

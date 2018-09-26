@@ -12,10 +12,36 @@ import {
   Title,
 } from 'react-jsx-highcharts';
 
-class ProfitLossGlobalChart extends Component {
-  state = {};
+type Props = {
+  data: Array,
+  currencies: Array,
+};
 
+class ProfitLossGlobalChart extends React.Component<Props> {
   render() {
+    const { currencies, data, days } = this.props;
+    if(!data.ready || !currencies.length) {
+      return null;
+    }
+    let dataSeries = [];
+    let currenciesData = [];
+    currencies.forEach((val) => {
+      let average = 0;
+      currenciesData.push(val.pair);
+      console.log('data[val.pair]', val.pair)
+      console.log('data[val.pair]', data[val.pair])
+      if(data[val.pair]) {
+        for(let counter = 0; counter < days; counter++) {
+          average += parseFloat(data[val.pair][counter]['Daily Profit and Loss']);
+        }
+        average /= days;
+        dataSeries.push(average);
+      } else {
+        dataSeries.push(0);
+      }
+    });
+    console.log(dataSeries);
+
     return (
       <HighchartsChart>
         <Chart />
@@ -27,12 +53,12 @@ class ProfitLossGlobalChart extends Component {
         />
 
         <XAxis
-          categories={['BTC', 'ETH', 'XRP', 'NEO', 'BNB', 'EOS']}
+          categories={currenciesData}
         />
 
         <YAxis id="number">
           <YAxis.Title>Profit and Loss in %</YAxis.Title>
-          <ColumnSeries name="asd" data={[6, 4.5, 8.2, 4, -8.2, 7]} />
+          <ColumnSeries name="asd" data={dataSeries} />
         </YAxis>
       </HighchartsChart>
     );

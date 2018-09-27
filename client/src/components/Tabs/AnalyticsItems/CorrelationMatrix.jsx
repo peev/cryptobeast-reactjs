@@ -3,8 +3,6 @@ import Paper from '@material-ui/core/Paper';
 import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
-import Button from '../../CustomButtons/Button';
-import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 import MotionSelect from '../../Selectors/MotionSelect';
 import CorrelationMatrixTable from '../../CustomTables/CorrelationMatrixTable';
 
@@ -44,7 +42,7 @@ const styles = () => ({
   },
   noMargin: {
     marginTop: 0
-  }
+  },
 });
 
 type Props = {

@@ -42,7 +42,7 @@ const styles = () => ({
     marginTop: '40px'
   },
   header: {
-    color: 'red',
+    color: '#ca3f58',
     margin: '20px 0',
   },
   flex: {

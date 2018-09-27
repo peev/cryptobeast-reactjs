@@ -29,7 +29,25 @@ const styles = (theme: Object) => ({
 	miniCell: {
     'width': '75px',
     'padding': '4px 20px 4px 20px'
-	},
+  },
+  status6: {
+    'background-color': '#BEBEBE'
+  },
+  status5: {
+    'background-color': '#ca3f58'
+  },
+  status4: {
+    'background-color': '#ec8e7b'
+  },
+  status3: {
+    'background-color': 'white'
+  },
+  status2: {
+    'background-color': '#7cb5ec'
+  },
+  status1: {
+    'background-color': '#2b908f'
+  },
 });
 
 type Props = {
@@ -44,8 +62,22 @@ class CorrelationMatrixTable extends React.Component<Props, State> {
     return [
       <TableCell className={classes.miniCell} key={uuid()}>{column}</TableCell>,
       Object.keys(data).map((key) => {
+        let className = '';
+        if(data[key] === 1) {
+          className = 'status6';
+        } else if(data[key] > 0.5) {
+          className = 'status5';
+        } else if(data[key] > 0.2) {
+          className = 'status4';
+        } else if(data[key] > -0.2) {
+          className = 'status3';
+        } else if(data[key] > -0.5) {
+          className = 'status2';
+        } else {
+          className = 'status1';
+        }
         return (
-          <TableCell className={classes.miniCell} key={uuid()}>{data[key].toFixed(3)}</TableCell>
+          <TableCell className={[classes.miniCell, classes[className]].join(' ')} key={uuid()}>{data[key].toFixed(3)}</TableCell>
         )
       })
     ]

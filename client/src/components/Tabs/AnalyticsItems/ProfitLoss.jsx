@@ -5,7 +5,6 @@ import { inject, observer } from 'mobx-react';
 
 import MotionSelect from '../../Selectors/MotionSelect';
 import ProfitLossChart from '../../HighCharts/ProfitLoss';
-import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import ProfitLossGlobalChart from '../../HighCharts/ProfitLossGlobalChart';
 
 const styles = () => ({
@@ -39,7 +38,7 @@ const styles = () => ({
     marginTop: '40px'
   },
   header: {
-    color: 'red',
+    color: '#ca3f58',
     margin: '20px 0',
   },
   flex: {

@@ -2,7 +2,6 @@
 import React from 'react';
 import uuid from 'uuid/v4';
 import { FormControl, InputLabel, Select, MenuItem, withStyles } from '@material-ui/core';
-import { inject, observer } from 'mobx-react';
 
 const styles = (theme: Object) => ({
   button: {
@@ -47,7 +46,7 @@ class SelectPeriod extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, selectedValue, defaultValueIndex, values } = this.props
+    const { classes, values } = this.props
     let data = ['1d', '1m', '1y'];
     if(values) {
       data = values;

@@ -3,11 +3,8 @@ import Paper from '@material-ui/core/Paper';
 import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
-import Button from '../../CustomButtons/Button';
-import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
-import SelectPeriod from '../../Selectors/SelectPeriod';
+import MotionSelect from '../../Selectors/MotionSelect';
 import ProfitLossChart from '../../HighCharts/ProfitLoss';
-import ProfitLossTable from '../../CustomTables/ProfitLossTable';
 import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import ProfitLossGlobalChart from '../../HighCharts/ProfitLossGlobalChart';
 
@@ -81,10 +78,12 @@ class ProfitLoss extends React.Component<Props, State> {
     value: '',
     selectPeriod: '',
     globalSelectPeriod: '',
+    selectedCurrency: 'BTC'
   };
 
   constructor(props) {
     super(props);
+    this.handleSelectCurrency = this.handleSelectCurrency.bind(this);
     this.handleSelectPeriod = this.handleSelectPeriod.bind(this);
     this.handleGlobalSelectPeriod = this.handleGlobalSelectPeriod.bind(this);
   }
@@ -104,8 +103,20 @@ class ProfitLoss extends React.Component<Props, State> {
       case '1y':
         days = 365
         break;
+      default:
+        days = 1;
+        break;
     }
     return days;
+  }
+
+  handleSelectCurrency(data) {
+    if (!data) {
+      return;
+    }
+    this.setState({
+      selectedCurrency: data
+    });
   }
 
   handleSelectPeriod(data) {
@@ -128,44 +139,39 @@ class ProfitLoss extends React.Component<Props, State> {
 
   render() {
     const { classes, MarketStore } = this.props;
-    const { selectPeriod, globalSelectPeriod } = this.state;
-    let currencies = MarketStore.baseCurrencies;
+    const { selectPeriod, globalSelectPeriod, selectedCurrency } = this.state;
     let profitLoss = MarketStore.profitLoss;
 
-    let globalData = [];
-    let selectedCurrency = 'BTC';
     let localSelectPeriod = selectPeriod || 30;
     let localGlobalSelectPeriod = globalSelectPeriod || 30;
 
-    if (MarketStore.selectedBaseCurrency !== null) {
-      selectedCurrency = MarketStore.selectedBaseCurrency.pair;
+    let profitLossCurrencies = [];
+    for(let currency in profitLoss) {
+      if(profitLoss[currency].length) {
+        profitLossCurrencies.push(currency);
+      }
     }
 
     return (
       <Grid container className={classes.overflowNone}>
         <Grid container>
-          <Grid item xs={6} className={[classes.flex, classes.flexCenter].join(' ')}>
-            <SelectPeriod defaultValueIndex={0} selectedValue={this.handleGlobalSelectPeriod} />
+          <Grid item xs={3} className={[classes.flex, classes.flexCenter].join(' ')}>
+            <MotionSelect defaultValueIndex={0} selectedValue={this.handleGlobalSelectPeriod} values={['1d', '1w', '1m']}  />
           </Grid>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <ProfitLossGlobalChart currencies={currencies} data={profitLoss} days={localGlobalSelectPeriod}/>
+            <ProfitLossGlobalChart data={profitLoss} days={localGlobalSelectPeriod}/>
           </Paper>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
-          <Grid item xs={6} className={[classes.flex, classes.flexCenter].join(' ')}>
-            <SelectPeriod defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['1w', '1m', '1y']} />
+          <Grid item xs={3} className={[classes.flex, classes.flexCenter].join(' ')}>
+            <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['1w', '1m', '1y']} />
           </Grid>
-          <Grid item xs={6} className={[classes.paddingLeft, classes.flex, classes.flexCenter].join(' ')}>
-            <SelectBaseCurrency
-              className={classes.inputWrapper}
-              label="Select currency"
-              validators={['isPositive']}
-              style={{ textTransform: 'uppercase', fontSize: '14px' }}
-            />
+          <Grid item xs={3} className={[classes.paddingLeft, classes.flex, classes.flexCenter].join(' ')}>
+            <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectCurrency} values={profitLossCurrencies} title={'Select currency'} />
           </Grid>
         </Grid>
 

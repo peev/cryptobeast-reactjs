@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Highcharts from 'highcharts';
 import {
   HighchartsChart,
@@ -14,33 +14,35 @@ import {
 
 type Props = {
   data: Array,
-  currencies: Array,
 };
 
 class ProfitLossGlobalChart extends React.Component<Props> {
   render() {
-    const { currencies, data, days } = this.props;
-    if(!data.ready || !currencies.length) {
+    const { data, days } = this.props;
+    if(!data.ready) {
       return null;
     }
     let dataSeries = [];
     let currenciesData = [];
-    currencies.forEach((val) => {
+    for(let currency in data) {
       let average = 0;
-      currenciesData.push(val.pair);
-      console.log('data[val.pair]', val.pair)
-      console.log('data[val.pair]', data[val.pair])
-      if(data[val.pair]) {
-        for(let counter = 0; counter < days; counter++) {
-          average += parseFloat(data[val.pair][counter]['Daily Profit and Loss']);
+      let passed = true;
+      for(let counter = 0; counter < days; counter++) {
+        if(counter === data[currency].length) {
+          break;
         }
+        if(!data[currency][counter]) {
+          passed = false;
+          break;
+        }
+        average += parseFloat(data[currency][counter]['Daily Profit and Loss']);
+      }
+      if(passed) {
         average /= days;
         dataSeries.push(average);
-      } else {
-        dataSeries.push(0);
+        currenciesData.push(currency);
       }
-    });
-    console.log(dataSeries);
+    }
 
     return (
       <HighchartsChart>

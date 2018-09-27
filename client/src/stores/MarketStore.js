@@ -71,7 +71,7 @@ class MarketStore {
     
     // get correlation matrix history from database (Coin Market Cap)
     requester.Market.getCorrelationMatrixHistory()
-      .then(action(result => this.correlationMatrix = result.data))
+      .then(this.getCorrelationMatrixHistory)
       .catch((err: object) => console.log(err));
   }
 
@@ -97,6 +97,11 @@ class MarketStore {
     });
     builder.ready = true;
     this.profitLoss = builder;
+  }
+
+  @action.bound
+  getCorrelationMatrixHistory(response: object) {
+    this.correlationMatrix = response.data;
   }
 
   @action.bound

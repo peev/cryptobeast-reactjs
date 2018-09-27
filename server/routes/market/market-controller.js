@@ -5,6 +5,7 @@ const marketController = (repository) => {
   const marketService = require('../../services/market-service')(repository);
   //TODO: Used to respond with mock. Delete when approved
   const historyMockData = require('../../mocks/analytics-mock.json');
+  const correlationMatrixMockData = require('../../mocks/correlation-matrix.json');
 
   const syncSummariesOnRequest = (req, res) => {
     marketService.syncSummaries()
@@ -148,7 +149,6 @@ const marketController = (repository) => {
   
   const getProfitAndLossHistory = (req, res) => {
     // TODO: Make it working not as mock up
-    console.log(historyMockData);
     res.status(200).send(historyMockData);
   };
   
@@ -161,9 +161,7 @@ const marketController = (repository) => {
 
   const getCorrelationMatrixHistory = (req, res) => {
     // TODO: Make it working not as mock up
-    res.status(200).send({
-      working: true
-    });
+    res.status(200).send(correlationMatrixMockData);
   };
 
   return {

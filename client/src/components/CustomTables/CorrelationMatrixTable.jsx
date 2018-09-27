@@ -18,58 +18,81 @@ const styles = (theme: Object) => ({
     overflowX: 'auto',
   },
   table: {
-    minWidth: 700,
+    width: '700px'
   },
   center: {
     textAlign: 'center'
   },
   right: {
     textAlign: 'right'
-  }
+  },
+	miniCell: {
+    'width': '75px',
+    'padding': '4px 20px 4px 20px'
+	},
 });
-
-const data = [
-  { ticker: 'BTC', alpha: `${0.0000}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-  { ticker: 'ETH', alpha: `${0.0012}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-  { ticker: 'XRP', alpha: `${0.0012}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-  { ticker: 'NEO', alpha: `${0.0012}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-  { ticker: 'XRP', alpha: `${0.0012}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-  { ticker: 'NEO', alpha: `${0.0012}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-];
 
 type Props = {
   classes: Object,
+  data: Array
 };
 
-function CorrelationMatrixTable(props: Props) {
-  const { classes } = props;
+class CorrelationMatrixTable extends React.Component<Props, State> {
 
-  return (
-    <Paper className={classes.root}>
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell>TICKER</TableCell>
-            <TableCell className={classes.right}>ALPHA</TableCell>
-            <TableCell className={classes.right}>R^2</TableCell>
-            <TableCell className={classes.right}>ADJUSTED R</TableCell>
-            <TableCell className={classes.right}>EST.VARIANCE</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map((ROW: Object) => (
-            <TableRow key={uuid()}>
-              <TableCell>{ROW.ticker}</TableCell>
-              <TableCell numeric>{ROW.alpha}</TableCell>
-              <TableCell numeric>{ROW.Rsq}</TableCell>
-              <TableCell numeric>{ROW.adjR}</TableCell>
-              <TableCell numeric>{ROW.variance}</TableCell>
+  getCells(data, column) {
+    const { classes } = this.props;
+    return [
+      <TableCell className={classes.miniCell} key={uuid()}>{column}</TableCell>,
+      Object.keys(data).map((key) => {
+        return (
+          <TableCell className={classes.miniCell} key={uuid()}>{data[key].toFixed(3)}</TableCell>
+        )
+      })
+    ]
+  }
+
+  render() {
+    const { classes, data } = this.props;
+    if (data.length === 0) {
+      return null;
+    }
+    let columns = [];
+    for (let col in data[0]) {
+      columns.push(col);
+    }
+
+    return (
+      <Paper className={classes.root}>
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell className={classes.miniCell}></TableCell>
+              {
+                columns.map((el) => {
+                  return (
+                    <TableCell className={classes.miniCell} key={uuid()}>{el}</TableCell>
+                  )
+                })
+              }
             </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-    </Paper>
-  );
+          </TableHead>
+          <TableBody>
+            {
+              data.map((key, index) => {
+                return (
+                  <TableRow className={classes.miniCell} key={uuid()}>
+                    {
+                      this.getCells(key, columns[index])
+                    }
+                  </TableRow>
+                );
+              })
+            }
+          </TableBody>
+        </Table>
+      </Paper>
+    );
+  }
 }
 
 export default withStyles(styles)(CorrelationMatrixTable);

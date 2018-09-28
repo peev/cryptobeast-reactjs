@@ -6,10 +6,7 @@ import { inject, observer } from 'mobx-react';
 import Button from '../../CustomButtons/Button';
 import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 import SelectPeriod from '../../Selectors/SelectPeriod';
-import VolatilityColumnChart from '../../HighCharts/VolatilityDevSkew';
-import VolatilityAndRisk from '../../HighCharts/VolatilityAndRisk';
-import VolatilityTable from '../../CustomTables/VolatilityTable';
-import VolatilitySpider from '../../HighCharts/VolatilitySpider';
+import LiquidityChart from '../../HighCharts/Liquidity';
 
 const styles = () => ({
   overflowNone: {
@@ -68,7 +65,7 @@ type Props = {
   classes: Object,
 };
 
-const Volatility = inject('Analytics')(observer(({ ...props }: Props) => {
+const Liquidity = inject('Analytics')(observer(({ ...props }: Props) => {
   const { classes } = props;
 
   return (
@@ -87,42 +84,13 @@ const Volatility = inject('Analytics')(observer(({ ...props }: Props) => {
         </Grid>
       </Grid>
 
-      <Grid container className={classes.smallTopPadding}>
-        <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
-          <Paper className={classes.topHeight}>
-            <VolatilityTable style={{ width: '100%' }}  className={[classes.flex, classes.flexCenter].join(' ')} />
-          </Paper>
-        </Grid>
-
-        <Grid item xs={5} className={[classes.topItem, classes.topHeight].join(' ')}>
-          <Paper className={classes.padding}>
-            <VolatilitySpider style={{ width: '100%' }} />
-          </Paper>
-        </Grid>
-      </Grid>
-
-      <Grid container className={classes.bigTopPadding}>
-        <Paper className={['VolatilityPaper', classes.maxWidth, classes.padding].join(' ')}>
-          <h5 className={classes.noMargin}>PORTFOLIO VOLATILITY AND RISK</h5>
-
-          <Grid container>
-            <Grid item xs={3}><p>STANDARD DEVIATION: <b>2.63</b></p></Grid>
-            <Grid item xs={3}><p>PORTFOLIO ALPHA: <b>2.14%</b></p></Grid>
-            <Grid item xs={3}><p>PORTFOLIO BETA: <b>0.65%</b></p></Grid>
-            <Grid item xs={3}><p>PORTFOLIO VARIANCE: <b>0.65</b></p></Grid>
-          </Grid>
-
-          <VolatilityAndRisk />
-        </Paper>
-      </Grid>
-
       <Grid container className={classes.bigTopPadding}>
         <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-          <VolatilityColumnChart />
+          <LiquidityChart />
         </Paper>
       </Grid>
     </Grid>
   );
 }));
 
-export default withStyles(styles)(Volatility);
+export default withStyles(styles)(Liquidity);

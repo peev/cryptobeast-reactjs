@@ -47,11 +47,11 @@ class SelectBenchmark extends React.Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <div autoComplete="off" className={classes.formGroup}>
+      <div autoComplete="off">
         <FormControl className={classes.formControl}>
-          <label htmlFor="benchMark">
+          <InputLabel htmlFor="benchMark">
             Select Benchmark
-          </label>
+          </InputLabel>
           <Select
             value={this.state.value}
             open={this.state.open}

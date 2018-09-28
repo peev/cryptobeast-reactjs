@@ -9,14 +9,18 @@ import {
 import { inject, observer } from 'mobx-react';
 import Volatility from './AnalyticsItems/Volatility';
 import Performance from './AnalyticsItems/Performance';
+import ProfitLoss from './AnalyticsItems/ProfitLoss';
+import Liquidity from './AnalyticsItems/Liquidity';
+import CorrelationMatrix from './AnalyticsItems/CorrelationMatrix';
 
 const styles = () => ({
+  // TODO: Refactor this
   navigation: {
     backgroundColor: '#33435d',
     color: '#FFF',
-    marginTop: '-10px',
-    marginLeft: '-30px',
-    marginRight: '-30px',
+    marginTop: '-20px',
+    marginLeft: '-50px',
+    marginRight: '0',
     position: 'fixed',
     width: '100%',
     zIndex: 1,
@@ -72,17 +76,12 @@ class AnalyticsTabs extends React.Component<Props, State> {
 
           <Volatility />
 
-          <div>
-            <h2>Profit/Loss</h2>
-          </div>
+          <ProfitLoss />
 
-          <div>
-            <h2>Liquidity</h2>
-          </div>
+          <Liquidity />
 
-          <div>
-            <h2>Correlation matrix</h2>
-          </div>
+          <CorrelationMatrix />
+
         </SwipeableViews>
       </div>
     );

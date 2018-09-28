@@ -40,9 +40,10 @@ function enableDevtools() {
 }
 if (process.env.NODE_ENV === 'development') {
   configure({
-    enforceActions: 'always',
-    computedRequiresReaction: true,
-    disableErrorBoundaries: true,
+    // TODO: Use this when stabilize the project... it blows up non stop
+    // enforceActions: 'always',
+    // computedRequiresReaction: true,
+    // disableErrorBoundaries: true,
   });
 
   enableDevtools();

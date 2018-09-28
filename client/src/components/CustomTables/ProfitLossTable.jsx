@@ -18,13 +18,19 @@ const styles = (theme: Object) => ({
     overflowX: 'auto',
   },
   table: {
-    minWidth: 700,
+    tableLayout: 'auto'
   },
   center: {
     textAlign: 'center'
   },
   right: {
     textAlign: 'right'
+  },
+  bigMarginLeft: {
+    marginLeft: '22px'
+  },
+  smallPaddingTop: {
+    paddingTop: '15px'
   }
 });
 
@@ -41,19 +47,18 @@ type Props = {
   classes: Object,
 };
 
-function VolatilityTable(props: Props) {
-  const { classes } = props;
-
+function ProfitLossTable(props: Props) {
+  const { classes, asc } = props;
   return (
-    <Paper className={classes.root}>
+    <Paper className={[classes.root, classes.smallPaddingTop].join(' ')}>
+      <label className={classes.bigMarginLeft}>{asc ? 'BEST PERFORMING COINS' : 'WORST PERFORMING COINS'}</label>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell>TICKER</TableCell>
-            <TableCell className={classes.right}>ALPHA</TableCell>
-            <TableCell className={classes.right}>R^2</TableCell>
-            <TableCell className={classes.right}>ADJUSTED R</TableCell>
-            <TableCell className={classes.right}>EST.VARIANCE</TableCell>
+            <TableCell>COIN</TableCell>
+            <TableCell className={classes.right}>MONTH</TableCell>
+            <TableCell className={classes.right}>MARKET CAP DIFF</TableCell>
+            <TableCell className={classes.right}>MARKET CAP</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -63,7 +68,6 @@ function VolatilityTable(props: Props) {
               <TableCell numeric>{ROW.alpha}</TableCell>
               <TableCell numeric>{ROW.Rsq}</TableCell>
               <TableCell numeric>{ROW.adjR}</TableCell>
-              <TableCell numeric>{ROW.variance}</TableCell>
             </TableRow>
             ))}
         </TableBody>
@@ -72,4 +76,4 @@ function VolatilityTable(props: Props) {
   );
 }
 
-export default withStyles(styles)(VolatilityTable);
+export default withStyles(styles)(ProfitLossTable);

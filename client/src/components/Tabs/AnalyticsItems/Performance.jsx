@@ -18,7 +18,7 @@ const styles = () => ({
     marginRight: '75px',
   },
   header: {
-    color: 'red',
+    color: '#ca3f58',
     margin: '20px 0',
   },
   flex: {

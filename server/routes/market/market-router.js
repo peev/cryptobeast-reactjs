@@ -37,6 +37,15 @@ const attachTo = (app, data) => {
     })
     .post('/periodPriceHistory', (req, res) => {
       return marketController.getBaseTickersHistory(req, res);
+    })
+    .get('/profitAndLossHistory', (req, res) => {
+      return marketController.getProfitAndLossHistory(req, res);
+    })
+    .get('/liquidityHistory', (req, res) => {
+      return marketController.getLiquidityHistory(req, res);
+    })
+    .get('/correlationMatrixHistory', (req, res) => {
+      return marketController.getCorrelationMatrixHistory(req, res);
     });
 
   app.use('/market', router);

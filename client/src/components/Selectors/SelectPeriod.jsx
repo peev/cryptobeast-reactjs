@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
+import uuid from 'uuid/v4';
 import { FormControl, InputLabel, Select, MenuItem, withStyles } from '@material-ui/core';
-import { inject, observer } from 'mobx-react';
 
 const styles = (theme: Object) => ({
   button: {
@@ -24,24 +24,33 @@ type State = {
   value: ?string,
 };
 
-@inject('InvestorStore')
-@observer
 class SelectPeriod extends React.Component<Props, State> {
   state = {
     open: false,
-    value: '',
+    value: '1m',
   };
 
   handleOpen = () => {
     this.setState({ open: true });
   };
 
-  handleClose = () => {
-    this.setState({ open: false });
+  handleClose = (event) => {
+    if(!event.target.dataset.value) {
+      return;
+    }
+    this.props.selectedValue(event.target.dataset.value);
+    this.setState({ 
+      open: false, 
+      value: event.target.dataset.value 
+    });
   };
 
   render() {
-    const { classes } = this.props
+    const { classes, values } = this.props
+    let data = ['1d', '1m', '1y'];
+    if(values) {
+      data = values;
+    }
 
     return (
       <div autoComplete="off">
@@ -57,9 +66,11 @@ class SelectPeriod extends React.Component<Props, State> {
             onClose={this.handleClose}
             inputProps={{ name: 'SelectPeriod', id: 'SelectPeriod' }}
           >
-            <MenuItem value="">
-              <em>None</em>
+          {data.map((val) => (
+            <MenuItem key={uuid()} value={val}>
+              <em>{val}</em>
             </MenuItem>
+          ))}
           </Select>
         </FormControl>
       </div >

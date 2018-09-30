@@ -18,11 +18,11 @@ ShallowWrapper {
     "nodeType": "class",
     "props": Object {
       "classes": Object {
-        "container": "inject-_class-with-PortfolioStore-container-1",
-        "containerHeader": "inject-_class-with-PortfolioStore-containerHeader-2",
-        "containerMiddle": "inject-_class-with-PortfolioStore-containerMiddle-3",
-        "removePaddingBottom": "inject-_class-with-PortfolioStore-removePaddingBottom-5",
-        "warningText": "inject-_class-with-PortfolioStore-warningText-4",
+        "container": "inject-_class-with-PortfolioStore-container-01",
+        "containerHeader": "inject-_class-with-PortfolioStore-containerHeader-02",
+        "containerMiddle": "inject-_class-with-PortfolioStore-containerMiddle-03",
+        "removePaddingBottom": "inject-_class-with-PortfolioStore-removePaddingBottom-05",
+        "warningText": "inject-_class-with-PortfolioStore-warningText-04",
       },
     },
     "ref": null,
@@ -36,11 +36,11 @@ ShallowWrapper {
       "nodeType": "class",
       "props": Object {
         "classes": Object {
-          "container": "inject-_class-with-PortfolioStore-container-1",
-          "containerHeader": "inject-_class-with-PortfolioStore-containerHeader-2",
-          "containerMiddle": "inject-_class-with-PortfolioStore-containerMiddle-3",
-          "removePaddingBottom": "inject-_class-with-PortfolioStore-removePaddingBottom-5",
-          "warningText": "inject-_class-with-PortfolioStore-warningText-4",
+          "container": "inject-_class-with-PortfolioStore-container-01",
+          "containerHeader": "inject-_class-with-PortfolioStore-containerHeader-02",
+          "containerMiddle": "inject-_class-with-PortfolioStore-containerMiddle-03",
+          "removePaddingBottom": "inject-_class-with-PortfolioStore-removePaddingBottom-05",
+          "warningText": "inject-_class-with-PortfolioStore-warningText-04",
         },
       },
       "ref": null,

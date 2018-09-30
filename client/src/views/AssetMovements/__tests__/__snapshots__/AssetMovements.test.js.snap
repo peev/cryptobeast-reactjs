@@ -18,43 +18,83 @@ ShallowWrapper {
     "nodeType": "class",
     "props": Object {
       "children": Array [
-        <WithStyles(GridWrapper)
+        <WithStyles(Grid)
           item={true}
           md={12}
           sm={12}
           xs={12}
 >
           <WithStyles(inject-AssetInput-with-AssetStore-MarketStore-PortfolioStore-NotificationStore) />
-</WithStyles(GridWrapper)>,
-        <WithStyles(GridWrapper)
+</WithStyles(Grid)>,
+        <WithStyles(Grid)
           item={true}
           md={12}
           sm={12}
           xs={12}
 >
-          <WithStyles(inject-AssetAllocation-with-AssetStore-NotificationStore-MarketStore-PortfolioStore) />
-</WithStyles(GridWrapper)>,
-        <WithStyles(GridWrapper)
+          <WithStyles(inject-AssetAllocation-with-AssetStore-MarketStore-PortfolioStore) />
+</WithStyles(Grid)>,
+        <WithStyles(Grid)
           item={true}
           md={12}
           sm={12}
           xs={12}
 >
-          <WithStyles(inject-_class-with-PortfolioStore)
+          <WithStyles(inject-PortfolioSummaryTable-with-PortfolioStore)
                     tableHead={
                               Array [
-                                        "Ticker",
-                                        "Holdings",
-                                        "Price(BTC)",
-                                        "Price(USD)",
-                                        "Total Value(USD)",
-                                        "Asset Weight",
-                                        "24H Change",
-                                        "7D Change",
+                                        Object {
+                                          "disablePadding": false,
+                                          "id": "ticker",
+                                          "label": "Ticker",
+                                          "numberic": false,
+                                        },
+                                        Object {
+                                          "disablePadding": false,
+                                          "id": "holdings",
+                                          "label": "Holdings",
+                                          "numberic": true,
+                                        },
+                                        Object {
+                                          "disablePadding": false,
+                                          "id": "priceBTC",
+                                          "label": "Price (BTC)",
+                                          "numberic": true,
+                                        },
+                                        Object {
+                                          "disablePadding": false,
+                                          "id": "priceUSD",
+                                          "label": "Price (USD)",
+                                          "numberic": true,
+                                        },
+                                        Object {
+                                          "disablePadding": false,
+                                          "id": "totalUSD",
+                                          "label": "Total Value (USD)",
+                                          "numberic": true,
+                                        },
+                                        Object {
+                                          "disablePadding": false,
+                                          "id": "assetWeight",
+                                          "label": "Asset Weight",
+                                          "numberic": false,
+                                        },
+                                        Object {
+                                          "disablePadding": false,
+                                          "id": "24Change",
+                                          "label": "24H Change",
+                                          "numberic": true,
+                                        },
+                                        Object {
+                                          "disablePadding": false,
+                                          "id": "7Change",
+                                          "label": "7D Change",
+                                          "numberic": true,
+                                        },
                                       ]
                     }
           />
-</WithStyles(GridWrapper)>,
+</WithStyles(Grid)>,
       ],
       "container": true,
     },
@@ -88,7 +128,7 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "class",
         "props": Object {
-          "children": <WithStyles(inject-AssetAllocation-with-AssetStore-NotificationStore-MarketStore-PortfolioStore) />,
+          "children": <WithStyles(inject-AssetAllocation-with-AssetStore-MarketStore-PortfolioStore) />,
           "item": true,
           "md": 12,
           "sm": 12,
@@ -111,17 +151,57 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "class",
         "props": Object {
-          "children": <WithStyles(inject-_class-with-PortfolioStore)
+          "children": <WithStyles(inject-PortfolioSummaryTable-with-PortfolioStore)
             tableHead={
                         Array [
-                                    "Ticker",
-                                    "Holdings",
-                                    "Price(BTC)",
-                                    "Price(USD)",
-                                    "Total Value(USD)",
-                                    "Asset Weight",
-                                    "24H Change",
-                                    "7D Change",
+                                    Object {
+                                      "disablePadding": false,
+                                      "id": "ticker",
+                                      "label": "Ticker",
+                                      "numberic": false,
+                                    },
+                                    Object {
+                                      "disablePadding": false,
+                                      "id": "holdings",
+                                      "label": "Holdings",
+                                      "numberic": true,
+                                    },
+                                    Object {
+                                      "disablePadding": false,
+                                      "id": "priceBTC",
+                                      "label": "Price (BTC)",
+                                      "numberic": true,
+                                    },
+                                    Object {
+                                      "disablePadding": false,
+                                      "id": "priceUSD",
+                                      "label": "Price (USD)",
+                                      "numberic": true,
+                                    },
+                                    Object {
+                                      "disablePadding": false,
+                                      "id": "totalUSD",
+                                      "label": "Total Value (USD)",
+                                      "numberic": true,
+                                    },
+                                    Object {
+                                      "disablePadding": false,
+                                      "id": "assetWeight",
+                                      "label": "Asset Weight",
+                                      "numberic": false,
+                                    },
+                                    Object {
+                                      "disablePadding": false,
+                                      "id": "24Change",
+                                      "label": "24H Change",
+                                      "numberic": true,
+                                    },
+                                    Object {
+                                      "disablePadding": false,
+                                      "id": "7Change",
+                                      "label": "7D Change",
+                                      "numberic": true,
+                                    },
                                   ]
             }
 />,
@@ -137,14 +217,54 @@ ShallowWrapper {
           "nodeType": "class",
           "props": Object {
             "tableHead": Array [
-              "Ticker",
-              "Holdings",
-              "Price(BTC)",
-              "Price(USD)",
-              "Total Value(USD)",
-              "Asset Weight",
-              "24H Change",
-              "7D Change",
+              Object {
+                "disablePadding": false,
+                "id": "ticker",
+                "label": "Ticker",
+                "numberic": false,
+              },
+              Object {
+                "disablePadding": false,
+                "id": "holdings",
+                "label": "Holdings",
+                "numberic": true,
+              },
+              Object {
+                "disablePadding": false,
+                "id": "priceBTC",
+                "label": "Price (BTC)",
+                "numberic": true,
+              },
+              Object {
+                "disablePadding": false,
+                "id": "priceUSD",
+                "label": "Price (USD)",
+                "numberic": true,
+              },
+              Object {
+                "disablePadding": false,
+                "id": "totalUSD",
+                "label": "Total Value (USD)",
+                "numberic": true,
+              },
+              Object {
+                "disablePadding": false,
+                "id": "assetWeight",
+                "label": "Asset Weight",
+                "numberic": false,
+              },
+              Object {
+                "disablePadding": false,
+                "id": "24Change",
+                "label": "24H Change",
+                "numberic": true,
+              },
+              Object {
+                "disablePadding": false,
+                "id": "7Change",
+                "label": "7D Change",
+                "numberic": true,
+              },
             ],
           },
           "ref": null,
@@ -163,43 +283,83 @@ ShallowWrapper {
       "nodeType": "class",
       "props": Object {
         "children": Array [
-          <WithStyles(GridWrapper)
+          <WithStyles(Grid)
             item={true}
             md={12}
             sm={12}
             xs={12}
 >
             <WithStyles(inject-AssetInput-with-AssetStore-MarketStore-PortfolioStore-NotificationStore) />
-</WithStyles(GridWrapper)>,
-          <WithStyles(GridWrapper)
+</WithStyles(Grid)>,
+          <WithStyles(Grid)
             item={true}
             md={12}
             sm={12}
             xs={12}
 >
-            <WithStyles(inject-AssetAllocation-with-AssetStore-NotificationStore-MarketStore-PortfolioStore) />
-</WithStyles(GridWrapper)>,
-          <WithStyles(GridWrapper)
+            <WithStyles(inject-AssetAllocation-with-AssetStore-MarketStore-PortfolioStore) />
+</WithStyles(Grid)>,
+          <WithStyles(Grid)
             item={true}
             md={12}
             sm={12}
             xs={12}
 >
-            <WithStyles(inject-_class-with-PortfolioStore)
+            <WithStyles(inject-PortfolioSummaryTable-with-PortfolioStore)
                         tableHead={
                                     Array [
-                                                "Ticker",
-                                                "Holdings",
-                                                "Price(BTC)",
-                                                "Price(USD)",
-                                                "Total Value(USD)",
-                                                "Asset Weight",
-                                                "24H Change",
-                                                "7D Change",
+                                                Object {
+                                                  "disablePadding": false,
+                                                  "id": "ticker",
+                                                  "label": "Ticker",
+                                                  "numberic": false,
+                                                },
+                                                Object {
+                                                  "disablePadding": false,
+                                                  "id": "holdings",
+                                                  "label": "Holdings",
+                                                  "numberic": true,
+                                                },
+                                                Object {
+                                                  "disablePadding": false,
+                                                  "id": "priceBTC",
+                                                  "label": "Price (BTC)",
+                                                  "numberic": true,
+                                                },
+                                                Object {
+                                                  "disablePadding": false,
+                                                  "id": "priceUSD",
+                                                  "label": "Price (USD)",
+                                                  "numberic": true,
+                                                },
+                                                Object {
+                                                  "disablePadding": false,
+                                                  "id": "totalUSD",
+                                                  "label": "Total Value (USD)",
+                                                  "numberic": true,
+                                                },
+                                                Object {
+                                                  "disablePadding": false,
+                                                  "id": "assetWeight",
+                                                  "label": "Asset Weight",
+                                                  "numberic": false,
+                                                },
+                                                Object {
+                                                  "disablePadding": false,
+                                                  "id": "24Change",
+                                                  "label": "24H Change",
+                                                  "numberic": true,
+                                                },
+                                                Object {
+                                                  "disablePadding": false,
+                                                  "id": "7Change",
+                                                  "label": "7D Change",
+                                                  "numberic": true,
+                                                },
                                               ]
                         }
             />
-</WithStyles(GridWrapper)>,
+</WithStyles(Grid)>,
         ],
         "container": true,
       },
@@ -233,7 +393,7 @@ ShallowWrapper {
           "key": undefined,
           "nodeType": "class",
           "props": Object {
-            "children": <WithStyles(inject-AssetAllocation-with-AssetStore-NotificationStore-MarketStore-PortfolioStore) />,
+            "children": <WithStyles(inject-AssetAllocation-with-AssetStore-MarketStore-PortfolioStore) />,
             "item": true,
             "md": 12,
             "sm": 12,
@@ -256,17 +416,57 @@ ShallowWrapper {
           "key": undefined,
           "nodeType": "class",
           "props": Object {
-            "children": <WithStyles(inject-_class-with-PortfolioStore)
+            "children": <WithStyles(inject-PortfolioSummaryTable-with-PortfolioStore)
               tableHead={
                             Array [
-                                          "Ticker",
-                                          "Holdings",
-                                          "Price(BTC)",
-                                          "Price(USD)",
-                                          "Total Value(USD)",
-                                          "Asset Weight",
-                                          "24H Change",
-                                          "7D Change",
+                                          Object {
+                                            "disablePadding": false,
+                                            "id": "ticker",
+                                            "label": "Ticker",
+                                            "numberic": false,
+                                          },
+                                          Object {
+                                            "disablePadding": false,
+                                            "id": "holdings",
+                                            "label": "Holdings",
+                                            "numberic": true,
+                                          },
+                                          Object {
+                                            "disablePadding": false,
+                                            "id": "priceBTC",
+                                            "label": "Price (BTC)",
+                                            "numberic": true,
+                                          },
+                                          Object {
+                                            "disablePadding": false,
+                                            "id": "priceUSD",
+                                            "label": "Price (USD)",
+                                            "numberic": true,
+                                          },
+                                          Object {
+                                            "disablePadding": false,
+                                            "id": "totalUSD",
+                                            "label": "Total Value (USD)",
+                                            "numberic": true,
+                                          },
+                                          Object {
+                                            "disablePadding": false,
+                                            "id": "assetWeight",
+                                            "label": "Asset Weight",
+                                            "numberic": false,
+                                          },
+                                          Object {
+                                            "disablePadding": false,
+                                            "id": "24Change",
+                                            "label": "24H Change",
+                                            "numberic": true,
+                                          },
+                                          Object {
+                                            "disablePadding": false,
+                                            "id": "7Change",
+                                            "label": "7D Change",
+                                            "numberic": true,
+                                          },
                                         ]
               }
 />,
@@ -282,14 +482,54 @@ ShallowWrapper {
             "nodeType": "class",
             "props": Object {
               "tableHead": Array [
-                "Ticker",
-                "Holdings",
-                "Price(BTC)",
-                "Price(USD)",
-                "Total Value(USD)",
-                "Asset Weight",
-                "24H Change",
-                "7D Change",
+                Object {
+                  "disablePadding": false,
+                  "id": "ticker",
+                  "label": "Ticker",
+                  "numberic": false,
+                },
+                Object {
+                  "disablePadding": false,
+                  "id": "holdings",
+                  "label": "Holdings",
+                  "numberic": true,
+                },
+                Object {
+                  "disablePadding": false,
+                  "id": "priceBTC",
+                  "label": "Price (BTC)",
+                  "numberic": true,
+                },
+                Object {
+                  "disablePadding": false,
+                  "id": "priceUSD",
+                  "label": "Price (USD)",
+                  "numberic": true,
+                },
+                Object {
+                  "disablePadding": false,
+                  "id": "totalUSD",
+                  "label": "Total Value (USD)",
+                  "numberic": true,
+                },
+                Object {
+                  "disablePadding": false,
+                  "id": "assetWeight",
+                  "label": "Asset Weight",
+                  "numberic": false,
+                },
+                Object {
+                  "disablePadding": false,
+                  "id": "24Change",
+                  "label": "24H Change",
+                  "numberic": true,
+                },
+                Object {
+                  "disablePadding": false,
+                  "id": "7Change",
+                  "label": "7D Change",
+                  "numberic": true,
+                },
               ],
             },
             "ref": null,

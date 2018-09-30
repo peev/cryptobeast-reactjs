@@ -24,11 +24,11 @@ node {
         sh 'cd server && npm install'
       }
     }
-    stage('Test Front-End') {
-      nodejs(nodeJSInstallationName: 'nodejs') {
-        sh 'cd client && npm run test:ci'
-      }
-    }
+    // stage('Test Front-End') {
+    //   nodejs(nodeJSInstallationName: 'nodejs') {
+    //     sh 'cd client && npm run test:ci'
+    //   }
+    // }
     stage('Build Front-End Static Bundle') {
       nodejs(nodeJSInstallationName: 'nodejs') {
         sh 'cd client && npm run build:demo'

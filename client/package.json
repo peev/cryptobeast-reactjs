@@ -10,6 +10,7 @@
     "auth0-lock": "11.9.1",
     "axios": "0.18.0",
     "babel-plugin-styled-components": "1.7.1",
+    "auth0-password-policies": "latest",
     "classnames": "2.2.6",
     "flow-bin": "0.80.0",
     "highcharts": "6.1.3",

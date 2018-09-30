@@ -1,12 +1,9 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { withStyles, Grid } from '@material-ui/core';
-import { inject, observer } from 'mobx-react';
 
-import Button from '../../CustomButtons/Button';
-import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
-import SelectPeriod from '../../Selectors/SelectPeriod';
 import LiquidityChart from '../../HighCharts/Liquidity';
+import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 
 const styles = () => ({
   overflowNone: {
@@ -65,32 +62,25 @@ type Props = {
   classes: Object,
 };
 
-const Liquidity = inject('Analytics')(observer(({ ...props }: Props) => {
-  const { classes } = props;
-
-  return (
-    <Grid container className={classes.overflowNone}>
-      <Grid container>
-        <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
-          <SelectPeriod />
+class Liquidity extends React.Component<Props, State> {
+  render() {
+    const { classes } = this.props;
+    return (
+      <Grid container className={classes.overflowNone}>
+        <Grid container>
+          <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
+            <SelectBenchmark/>
+          </Grid>
         </Grid>
 
-        <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
-          <SelectBenchmark />
-        </Grid>
-
-        <Grid item xs={1} className={[classes.flex, classes.flexBottom].join(' ')}>
-          <Button>Apply</Button>
+        <Grid container className={classes.bigTopPadding}>
+          <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
+            <LiquidityChart />
+          </Paper>
         </Grid>
       </Grid>
-
-      <Grid container className={classes.bigTopPadding}>
-        <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-          <LiquidityChart />
-        </Paper>
-      </Grid>
-    </Grid>
-  );
-}));
+    );
+  }
+};
 
 export default withStyles(styles)(Liquidity);

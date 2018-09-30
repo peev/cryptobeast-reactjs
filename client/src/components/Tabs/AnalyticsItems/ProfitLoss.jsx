@@ -167,7 +167,7 @@ class ProfitLoss extends React.Component<Props, State> {
 
         <Grid container className={classes.bigTopPadding}>
           <Grid item xs={3} className={[classes.flex, classes.flexCenter].join(' ')}>
-            <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['1w', '1m', '1y']} />
+            <MotionSelect defaultValueIndex={1} selectedValue={this.handleSelectPeriod} values={['1w', '1m', '1y']} />
           </Grid>
           <Grid item xs={3} className={[classes.paddingLeft, classes.flex, classes.flexCenter].join(' ')}>
             <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectCurrency} values={profitLossCurrencies} title={'Select currency'} />

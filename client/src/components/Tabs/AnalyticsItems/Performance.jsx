@@ -65,7 +65,7 @@ const Performance = inject('Analytics')(observer(({ ...props }: Props) => {
 
       <Grid container>
         <Grid item xs={8} sm={8} md={8} className={classes.marginRight}>
-          <TotalPortfolioValue chartHeight={416} />
+          <TotalPortfolioValue />
         </Grid>
 
         <Grid item xs={3} sm={3} md={3}>

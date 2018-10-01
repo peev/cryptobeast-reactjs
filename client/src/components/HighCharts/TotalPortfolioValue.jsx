@@ -15,7 +15,7 @@ const TotalPortfolioValue = inject('Analytics')(observer(({ ...props }: Props) =
   const config = {
     chart: {
       zoomType: 'x',
-      height: chartHeight,
+      height: chartHeight || null,
     },
     title: {
       text: 'Total portfolio value in USD',

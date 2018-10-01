@@ -17,9 +17,6 @@ const styles = (theme: Object) => ({
     height: '100%',
     overflowX: 'auto',
   },
-  table: {
-    width: '700px'
-  },
   center: {
     textAlign: 'center'
   },

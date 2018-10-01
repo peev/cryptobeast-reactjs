@@ -6,7 +6,7 @@ import {
   YAxis,
   XAxis,
   Legend,
-  // Tooltip,
+  Tooltip,
   Chart,
   ColumnSeries,
   Title,
@@ -19,25 +19,25 @@ type Props = {
 class ProfitLossGlobalChart extends React.Component<Props> {
   render() {
     const { data, days } = this.props;
-    if(!data.ready) {
+    if (!data.ready) {
       return null;
     }
     let dataSeries = [];
     let currenciesData = [];
-    for(let currency in data) {
+    for (let currency in data) {
       let average = 0;
       let passed = true;
-      for(let counter = 0; counter < days; counter++) {
-        if(counter === data[currency].length) {
+      for (let counter = 0; counter < days; counter++) {
+        if (counter === data[currency].length) {
           break;
         }
-        if(!data[currency][counter]) {
+        if (!data[currency][counter]) {
           passed = false;
           break;
         }
         average += parseFloat(data[currency][counter]['Daily Profit and Loss']);
       }
-      if(passed) {
+      if (passed) {
         average /= days;
         dataSeries.push(average);
         currenciesData.push(currency);
@@ -48,9 +48,11 @@ class ProfitLossGlobalChart extends React.Component<Props> {
       <HighchartsChart>
         <Chart />
 
-        <Title>PROFIT AND LOSS OF EACH ASSET</Title>
+        <Tooltip shared />
 
-        <Legend 
+        <Title>CUMULATIVE PROFIT AND LOSS SUMMAR</Title>
+
+        <Legend
           enabled={false}
         />
 

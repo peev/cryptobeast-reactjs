@@ -6,7 +6,7 @@ import {
   YAxis,
   XAxis,
   Legend,
-  // Tooltip,
+  Tooltip,
   Chart,
   ColumnSeries,
   Title,
@@ -15,14 +15,23 @@ import {
 class ProfitLossChart extends React.Component<Props, State> {
   render() {
     const { currency, data, days } = this.props;
-    if(!data.ready || !currency.length) {
+    if (!data.ready || !currency.length) {
       return null;
     }
     let currencyData = data[currency].map((val) => {
       return parseFloat(val['Daily Profit and Loss']);
     });
     let dates = data[currency].map((val) => {
-      return val.Date;
+      let date = new Date(val.Date);
+      let day = date.getDate() + '';
+      if (day.length === 1) {
+        day = '0' + day;
+      }
+      let month = date.getUTCMonth() + '';
+      if (month.length === 1) {
+        month = '0' + month;
+      }
+      return day + '-' + month + '-' + date.getFullYear();
     });
     currencyData.length = days;
     dates = dates.reverse();
@@ -31,10 +40,9 @@ class ProfitLossChart extends React.Component<Props, State> {
       <HighchartsChart>
         <Chart />
 
-        <Title>PROFIT AND LOSS</Title>
+        <Tooltip shared />
 
-        <Legend />
-
+        <Title>{currency + ' DAILY PROFIT AND LOSS'}</Title>
 
         <XAxis
           categories={dates}

@@ -29,6 +29,7 @@ class PortfolioStore {
   @observable currentPortfolioTrades;
   @observable currentPortfolioApiTradeHistory;
   @observable currentPortfolioPrices;
+  @observable currentPortfolioValueHistory;
   @observable newPortfolioName;
 
   constructor() {
@@ -42,6 +43,7 @@ class PortfolioStore {
     this.currentPortfolioTrades = [];
     this.currentPortfolioApiTradeHistory = [];
     this.currentPortfolioPrices = [];
+    this.currentPortfolioValueHistory = [];
     this.newPortfolioName = '';
 
     // only start data fetching if those properties are actually used!
@@ -569,6 +571,7 @@ class PortfolioStore {
           this.getCurrentPortfolioInvestors();
           this.getCurrentPortfolioTrades();
           this.getCurrentPortfolioTransactions();
+          this.getCurrentPortfolioValue();
         }
       });
       InvestorStore.selectedInvestorIndividualSummary = null;
@@ -620,6 +623,14 @@ class PortfolioStore {
     requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
       .then(action((result) => {
         this.currentPortfolioPrices = result.data;
+      }));
+  }
+
+  @action.bound
+  getCurrentPortfolioValue() {
+    requester.Portfolio.getValueHistory()
+      .then(action((result) => {
+        this.currentPortfolioValueHistory = result.data;
       }));
   }
 

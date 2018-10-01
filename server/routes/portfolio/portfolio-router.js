@@ -16,7 +16,8 @@ const attachTo = (app, repository, jobs) => {
     .post('/getPortfolioSharePrice', (req, res) => controller.getPortfolioSharePrice(req, res))
     .post('/sharePriceHistory', (req, res) => controller.getSharePriceHistory(req, res))
     .post('/priceHistory', (req, res) => controller.getPricesHistory(req, res))
-    .post('/periodPriceHistory', (req, res) => controller.getPricesHistoryForPeriod(req, res));
+    .post('/periodPriceHistory', (req, res) => controller.getPricesHistoryForPeriod(req, res))
+    .post('/getValueHistory', (req, res) => controller.getValueHistory(req, res));
 
   app.use('/portfolio', router);
 };

@@ -25,6 +25,7 @@ const Portfolio = {
   searchItemsInCurrentPortfolio: requestParams => requests.get(`/portfolio/${requestParams.portfolioId}/${requestParams.item}`),
   getSharePrice: id => requests.post('/portfolio/getPortfolioSharePrice', id),
   getSharePriceHistory: requestParams => requests.post('/portfolio/sharePriceHistory', requestParams),
+  getValueHistory: requestParams => requests.post('/portfolio/getValueHistory', requestParams),
   getPriceHistory: requestParams => requests.post('/portfolio/priceHistory', requestParams),
   getPriceHistoryForPeriod: requestParams => requests.post('/portfolio/periodPriceHistory', requestParams),
   update: (requestParams, id) => requests.put(`/portfolio/update/${id}`, requestParams), // id + newName

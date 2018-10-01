@@ -7,6 +7,7 @@ const modelName = 'Portfolio';
 
 const portfolioController = (repository, jobs) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
+  const portfolioValueHistory = require('../../mocks/portfolio-usd-value-history');
   const { closingSharePriceJobs, openingSharePriceJobs, closingPortfolioCostJobs } = jobs;
   // const printSharePriceJobs = () => console.log('>>> controller jobs: ', jobs);
   // setInterval(printSharePriceJobs, 5000);
@@ -225,6 +226,10 @@ const portfolioController = (repository, jobs) => {
       });
   };
 
+  const getValueHistory = (req, res) => {
+    res.status(200).send(portfolioValueHistory);
+  };
+
   return {
     searchItemsInCurrentPortfolio,
     getAllPortfolios,
@@ -237,6 +242,7 @@ const portfolioController = (repository, jobs) => {
     getSharePriceHistory,
     getPricesHistory,
     getPricesHistoryForPeriod,
+    getValueHistory,
   };
 };
 

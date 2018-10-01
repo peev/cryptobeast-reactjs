@@ -7,12 +7,14 @@ class Analytics {
   @observable currentPortfolioBTCPriceHistory;
   @observable currentPortfolioClosingSharePrices;
   @observable currentPortfolioPriceHistoryForPeriod;
+  @observable currentPortfolioValueHistoryForPeriod;
   @observable selectedTimeInPerformance;
 
   constructor() {
     this.currentPortfolioBTCPriceHistory = [];
     this.currentPortfolioClosingSharePrices = [];
     this.currentPortfolioPriceHistoryForPeriod = [];
+    this.currentPortfolioValueHistoryForPeriod = [];
     this.selectedTimeInPerformance = '';
 
     onBecomeObserved(this, 'currentPortfolioClosingSharePrices', this.getClosingSharePriceHistory);
@@ -157,6 +159,21 @@ class Analytics {
           const usdEquivalentRounded = Number(`${Math.round(`${usdEquivalent}e2`)}e-2`);
 
           return [timeOfCreation, usdEquivalentRounded, null];
+        });
+    }
+
+    return [];
+  }
+
+  @computed
+  get currentPortfolioValueHistory() {
+    if (PortfolioStore.selectedPortfolio && MarketStore.baseCurrencies.length > 0 &&
+      (!this.currentPortfolioValueHistoryForPeriod.length)) {
+      return PortfolioStore.currentPortfolioValueHistory
+        .map((el) => {
+          const date = Number(parseFloat(el.date));
+          const value = Number(parseFloat(el.value));
+          return [date, value];
         });
     }
 

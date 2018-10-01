@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import Highcharts from 'highcharts';
 import {
-  HighchartsChart, Chart, withHighcharts, XAxis, YAxis, Title, Subtitle, Legend, LineSeries, Tooltip
+  HighchartsChart, Chart, withHighcharts, XAxis, YAxis, Title, LineSeries, Tooltip
 } from 'react-jsx-highcharts';
 
 class TransactionFrequencyChart extends Component {
   state = {};
 
   render() {
-    const { classes, dates, values } = this.props;
+    const { dates, values } = this.props;
 
     return (
       <HighchartsChart>

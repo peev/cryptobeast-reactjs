@@ -5,7 +5,6 @@ import { inject, observer } from 'mobx-react';
 
 import TradeVolumeChart from '../../HighCharts/TradeVolume';
 import TransactionFrequencyChart from '../../HighCharts/TransactionFrequency';
-import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 import MotionSelect from '../../Selectors/MotionSelect';
 
 const styles = () => ({
@@ -72,10 +71,6 @@ class Liquidity extends React.Component<Props, State> {
     selectPeriod: '',
     selectedCurrency: 'BTC'
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   handleSelectMarkey(data) {
 

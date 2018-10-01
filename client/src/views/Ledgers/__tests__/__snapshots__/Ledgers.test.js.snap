@@ -18,8 +18,8 @@ ShallowWrapper {
     "nodeType": "function",
     "props": Object {
       "classes": Object {
-        "iframe": "Ledgers-iframe-1",
-        "iframeContainer": "Ledgers-iframeContainer-2",
+        "iframe": "Ledgers-iframe-01",
+        "iframeContainer": "Ledgers-iframeContainer-02",
       },
     },
     "ref": null,
@@ -33,8 +33,8 @@ ShallowWrapper {
       "nodeType": "function",
       "props": Object {
         "classes": Object {
-          "iframe": "Ledgers-iframe-1",
-          "iframeContainer": "Ledgers-iframeContainer-2",
+          "iframe": "Ledgers-iframe-01",
+          "iframeContainer": "Ledgers-iframeContainer-02",
         },
       },
       "ref": null,

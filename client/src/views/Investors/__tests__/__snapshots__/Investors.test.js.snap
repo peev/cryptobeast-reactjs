@@ -18,11 +18,10 @@ ShallowWrapper {
     "nodeType": "function",
     "props": Object {
       "classes": Object {
-        "headerPosition1": "Investors-headerPosition1-3",
-        "headerPosition2": "Investors-headerPosition2-4",
-        "herderBottomButton": "Investors-herderBottomButton-2",
-        "herderTopButton": "Investors-herderTopButton-1",
-        "itemsCardPosition": "Investors-itemsCardPosition-5",
+        "herderBottomButton": "Investors-herderBottomButton-02",
+        "herderTopButton": "Investors-herderTopButton-01",
+        "upperPart": "Investors-upperPart-03",
+        "upperPartSingleRow": "Investors-upperPartSingleRow-04",
       },
     },
     "ref": null,
@@ -36,11 +35,10 @@ ShallowWrapper {
       "nodeType": "function",
       "props": Object {
         "classes": Object {
-          "headerPosition1": "Investors-headerPosition1-3",
-          "headerPosition2": "Investors-headerPosition2-4",
-          "herderBottomButton": "Investors-herderBottomButton-2",
-          "herderTopButton": "Investors-herderTopButton-1",
-          "itemsCardPosition": "Investors-itemsCardPosition-5",
+          "herderBottomButton": "Investors-herderBottomButton-02",
+          "herderTopButton": "Investors-herderTopButton-01",
+          "upperPart": "Investors-upperPart-03",
+          "upperPartSingleRow": "Investors-upperPartSingleRow-04",
         },
       },
       "ref": null,

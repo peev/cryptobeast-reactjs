@@ -12,7 +12,7 @@ import {
   Title,
 } from 'react-jsx-highcharts';
 
-class LiquidityChart extends Component {
+class TradeVolumeChart extends Component {
   state = {};
 
   render() {
@@ -39,4 +39,4 @@ class LiquidityChart extends Component {
   }
 }
 
-export default withHighcharts(LiquidityChart, Highcharts);
+export default withHighcharts(TradeVolumeChart, Highcharts);

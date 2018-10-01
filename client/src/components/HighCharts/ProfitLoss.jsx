@@ -5,7 +5,6 @@ import {
   withHighcharts,
   YAxis,
   XAxis,
-  Legend,
   Tooltip,
   Chart,
   ColumnSeries,

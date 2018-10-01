@@ -6,17 +6,19 @@ import { inject, observer } from 'mobx-react';
 
 type Props = {
   Analytics: Object,
+  chartHeight: number,
 };
 
-const TotalAssetsValue = inject('Analytics')(observer(({ ...props }: Props) => {
-  const { Analytics } = props;
+const TotalPortfolioValue = inject('Analytics')(observer(({ ...props }: Props) => {
+  const { Analytics, chartHeight } = props;
 
   const config = {
     chart: {
       zoomType: 'x',
+      height: chartHeight,
     },
     title: {
-      text: 'Total assets value',
+      text: 'Total portfolio value in USD',
     },
     subtitle: {
       text: document.ontouchstart === undefined ?
@@ -63,7 +65,7 @@ const TotalAssetsValue = inject('Analytics')(observer(({ ...props }: Props) => {
     series: [{
       type: 'area',
       name: 'USD value',
-      data: Analytics.currentPortfolioPriceHistoryBreakdown,
+      data: Analytics.currentPortfolioValueHistory,
     }],
   };
 
@@ -72,4 +74,4 @@ const TotalAssetsValue = inject('Analytics')(observer(({ ...props }: Props) => {
   );
 }));
 
-export default TotalAssetsValue;
+export default TotalPortfolioValue;

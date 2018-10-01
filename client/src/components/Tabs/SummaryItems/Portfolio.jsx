@@ -2,8 +2,7 @@
 import React from 'react';
 import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-
-import PerformanceChart from '../../HighCharts/PerformanceChart';
+import TotalPortfolioValue from '../../HighCharts/TotalPortfolioValue';
 
 const styles = () => ({
   container: {
@@ -24,16 +23,15 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  Analytics: Object,
 };
 
-const Portfolio = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: Props) => {
-  const { classes, Analytics } = props;
+const Portfolio = inject('PortfolioStore')(observer(({ ...props }: Props) => {
+  const { classes } = props;
 
   return (
     <Grid container className={classes.container}>
       <Grid item xs={12} sm={12} md={12} className={classes.gridItem}>
-        {Analytics.currentPortfolioClosingSharePricesBreakdown.length > 0 ? <PerformanceChart /> : ''}
+        <TotalPortfolioValue chartHeight={320} />
       </Grid>
     </Grid>
   );

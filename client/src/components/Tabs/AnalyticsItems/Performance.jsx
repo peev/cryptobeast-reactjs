@@ -5,8 +5,9 @@ import { inject, observer } from 'mobx-react';
 
 import Button from '../../CustomButtons/Button';
 import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
-import SelectPeriod from '../../Selectors/Analytics/SelectPeriod';
-import TotalAssetsValue from '../../HighCharts/TotalAssetsValue';
+// import SelectPeriod from '../../Selectors/Analytics/SelectPeriod';
+// import TotalAssetsValue from '../../HighCharts/TotalAssetsValue';
+import TotalPortfolioValue from '../../HighCharts/TotalPortfolioValue';
 import PerformanceAssets from '../../HighCharts/PerformanceAssets';
 import SummaryPerformanceCard from '../../Cards/Analytics/SummaryPerformanceCard';
 
@@ -52,7 +53,7 @@ const Performance = inject('Analytics')(observer(({ ...props }: Props) => {
 
   return (
     <Grid container>
-      <Grid container className={classes.header}>
+      {/* <Grid container className={classes.header}>
         <Grid item xs={2} sm={2} md={2} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
           <SelectPeriod />
         </Grid>
@@ -60,11 +61,11 @@ const Performance = inject('Analytics')(observer(({ ...props }: Props) => {
         <Grid item xs={1} sm={1} md={1} className={[classes.flex, classes.flexBottom].join(' ')}>
           <Button onClick={() => handleSelectTimePeriod()}>Apply</Button>
         </Grid>
-      </Grid>
+      </Grid> */}
 
       <Grid container>
         <Grid item xs={8} sm={8} md={8} className={classes.marginRight}>
-          <TotalAssetsValue />
+          <TotalPortfolioValue chartHeight={416} />
         </Grid>
 
         <Grid item xs={3} sm={3} md={3}>

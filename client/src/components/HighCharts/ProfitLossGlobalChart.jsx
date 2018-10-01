@@ -62,7 +62,7 @@ class ProfitLossGlobalChart extends React.Component<Props> {
 
         <YAxis id="number">
           <YAxis.Title>Profit and Loss in %</YAxis.Title>
-          <ColumnSeries name="asd" data={dataSeries} />
+          <ColumnSeries name="Profit/Loss" data={dataSeries} />
         </YAxis>
       </HighchartsChart>
     );

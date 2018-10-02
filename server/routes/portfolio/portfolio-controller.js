@@ -9,6 +9,7 @@ const portfolioController = (repository, jobs) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
   const { closingSharePriceJobs, openingSharePriceJobs, closingPortfolioCostJobs } = jobs;
   const pricesHistoryMock = require('../../mocks/prices-history');
+  const sharePriceHistoryMock = require('../../mocks/share-price-history');
   // const printSharePriceJobs = () => console.log('>>> controller jobs: ', jobs);
   // setInterval(printSharePriceJobs, 5000);
 
@@ -152,21 +153,23 @@ const portfolioController = (repository, jobs) => {
   };
 
   const getSharePriceHistory = (req, res) => {
-    repository.find({
-      modelName: 'SharePrice',
-      options: {
-        where: {
-          portfolioId: req.body.portfolioId,
-          isClosingPrice: req.body.isClosingPrice,
-        },
-      },
-    })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
-      });
+    // TODO remove mock
+    res.status(200).send(sharePriceHistoryMock);
+    // repository.find({
+    //   modelName: 'SharePrice',
+    //   options: {
+    //     where: {
+    //       portfolioId: req.body.portfolioId,
+    //       isClosingPrice: req.body.isClosingPrice,
+    //     },
+    //   },
+    // })
+    //   .then((response) => {
+    //     res.status(200).send(response);
+    //   })
+    //   .catch((error) => {
+    //     res.json(error);
+    //   });
   };
 
   const getPricesHistory = (req, res) => {

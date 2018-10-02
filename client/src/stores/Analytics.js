@@ -209,6 +209,28 @@ class Analytics {
     return [];
   }
 
+  @computed
+  get currentPortfolioClosingSharePricesBreakdownMock() {
+    if (PortfolioStore.selectedPortfolio && this.currentPortfolioClosingSharePrices.length > 0) {
+      const dates = [];
+      const prices = [];
+      const btc = [];
+      const eth = [];
+      this.currentPortfolioClosingSharePrices
+        .filter(el => el.isClosingPrice === true)
+        .forEach((el) => {
+          const date = new Date(Number(el.createdAt)).toString().split(' ');
+          dates.push(`${date[2]} ${date[1]} ${date[3]}`);
+          prices.push(Number(el.price));
+          btc.push(Number(el.btcusd));
+          eth.push(Number(el.ethusd));
+        });
+      return [dates, prices, btc, eth];
+    }
+
+    return [];
+  }
+
   @action
   selectTimeInPerformance(value) {
     this.selectedTimeInPerformance = value;

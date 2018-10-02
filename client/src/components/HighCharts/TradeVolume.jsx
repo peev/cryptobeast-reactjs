@@ -1,42 +1,101 @@
 import React, { Component } from 'react';
-import Highcharts from 'highcharts';
-import {
-  HighchartsChart,
-  withHighcharts,
-  YAxis,
-  XAxis,
-  Legend,
-  // Tooltip,
-  Chart,
-  ColumnSeries,
-  Title,
-} from 'react-jsx-highcharts';
+import ReactHighcharts from 'react-highcharts';
+import ReactHighstock from 'react-highcharts/ReactHighstock.src';
 
 class TradeVolumeChart extends Component {
   state = {};
 
   render() {
+    const { data } = this.props;
+    // split the data set into ohlc and volume
+    let ohlc = [],
+      volume = [],
+      groupingUnits = [[
+        'week',                         // unit name
+        [1]                             // allowed multiples
+      ], [
+        'month',
+        [1, 2, 3, 4, 6]
+      ]],
+      i = 0;
+
+    for (i; i < data.length; i += 1) {
+      ohlc.push([
+        +(new Date(data[i]['Date'])), // the date
+        +data[i]['Open'], // open
+        +data[i]['High'], // high
+        +data[i]['Low'], // low
+        +data[i]['Close'] // close
+      ]);
+
+      volume.push([
+        +(new Date(data[i]['Date'])), // the date
+        +data[i]['Volume To'] // the volume
+      ]);
+    }
+
+    const config = {
+      rangeSelector: {
+        selected: 1
+      },
+
+      title: {
+        text: 'BTC-USD 30-Day Transaction Frequency'
+      },
+
+      yAxis: [{
+        labels: {
+          align: 'right',
+          x: -3
+        },
+        title: {
+          text: 'OHLC'
+        },
+        height: '60%',
+        lineWidth: 2,
+        resize: {
+          enabled: true
+        }
+      }, {
+        labels: {
+          align: 'right',
+          x: -3
+        },
+        title: {
+          text: 'Volume'
+        },
+        top: '65%',
+        height: '35%',
+        offset: 0,
+        lineWidth: 2
+      }],
+
+      tooltip: {
+        split: true
+      },
+
+      series: [{
+        type: 'candlestick',
+        name: 'AAPL',
+        data: ohlc,
+        dataGrouping: {
+          units: groupingUnits
+        }
+      }, {
+        type: 'column',
+        name: 'Volume',
+        data: volume,
+        yAxis: 1,
+        dataGrouping: {
+          units: groupingUnits
+        }
+      }]
+    };
+
     return (
-      <HighchartsChart>
-        <Chart />
-
-        <Title>Liquidity Chart</Title>
-
-        <Legend />
-
-        <XAxis
-          id="x"
-          categories={['BTC', 'ETH', 'XRP', 'NEO', 'BNB', 'EOS']}
-        />
-
-        <YAxis id="number">
-          <ColumnSeries id="jane" name="" data={[6, 4.5, 8.2, 4, 8.2, 7]} />
-          <ColumnSeries id="john" name="" data={[0.3, 0.5, 0.4, 0.6, 0.5, 0.1]} />
-          <ColumnSeries id="joe" name="" data={[2.2, 3.8, 2.8, 3.5, 0, 7]} />
-        </YAxis>
-      </HighchartsChart>
+      <ReactHighstock config={config} />
     );
   }
 }
 
-export default withHighcharts(TradeVolumeChart, Highcharts);
+export default TradeVolumeChart;

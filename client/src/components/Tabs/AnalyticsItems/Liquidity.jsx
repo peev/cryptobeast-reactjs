@@ -4,7 +4,6 @@ import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import TradeVolumeChart from '../../HighCharts/TradeVolume';
-import TransactionFrequencyChart from '../../HighCharts/TransactionFrequency';
 import MotionSelect from '../../Selectors/MotionSelect';
 
 const styles = () => ({
@@ -86,25 +85,11 @@ class Liquidity extends React.Component<Props, State> {
 
   render() {
     const { classes, MarketStore } = this.props;
-    let dates = [];
-    let values = [];
-    for (let counter = 0; counter < MarketStore.liquidity.length; counter++) {
-      let date = new Date(MarketStore.liquidity[counter][0]);
-      let day = date.getDate() + '';
-      if (day.length === 1) {
-        day = '0' + day;
-      }
-      let month = date.getUTCMonth() + 1 + '';
-      if (month.length === 1) {
-        month = '0' + month;
-      }
-      if (counter % 20  === 0) {
-        dates.push(day + '-' + month + '-' + date.getFullYear());
-      } else {
-        dates.push('');
-      }
-      values.push(MarketStore.liquidity[counter][1]);
+    if(!MarketStore.profitLoss['BTC']) {
+      return null;
     }
+    let data = MarketStore.profitLoss['BTC'].reverse();
+    
     return (
       <Grid container className={classes.overflowNone}>
         <Grid container>
@@ -116,21 +101,11 @@ class Liquidity extends React.Component<Props, State> {
             <MotionSelect defaultValueIndex={0} title={'Select Exchange'}
               selectedValue={this.handleSelectExchange} values={['Kraken']}  />
           </Grid>
-          <Grid item xs={2} className={[classes.marginRight, classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
-            <MotionSelect defaultValueIndex={0} title={'Select Period'}
-              selectedValue={this.handleSelectPeriod} values={['1m', '5m', '1h', '1d']}  />
-          </Grid>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <TransactionFrequencyChart dates={dates} values={values} />
-          </Paper>
-        </Grid>
-
-        <Grid container className={classes.bigTopPadding}>
-          <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <TradeVolumeChart />
+            <TradeVolumeChart data={data} />
           </Paper>
         </Grid>
       </Grid>

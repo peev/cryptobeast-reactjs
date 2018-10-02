@@ -144,6 +144,21 @@ class Analytics {
     return '-';
   }
 
+
+  @computed
+  get currentPortfolioPriceHistoryBreakdownMock() {
+    if (PortfolioStore.selectedPortfolio && MarketStore.baseCurrencies.length > 0 &&
+      (this.currentPortfolioPriceHistoryForPeriod.length > 0 ||
+        PortfolioStore.currentPortfolioPrices.length > 0)) {
+      return this.currentPortfolioPriceHistoryForPeriod
+        .map((el) => {
+          return [Number(el.createdAt), Number(el.price), null];
+        });
+    }
+
+    return [];
+  }
+
   @computed
   get currentPortfolioPriceHistoryBreakdown() {
     if (PortfolioStore.selectedPortfolio && MarketStore.baseCurrencies.length > 0 &&

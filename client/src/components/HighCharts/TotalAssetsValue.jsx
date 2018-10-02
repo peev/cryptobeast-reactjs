@@ -63,7 +63,7 @@ const TotalAssetsValue = inject('Analytics')(observer(({ ...props }: Props) => {
     series: [{
       type: 'area',
       name: 'USD value',
-      data: Analytics.currentPortfolioPriceHistoryBreakdown,
+      data: Analytics.currentPortfolioPriceHistoryBreakdownMock,
     }],
   };
 

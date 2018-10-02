@@ -8,6 +8,7 @@ const modelName = 'Portfolio';
 const portfolioController = (repository, jobs) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
   const { closingSharePriceJobs, openingSharePriceJobs, closingPortfolioCostJobs } = jobs;
+  const pricesHistoryMock = require('../../mocks/prices-history');
   // const printSharePriceJobs = () => console.log('>>> controller jobs: ', jobs);
   // setInterval(printSharePriceJobs, 5000);
 
@@ -186,43 +187,45 @@ const portfolioController = (repository, jobs) => {
   };
 
   const getPricesHistoryForPeriod = (req, res) => {
-    const id = req.body.portfolioId;
-    const time = req.body.selectedPeriod;
-    const currentDate = new Date();
-    let endDate;
+    // TODO remove mock
+    res.status(200).send(pricesHistoryMock);
+    // const id = req.body.portfolioId;
+    // const time = req.body.selectedPeriod;
+    // const currentDate = new Date();
+    // let endDate;
 
-    switch (time) {
-      case '1d':
-        endDate = currentDate.getTime() - (24 * 60 * 60 * 1000);
-        break;
-      case '1m':
-        endDate = currentDate.getTime() - ((24 * 60 * 60 * 1000) * 31);
-        break;
-      case '1y':
-        endDate = currentDate.getTime() - ((24 * 60 * 60 * 1000) * 365);
-        break;
-      default:
-        console.log('No such time period');
-        break;
-    }
+    // switch (time) {
+    //   case '1d':
+    //     endDate = currentDate.getTime() - (24 * 60 * 60 * 1000);
+    //     break;
+    //   case '1m':
+    //     endDate = currentDate.getTime() - ((24 * 60 * 60 * 1000) * 31);
+    //     break;
+    //   case '1y':
+    //     endDate = currentDate.getTime() - ((24 * 60 * 60 * 1000) * 365);
+    //     break;
+    //   default:
+    //     console.log('No such time period');
+    //     break;
+    // }
 
-    repository.find({
-      modelName: 'PortfolioPrice',
-      options: {
-        where: {
-          portfolioId: id,
-          createdAt: {
-            $gt: new Date(endDate),
-          },
-        },
-      },
-    })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
-      });
+    // repository.find({
+    //   modelName: 'PortfolioPrice',
+    //   options: {
+    //     where: {
+    //       portfolioId: id,
+    //       createdAt: {
+    //         $gt: new Date(endDate),
+    //       },
+    //     },
+    //   },
+    // })
+    //   .then((response) => {
+    //     res.status(200).send(response);
+    //   })
+    //   .catch((error) => {
+    //     res.json(error);
+    //   });
   };
 
   return {

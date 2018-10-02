@@ -9,41 +9,40 @@ type Props = {
 
 const PerformanceAssets = inject('Analytics')(observer(({ ...props }: Props) => {
   const { Analytics } = props;
-
   const config = {
-    rangeSelector: {
-      selected: 4,
+    chart: {
+      type: 'line',
     },
-
+    title: {
+      text: 'Share price history',
+    },
+    xAxis: {
+      categories: Analytics.currentPortfolioClosingSharePricesBreakdown[0],
+    },
     yAxis: {
-      labels: {
-        formatter() {
-          return `${this.value > 0 ? ' + ' : ''}${this.value}'%`;
-        },
+      title: {
+        text: 'USD',
       },
-      plotLines: [{
-        value: 0,
-        width: 2,
-        color: 'silver',
-      }],
     },
-
     plotOptions: {
-      series: {
-        compare: 'percent',
-        showInNavigator: true,
+      line: {
+        dataLabels: {
+          enabled: true,
+        },
+        enableMouseTracking: false,
       },
     },
-
-    tooltip: {
-      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
-      valueDecimals: 2,
-      split: true,
-    },
-
-    series: Analytics.currentPortfolioPriceHistoryBreakdown,
+    series: [{
+      name: 'Share price',
+      data: Analytics.currentPortfolioClosingSharePricesBreakdown[1],
+    }, {
+      name: 'BTC',
+      data: Analytics.currentPortfolioClosingSharePricesBreakdown[2],
+    }, {
+      name: 'ETH',
+      data: Analytics.currentPortfolioClosingSharePricesBreakdown[3],
+    }],
   };
-
 
   return (
     <ReactHighcharts config={config} />

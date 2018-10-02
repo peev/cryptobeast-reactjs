@@ -200,12 +200,22 @@ class Analytics {
   @computed
   get currentPortfolioClosingSharePricesBreakdown() {
     if (PortfolioStore.selectedPortfolio && this.currentPortfolioClosingSharePrices.length > 0) {
-      return this.currentPortfolioClosingSharePrices
+      const dates = [];
+      const prices = [];
+      const btc = [];
+      const eth = [];
+      this.currentPortfolioClosingSharePrices
         .filter(el => el.isClosingPrice === true)
-        .map((el) => {
-          const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
-          return [timeOfCreation, el.price, null];
+        .forEach((el) => {
+          const date = Date(Number(parseFloat(el.createdAt))).toString().split(' ');
+          dates.push(`${date[2]} ${date[1]} ${date[3]}`);
+          prices.push(Number(parseFloat(el.price)));
+          btc.push(Number(parseFloat(el.btcusd)));
+          eth.push(Number(parseFloat(el.ethusd)));
         });
+      return [dates, prices, btc, eth];
+      // const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
+      // return [timeOfCreation, el.price, null];
     }
 
     return [];

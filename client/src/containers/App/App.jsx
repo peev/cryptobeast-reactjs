@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core';
 
 import appRoutes from './../../routes/app';
-import AuthService from './../../services/Authentication';
 import { Header, Sidebar } from './../../components';
 import Logo from '../../components/CustomIcons/Sidebar/Logo';
 import LogoText from '../../components/CustomIcons/Sidebar/LogoText';
@@ -35,18 +34,6 @@ class App extends React.Component<Props> {
   state = {
     open: false,
   };
-
-  componentDidMount() {
-    const { location, UserStore } = this.props;
-    UserStore.getUserProfile(); // tries to get user from local storage
-    if (!AuthService.isAuthenticated()) {
-      if (/access_token|id_token|error/.test(location.hash)) {
-        AuthService.receiveAuthentication(location.hash);
-      } else {
-        AuthService.signIn();
-      }
-    }
-  }
 
   handleDrawerOpen = () => {
     this.setState({ open: true });

@@ -6,28 +6,26 @@ import { inject, observer } from 'mobx-react';
 
 type Props = {
   Analytics: Object,
+  chartHeight: number
 };
 
 const TotalAssetsValue = inject('Analytics')(observer(({ ...props }: Props) => {
-  const { Analytics } = props;
+  const { Analytics, chartHeight } = props;
 
   const config = {
     chart: {
       zoomType: 'x',
+      height: chartHeight || null,
     },
     title: {
-      text: 'Total assets value',
-    },
-    subtitle: {
-      text: document.ontouchstart === undefined ?
-        'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
+      text: 'Total portfolio value',
     },
     xAxis: {
       type: 'datetime',
     },
     yAxis: {
       title: {
-        text: 'Exchange rate',
+        text: 'USD',
       },
     },
     legend: {

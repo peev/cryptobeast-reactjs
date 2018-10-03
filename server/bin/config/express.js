@@ -53,7 +53,7 @@ const init = async (repository) => {
   });
 
   // Enable Authentication on all API Endpoints
-  app.use(checkJwt);
+  // app.use(checkJwt);
 
 
   // Initialize market summaries, base tickers and their sync jobs

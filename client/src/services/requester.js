@@ -11,10 +11,10 @@ const idToken = window.localStorage.getItem('id_token'); // eslint-disable-line
 const options = { headers: { Authorization: `Bearer ${idToken}` } };
 
 const requests = {
-  get: url => axios.get(`${API_ROOT}${url}`, options),
-  post: (url, body) => axios.post(`${API_ROOT}${url}`, body, options),
-  put: (url, body) => axios.put(`${API_ROOT}${url}`, body, options),
-  patch: (url, body) => axios.patch(`${API_ROOT}${url}`, body, options),
+  get: url => axios.get(`${API_ROOT}${url}`),
+  post: (url, body) => axios.post(`${API_ROOT}${url}`, body),
+  put: (url, body) => axios.put(`${API_ROOT}${url}`, body),
+  patch: (url, body) => axios.patch(`${API_ROOT}${url}`, body),
   delete: url => axios.delete(`${API_ROOT}${url}`, options), // axios.delete doesn't support body in requests !!!
 };
 

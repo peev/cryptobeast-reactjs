@@ -579,8 +579,11 @@ class PortfolioStore {
 
   @action
   getPortfolios() {
+    
+    
     this.fetchingPortfolios = true;
     return new Promise((resolve, reject) => {
+      console.log('weee');
       requester.Portfolio.getAll()
         .then(action((result) => {
           ApiAccountStore.initializeUserApis(result.data.userApis);

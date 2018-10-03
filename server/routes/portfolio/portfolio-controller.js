@@ -1,8 +1,6 @@
 // const { CronJob } = require('cron');
 const { responseHandler } = require('../utilities/response-handler');
-const AManagement = require('../../integrations/Auth0ManagementAPI');
 
-const Auth0ManagementApi = new AManagement();
 const modelName = 'Portfolio';
 
 const portfolioController = (repository, jobs) => {
@@ -71,8 +69,15 @@ const portfolioController = (repository, jobs) => {
   };
 
   const getAllPortfolios = async (req, res) => {
+    // const allProfilesFound = await repository.find({
+    //   modelName,
+    //   options: {
+    //     where: { owner: req.user.email },
+    //   },
+    // });
+    // return res.status(200).send({ userApis: {}, portfolios: allProfilesFound });
     try {
-      const returnedUser = await Auth0ManagementApi.getUser(req);
+      const returnedUser = await req.body.user;
       const allProfilesFound = await repository.find({
         modelName,
         options: {

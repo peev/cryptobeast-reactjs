@@ -3,11 +3,8 @@ const userController = (repository, jobs) => {
   const { bittrexServices } = require('../../integrations/bittrex-services');
   const { krakenServices } = require('../../integrations/kraken-services');
   const portfolioService = require('../../services/portfolio-service')(repository);
-  const AManagement = require('../../integrations/Auth0ManagementAPI');
 
-  const Auth0ManagementApi = new AManagement();
   const modelName = 'User';
-
 
   const updateClosingTime = async (req, res) => {
     const setting = await repository.findOne({
@@ -62,7 +59,7 @@ const userController = (repository, jobs) => {
 
       if (returnedAssets) {
         // Add given api key and secret to auth0
-        const returnedUser = await Auth0ManagementApi.patchUser(req, res);
+        const returnedUser = req.body.user;
 
         // Add found balance to current selected portfolio
         await addAssetsToPortfolio(returnedAssets, portfolioId); // eslint-disable-line
@@ -80,7 +77,7 @@ const userController = (repository, jobs) => {
   };
 
   const patchUserMetadata = async (req, res) => {
-    const userMetadata = await Auth0ManagementApi.getUser(req);
+    const userMetadata = req.body.user_metadata;
 
     const apiId = req.body.user_metadata.api.id;
     const selectedUserApi = userMetadata.user_metadata[apiId];
@@ -96,15 +93,17 @@ const userController = (repository, jobs) => {
       [apiId]: selectedUserApi,
     };
 
-    const result = await Auth0ManagementApi.patchUser(req, res);
+    const result = userMetadata;
     return result;
   };
 
-  const deleteUserMetadata = async (req, res) => Auth0ManagementApi.patchUser(req, res);
+  const deleteUserMetadata = async (req, res) => {
+    return req.body.user;
+  };
 
   const syncUserApiData = async (req, res) => {
     const portfolioId = parseInt(req.params.portfolioId, 10);
-    const auth0User = await Auth0ManagementApi.getUser(req, res);
+    const auth0User = req.body.user;
     const userMetadata = auth0User.user_metadata;
 
     const currentPortfolioApis = [];

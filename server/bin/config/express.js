@@ -37,20 +37,20 @@ const init = async (repository) => {
   });
 
   // Middleware for checking the JWT
-  const checkJwt = jwt({
-    // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint
-    secret: jwksRsa.expressJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: 'https://cryptobeast.eu.auth0.com/.well-known/jwks.json',
-    }),
+  // const checkJwt = jwt({
+  //   // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint
+  //   secret: jwksRsa.expressJwtSecret({
+  //     cache: true,
+  //     rateLimit: true,
+  //     jwksRequestsPerMinute: 5,
+  //     jwksUri: 'https://cryptobeast.eu.auth0.com/.well-known/jwks.json',
+  //   }),
 
-    // Validate the audience and the issuer
-    audience: 'ro3TfD3x5qWYVH7EhI7IlpoHPK330NeQ',
-    issuer: 'https://cryptobeast.eu.auth0.com/',
-    algorithms: ['RS256'],
-  });
+  //   // Validate the audience and the issuer
+  //   audience: 'ro3TfD3x5qWYVH7EhI7IlpoHPK330NeQ',
+  //   issuer: 'https://cryptobeast.eu.auth0.com/',
+  //   algorithms: ['RS256'],
+  // });
 
   // Enable Authentication on all API Endpoints
   // app.use(checkJwt);

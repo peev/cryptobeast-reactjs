@@ -20,7 +20,7 @@ import stores from './stores';
 // stores.PortfolioStore.getPortfolios().then(() => {
 //   stores.MarketStore.init();
 // });
-stores.PortfolioStore.getPortfolios()
+stores.PortfolioStore.getPortfolios();
 stores.MarketStore.init();
 
 // ====================================

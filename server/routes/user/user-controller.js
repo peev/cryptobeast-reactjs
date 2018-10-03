@@ -2,6 +2,7 @@ const userController = (repository, jobs) => {
   const { closingSharePriceJobs, openingSharePriceJobs, closingPortfolioCostJobs } = jobs;
   const { bittrexServices } = require('../../integrations/bittrex-services');
   const { krakenServices } = require('../../integrations/kraken-services');
+  const { weidexServices } = require('../../integrations/weidex-services');
   const portfolioService = require('../../services/portfolio-service')(repository);
 
   const modelName = 'User';
@@ -169,6 +170,14 @@ const userController = (repository, jobs) => {
     })();
   };
 
+  const getUserAddresses = async () => {
+    console.log('why');
+    // try {
+    //   return await weidexServices().getUserAddresses();
+    // } catch (e) {
+    //   return { error: { response: e, message: 'Could not fetch account address.' } };
+    // }
+  };
 
   // =================
   // Utility functions
@@ -338,6 +347,7 @@ const userController = (repository, jobs) => {
     patchUserMetadata,
     deleteUserMetadata,
     syncUserApiData,
+    getUserAddresses,
   };
 };
 

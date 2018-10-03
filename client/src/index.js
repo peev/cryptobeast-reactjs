@@ -20,8 +20,10 @@ import stores from './stores';
 // stores.PortfolioStore.getPortfolios().then(() => {
 //   stores.MarketStore.init();
 // });
+stores.UserStore.getUserAddresses();
 stores.PortfolioStore.getPortfolios();
 stores.MarketStore.init();
+
 
 // ====================================
 // For easier debugging MobX

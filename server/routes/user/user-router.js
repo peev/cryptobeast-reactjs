@@ -29,6 +29,10 @@ const attachTo = (app, repository, jobs) => {
       '/syncApiData/:portfolioId',
       validator.syncUserApiDataRequest,
       userController.syncUserApiData,
+    )
+    .get(
+      '/userAddresses',
+      userController.getUserAddresses,
     );
 
   app.use('/user', router);

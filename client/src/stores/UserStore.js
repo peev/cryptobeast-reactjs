@@ -10,13 +10,15 @@ class UserStore {
   @observable timeValue;
   @observable timeType;
   @observable profile;
+  @observable userAddresses;
 
   constructor() {
     this.data = {};
     this.timeValue = '23:59';
     this.timeType = true;
     this.profile = {};
-
+    this.userAddresses = [];
+    
     this.getUserData();
 
     reaction(
@@ -50,6 +52,15 @@ class UserStore {
   setPortfolio(portfolioId) {
     this.data.selectedPortfolio = portfolioId;
     this.saveData();
+  }
+
+  @action.bound
+  getUserAddresses() {
+    console.log('first');
+    requester.User.getUserAddresses().then((data) => {
+      console.log('second');
+      this.userAddresses = data;
+    });
   }
 
   @action.bound

@@ -8,6 +8,7 @@ import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 import TotalAssetsValue from '../../HighCharts/TotalAssetsValue';
 import PerformanceAssets from '../../HighCharts/PerformanceAssets';
 import SummaryPerformanceCard from '../../Cards/Analytics/SummaryPerformanceCard';
+import SharePriceChart from '../../HighCharts/SharePriceChart';
 
 const styles = () => ({
   marginTop: {
@@ -86,7 +87,7 @@ class Performance extends React.Component<Props, State> {
 
         <Grid container>
           <Grid item xs={12} sm={12} md={12}>
-            <PerformanceAssets />
+            <SharePriceChart />
           </Grid>
         </Grid>
 

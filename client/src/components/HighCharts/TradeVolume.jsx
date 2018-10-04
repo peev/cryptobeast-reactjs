@@ -21,7 +21,6 @@ class TradeVolumeChart extends Component {
         [1, 2, 3, 4, 6]
       ]],
       i = 0;
-
     for (i; i < data.length; i += 1) {
       ohlc.push([
         +(new Date(data[i]['Date'])), // the date
@@ -78,13 +77,20 @@ class TradeVolumeChart extends Component {
         split: true
       },
 
+      plotOptions: {
+        candlestick: {
+          color: red,
+          upColor: green
+        }
+      },
+
       series: [{
         type: 'candlestick',
         name: 'AAPL',
         data: ohlc,
         dataGrouping: {
           units: groupingUnits
-        }
+        },
       }, {
         type: 'column',
         name: 'Volume',

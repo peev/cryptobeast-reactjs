@@ -7,9 +7,8 @@ const attachTo = (app, repository, jobs) => {
 
   router
     .post('/create', validator.verifyCreateWeiUser, controller.createWeiUser)
-    .get('/:address', controller.getWeiUser)
-    .put('/update/:id', controller.updateWeiUser)
-    .delete('/delete/:id', (req, res) => controller.deleteWeiUser(req, res));
+    .get('/:id', controller.getWeiUser)
+    .put('/update/:id', validator.verifyUpdateWeiUser, controller.updateWeiUser);
 
   app.use('/wei-user', router);
 };

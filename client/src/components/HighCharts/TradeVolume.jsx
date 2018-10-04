@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import ReactHighcharts from 'react-highcharts';
 import ReactHighstock from 'react-highcharts/ReactHighstock.src';
-
+import Boost from "highcharts-boost";
+Boost(ReactHighcharts.Highcharts)
 class TradeVolumeChart extends Component {
   state = {};
 
   render() {
     const { data } = this.props;
+    const red = '#eb4562';
+    const green = '#3ab693';
     // split the data set into ohlc and volume
     let ohlc = [],
       volume = [],
@@ -28,13 +31,14 @@ class TradeVolumeChart extends Component {
         +data[i]['Close'] // close
       ]);
 
-      volume.push([
-        +(new Date(data[i]['Date'])), // the date
-        +data[i]['Volume To'] // the volume
-      ]);
+      volume.push({
+        x: +(new Date(data[i]['Date'])),
+        y: +data[i]['Volume To'],
+        color: ((i === 0) || (+data[i]['Volume To'] > +data[i - 1]['Volume To'])) ? green : red
+      });
     }
 
-    const config = {
+    let config = {
       rangeSelector: {
         selected: 1
       },
@@ -84,11 +88,17 @@ class TradeVolumeChart extends Component {
       }, {
         type: 'column',
         name: 'Volume',
+        colorByPoint: true,
         data: volume,
         yAxis: 1,
         dataGrouping: {
           units: groupingUnits
-        }
+        },
+        turboThreshold: 0,
+        boostThreshold: 0,
+        cropThreshold: 0,
+        allowForce: false,
+        enabled: false
       }]
     };
 

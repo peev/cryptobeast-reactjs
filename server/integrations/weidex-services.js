@@ -1,11 +1,10 @@
-const crossStorageClient = require('cross-storage').CrossStorageClient;
+const CrossStorageClient = require('cross-storage');
 
 const baseURL = 'http://localhost:8080/hub.html';
 
 const weidexServices = () => {
-  console.log('weee');
   const getUserAddresses = new Promise((resolve) => {
-    const storage = crossStorageClient({ baseURL });
+    const storage = new CrossStorageClient.CrossStorageClient({ baseURL });
     storage.onConnect()
       .then(() => storage.get('WALLETS_INFO'))
       .then((res) => {

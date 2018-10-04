@@ -1,9 +1,11 @@
 import { observable, action, reaction } from 'mobx';
+import { CrossStorageClient } from 'cross-storage';
 import userApi from '../services/user';
-
 import PortfolioStore from './PortfolioStore';
 import NotificationStore from './NotificationStore';
 import requester from '../services/requester';
+
+const baseURL = 'http://localhost:8080/hub.html';
 
 class UserStore {
   @observable data;
@@ -56,11 +58,18 @@ class UserStore {
 
   @action.bound
   getUserAddresses() {
-    console.log('first');
-    requester.User.getUserAddresses().then((data) => {
-      console.log('second');
-      this.userAddresses = data;
+    const client = new CrossStorageClient(baseURL, {
+      timeout: 0,
+      frameId: 'null',
     });
+
+    client.onConnect()
+      .then(() => client.get('WALLETS_INFO'))
+      .then((res) => {
+        console.log(res);
+        this.userAddresses = res;
+      })
+      .catch(err => console.log(err));
   }
 
   @action.bound

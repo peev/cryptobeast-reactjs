@@ -171,12 +171,11 @@ const userController = (repository, jobs) => {
   };
 
   const getUserAddresses = async () => {
-    console.log('why');
-    // try {
-    //   return await weidexServices().getUserAddresses();
-    // } catch (e) {
-    //   return { error: { response: e, message: 'Could not fetch account address.' } };
-    // }
+    try {
+      return await weidexServices().getUserAddresses();
+    } catch (e) {
+      return { error: { response: e, message: 'Could not fetch account address.' } };
+    }
   };
 
   // =================

@@ -90,7 +90,7 @@ const init = async (repository) => {
   require('./../../routes/market/market-router').attachTo(app, repository);
   require('./../../routes/account/account-router').attachTo(app, repository);
   require('./../../routes/investor/investor-router').attachTo(app, repository);
-  require('./../../routes/wei-user/wei-user-router').attachTo(app, repository, jobs);
+  require('./../../routes/wei-portfolio/wei-portfolio-router').attachTo(app, repository, jobs);
 
   // Handle Errors
   // catch 404 and forward to error handler

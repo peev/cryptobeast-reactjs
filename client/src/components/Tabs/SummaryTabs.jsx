@@ -12,6 +12,7 @@ import {
 
 import Portfolio from './SummaryItems/Portfolio';
 import Trending from './SummaryItems/Trending';
+import Analytics from '../../stores/Analytics';
 
 const styles = () => ({
   container: {
@@ -73,6 +74,10 @@ class SummaryTabs extends React.Component<Props, State> {
   state = {
     value: 0,
   };
+
+  componentDidMount() {
+    Analytics.getPortfolioPriceHistoryForTimePeriod();
+  }
 
   handleChange = (event: SyntheticEvent, value: number) => {
     this.setState({ value });

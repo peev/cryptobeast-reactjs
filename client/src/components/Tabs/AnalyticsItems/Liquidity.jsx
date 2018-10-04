@@ -1,9 +1,10 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { withStyles, Grid } from '@material-ui/core';
+import { inject, observer } from 'mobx-react';
 
-import LiquidityChart from '../../HighCharts/Liquidity';
-import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
+import TradeVolumeChart from '../../HighCharts/TradeVolume';
+import MotionSelect from '../../Selectors/MotionSelect';
 
 const styles = () => ({
   overflowNone: {
@@ -53,8 +54,8 @@ const styles = () => ({
   padding: {
     padding: '20px'
   },
-  noMargin: {
-    marginTop: 0
+  textLeft: {
+    textAlign: 'left'
   }
 });
 
@@ -62,20 +63,49 @@ type Props = {
   classes: Object,
 };
 
+@inject('MarketStore')
+@observer
 class Liquidity extends React.Component<Props, State> {
+  state = {
+    selectPeriod: '',
+    selectedCurrency: 'BTC'
+  };
+
+  handleSelectMarkey(data) {
+
+  }
+
+  handleSelectExchange(data) {
+    
+  }
+
+  handleSelectPeriod(data) {
+    
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, MarketStore } = this.props;
+    if(!MarketStore.profitLoss['BTC']) {
+      return null;
+    }
+    let data = MarketStore.profitLoss['BTC'].reverse();
+    
     return (
       <Grid container className={classes.overflowNone}>
         <Grid container>
-          <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
-            <SelectBenchmark/>
+          <Grid item xs={2} className={[classes.marginRight, classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
+          <MotionSelect defaultValueIndex={0} title={'Select Market'}
+            selectedValue={this.handleSelectMarkey} values={['BTC-USD']}  />
+          </Grid>
+          <Grid item xs={2} className={[classes.marginRight, classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
+            <MotionSelect defaultValueIndex={0} title={'Select Exchange'}
+              selectedValue={this.handleSelectExchange} values={['Kraken']}  />
           </Grid>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <LiquidityChart />
+            <TradeVolumeChart data={data} />
           </Paper>
         </Grid>
       </Grid>

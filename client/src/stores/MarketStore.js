@@ -66,7 +66,7 @@ class MarketStore {
     
     // get liquidity history from database (Coin Market Cap)
     requester.Market.getLiquidityHistory()
-      .then(action(result => this.liquidity = result.data))
+      .then(this.getLiquidityHistory)
       .catch((err: object) => console.log(err));
     
     // get correlation matrix history from database (Coin Market Cap)
@@ -102,6 +102,11 @@ class MarketStore {
   @action.bound
   getCorrelationMatrixHistory(response: object) {
     this.correlationMatrix = response.data;
+  }
+
+  @action.bound
+  getLiquidityHistory(response: object) {
+    this.liquidity = response.data;
   }
 
   @action.bound

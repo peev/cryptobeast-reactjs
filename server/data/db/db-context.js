@@ -38,6 +38,8 @@ const init = databaseConfig => new Promise((resolve) => {
       db.ApiTradeHistory = sequelize.import(path.join(__dirname, '/models/apiTradeHistory.js'));
       db.SharePrice = sequelize.import(path.join(__dirname, '/models/sharePrice.js'));
       db.PortfolioPrice = sequelize.import(path.join(__dirname, '/models/portfolioPrice.js'));
+
+      db.WeiUser = sequelize.import(path.join(__dirname, '/models/weiUser.js'));
       // db.User = sequelize.import(path.join(__dirname, '/models/user.js'));
       // db.Setting = sequelize.import(path.join(__dirname, '/models/setting.js'));
       // TODO: Configure model connections here (one-to-one/one-to-many etc.)

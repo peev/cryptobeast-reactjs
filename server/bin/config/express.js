@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-const jwksRsa = require('jwks-rsa');
-const jwt = require('express-jwt');
+// const jwksRsa = require('jwks-rsa');
+// const jwt = require('express-jwt');
 // const path = require('path');
 
 
@@ -91,6 +91,7 @@ const init = async (repository) => {
   require('./../../routes/account/account-router').attachTo(app, repository);
   require('./../../routes/investor/investor-router').attachTo(app, repository);
   require('./../../routes/wei-portfolio/wei-portfolio-router').attachTo(app, repository, jobs);
+  require('./../../routes/wei-asset/wei-asset-router').attachTo(app, repository, jobs);
 
   // Handle Errors
   // catch 404 and forward to error handler

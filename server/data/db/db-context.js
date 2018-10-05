@@ -40,6 +40,7 @@ const init = databaseConfig => new Promise((resolve) => {
       db.PortfolioPrice = sequelize.import(path.join(__dirname, '/models/portfolioPrice.js'));
 
       db.WeiPortfolio = sequelize.import(path.join(__dirname, '/models/weiPortfolio.js'));
+      db.WeiAsset = sequelize.import(path.join(__dirname, '/models/weiAsset.js'));
       // db.User = sequelize.import(path.join(__dirname, '/models/user.js'));
       // db.Setting = sequelize.import(path.join(__dirname, '/models/setting.js'));
       // TODO: Configure model connections here (one-to-one/one-to-many etc.)
@@ -52,6 +53,9 @@ const init = databaseConfig => new Promise((resolve) => {
 
       // db.Portfolio.hasMany(db.Account);
       // db.Account.belongsTo(db.Portfolio);
+
+      db.WeiPortfolio.hasMany(db.WeiAsset);
+      db.WeiAsset.belongsTo(db.WeiPortfolio);
 
       db.Portfolio.hasMany(db.Asset);
       db.Asset.belongsTo(db.Portfolio);

@@ -1,11 +1,11 @@
 const { responseHandler } = require('../utilities/response-handler');
 
-const modelName = 'WeiTransaction';
+const modelName = 'WeiTradeHistory';
 
-const weiTransactionController = (repository) => {
-  const createWeiTransaction = (req, res) => {
-    const weiTransactionData = req.body;
-    repository.create({ modelName, newObject: weiTransactionData })
+const weiTradeController = (repository) => {
+  const createWeiTrade = (req, res) => {
+    const weiTrade = req.body;
+    repository.create({ modelName, newObject: weiTrade })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -14,7 +14,7 @@ const weiTransactionController = (repository) => {
       });
   };
 
-  const getWeiTransaction = (req, res) => {
+  const getWeiTrade = (req, res) => {
     const { id } = req.params;
     repository.findById({ modelName, id })
       .then((response) => {
@@ -25,17 +25,17 @@ const weiTransactionController = (repository) => {
       });
   };
 
-  const updateWeiTransaction = (req, res) => {
+  const updateWeiTrade = (req, res) => {
     const { id } = req.params;
-    const weiTransactionData = Object.assign({}, req.body, { id });
-    repository.update({ modelName, updatedRecord: weiTransactionData })
+    const weiTradeData = Object.assign({}, req.body, { id });
+    repository.update({ modelName, updatedRecord: weiTradeData })
       .then((response) => {
         res.status(200).send(response);
       })
       .catch(error => res.json(error));
   };
 
-  const removeWeiTransaction = (req, res) => {
+  const removeWeiTrade = (req, res) => {
     const { id } = req.params;
     repository.remove({ modelName, id })
       .then(result => responseHandler(res, result))
@@ -43,11 +43,11 @@ const weiTransactionController = (repository) => {
   };
 
   return {
-    createWeiTransaction,
-    getWeiTransaction,
-    updateWeiTransaction,
-    removeWeiTransaction,
+    createWeiTrade,
+    getWeiTrade,
+    updateWeiTrade,
+    removeWeiTrade,
   };
 };
 
-module.exports = weiTransactionController;
+module.exports = weiTradeController;

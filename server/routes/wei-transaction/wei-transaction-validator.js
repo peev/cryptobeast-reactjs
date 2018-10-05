@@ -12,23 +12,23 @@ const weiTransactionValidator = () => {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid valid type!' });
     }
 
-    if (!payload || !payload.hasOwnProperty('amount') || typeof payload.amount !== 'number') {
+    if (!payload || typeof payload.amount !== 'number') {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid amount type!' });
     }
 
-    if (!payload || !payload.hasOwnProperty('txHash') || typeof payload.txHash !== 'string' || !validator.isLength(payload.txHash, { min: 1, max: 150 })) {
+    if (!payload || typeof payload.txHash !== 'string' || !validator.isLength(payload.txHash, { min: 1, max: 150 })) {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid transaction hash!' });
     }
 
-    if (!payload || !payload.hasOwnProperty('status') || typeof payload.status !== 'string' || !validator.isLength(payload.status, { min: 1, max: 10 })) {
+    if (!payload || typeof payload.status !== 'string' || !validator.isLength(payload.status, { min: 1, max: 10 })) {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid transaction status!' });
     }
 
-    if (!payload || !payload.hasOwnProperty('tokenName') || typeof payload.tokenName !== 'string' || !validator.isLength(payload.tokenName, { min: 1, max: 4 })) {
+    if (!payload || typeof payload.tokenName !== 'string' || !validator.isLength(payload.tokenName, { min: 1, max: 4 })) {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid transaction token name!' });
     }
 
-    if (!payload || !payload.hasOwnProperty('date') || !validator.isLength(payload.date, { min: 10, max: 10 })) {
+    if (!payload || typeof payload.date !== 'string' || !validator.isLength(payload.date, { min: 10, max: 10 })) {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid transaction date!' });
     }
 

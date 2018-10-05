@@ -1,7 +1,7 @@
 const validator = require('validator');
 
 const assetValidator = () => {
-  const verifyCreateWeiAssetset = (req, res, next) => {
+  const verifyCreateWeiAsset = (req, res, next) => {
     const payload = req.body;
 
     if (!payload || !payload.hasOwnProperty('weiPortfolioId') || typeof payload.weiPortfolioId !== 'number') {
@@ -38,7 +38,7 @@ const assetValidator = () => {
   };
 
   return {
-    verifyCreateWeiAssetset,
+    verifyCreateWeiAsset,
     verifyUpdateWeiAsset,
   };
 };

@@ -8,6 +8,7 @@ const attachTo = (app, repository, jobs) => {
   router
     .post('/create', validator.verifyCreateWeiTransaction, controller.createWeiTransaction)
     .get('/:id', controller.getWeiTransaction)
+    .put('/update/:id', controller.updateWeiTransaction)
     .delete('/delete/:id', controller.removeWeiTransaction);
 
   app.use('/wei-transaction', router);

@@ -1,10 +1,10 @@
 module.exports = (sequelize, DataTypes) => sequelize.define('weiTransaction', {
   type: {
     type: DataTypes.STRING,
+    allowNull: false,
     validate: {
       len: [1, 1],
     },
-    allowNull: false,
   },
   amount: {
     type: DataTypes.DOUBLE,
@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('weiTransaction', {
   },
   date: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
   },
   tokenPriceETH: {
     type: DataTypes.DOUBLE,

@@ -14,15 +14,25 @@ const weiAssetController = (repository) => {
       });
   };
 
-  const updateWeiAsset = (req, res) => {
-    const weiAsset = req.body;
-    repository.update({ modelName, updatedRecord: weiAsset })
+  const getWeiAsset = (req, res) => {
+    const { id } = req.params;
+    repository.findById({ modelName, id })
       .then((response) => {
         res.status(200).send(response);
       })
       .catch((error) => {
         res.json(error);
       });
+  };
+
+  const updateWeiAsset = (req, res) => {
+    const { id } = req.params;
+    const weiAssetData = Object.assign({}, req.body, { id });
+    repository.update({ modelName, updatedRecord: weiAssetData })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch(error => res.json(error));
   };
 
   const removeWeiAsset = (req, res) => {
@@ -34,6 +44,7 @@ const weiAssetController = (repository) => {
 
   return {
     createWeiAsset,
+    getWeiAsset,
     updateWeiAsset,
     removeWeiAsset,
   };

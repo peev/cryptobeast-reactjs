@@ -8,7 +8,7 @@ const weiTransactionValidator = () => {
       return res.status(400).send({ isSuccessful: false, message: 'Provide a portfolio ID as number!' });
     }
 
-    if (!payload || typeof payload.type !== 'string' || !validator.isLength(payload.type, { min: 1, max: 1 }) || !payload.type.matches(/^[d,w{1}]+$/)) {
+    if (!payload || typeof payload.type !== 'string' || !validator.isLength(payload.type, { min: 1, max: 1 })) {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid valid type!' });
     }
 
@@ -26,10 +26,6 @@ const weiTransactionValidator = () => {
 
     if (!payload || typeof payload.tokenName !== 'string' || !validator.isLength(payload.tokenName, { min: 1, max: 4 })) {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid transaction token name!' });
-    }
-
-    if (!payload || typeof payload.date !== 'string' || !validator.isLength(payload.date, { min: 10, max: 10 })) {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid transaction date!' });
     }
 
     return next();

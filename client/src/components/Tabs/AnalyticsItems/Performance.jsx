@@ -17,6 +17,12 @@ const styles = () => ({
   marginRight: {
     marginRight: '75px',
   },
+  marginTop: {
+    marginTop: '5px',
+  },
+  marginBottom: {
+    marginBottom: '20px',
+  },
   header: {
     color: '#ca3f58',
     margin: '20px 0',
@@ -80,7 +86,7 @@ class Performance extends React.Component<Props, State> {
         </Grid>
 
         <Grid container>
-          <Grid item xs={2} sm={2} md={2} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
+          <Grid item xs={2} sm={2} md={2} className={[classes.marginTop,classes.marginBottom, classes.flex, classes.flexCenter].join(' ')}>
             <SelectBenchmark />
           </Grid>
         </Grid>

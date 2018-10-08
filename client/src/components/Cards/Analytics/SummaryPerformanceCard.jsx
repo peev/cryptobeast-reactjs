@@ -15,8 +15,13 @@ const styles = () => ({
     justifyContent: 'space-between',
     fontSize: '14px',
     fontWeight: '600',
-    textTransform: 'uppercase',
   },
+  green: {
+    color: '#2b908f'
+  },
+  red: {
+    color: '#ca3f58'
+  }
 
 });
 
@@ -31,37 +36,43 @@ const SummaryPerformanceCard = inject('Analytics')(observer(({ ...props }: Props
   return (
     <Paper className={classes.container}>
       <div className={classes.item}>
-        <p>min:</p>
-        <p>{`$${Number(`${Math.round(`${Analytics.performanceMin}e2`)}e-2`)}`}</p>
+        <p>Мin:</p>
+        {/* <p>{`$${Number(`${Math.round(`${Analytics.performanceMin}e2`)}e-2`)}`}</p> */}
+        <p>1000.00 USD</p>
       </div>
       <div className={classes.item}>
-        <p>max:</p>
-        <p>{`$${Number(`${Math.round(`${Analytics.performanceMax}e2`)}e-2`)}`}</p>
+        <p>Мax:</p>
+        {/* <p>{`$${Number(`${Math.round(`${Analytics.performanceMax}e2`)}e-2`)}`}</p> */}
+        <p>3474.58 USD</p>
       </div>
       <div className={classes.item}>
-        <p>ath:</p>
-        <p>{`$${Number(`${Math.round(`${Analytics.performanceATH}e2`)}e-2`)}`}</p>
+        <p>ATH:</p>
+        {/* <p>{`$${Number(`${Math.round(`${Analytics.performanceATH}e2`)}e-2`)}`}</p> */}
+        <p>3474.58 USD</p>
       </div>
       <div className={classes.item}>
-        <p>profit/loss:</p>
-        <p>{`${Number(`${Math.round(`${Analytics.performanceProfitLoss}e2`)}e-2`)}%`}</p>
+        <p>Profit/Loss:</p>
+        {/* <p>{`${Number(`${Math.round(`${Analytics.performanceProfitLoss}e2`)}e-2`)}%`}</p> */}
+        <p className={classes.green}>162.38%</p>
       </div>
-      <div className={classes.item}>
+      {/* <div className={classes.item}>
         <p>avg. change:</p>
         <p>{`${Number(`${Math.round(`${Analytics.performanceAverageChange}e2`)}e-2`)}%`}</p>
+      </div> */}
+      <div className={classes.item}>
+        <p>24H:</p>
+        {/* <p>{`${Number(`${Math.round(`${Analytics.performanceLast24H}e2`)}e-2`)}%`}</p> */}
+        <p className={classes.green}>6.12%</p>
       </div>
       <div className={classes.item}>
-        <p>last 24h:</p>
-        <p>{`${Number(`${Math.round(`${Analytics.performanceLast24H}e2`)}e-2`)}%`}</p>
+        <p>7D:</p>
+        {/* <p>{`${Number(`${Math.round(`${Analytics.performanceLast7D}e2`)}e-2`)}%`}</p> */}
+        <p className={classes.red}>-3.18%</p>
       </div>
-      <div className={classes.item}>
-        <p>last 7d:</p>
-        <p>{`${Number(`${Math.round(`${Analytics.performanceLast7D}e2`)}e-2`)}%`}</p>
-      </div>
-      <div className={classes.item}>
+      {/* <div className={classes.item}>
         <p>top performer:</p>
         <p>{Analytics.performanceTopPerformer}</p>
-      </div>
+      </div> */}
     </Paper>
   );
 }));

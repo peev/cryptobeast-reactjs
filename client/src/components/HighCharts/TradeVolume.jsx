@@ -43,7 +43,7 @@ class TradeVolumeChart extends Component {
       },
 
       title: {
-        text: 'BTC-USD 30-Day Transaction Frequency'
+        text: 'BTC-USD CANDLE CHART AND VOLUME'
       },
 
       yAxis: [{
@@ -54,7 +54,7 @@ class TradeVolumeChart extends Component {
         title: {
           text: 'OHLC'
         },
-        height: '60%',
+        height: '80%',
         lineWidth: 2,
         resize: {
           enabled: true
@@ -67,8 +67,8 @@ class TradeVolumeChart extends Component {
         title: {
           text: 'Volume'
         },
-        top: '65%',
-        height: '35%',
+        top: '80%',
+        height: '20%',
         offset: 0,
         lineWidth: 2
       }],

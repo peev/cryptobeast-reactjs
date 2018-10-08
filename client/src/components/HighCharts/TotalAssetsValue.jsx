@@ -16,6 +16,7 @@ const TotalAssetsValue = inject('Analytics')(observer(({ ...props }: Props) => {
     chart: {
       zoomType: 'x',
       height: chartHeight || null,
+      height: '312px'
     },
     title: {
       text: 'Total portfolio value',
@@ -66,7 +67,9 @@ const TotalAssetsValue = inject('Analytics')(observer(({ ...props }: Props) => {
   };
 
   return (
-    <ReactHighcharts config={config} />
+    <div style={{height: '100%'}}>
+      <ReactHighcharts config={config} />
+    </div>
   );
 }));
 

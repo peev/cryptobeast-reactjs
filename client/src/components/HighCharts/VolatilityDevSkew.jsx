@@ -6,7 +6,7 @@ import {
   YAxis,
   XAxis,
   Legend,
-  // Tooltip,
+  Tooltip,
   Chart,
   ColumnSeries,
   Title,
@@ -21,6 +21,8 @@ class VolatilityColumnChart extends Component {
         <Chart />
 
         <Title>STD. DEVIATION, SKEWNESS, KURTOSIS</Title>
+
+        <Tooltip shared />
 
         <Legend />
 

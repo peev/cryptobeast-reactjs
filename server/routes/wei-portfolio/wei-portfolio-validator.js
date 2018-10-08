@@ -8,9 +8,6 @@ const weiPortfolioValidator = () => {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid portfolio address!' });
     }
 
-    if (!payload || typeof payload.name !== 'string' || !validator.isLength(payload.name, { min: 1, max: 50 })) {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid portfolio name!' });
-    }
     return next();
   };
 
@@ -19,10 +16,6 @@ const weiPortfolioValidator = () => {
 
     if (!payload || typeof payload.address !== 'string' || !validator.isLength(payload.address, { min: 1, max: 150 })) {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid portfolio address!' });
-    }
-
-    if (!payload || typeof payload.name !== 'string' || !validator.isLength(payload.name, { min: 1, max: 50 })) {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid portfolio name!' });
     }
 
     return next();

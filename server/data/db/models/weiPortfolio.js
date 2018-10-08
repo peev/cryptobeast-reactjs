@@ -1,12 +1,16 @@
 module.exports = (sequelize, DataTypes) => sequelize.define('weiPortfolio', {
-  address: {
+  userAddress: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
       len: [1, 150],
     },
   },
-  name: {
+  userID: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  portfolioName: {
     type: DataTypes.STRING,
     allowNull: true,
   },

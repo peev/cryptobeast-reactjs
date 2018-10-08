@@ -2,8 +2,17 @@ const modelName = 'WeiPortfolio';
 
 const weiPortfolioController = (repository) => {
   const createWeiPortfolio = (req, res) => {
-    const weiPortfolio = req.body;
-    repository.create({ modelName, newObject: weiPortfolio })
+    // TODO get user first
+    // TODO calculate deposits - withdraws
+    const user = req.body;
+    repository.create({ modelName,
+      newObject: {
+        userAddress: user.address,
+        userID: user.id,
+        portfolioName: null,
+        totalInvestments: null,
+      },
+    })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -23,9 +32,17 @@ const weiPortfolioController = (repository) => {
   };
 
   const getWeiPortfolio = (req, res) => {
-    const { id } = req.params;
-    repository.findById({ modelName, id })
+    const { address } = req.params;
+    repository.findOne({
+      modelName,
+      options: {
+        where: {
+          userAddress: address,
+        },
+      },
+    })
       .then((response) => {
+        console.log(response);
         res.status(200).send(response);
       })
       .catch((error) => {

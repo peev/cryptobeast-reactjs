@@ -7,7 +7,7 @@ const attachTo = (app, repository, jobs) => {
 
   router
     .post('/create', validator.verifyCreateWeiPortfolio, controller.createWeiPortfolio)
-    .get('/:id', controller.getWeiPortfolio)
+    .get('/:address', controller.getWeiPortfolio)
     .put('/update/:id', validator.verifyUpdateWeiPortfolio, controller.updateWeiPortfolio);
 
   app.use('/wei-portfolio', router);

@@ -94,6 +94,7 @@ const init = async (repository) => {
   require('./../../routes/wei-asset/wei-asset-router').attachTo(app, repository, jobs);
   require('./../../routes/wei-transaction/wei-transaction-router').attachTo(app, repository, jobs);
   require('./../../routes/wei-trade-history/wei-trade-history-router').attachTo(app, repository, jobs);
+  require('./../../routes/wei-currency/wei-currency-router').attachTo(app, repository, jobs);
 
   // Handle Errors
   // catch 404 and forward to error handler

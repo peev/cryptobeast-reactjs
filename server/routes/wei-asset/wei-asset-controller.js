@@ -4,8 +4,17 @@ const modelName = 'WeiAsset';
 
 const weiAssetController = (repository) => {
   const createWeiAsset = (req, res) => {
-    const weiAsset = req.body;
-    repository.create({ modelName, newObject: weiAsset })
+    const balance = req.body;
+    repository.create({ modelName,
+      newObject: {
+        currency: balance.tokenName,
+        userID: balance.userAddress,
+        balance: balance.fullAmount,
+        available: balance.availableAmount,
+        inOrder: balance.fullAmount - balance.availableAmount,
+        weiPortfolioId: balance.weiPortfolioId,
+      },
+    })
       .then((response) => {
         res.status(200).send(response);
       })

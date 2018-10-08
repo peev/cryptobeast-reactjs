@@ -1,9 +1,9 @@
+const { responseHandler } = require('../utilities/response-handler');
+
 const modelName = 'WeiPortfolio';
 
 const weiPortfolioController = (repository) => {
   const createWeiPortfolio = (req, res) => {
-    // TODO get user first
-    // TODO calculate deposits - withdraws
     const user = req.body;
     repository.create({ modelName,
       newObject: {
@@ -49,15 +49,19 @@ const weiPortfolioController = (repository) => {
         res.json(error);
       });
   };
-
-  const calculateTotalInvestment = () => {
-    // TODO
+  
+  const removeWeiPortfolio = (req, res) => {
+    const { id } = req.params;
+    repository.remove({ modelName, id })
+      .then(result => responseHandler(res, result))
+      .catch(error => res.json(error));
   };
 
   return {
     createWeiPortfolio,
     updateWeiPortfolio,
     getWeiPortfolio,
+    removeWeiPortfolio,
   };
 };
 

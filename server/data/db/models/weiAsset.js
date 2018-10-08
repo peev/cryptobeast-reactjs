@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('weiAsset', {
   },
   available: {
     type: DataTypes.DOUBLE,
-    allowNull: true,
+    allowNull: false,
   },
   inOrder: {
     type: DataTypes.DOUBLE,
@@ -30,12 +30,12 @@ module.exports = (sequelize, DataTypes) => sequelize.define('weiAsset', {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
-  weight: {
+  totalETH: {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
-  uuid: {
-    type: DataTypes.UUID,
+  weight: {
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
 });

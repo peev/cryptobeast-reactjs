@@ -8,12 +8,12 @@ const assetValidator = () => {
       return res.status(400).send({ isSuccessful: false, message: 'Provide a portfolio ID as number!' });
     }
 
-    if (!payload || typeof payload.currency !== 'string' || !validator.isLength(payload.currency, { min: 1, max: 4 })) {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid portfolio address!' });
+    if (!payload || typeof payload.tokenName !== 'string' || !validator.isLength(payload.tokenName, { min: 1, max: 4 })) {
+      return res.status(400).send({ isSuccessful: false, message: 'Invalid asset currency!' });
     }
 
-    if (!payload || !payload.hasOwnProperty('balance') || typeof payload.balance !== 'number' || payload.balance <= 0) {
-      return res.status(400).send({ isSuccessful: false, message: 'Specify currency quantity!' });
+    if (!payload || typeof payload.fullAmount !== 'number' || payload.fullAmounts <= 0) {
+      return res.status(400).send({ isSuccessful: false, message: 'Invalid asset balance!' });
     }
 
     return next();
@@ -26,12 +26,12 @@ const assetValidator = () => {
       return res.status(400).send({ isSuccessful: false, message: 'Provide a portfolio ID as number!' });
     }
 
-    if (!payload || typeof payload.currency !== 'string' || !validator.isLength(payload.currency, { min: 1, max: 4 })) {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid portfolio address!' });
+    if (!payload || typeof payload.tokenName !== 'string' || !validator.isLength(payload.tokenName, { min: 1, max: 4 })) {
+      return res.status(400).send({ isSuccessful: false, message: 'Invalid asset currency!' });
     }
 
-    if (!payload || !payload.hasOwnProperty('balance') || typeof payload.balance !== 'number' || payload.balance <= 0) {
-      return res.status(400).send({ isSuccessful: false, message: 'Specify currency quantity!' });
+    if (!payload || typeof payload.fullAmount !== 'number' || payload.fullAmount <= 0) {
+      return res.status(400).send({ isSuccessful: false, message: 'Invalid asset balance!' });
     }
 
     return next();

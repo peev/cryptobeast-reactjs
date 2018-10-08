@@ -20,7 +20,7 @@ class VolatilityColumnChart extends Component {
       <HighchartsChart>
         <Chart />
 
-        <Title>ST.DEV.SKEWNESS. KURTOSIS</Title>
+        <Title>STD. DEVIATION, SKEWNESS, KURTOSIS</Title>
 
         <Legend />
 
@@ -30,9 +30,9 @@ class VolatilityColumnChart extends Component {
         />
 
         <YAxis id="number">
-          <ColumnSeries id="jane" name="" data={[6, 4.5, 8.2, 4, 8.2, 7]} />
-          <ColumnSeries id="john" name="" data={[0.3, 0.5, 0.4, 0.6, 0.5, 0.1]} />
-          <ColumnSeries id="joe" name="" data={[2.2, 3.8, 2.8, 3.5, 0, 7]} />
+          <ColumnSeries id="jane" name="STD. DEVIATION" data={[6, 4.5, 8.2, 4, 8.2, 7]} />
+          <ColumnSeries id="john" name="SKEWNESS" data={[0.3, 0.5, 0.4, 0.6, 0.5, 0.1]} />
+          <ColumnSeries id="joe" name="KURTOSIS" data={[2.2, 3.8, 2.8, 3.5, 0, 7]} />
         </YAxis>
       </HighchartsChart>
     );

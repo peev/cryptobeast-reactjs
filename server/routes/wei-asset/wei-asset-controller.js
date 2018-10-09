@@ -3,16 +3,39 @@ const { responseHandler } = require('../utilities/response-handler');
 const modelName = 'WeiAsset';
 
 const weiAssetController = (repository) => {
-  const createWeiAsset = (req, res) => {
-    const balance = req.body;
-    repository.create({ modelName,
+  const createWeiAsset = async (req, res) => {
+    const weiAssetData = req.body;
+
+    const currency = await repository.findOne({
+      modelName: 'WeiCurrency',
+      options: {
+        where: {
+          tokenName: weiAssetData.tokenName,
+        },
+      },
+    });
+
+    const ethToUsd = await repository.findOne({
+      modelName: 'MarketSummary',
+      options: {
+        where: {
+          MarketName: 'USD-ETH',
+        },
+      },
+    });
+
+    await repository.create({ modelName,
       newObject: {
-        currency: balance.tokenName,
-        userID: balance.userAddress,
-        balance: balance.fullAmount,
-        available: balance.availableAmount,
-        inOrder: balance.fullAmount - balance.availableAmount,
-        weiPortfolioId: balance.weiPortfolioId,
+        currency: weiAssetData.tokenName,
+        userID: weiAssetData.userAddress,
+        balance: weiAssetData.fullAmount,
+        available: weiAssetData.availableAmount,
+        inOrder: weiAssetData.fullAmount - weiAssetData.availableAmount,
+        weiPortfolioId: weiAssetData.weiPortfolioId,
+        lastPriceETH: currency.lastPriceETH,
+        lastPriceUSD: currency.lastPriceETH * ethToUsd.Last,
+        totalETH: weiAssetData.fullAmount * currency.lastPriceETH,
+        totalUSD: (weiAssetData.fullAmount * currency.lastPriceETH) * ethToUsd.Last,
       },
     })
       .then((response) => {

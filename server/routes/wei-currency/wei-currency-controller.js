@@ -10,6 +10,7 @@ const weiCurrencyController = (repository) => {
         tokenId: weiCurrencyData.id,
         tokenName: weiCurrencyData.name,
         tokenNameLong: weiCurrencyData.fullName,
+        lastPriceETH: weiCurrencyData.lastPriceETH,
       },
     })
       .then((response) => {

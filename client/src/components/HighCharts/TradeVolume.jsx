@@ -86,7 +86,7 @@ class TradeVolumeChart extends Component {
 
       series: [{
         type: 'candlestick',
-        name: 'AAPL',
+        name: 'BTC',
         data: ohlc,
         dataGrouping: {
           units: groupingUnits

@@ -9,7 +9,7 @@ const weiTransactionValidator = () => {
     }
 
     if (!payload || typeof payload.type !== 'string' || !validator.isLength(payload.type, { min: 1, max: 1 })) {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid valid type!' });
+      return res.status(400).send({ isSuccessful: false, message: 'Invalid type!' });
     }
 
     if (!payload || typeof payload.amount !== 'number') {

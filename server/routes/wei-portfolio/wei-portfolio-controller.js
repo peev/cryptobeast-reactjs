@@ -3,6 +3,8 @@ const { responseHandler } = require('../utilities/response-handler');
 const modelName = 'WeiPortfolio';
 
 const weiPortfolioController = (repository) => {
+  const weiPortfolioService = require('../../services/wei-portfolio-service')(repository);
+
   const createWeiPortfolio = (req, res) => {
     const user = req.body;
     repository.create({ modelName,
@@ -14,7 +16,8 @@ const weiPortfolioController = (repository) => {
       },
     })
       .then((response) => {
-        res.status(200).send(response);
+        weiPortfolioService.updateWeiPortfolioTotalInvestment(response.id);
+        return res.status(200).send(response);
       })
       .catch((error) => {
         res.json(error);

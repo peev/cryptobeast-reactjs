@@ -5,7 +5,13 @@ const modelName = 'WeiCurrency';
 const weiCurrencyController = (repository) => {
   const createWeiCurrency = (req, res) => {
     const weiCurrencyData = req.body;
-    repository.create({ modelName, newObject: weiCurrencyData })
+    repository.create({ modelName,
+      newObject: {
+        tokenId: weiCurrencyData.id,
+        tokenName: weiCurrencyData.name,
+        tokenNameLong: weiCurrencyData.fullName,
+      },
+    })
       .then((response) => {
         res.status(200).send(response);
       })

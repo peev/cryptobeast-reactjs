@@ -44,6 +44,7 @@ const init = databaseConfig => new Promise((resolve) => {
       db.WeiTransaction = sequelize.import(path.join(__dirname, '/models/weiTransaction.js'));
       db.WeiTradeHistory = sequelize.import(path.join(__dirname, '/models/weiTradeHistory.js'));
       db.WeiCurrency = sequelize.import(path.join(__dirname, '/models/weiCurrency.js'));
+      db.WeiFiatFx = sequelize.import(path.join(__dirname, '/models/weiFiatFx.js'));
       // db.User = sequelize.import(path.join(__dirname, '/models/user.js'));
       // db.Setting = sequelize.import(path.join(__dirname, '/models/setting.js'));
       // TODO: Configure model connections here (one-to-one/one-to-many etc.)

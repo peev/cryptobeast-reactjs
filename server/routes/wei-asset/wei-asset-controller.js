@@ -59,10 +59,43 @@ const weiAssetController = (repository) => {
       });
   };
 
-  const updateWeiAsset = (req, res) => {
+  const updateWeiAsset = async (req, res) => {
     const { id } = req.params;
-    const weiAssetData = Object.assign({}, req.body, { id });
-    repository.update({ modelName, updatedRecord: weiAssetData })
+    const weiAssetData = req.body;
+
+    const currency = await repository.findOne({
+      modelName: 'WeiCurrency',
+      options: {
+        where: {
+          tokenName: weiAssetData.tokenName,
+        },
+      },
+    });
+
+    const ethToUsd = await repository.findOne({
+      modelName: 'MarketSummary',
+      options: {
+        where: {
+          MarketName: 'USD-ETH',
+        },
+      },
+    });
+
+    const assetObject = {
+      currency: weiAssetData.tokenName,
+      userID: weiAssetData.userAddress,
+      balance: weiAssetData.fullAmount,
+      available: weiAssetData.availableAmount,
+      inOrder: weiAssetData.fullAmount - weiAssetData.availableAmount,
+      weiPortfolioId: weiAssetData.weiPortfolioId,
+      lastPriceETH: currency.lastPriceETH,
+      lastPriceUSD: currency.lastPriceETH * ethToUsd.Last,
+      totalETH: weiAssetData.fullAmount * currency.lastPriceETH,
+      totalUSD: (weiAssetData.fullAmount * currency.lastPriceETH) * ethToUsd.Last,
+    };
+
+    const newWeiAssetData = Object.assign({}, assetObject, { id });
+    repository.update({ modelName, updatedRecord: newWeiAssetData })
       .then((response) => {
         res.status(200).send(response);
       })

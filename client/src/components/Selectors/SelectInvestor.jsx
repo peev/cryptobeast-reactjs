@@ -1,12 +1,7 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-// import { InputLabel } from '@material-ui/core/Input';
-import Select from 'react-select';
 
-import FormControl from '@material-ui/core/FormControl';
-// import Select from '@material-ui/core/Select';
-
+import { FormControl, InputLabel, Select, MenuItem, withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import DropDownArrow from '../CustomIcons/DropDown/DropDownArrow';
@@ -61,10 +56,7 @@ type Props = {
 class SelectInvestor extends React.Component<Props> {
   handleChange = (event: SyntheticEvent) => {
     if (event) {
-      this.props.handleChange({
-        label: event.value,
-        value: event.value
-      });
+      this.props.handleChange(event.target.value);
     } else {
       this.props.handleChange('');
     }
@@ -82,29 +74,25 @@ class SelectInvestor extends React.Component<Props> {
       .forEach((investor: object) => {
         investorsToShow.push(investor);
       });
-
     return (
       <div autoComplete="off" >
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
+          <InputLabel htmlFor="benchMark">
+            Select investor*
+          </InputLabel>
           <Select
-            name="investor"
-            placeholder="Select investor*"
-            // open={this.state.open}
             value={value}
-            onClose={this.handleClose}
             // onOpen={this.handleOpen}
             onChange={this.handleChange}
-            options={investorsToShow}
-            style={{
-              ...style,
-              width: '100%',
-            }}
-            inputProps={{
-              id: 'controlled-open-select',
-            }}
-            arrowRenderer={this.arrowRenderer}
-            className={classes.select}
-          />
+            onClose={this.handleClose}
+            inputProps={{ id: 'controlled-open-select' }}
+          >
+            {investorsToShow.map((investor: Object) => (
+              <MenuItem value={investor.value} key={investor.value}>
+                <em>{investor.label}</em>
+              </MenuItem>
+            ))}
+          </Select>
         </FormControl>
       </div >
     );

@@ -43,10 +43,19 @@ const weiPortfolioService = (repository) => {
     return Number(depositAmount - withdrawAmount);
   };
 
+  const calcPortfolioTotalValue = async (portfolio) => {
+    let value = 0;
+    await Promise.all(portfolio.weiAssets.map(async (asset) => {
+      value += await calculateEtherValueUSD(await calculateTokenValueETH(asset.currency, asset.balance));
+    }));
+    return Number(value);
+  };
+
   return {
     calculateTokenValueETH,
     calculateEtherValueUSD,
     calcPortfolioTotalInvestment,
+    calcPortfolioTotalValue,
   };
 };
 

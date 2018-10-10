@@ -9,6 +9,7 @@ const attachTo = (app, data) => {
     .post('/create', validator.verifyCreateWeiAsset, controller.createWeiAsset)
     .get('/:id', controller.getWeiAsset)
     .put('/update/:id', validator.verifyUpdateWeiAsset, controller.updateWeiAsset)
+    .put('/updateAssetWeight/:id', controller.updateWeiAssetWeight)
     .delete('/delete/:id', controller.removeWeiAsset);
 
   app.use('/wei-asset', router);

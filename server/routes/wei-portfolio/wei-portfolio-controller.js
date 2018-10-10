@@ -16,8 +16,7 @@ const weiPortfolioController = (repository) => {
       },
     })
       .then((response) => {
-        weiPortfolioService.updateWeiPortfolioTotalInvestment(response.id);
-        return res.status(200).send(response);
+        res.status(200).send(response);
       })
       .catch((error) => {
         res.json(error);
@@ -34,6 +33,27 @@ const weiPortfolioController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const updateWeiPortfolioTotalInvestment = async (req, res) => {
+    const { address } = req.params;
+    const portfolio = await repository.findOne({
+      modelName,
+      options: {
+        where: { userAddress: address },
+        include: [{ all: true }],
+      },
+    });
+
+    if (portfolio.weiTransactions !== 0) {
+      await weiPortfolioService.calcPortfolioTotalInvestment(portfolio).then((data) => {
+        portfolio.totalInvestment = data;
+        const weiPortfolioData = Object.assign({}, portfolio, { id: portfolio.id, totalInvestment: data });
+        repository.update({ modelName, updatedRecord: weiPortfolioData })
+          .then((response) => { res.status(200).send(response); })
+          .catch(error => res.json(error));
+      });
+    }
+  };
+
   const getWeiPortfolio = (req, res) => {
     const { address } = req.params;
     repository.findOne({
@@ -45,14 +65,14 @@ const weiPortfolioController = (repository) => {
       },
     })
       .then((response) => {
-        console.log(response);
+        weiPortfolioService.updateWeiPortfolioTotalInvestment(response.id);
         res.status(200).send(response);
       })
       .catch((error) => {
         res.json(error);
       });
   };
-  
+
   const removeWeiPortfolio = (req, res) => {
     const { id } = req.params;
     repository.remove({ modelName, id })
@@ -63,6 +83,7 @@ const weiPortfolioController = (repository) => {
   return {
     createWeiPortfolio,
     updateWeiPortfolio,
+    updateWeiPortfolioTotalInvestment,
     getWeiPortfolio,
     removeWeiPortfolio,
   };

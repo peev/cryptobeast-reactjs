@@ -9,6 +9,7 @@ const attachTo = (app, repository, jobs) => {
     .post('/create', validator.verifyCreateWeiPortfolio, controller.createWeiPortfolio)
     .get('/:address', controller.getWeiPortfolio)
     .put('/update/:id', validator.verifyUpdateWeiPortfolio, controller.updateWeiPortfolio)
+    .put('/updatePortfolioTotalInvastments/:address', controller.updateWeiPortfolioTotalInvestment)
     .delete('/delete/:id', controller.removeWeiPortfolio);
 
   app.use('/wei-portfolio', router);

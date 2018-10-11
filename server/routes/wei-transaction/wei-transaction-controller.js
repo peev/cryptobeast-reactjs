@@ -3,15 +3,31 @@ const { responseHandler } = require('../utilities/response-handler');
 const modelName = 'WeiTransaction';
 
 const weiTransactionController = (repository) => {
-  const createWeiTransaction = (req, res) => {
+  const createWeiTransaction = async (req, res) => {
     const weiTransactionData = req.body;
-    repository.create({ modelName, newObject: weiTransactionData })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
-      });
+
+    await repository.findOne({
+      modelName,
+      options: {
+        where: {
+          txHash: weiTransactionData.txHash,
+        },
+      },
+    }).then((transaction) => {
+      if (transaction === null) {
+        repository.create({ modelName, newObject: weiTransactionData })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch((error) => {
+            res.json(error);
+          });
+      } else {
+        res.status(200).send(transaction);
+      }
+    }).catch((error) => {
+      res.json(error);
+    });
   };
 
   const getWeiTransaction = (req, res) => {

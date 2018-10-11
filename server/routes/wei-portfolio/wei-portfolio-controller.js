@@ -5,22 +5,41 @@ const modelName = 'WeiPortfolio';
 const weiPortfolioController = (repository) => {
   const weiPortfolioService = require('../../services/wei-portfolio-service')(repository);
 
-  const createWeiPortfolio = (req, res) => {
+  const createWeiPortfolio = async (req, res) => {
     const user = req.body;
-    repository.create({ modelName,
-      newObject: {
-        userAddress: user.address,
-        userID: user.id,
-        portfolioName: null,
-        totalInvestments: null,
+
+    const newWeiPortfolioObject = {
+      userAddress: user.address,
+      userID: user.id,
+    };
+
+    await repository.findOne({
+      modelName,
+      options: {
+        where: {
+          userAddress: user.address,
+        },
       },
-    })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
-      });
+    }).then((portfolio) => {
+      if (portfolio === null) {
+        repository.create({ modelName, newObject: newWeiPortfolioObject })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch((error) => {
+            res.json(error);
+          });
+      } else {
+        const newWeiPortfolioData = Object.assign({}, newWeiPortfolioObject, { id: portfolio.id });
+        repository.update({ modelName, updatedRecord: newWeiPortfolioData })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch(error => res.json(error));
+      }
+    }).catch((error) => {
+      res.json(error);
+    });
   };
 
   const updateWeiPortfolio = async (req, res) => {

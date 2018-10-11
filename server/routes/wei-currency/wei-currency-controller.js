@@ -3,22 +3,38 @@ const { responseHandler } = require('../utilities/response-handler');
 const modelName = 'WeiCurrency';
 
 const weiCurrencyController = (repository) => {
-  const createWeiCurrency = (req, res) => {
+  const createWeiCurrency = async (req, res) => {
     const weiCurrencyData = req.body;
-    repository.create({ modelName,
-      newObject: {
-        tokenId: weiCurrencyData.id,
-        tokenName: weiCurrencyData.name,
-        tokenNameLong: weiCurrencyData.fullName,
-        lastPriceETH: weiCurrencyData.lastPriceETH,
+
+    const newWeiCurrencyObject = {
+      tokenId: weiCurrencyData.id,
+      tokenName: weiCurrencyData.name,
+      tokenNameLong: weiCurrencyData.fullName,
+      lastPriceETH: weiCurrencyData.lastPriceETH,
+    };
+
+    await repository.findOne({
+      modelName,
+      options: {
+        where: {
+          tokenName: weiCurrencyData.name,
+        },
       },
-    })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
-      });
+    }).then((currency) => {
+      if (currency === null) {
+        repository.create({ modelName, newObject: newWeiCurrencyObject })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch((error) => {
+            res.json(error);
+          });
+      } else {
+        res.status(200).send(currency);
+      }
+    }).catch((error) => {
+      res.json(error);
+    });
   };
 
   const getWeiCurrency = (req, res) => {

@@ -8,16 +8,6 @@ const weiAssetController = (repository) => {
   const createWeiAsset = async (req, res) => {
     const weiAssetData = req.body;
 
-    const findAssetPromise = repository.findOne({
-      modelName,
-      options: {
-        where: {
-          currency: weiAssetData.tokenName,
-          weiPortfolioId: weiAssetData.weiPortfolioId,
-        },
-      },
-    });
-
     const currency = await repository.findOne({
       modelName: 'WeiCurrency',
       options: {
@@ -49,25 +39,34 @@ const weiAssetController = (repository) => {
       totalUSD: (weiAssetData.fullAmount * currency.lastPriceETH) * ethToUsd.Last,
     };
 
-    findAssetPromise
-      .then(async (asset) => {
-        if (!asset) {
-          await repository.create({ modelName, assetObject })
-            .then((response) => {
-              res.status(200).send(response);
-            })
-            .catch((error) => {
-              res.json(error);
-            });
-        } else {
-          const newWeiAssetData = Object.assign({}, assetObject, { id: asset.id });
-          repository.update({ modelName, updatedRecord: newWeiAssetData })
-            .then((response) => {
-              res.status(200).send(response);
-            })
-            .catch(error => res.json(error));
-        }
-      });
+    await repository.findOne({
+      modelName,
+      options: {
+        where: {
+          currency: weiAssetData.tokenName,
+          weiPortfolioId: weiAssetData.weiPortfolioId,
+        },
+      },
+    }).then((asset) => {
+      if (asset === null) {
+        repository.create({ modelName, newObject: assetObject })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch((error) => {
+            res.json(error);
+          });
+      } else {
+        const newWeiAssetData = Object.assign({}, assetObject, { id: asset.id });
+        repository.update({ modelName, updatedRecord: newWeiAssetData })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch(error => res.json(error));
+      }
+    }).catch((error) => {
+      res.json(error);
+    });
   };
 
   const getWeiAsset = (req, res) => {

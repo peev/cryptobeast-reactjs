@@ -4,15 +4,11 @@ const weiFiatFxValidator = () => {
   const verifyCreateWeiFiatFx = (req, res, next) => {
     const payload = req.body;
 
-    if (!payload || typeof payload.fetchId !== 'number') {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid fetch id type!' });
-    }
-
-    if (!payload || typeof payload.fxName !== 'string' || !validator.isLength(payload.fxName, { min: 1, max: 150 })) {
+    if (!payload || typeof payload.fxName !== 'string' || !validator.isLength(payload.fxName, { min: 1, max: 4 })) {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid short name!' });
     }
 
-    if (!payload || typeof payload.fxNameLong !== 'string' || !validator.isLength(payload.fxNameLong, { min: 1, max: 10 })) {
+    if (!payload || typeof payload.fxNameLong !== 'string' || !validator.isLength(payload.fxNameLong, { min: 1, max: 50 })) {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid long name!' });
     }
 

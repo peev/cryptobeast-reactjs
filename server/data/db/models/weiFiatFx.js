@@ -1,14 +1,14 @@
 module.exports = (sequelize, DataTypes) => sequelize.define('weiFiatFx', {
-  type: {
-    id: DataTypes.DOUBLE,
+  fetchId: {
+    type: DataTypes.DOUBLE,
     allowNull: false,
   },
-  amount: {
-    fxName: DataTypes.STRING,
+  fxName: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  priceETH: {
-    fxNameLong: DataTypes.STRING,
+  fxNameLong: {
+    type: DataTypes.STRING,
     allowNull: true,
   },
   priceUSD: {

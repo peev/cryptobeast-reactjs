@@ -4,8 +4,8 @@ const weiFiatFxValidator = () => {
   const verifyCreateWeiFiatFx = (req, res, next) => {
     const payload = req.body;
 
-    if (!payload || typeof payload.id !== 'number') {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid id type!' });
+    if (!payload || typeof payload.fetchId !== 'number') {
+      return res.status(400).send({ isSuccessful: false, message: 'Invalid fetch id type!' });
     }
 
     if (!payload || typeof payload.fxName !== 'string' || !validator.isLength(payload.fxName, { min: 1, max: 150 })) {

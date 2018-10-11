@@ -8,6 +8,16 @@ const weiAssetController = (repository) => {
   const createWeiAsset = async (req, res) => {
     const weiAssetData = req.body;
 
+    const findAssetPromise = repository.findOne({
+      modelName,
+      options: {
+        where: {
+          currency: weiAssetData.tokenName,
+          weiPortfolioId: weiAssetData.weiPortfolioId,
+        },
+      },
+    });
+
     const currency = await repository.findOne({
       modelName: 'WeiCurrency',
       options: {
@@ -26,25 +36,37 @@ const weiAssetController = (repository) => {
       },
     });
 
-    await repository.create({ modelName,
-      newObject: {
-        currency: weiAssetData.tokenName,
-        userID: weiAssetData.userAddress,
-        balance: weiAssetData.fullAmount,
-        available: weiAssetData.availableAmount,
-        inOrder: weiAssetData.fullAmount - weiAssetData.availableAmount,
-        weiPortfolioId: weiAssetData.weiPortfolioId,
-        lastPriceETH: currency.lastPriceETH,
-        lastPriceUSD: currency.lastPriceETH * ethToUsd.Last,
-        totalETH: weiAssetData.fullAmount * currency.lastPriceETH,
-        totalUSD: (weiAssetData.fullAmount * currency.lastPriceETH) * ethToUsd.Last,
-      },
-    })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
+    const assetObject = {
+      currency: weiAssetData.tokenName,
+      userID: weiAssetData.userAddress,
+      balance: weiAssetData.fullAmount,
+      available: weiAssetData.availableAmount,
+      inOrder: weiAssetData.fullAmount - weiAssetData.availableAmount,
+      weiPortfolioId: weiAssetData.weiPortfolioId,
+      lastPriceETH: currency.lastPriceETH,
+      lastPriceUSD: currency.lastPriceETH * ethToUsd.Last,
+      totalETH: weiAssetData.fullAmount * currency.lastPriceETH,
+      totalUSD: (weiAssetData.fullAmount * currency.lastPriceETH) * ethToUsd.Last,
+    };
+
+    findAssetPromise
+      .then(async (asset) => {
+        if (!asset) {
+          await repository.create({ modelName, assetObject })
+            .then((response) => {
+              res.status(200).send(response);
+            })
+            .catch((error) => {
+              res.json(error);
+            });
+        } else {
+          const newWeiAssetData = Object.assign({}, assetObject, { id: asset.id });
+          repository.update({ modelName, updatedRecord: newWeiAssetData })
+            .then((response) => {
+              res.status(200).send(response);
+            })
+            .catch(error => res.json(error));
+        }
       });
   };
 

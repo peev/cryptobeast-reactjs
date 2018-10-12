@@ -10,17 +10,6 @@ const krakenServices = (key, secret) => {
     .then(response => response.result)
     .catch(err => console.log(err)); // eslint-disable-line
 
-  const getPair = currencyPairs => new Promise((resolve) => {
-    request.get(`${URL}/Ticker?pair=${currencyPairs}`)
-      .then((response) => {
-        // TODO continue
-        console.log(response);
-        const parsedResult = JSON.parse(response);
-        resolve(parsedResult.result.ethusd);
-      })
-      .catch(err => console.log(err)); // eslint-disable-line
-  });
-
   const getTickers = currencyPairs => new Promise((resolve, reject) => {
     request({
       url: `${URL}/Ticker?pair=${currencyPairs}`,
@@ -135,7 +124,6 @@ const krakenServices = (key, secret) => {
 
   return {
     getCurrencies,
-    getPair,
     getTickers,
     getAllTickers,
     getBalance,

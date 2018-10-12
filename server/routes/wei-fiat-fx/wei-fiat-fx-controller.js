@@ -1,32 +1,27 @@
 const { responseHandler } = require('../utilities/response-handler');
 const { etherScanServices } = require('../../integrations/etherScan-services');
-const { krakenServices } = require('../../integrations/kraken-services');
 
 const modelName = 'WeiFiatFx';
 
 const weiFiatFxController = (repository) => {
+  const marketService = require('../../services/market-service')(repository);
+
   const createWeiFiatFx = async (req, res) => {
     const weiFiatFxData = req.body;
     let priceUsdValue;
 
     const ethPrice = await etherScanServices().getETHUSDPrice();
 
-    // TODO continue
-    const testTickers = await krakenServices().getPair('ETHJPY');
-    testTickers.then(result => console.log(result));
-
     switch (weiFiatFxData.fxName) {
       case 'ETC':
         priceUsdValue = ethPrice;
         break;
       default:
-        await repository.findOne({ modelName: 'MarketSummary', options: { where: { MarketName: `ETH-${weiFiatFxData.fxName}` } } })
-          .then((foundSummary) => {
-            priceUsdValue = ethPrice * foundSummary.dataValues.Last;
+        await marketService.getTickersFromKraken(`XETHZ${weiFiatFxData.fxName}`)
+          .then((data) => {
+            priceUsdValue = data[0].last / ethPrice;
           })
-          .catch((error) => {
-            res.json(error);
-          });
+          .catch(err => console.log(err));
         break;
     }
 
@@ -35,7 +30,6 @@ const weiFiatFxController = (repository) => {
       fxNameLong: weiFiatFxData.fxNameLong,
       priceUSD: priceUsdValue,
     };
-
 
     await repository.findOne({
       modelName,

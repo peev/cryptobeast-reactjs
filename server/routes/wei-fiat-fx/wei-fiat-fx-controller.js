@@ -71,10 +71,34 @@ const weiFiatFxController = (repository) => {
       });
   };
 
-  const updateWeiFiatFx = (req, res) => {
+  const updateWeiFiatFx = async (req, res) => {
     const { id } = req.params;
-    const weiFiatFxData = Object.assign({}, req.body, { id });
-    repository.update({ modelName, updatedRecord: weiFiatFxData })
+    const weiFiatFxData = req.body;
+    let priceUsdValue;
+
+    const ethPrice = await etherScanServices().getETHUSDPrice();
+
+    switch (weiFiatFxData.fxName) {
+      case 'ETC':
+        priceUsdValue = ethPrice;
+        break;
+      default:
+        await marketService.getTickersFromKraken(`XETHZ${weiFiatFxData.fxName}`)
+          .then((data) => {
+            priceUsdValue = data[0].last / ethPrice;
+          })
+          .catch(err => console.log(err));
+        break;
+    }
+
+    const newWeiFiatFxObject = {
+      fxName: weiFiatFxData.fxName,
+      fxNameLong: weiFiatFxData.fxNameLong,
+      priceUSD: priceUsdValue,
+    };
+
+    const newWeiPortfolioData = Object.assign({}, newWeiFiatFxObject, { id });
+    repository.update({ modelName, updatedRecord: newWeiPortfolioData })
       .then((response) => {
         res.status(200).send(response);
       })

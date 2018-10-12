@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
-const url = ''
+
+const url = '';
+const staging = 'http://staging-core-java.herokuapp.com';
 
 const WeidexService = (repository) => {
   const getUser = async (address) => {
@@ -62,6 +64,8 @@ const WeidexService = (repository) => {
     })
   };
 
+  const getTokenTicker = async tokenId => fetch(`${staging}/token/ticker/${tokenId}`, { method: 'GET' });
+
   return {
     getUser,
     getBalanceByUser,
@@ -71,7 +75,8 @@ const WeidexService = (repository) => {
     getUserOpenOrdersByOrderType,
     getUserOrderHistoryByToken,
     getUserOrderHistoryByUser,
-    getUserOrderHistoryByUserAndToken
+    getUserOrderHistoryByUserAndToken,
+    getTokenTicker,
   };
 };
 

@@ -3,14 +3,20 @@ const { responseHandler } = require('../utilities/response-handler');
 const modelName = 'WeiCurrency';
 
 const weiCurrencyController = (repository) => {
+  const WeidexService = require('../../services/weidex-service')(repository);
+
   const createWeiCurrency = async (req, res) => {
     const weiCurrencyData = req.body;
+
+    const priceResponse = await WeidexService.getTokenTicker(weiCurrencyData.id);
 
     const newWeiCurrencyObject = {
       tokenId: weiCurrencyData.id,
       tokenName: weiCurrencyData.name,
       tokenNameLong: weiCurrencyData.fullName,
-      lastPriceETH: weiCurrencyData.lastPriceETH,
+      lastPriceETH: priceResponse.body.lastPrice,
+      bid: priceResponse.body.bid,
+      ask: priceResponse.body.ask,
     };
 
     await repository.findOne({
@@ -30,7 +36,12 @@ const weiCurrencyController = (repository) => {
             res.json(error);
           });
       } else {
-        res.status(200).send(currency);
+        const newWeiCurrencyData = Object.assign({}, newWeiCurrencyObject, { id: currency.id });
+        repository.update({ modelName, updatedRecord: newWeiCurrencyData })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch(error => res.json(error));
       }
     }).catch((error) => {
       res.json(error);
@@ -48,10 +59,23 @@ const weiCurrencyController = (repository) => {
       });
   };
 
-  const updateWeiCurrency = (req, res) => {
+  const updateWeiCurrency = async (req, res) => {
     const { id } = req.params;
-    const weiCurrencyData = Object.assign({}, req.body, { id });
-    repository.update({ modelName, updatedRecord: weiCurrencyData })
+    const weiCurrencyData = req.body;
+
+    const priceResponse = await WeidexService.getTokenTicker(weiCurrencyData.id);
+
+    const newWeiCurrencyObject = {
+      tokenId: weiCurrencyData.id,
+      tokenName: weiCurrencyData.name,
+      tokenNameLong: weiCurrencyData.fullName,
+      lastPriceETH: priceResponse.body.lastPrice,
+      bid: priceResponse.body.bid,
+      ask: priceResponse.body.ask,
+    };
+
+    const newWeiCurrencyData = Object.assign({}, newWeiCurrencyObject, { id });
+    repository.update({ modelName, updatedRecord: newWeiCurrencyData })
       .then((response) => {
         res.status(200).send(response);
       })

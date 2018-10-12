@@ -18,10 +18,10 @@ const weiAssetController = (repository) => {
     });
 
     const ethToUsd = await repository.findOne({
-      modelName: 'MarketSummary',
+      modelName: 'WeiFiatFx',
       options: {
         where: {
-          MarketName: 'USD-ETH',
+          fxName: 'ETH',
         },
       },
     });
@@ -34,9 +34,9 @@ const weiAssetController = (repository) => {
       inOrder: weiAssetData.fullAmount - weiAssetData.availableAmount,
       weiPortfolioId: weiAssetData.weiPortfolioId,
       lastPriceETH: currency.lastPriceETH,
-      lastPriceUSD: currency.lastPriceETH * ethToUsd.Last,
+      lastPriceUSD: currency.lastPriceETH * ethToUsd.priceUSD,
       totalETH: weiAssetData.fullAmount * currency.lastPriceETH,
-      totalUSD: (weiAssetData.fullAmount * currency.lastPriceETH) * ethToUsd.Last,
+      totalUSD: (weiAssetData.fullAmount * currency.lastPriceETH) * ethToUsd.priceUSD,
     };
 
     await repository.findOne({
@@ -94,10 +94,10 @@ const weiAssetController = (repository) => {
     });
 
     const ethToUsd = await repository.findOne({
-      modelName: 'MarketSummary',
+      modelName: 'WeiFiatFx',
       options: {
         where: {
-          MarketName: 'USD-ETH',
+          fxName: 'ETH',
         },
       },
     });
@@ -110,9 +110,9 @@ const weiAssetController = (repository) => {
       inOrder: weiAssetData.fullAmount - weiAssetData.availableAmount,
       weiPortfolioId: weiAssetData.weiPortfolioId,
       lastPriceETH: currency.lastPriceETH,
-      lastPriceUSD: currency.lastPriceETH * ethToUsd.Last,
+      lastPriceUSD: currency.lastPriceETH * ethToUsd.priceUSD,
       totalETH: weiAssetData.fullAmount * currency.lastPriceETH,
-      totalUSD: (weiAssetData.fullAmount * currency.lastPriceETH) * ethToUsd.Last,
+      totalUSD: (weiAssetData.fullAmount * currency.lastPriceETH) * ethToUsd.priceUSD,
     };
 
     const newWeiAssetData = Object.assign({}, assetObject, { id });

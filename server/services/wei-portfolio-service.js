@@ -14,15 +14,15 @@ const weiPortfolioService = (repository) => {
 
   const calculateEtherValueUSD = async (amountETH) => {
     const summary = await repository.findOne({
-      modelName: 'MarketSummary',
+      modelName: 'WeiFiatFx',
       options: {
         where: {
-          MarketName: 'USD-ETH',
+          fxName: 'ETH',
         },
       },
     });
 
-    return amountETH * summary.Last;
+    return amountETH * summary.priceUSD;
   };
 
   const calcPortfolioTotalInvestment = async (portfolio) => {

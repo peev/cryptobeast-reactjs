@@ -13,7 +13,7 @@ const weiFiatFxController = (repository) => {
     const ethPrice = await etherScanServices().getETHUSDPrice();
 
     switch (weiFiatFxData.fxName) {
-      case 'ETC':
+      case 'ETH':
         priceUsdValue = ethPrice;
         break;
       default:
@@ -79,7 +79,7 @@ const weiFiatFxController = (repository) => {
     const ethPrice = await etherScanServices().getETHUSDPrice();
 
     switch (weiFiatFxData.fxName) {
-      case 'ETC':
+      case 'ETH':
         priceUsdValue = ethPrice;
         break;
       default:

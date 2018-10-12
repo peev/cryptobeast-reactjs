@@ -14,9 +14,9 @@ const weiCurrencyController = (repository) => {
       tokenId: weiCurrencyData.id,
       tokenName: weiCurrencyData.name,
       tokenNameLong: weiCurrencyData.fullName,
-      lastPriceETH: priceResponse.body.lastPrice,
-      bid: priceResponse.body.bid,
-      ask: priceResponse.body.ask,
+      lastPriceETH: priceResponse.price,
+      // bid: priceResponse.body.bid,
+      // ask: priceResponse.body.ask,
     };
 
     await repository.findOne({
@@ -69,9 +69,9 @@ const weiCurrencyController = (repository) => {
       tokenId: weiCurrencyData.id,
       tokenName: weiCurrencyData.name,
       tokenNameLong: weiCurrencyData.fullName,
-      lastPriceETH: priceResponse.body.lastPrice,
-      bid: priceResponse.body.bid,
-      ask: priceResponse.body.ask,
+      lastPriceETH: priceResponse.price,
+      // bid: priceResponse.body.bid,
+      // ask: priceResponse.body.ask,
     };
 
     const newWeiCurrencyData = Object.assign({}, newWeiCurrencyObject, { id });

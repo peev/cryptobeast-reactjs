@@ -38,6 +38,13 @@ const init = databaseConfig => new Promise((resolve) => {
       db.ApiTradeHistory = sequelize.import(path.join(__dirname, '/models/apiTradeHistory.js'));
       db.SharePrice = sequelize.import(path.join(__dirname, '/models/sharePrice.js'));
       db.PortfolioPrice = sequelize.import(path.join(__dirname, '/models/portfolioPrice.js'));
+
+      db.WeiPortfolio = sequelize.import(path.join(__dirname, '/models/weiPortfolio.js'));
+      db.WeiAsset = sequelize.import(path.join(__dirname, '/models/weiAsset.js'));
+      db.WeiTransaction = sequelize.import(path.join(__dirname, '/models/weiTransaction.js'));
+      db.WeiTradeHistory = sequelize.import(path.join(__dirname, '/models/weiTradeHistory.js'));
+      db.WeiCurrency = sequelize.import(path.join(__dirname, '/models/weiCurrency.js'));
+      db.WeiFiatFx = sequelize.import(path.join(__dirname, '/models/weiFiatFx.js'));
       // db.User = sequelize.import(path.join(__dirname, '/models/user.js'));
       // db.Setting = sequelize.import(path.join(__dirname, '/models/setting.js'));
       // TODO: Configure model connections here (one-to-one/one-to-many etc.)
@@ -50,6 +57,15 @@ const init = databaseConfig => new Promise((resolve) => {
 
       // db.Portfolio.hasMany(db.Account);
       // db.Account.belongsTo(db.Portfolio);
+
+      db.WeiPortfolio.hasMany(db.WeiTradeHistory);
+      db.WeiTransaction.belongsTo(db.WeiTradeHistory);
+
+      db.WeiPortfolio.hasMany(db.WeiTransaction);
+      db.WeiTransaction.belongsTo(db.WeiPortfolio);
+
+      db.WeiPortfolio.hasMany(db.WeiAsset);
+      db.WeiAsset.belongsTo(db.WeiPortfolio);
 
       db.Portfolio.hasMany(db.Asset);
       db.Asset.belongsTo(db.Portfolio);

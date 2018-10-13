@@ -11,7 +11,6 @@ import {
 } from '@material-ui/core';
 
 import appRoutes from './../../routes/app';
-import AuthService from './../../services/Authentication';
 import { Header, Sidebar } from './../../components';
 import Logo from '../../components/CustomIcons/Sidebar/Logo';
 import LogoText from '../../components/CustomIcons/Sidebar/LogoText';
@@ -36,18 +35,6 @@ class App extends React.Component<Props> {
     open: false,
   };
 
-  componentDidMount() {
-    const { location, UserStore } = this.props;
-    UserStore.getUserProfile(); // tries to get user from local storage
-    if (!AuthService.isAuthenticated()) {
-      if (/access_token|id_token|error/.test(location.hash)) {
-        AuthService.receiveAuthentication(location.hash);
-      } else {
-        AuthService.signIn();
-      }
-    }
-  }
-
   handleDrawerOpen = () => {
     this.setState({ open: true });
   };
@@ -60,7 +47,7 @@ class App extends React.Component<Props> {
     const { classes, theme, PortfolioStore, children, ...rest } = this.props;
     const { fetchingPortfolios } = PortfolioStore;
 
-    if (fetchingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
+    // if (fetchingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
 
     // this is used for portfolio select start screen, because those views doesn't have header
     const checkPortfolioNumber = this.props.location.pathname === '/' && (PortfolioStore.portfolios.length === 0 || PortfolioStore.portfolios.length > 1);

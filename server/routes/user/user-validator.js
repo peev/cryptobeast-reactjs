@@ -1,7 +1,3 @@
-const AManagement = require('../../integrations/Auth0ManagementAPI');
-
-const Auth0ManagementApi = new AManagement();
-
 const userValidator = () => {
   const verifiedPatchUserMetadataValidateRequest = (req, res, next) => {
     const payload = req.body.user_metadata.api;
@@ -41,7 +37,7 @@ const userValidator = () => {
     const { apiKey, apiSecret, portfolioId } = req.body.user_metadata.api;
 
     // Get user from auth0
-    const currentUser = await Auth0ManagementApi.getUser(req, res);
+    const currentUser = req.body.user;
     const filteredUserApis = Object.keys(currentUser.user_metadata).filter((apiName) => {
       if (apiName !== 'api') {
         return ((currentUser.user_metadata[apiName].apiKey === apiKey && currentUser.user_metadata[apiName].portfolioId === portfolioId)

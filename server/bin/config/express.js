@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-const jwksRsa = require('jwks-rsa');
-const jwt = require('express-jwt');
+// const jwksRsa = require('jwks-rsa');
+// const jwt = require('express-jwt');
 // const path = require('path');
 
 
@@ -37,23 +37,23 @@ const init = async (repository) => {
   });
 
   // Middleware for checking the JWT
-  const checkJwt = jwt({
-    // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint
-    secret: jwksRsa.expressJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: 'https://cryptobeast.eu.auth0.com/.well-known/jwks.json',
-    }),
+  // const checkJwt = jwt({
+  //   // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint
+  //   secret: jwksRsa.expressJwtSecret({
+  //     cache: true,
+  //     rateLimit: true,
+  //     jwksRequestsPerMinute: 5,
+  //     jwksUri: 'https://cryptobeast.eu.auth0.com/.well-known/jwks.json',
+  //   }),
 
-    // Validate the audience and the issuer
-    audience: 'ro3TfD3x5qWYVH7EhI7IlpoHPK330NeQ',
-    issuer: 'https://cryptobeast.eu.auth0.com/',
-    algorithms: ['RS256'],
-  });
+  //   // Validate the audience and the issuer
+  //   audience: 'ro3TfD3x5qWYVH7EhI7IlpoHPK330NeQ',
+  //   issuer: 'https://cryptobeast.eu.auth0.com/',
+  //   algorithms: ['RS256'],
+  // });
 
   // Enable Authentication on all API Endpoints
-  app.use(checkJwt);
+  // app.use(checkJwt);
 
 
   // Initialize market summaries, base tickers and their sync jobs
@@ -90,6 +90,12 @@ const init = async (repository) => {
   require('./../../routes/market/market-router').attachTo(app, repository);
   require('./../../routes/account/account-router').attachTo(app, repository);
   require('./../../routes/investor/investor-router').attachTo(app, repository);
+  require('./../../routes/wei-portfolio/wei-portfolio-router').attachTo(app, repository, jobs);
+  require('./../../routes/wei-asset/wei-asset-router').attachTo(app, repository, jobs);
+  require('./../../routes/wei-transaction/wei-transaction-router').attachTo(app, repository, jobs);
+  require('./../../routes/wei-trade-history/wei-trade-history-router').attachTo(app, repository, jobs);
+  require('./../../routes/wei-currency/wei-currency-router').attachTo(app, repository, jobs);
+  require('./../../routes/wei-fiat-fx/wei-fiat-fx-router').attachTo(app, repository, jobs);
 
   // Handle Errors
   // catch 404 and forward to error handler

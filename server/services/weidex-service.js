@@ -1,5 +1,8 @@
 const fetch = require('node-fetch');
-const url = ''
+const request = require('requestretry');
+
+const url = 'https://core.weidex.market/';
+const staging = 'http://staging-core-java.herokuapp.com';
 
 const WeidexService = (repository) => {
   const getUser = async (address) => {
@@ -62,6 +65,23 @@ const WeidexService = (repository) => {
     })
   };
 
+  const getTokenTicker = tokenId => new Promise((resolve, reject) => {
+    request({
+      url: `${staging}/token/ticker/${tokenId}`,
+      json: true,
+      maxAttempts: 3,
+      retryDelay: 3100,
+      retryStrategy: request.RetryStrategies.HTTPOrNetworkError, // (default) retry on 5xx or network errors
+    }, (err, response, body) => {
+      if (err) return reject(err);
+      if (body) {
+        if (body.error) return reject(body.error); // Probably invalid API call
+        return resolve(body);
+      }
+      return resolve([]); // eslint rule of consistent returns. Function must return value in every case;
+    });
+  });
+
   return {
     getUser,
     getBalanceByUser,
@@ -71,7 +91,8 @@ const WeidexService = (repository) => {
     getUserOpenOrdersByOrderType,
     getUserOrderHistoryByToken,
     getUserOrderHistoryByUser,
-    getUserOrderHistoryByUserAndToken
+    getUserOrderHistoryByUserAndToken,
+    getTokenTicker,
   };
 };
 

@@ -178,7 +178,7 @@ const marketController = (repository) => {
     getBaseTickersHistory,
     getProfitAndLossHistory,
     getLiquidityHistory,
-    getCorrelationMatrixHistory
+    getCorrelationMatrixHistory,
   };
 };
 

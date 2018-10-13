@@ -114,6 +114,7 @@ const marketService = (repository) => {
     syncTickersFromCoinMarketCap,
     syncCurrenciesFromApi,
     createMarketJob,
+    getTickersFromKraken,
   };
 };
 

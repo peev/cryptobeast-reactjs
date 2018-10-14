@@ -112,6 +112,10 @@ const weiFiatFxController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const sync = (data) => {
+    
+  };
+
   return {
     createWeiFiatFx,
     getWeiFiatFx,

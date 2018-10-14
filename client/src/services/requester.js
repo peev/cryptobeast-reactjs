@@ -89,6 +89,10 @@ const User = {
   syncUserApiData: id => requests.put(`/user/syncApiData/${id}`),
 };
 
+const Weidex = {
+  sync: data => requests.get('/weidex/sync')
+};
+
 export default {
   Portfolio,
   Investor,
@@ -97,4 +101,5 @@ export default {
   Asset,
   User,
   Trade,
+  Weidex
 };

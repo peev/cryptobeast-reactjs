@@ -5,6 +5,7 @@ const attachTo = (app, data) => {
   const weidexController = require('./weidex-controller')(data);
 
   router
+    .get('/sync/:id', (req, res) => weidexController.sync(req, res))
     .get('/user/:address', (req, res) => weidexController.getUser(req, res))
     .get('/token/all', (req, res) => weidexController.getAllTokens(req, res))
     .get('/balance/user/:userAddress', (req, res) => weidexController.getBalanceByUser(req, res))

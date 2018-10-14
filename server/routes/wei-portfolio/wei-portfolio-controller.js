@@ -99,6 +99,10 @@ const weiPortfolioController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const sync = (data) => {
+    
+  };
+
   return {
     createWeiPortfolio,
     updateWeiPortfolio,

@@ -89,6 +89,14 @@ const weiTradeController = (repository) => {
       } else {
         newest = 1
       }
+      const ethToUsd = await repository.findOne({
+        modelName: 'WeiFiatFx',
+        options: {
+          where: {
+            fxName: 'ETH',
+          },
+        },
+      });
       let transactions = await WeidexService.getUserOrderHistoryByUser(id).then(res => res.json());
       transactions.forEach((transaction) => {
         if(newest < +(new Date(transaction)) {

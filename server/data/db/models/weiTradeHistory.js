@@ -15,6 +15,14 @@ module.exports = (sequelize, DataTypes) => sequelize.define('weiTradeHistory', {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
+  priceTotalETH: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  priceTotalUSD: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
   timestamp: {
     type: DataTypes.DATE,
     allowNull: true,

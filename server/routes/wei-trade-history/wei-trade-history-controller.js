@@ -1,17 +1,65 @@
 const { responseHandler } = require('../utilities/response-handler');
+const { etherScanServices } = require('../../integrations/etherScan-services');
 
 const modelName = 'WeiTradeHistory';
 
 const weiTradeController = (repository) => {
-  const createWeiTrade = (req, res) => {
+  const createWeiTrade = async (req, res) => {
     const weiTrade = req.body;
-    repository.create({ modelName, newObject: weiTrade })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
+
+    const tradeExist = await repository.findOne({
+      modelName,
+      options: {
+        where: {
+          txHash: weiTrade.txHash,
+        },
+      },
+    });
+
+    if (!tradeExist) {
+      const ethToUsd = await repository.findOne({
+        modelName: 'WeiFiatFx',
+        options: {
+          where: {
+            fxName: 'ETH',
+          },
+        },
       });
+
+      const transaction = await etherScanServices().getTransactionByHash(weiTrade.txHash);
+
+      let transactonFee = null;
+
+      // Test network use another url
+      if (transaction !== null) {
+        transactonFee = Number(((transaction.gas * 100) * (transaction.gasPrice * 100)) / 100);
+      }
+
+      const newWeiTradeObject = {
+        type: weiTrade.type,
+        amount: weiTrade.amount,
+        priceETH: weiTrade.price,
+        priceUSD: weiTrade.price * ethToUsd.priceUSD,
+        priceTotalETH: weiTrade.amount * weiTrade.price,
+        priceTotalUSD: weiTrade.amount * (weiTrade.price * ethToUsd.priceUSD),
+        timestamp: weiTrade.createdAt,
+        txHash: weiTrade.txHash,
+        status: weiTrade.status,
+        txFee: transactonFee,
+        pair: `${weiTrade.token.name.toUpperCase()}-ETH`,
+        weiPortfolioId: weiTrade.weiPortfolioId,
+      };
+
+      repository.create({ modelName, newObject: newWeiTradeObject })
+        .then((response) => {
+          res.status(200).send(response);
+        })
+        .catch((error) => {
+          res.json(error);
+        });
+    } else {
+      res.status(200).send(weiTrade);
+    }
   };
 
   const getWeiTrade = (req, res) => {
@@ -23,16 +71,6 @@ const weiTradeController = (repository) => {
       .catch((error) => {
         res.json(error);
       });
-  };
-
-  const updateWeiTrade = (req, res) => {
-    const { id } = req.params;
-    const weiTradeData = Object.assign({}, req.body, { id });
-    repository.update({ modelName, updatedRecord: weiTradeData })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch(error => res.json(error));
   };
 
   const removeWeiTrade = (req, res) => {
@@ -49,7 +87,6 @@ const weiTradeController = (repository) => {
   return {
     createWeiTrade,
     getWeiTrade,
-    updateWeiTrade,
     removeWeiTrade,
     sync
   };

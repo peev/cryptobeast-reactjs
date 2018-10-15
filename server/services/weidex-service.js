@@ -3,6 +3,7 @@ const request = require('requestretry');
 
 const url = 'https://core.weidex.market/';
 const staging = 'http://staging-core-java.herokuapp.com';
+const dataFeeder = 'https://production-datafeeder.herokuapp.com';
 
 const WeidexService = (repository) => {
   const getUser = async (address) => {
@@ -82,6 +83,20 @@ const WeidexService = (repository) => {
     });
   });
 
+  const getCurrencyStats = (currencyId, from, to) => new Promise((resolve, reject) => {
+    request({
+      url: `${dataFeeder}/get/${currencyId}/${from}/${to}/1d`,
+      json: true,
+      retryStrategy: request.RetryStrategies.HTTPOrNetworkError, // (default) retry on 5xx or network errors
+    }, (err, response, body) => {
+      if (err) return reject(err);
+      if (body) {
+        return resolve(body);
+      }
+      return resolve([]); // eslint rule of consistent returns. Function must return value in every case;
+    });
+  });
+
   return {
     getUser,
     getBalanceByUser,
@@ -93,6 +108,7 @@ const WeidexService = (repository) => {
     getUserOrderHistoryByUser,
     getUserOrderHistoryByUserAndToken,
     getTokenTicker,
+    getCurrencyStats,
   };
 };
 

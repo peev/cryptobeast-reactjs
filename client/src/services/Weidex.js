@@ -1,9 +1,9 @@
 import requester from './requester';
 
 const Weidex = {
-  sync: () => {
+  sync: (data) => {
     // TODO: Get id from somewhere
-    requester.Weidex.sync().then((response) => {
+    requester.Weidex.sync(data).then((response) => {
       // Handle the FE sync here
     })
   }

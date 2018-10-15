@@ -81,7 +81,9 @@ const weiTradeController = (repository) => {
   };
 
   const sync = (data) => {
-    
+    repository.rawQuery('SELECT DISTINCT ON ("txHash") * FROM "weiTradeHistory" ORDER  BY "txHash", "timestamp" DESC NULLS LAST, "weiPortfolioId"').then((transactions) => {
+      let newest = transactions[0].timestamp;
+    });
   };
 
   return {

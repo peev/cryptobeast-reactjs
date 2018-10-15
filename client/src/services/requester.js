@@ -90,7 +90,7 @@ const User = {
 };
 
 const Weidex = {
-  sync: data => requests.get('/weidex/sync')
+  sync: data => requests.get(`/weidex/sync/${data.id}`)
 };
 
 export default {

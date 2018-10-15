@@ -98,6 +98,7 @@ const weiCurrencyController = (repository) => {
     getWeiCurrency,
     updateWeiCurrency,
     removeWeiCurrency,
+    sync
   };
 };
 

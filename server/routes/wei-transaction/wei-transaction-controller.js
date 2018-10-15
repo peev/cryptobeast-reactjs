@@ -67,6 +67,7 @@ const weiTransactionController = (repository) => {
     getWeiTransaction,
     updateWeiTransaction,
     removeWeiTransaction,
+    sync
   };
 };
 

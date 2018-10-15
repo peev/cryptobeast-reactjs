@@ -121,6 +121,7 @@ const weiFiatFxController = (repository) => {
     getWeiFiatFx,
     updateWeiFiatFx,
     removeWeiFiatFx,
+    sync
   };
 };
 

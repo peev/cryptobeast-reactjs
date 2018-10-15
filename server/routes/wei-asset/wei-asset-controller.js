@@ -158,7 +158,7 @@ const weiAssetController = (repository) => {
   };
 
   const sync = (data) => {
-    
+    console.log('sync activated')
   };
 
   return {
@@ -167,6 +167,7 @@ const weiAssetController = (repository) => {
     updateWeiAsset,
     updateWeiAssetWeight,
     removeWeiAsset,
+    sync
   };
 };
 

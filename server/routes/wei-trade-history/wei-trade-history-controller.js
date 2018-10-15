@@ -51,6 +51,7 @@ const weiTradeController = (repository) => {
     getWeiTrade,
     updateWeiTrade,
     removeWeiTrade,
+    sync
   };
 };
 

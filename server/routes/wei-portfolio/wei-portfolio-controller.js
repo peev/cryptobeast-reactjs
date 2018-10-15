@@ -109,6 +109,7 @@ const weiPortfolioController = (repository) => {
     updateWeiPortfolioTotalInvestment,
     getWeiPortfolio,
     removeWeiPortfolio,
+    sync
   };
 };
 

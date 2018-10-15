@@ -30,7 +30,9 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
   };
 
   const syncData = () => {
-    Weidex.sync();
+    Weidex.sync({
+      id: 'Test'
+    });
     // TODO: Set loading or something
   };
 

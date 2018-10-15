@@ -1,24 +1,33 @@
-const { WeidexService } = require('../../services/weidex-services');
+const { WeidexService } = require('../../services/weidex-service');
 
 const weidexController = (repository) => {
-  const weiFiatFxController = require('../wei-fiat-fx-controller')(repository);
-  const weiCurrencyController = require('../wei-currency-controller')(repository);
-  const weiPortfolioController = require('../wei-portfolio-controller')(repository);
   const weiAssetController = require('../wei-asset/wei-asset-controller')(repository);
-  const weiTransactionController = require('../wei-transacation-controller')(repository);
-  const weiTradeHistoryController = require('../wei-trade-history-controller')(repository);
+  const weiFiatFxController = require('../wei-fiat-fx/wei-fiat-fx-controller')(repository);
+  const weiCurrencyController = require('../wei-currency/wei-currency-controller')(repository);
+  const weiPortfolioController = require('../wei-portfolio/wei-portfolio-controller')(repository);
+  const weiTransactionController = require('../wei-transaction/wei-transaction-controller')(repository);
+  const weiTradeHistoryController = require('../wei-trade-history/wei-trade-history-controller')(repository);
 
   const sync = (req, res) => {
-    weiAssetController.sync(req.query.id);
-    weiFiatFxController.sync(req.query.id);
-    weiCurrencyController.sync(req.query.id);
-    weiPortfolioController.sync(req.query.id);
-    weiTransactionController.sync(req.query.id);
-    weiTradeHistoryController.sync(req.query.id);
+    let id = req.params.id;
+    console.log('Start sync');
+    // Not ready
+    weiAssetController.sync(id);
+    // working over
+    weiFiatFxController.sync(id);
+    // Not ready
+    weiCurrencyController.sync(id);
+    // Not ready
+    weiPortfolioController.sync(id);
+    // Not ready
+    weiTransactionController.sync(id);
+    // Not ready
+    weiTradeHistoryController.sync(id);
+    console.log('End sync');
   };
 
   const getUser = (req, res) => {
-    WeidexService.getUser(req.query.address)
+    WeidexService.getUser(req.params.address)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -38,7 +47,7 @@ const weidexController = (repository) => {
   };
 
   const getBalanceByUser = (req, res) => {
-    WeidexService.getBalanceByUser(req.query.address)
+    WeidexService.getBalanceByUser(req.params.address)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -48,7 +57,7 @@ const weidexController = (repository) => {
   };
 
   const getUserDeposit = (req, res) => {
-    WeidexService.getUserDeposit(req.query.userId)
+    WeidexService.getUserDeposit(req.params.userId)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -58,7 +67,7 @@ const weidexController = (repository) => {
   };
 
   const getUserWithdraw = (req, res) => {
-    WeidexService.getUserWithdraw(req.query.userId)
+    WeidexService.getUserWithdraw(req.params.userId)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -68,7 +77,7 @@ const weidexController = (repository) => {
   };
 
   const getUserOpenOrders = (req, res) => {
-    WeidexService.getUserOpenOrders(req.query.userId, req.query.tokenId)
+    WeidexService.getUserOpenOrders(req.params.userId, req.params.tokenId)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -78,7 +87,7 @@ const weidexController = (repository) => {
   };
 
   const getUserOpenOrdersByOrderType = (req, res) => {
-    WeidexService.getUserOpenOrdersByOrderType(req.query.tokenId, req.query.type)
+    WeidexService.getUserOpenOrdersByOrderType(req.params.tokenId, req.params.type)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -88,7 +97,7 @@ const weidexController = (repository) => {
   };
 
   const getUserOrderHistoryByToken = (req, res) => {
-    WeidexService.getUserOrderHistoryByToken(req.query.tokenId)
+    WeidexService.getUserOrderHistoryByToken(req.params.tokenId)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -98,7 +107,7 @@ const weidexController = (repository) => {
   };
 
   const getUserOrderHistoryByUser = (req, res) => {
-    WeidexService.getUserOrderHistoryByUser(req.query.userId)
+    WeidexService.getUserOrderHistoryByUser(req.params.userId)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -108,7 +117,7 @@ const weidexController = (repository) => {
   };
 
   const getUserOrderHistoryByUserAndToken = (req, res) => {
-    WeidexService.getUserOrderHistoryByUserAndToken(req.query.userId, req.query.tokenId)
+    WeidexService.getUserOrderHistoryByUserAndToken(req.params.userId, req.params.tokenId)
       .then((response) => {
         res.status(200).send(response);
       })
@@ -118,6 +127,7 @@ const weidexController = (repository) => {
   };
 
   return {
+    sync,
     getUser,
     getBalanceByUser,
     getUserDeposit,

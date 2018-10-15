@@ -1,5 +1,6 @@
 const { responseHandler } = require('../utilities/response-handler');
 const { etherScanServices } = require('../../integrations/etherScan-services');
+const { WeidexService } = require('../../services/weidex-service');
 
 const modelName = 'WeiTradeHistory';
 
@@ -80,9 +81,36 @@ const weiTradeController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = (data) => {
+  const sync = (id) => {
     repository.rawQuery('SELECT DISTINCT ON ("txHash") * FROM "weiTradeHistory" ORDER  BY "txHash", "timestamp" DESC NULLS LAST, "weiPortfolioId"').then((transactions) => {
-      let newest = transactions[0].timestamp;
+      let newest = null;
+      if(transactions[0]) {
+        newest = +new Date(transactions[0].timestamp);
+      } else {
+        newest = 1
+      }
+      let transactions = await WeidexService.getUserOrderHistoryByUser(id).then(res => res.json());
+      transactions.forEach((transaction) => {
+        if(newest < +(new Date(transaction)) {
+          repository.create({
+            modelName, 
+            newObject: {
+              type: transaction.type,
+              amount: transaction.amount,
+              priceETH: transaction.price,
+              priceUSD: transaction.price * ethToUsd.priceUSD,
+              priceTotalETH: transaction.amount * transaction.price,
+              priceTotalUSD: transaction.amount * (transaction.price * ethToUsd.priceUSD),
+              timestamp: transaction.createdAt,
+              txHash: transaction.txHash,
+              status: transaction.status,
+              txFee: Number(((transaction.gas * 100) * (transaction.gasPrice * 100)) / 100);,
+              pair: `${transaction.token.name.toUpperCase()}-ETH`,
+              weiPortfolioId: transaction.weiPortfolioId,
+            } 
+          });
+        }
+      });
     });
   };
 

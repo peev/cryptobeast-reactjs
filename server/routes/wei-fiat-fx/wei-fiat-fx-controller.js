@@ -99,7 +99,7 @@ const weiFiatFxController = (repository) => {
       .catch(error => res.json(error));
   };
   
-  const sync = (data) => {
+  const sync = () => {
     repository.find({ modelName }).then((currencies) => {
       // Update the usd price of all currencies
       currencies.forEach((currency) => {

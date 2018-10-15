@@ -13,8 +13,7 @@ const weidexController = (repository) => {
     console.log('Start sync');
     // Not ready
     weiAssetController.sync(id);
-    // working over
-    weiFiatFxController.sync(id);
+    weiFiatFxController.sync();
     // Not ready
     weiCurrencyController.sync(id);
     // Not ready

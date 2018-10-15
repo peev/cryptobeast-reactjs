@@ -80,10 +80,15 @@ const weiTradeController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const sync = (data) => {
+    
+  };
+
   return {
     createWeiTrade,
     getWeiTrade,
     removeWeiTrade,
+    sync
   };
 };
 

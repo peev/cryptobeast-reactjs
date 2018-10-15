@@ -157,12 +157,17 @@ const weiAssetController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const sync = (data) => {
+    console.log('sync activated')
+  };
+
   return {
     createWeiAsset,
     getWeiAsset,
     updateWeiAsset,
     updateWeiAssetWeight,
     removeWeiAsset,
+    sync
   };
 };
 

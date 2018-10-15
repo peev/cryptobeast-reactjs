@@ -89,11 +89,16 @@ const weiCurrencyController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const sync = (data) => {
+    
+  };
+
   return {
     createWeiCurrency,
     getWeiCurrency,
     updateWeiCurrency,
     removeWeiCurrency,
+    sync
   };
 };
 

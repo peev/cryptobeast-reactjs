@@ -58,11 +58,16 @@ const weiTransactionController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const sync = (data) => {
+    
+  };
+
   return {
     createWeiTransaction,
     getWeiTransaction,
     updateWeiTransaction,
     removeWeiTransaction,
+    sync
   };
 };
 

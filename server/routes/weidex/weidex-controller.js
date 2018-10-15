@@ -1,6 +1,22 @@
 const { WeidexService } = require('../../services/weidex-services');
 
 const weidexController = (repository) => {
+  const weiFiatFxController = require('../wei-fiat-fx-controller')(repository);
+  const weiCurrencyController = require('../wei-currency-controller')(repository);
+  const weiPortfolioController = require('../wei-portfolio-controller')(repository);
+  const weiAssetController = require('../wei-asset/wei-asset-controller')(repository);
+  const weiTransactionController = require('../wei-transacation-controller')(repository);
+  const weiTradeHistoryController = require('../wei-trade-history-controller')(repository);
+
+  const sync = (req, res) => {
+    weiAssetController.sync(req.query.id);
+    weiFiatFxController.sync(req.query.id);
+    weiCurrencyController.sync(req.query.id);
+    weiPortfolioController.sync(req.query.id);
+    weiTransactionController.sync(req.query.id);
+    weiTradeHistoryController.sync(req.query.id);
+  };
+
   const getUser = (req, res) => {
     WeidexService.getUser(req.query.address)
       .then((response) => {

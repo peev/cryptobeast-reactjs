@@ -27,7 +27,7 @@ const weiAssetController = (repository) => {
     });
 
     const assetObject = {
-      currency: weiAssetData.tokenName,
+      tokenName: weiAssetData.tokenName,
       userID: weiAssetData.userAddress,
       balance: weiAssetData.fullAmount,
       available: weiAssetData.availableAmount,
@@ -43,7 +43,7 @@ const weiAssetController = (repository) => {
       modelName,
       options: {
         where: {
-          currency: weiAssetData.tokenName,
+          tokenName: weiAssetData.tokenName,
           weiPortfolioId: weiAssetData.weiPortfolioId,
         },
       },
@@ -103,7 +103,7 @@ const weiAssetController = (repository) => {
     });
 
     const assetObject = {
-      currency: weiAssetData.tokenName,
+      tokenName: weiAssetData.tokenName,
       userID: weiAssetData.userAddress,
       balance: weiAssetData.fullAmount,
       available: weiAssetData.availableAmount,
@@ -139,7 +139,7 @@ const weiAssetController = (repository) => {
     if (portfolio.weiAssets !== 0) {
       const assetValue = await weiPortfolioService
         .calculateEtherValueUSD(await weiPortfolioService
-          .calculateTokenValueETH(weiAssetData.currency, weiAssetData.balance));
+          .calculateTokenValueETH(weiAssetData.tokenName, weiAssetData.balance));
       await weiPortfolioService.calcPortfolioTotalValue(portfolio).then((portfolioValue) => {
         const result = (assetValue * 100) / portfolioValue;
         const newAssetData = Object.assign({}, weiAssetData, { id: weiAssetData.id, weight: result });

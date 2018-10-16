@@ -37,6 +37,7 @@ const weiTradeController = (repository) => {
       }
 
       const newWeiTradeObject = {
+        tokenName: weiTrade.token.name,
         type: weiTrade.type,
         amount: weiTrade.amount,
         priceETH: weiTrade.price,
@@ -103,6 +104,7 @@ const weiTradeController = (repository) => {
           repository.create({
             modelName,
             newObject: {
+              tokenName: transaction.token.name,
               type: transaction.type,
               amount: transaction.amount,
               priceETH: transaction.price,

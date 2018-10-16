@@ -8,6 +8,10 @@ const weiTradeHistoryValidator = () => {
       return res.status(400).send({ isSuccessful: false, message: 'Provide a portfolio ID as number!' });
     }
 
+    if (!payload || typeof payload.token.name !== 'string' || !validator.isLength(payload.token.name, { min: 1, max: 4 })) {
+      return res.status(400).send({ isSuccessful: false, message: 'Invalid type!' });
+    }
+
     if (!payload || typeof payload.amount !== 'number' || payload.amount < 0) {
       return res.status(400).send({ isSuccessful: false, message: 'Invalid amount!' });
     }

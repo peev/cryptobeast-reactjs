@@ -10,7 +10,7 @@ const weiFiatFxController = (repository) => {
 
   const createWeiFiatFx = async (req, res) => {
     const weiFiatFxData = req.body;
-    let priceUsdValue = await weiFiatFxService.getPriceByType(weiFiatFxData.fxName)
+    const priceUsdValue = await weiFiatFxService.getPriceByType(weiFiatFxData.fxName);
 
     const newWeiFiatFxObject = {
       fxName: weiFiatFxData.fxName,
@@ -102,16 +102,15 @@ const weiFiatFxController = (repository) => {
   const sync = () => {
     repository.find({ modelName }).then((currencies) => {
       // Update the usd price of all currencies
-      currencies.forEach((currency) => {
-        let priceUsdValue = await weiFiatFxService.getPriceByType(currency.fxName);
-        repository.update(
-          { 
-            modelName, 
-            updatedRecord: {
-              id: currency.id
-              priceUSD: priceUsdValue
-            } 
-          })
+      currencies.forEach(async (currency) => {
+        const priceUsdValue = await weiFiatFxService.getPriceByType(currency.fxName);
+        repository.update({
+          modelName,
+          updatedRecord: {
+            id: currency.id,
+            priceUSD: priceUsdValue,
+          },
+        })
           .then((response) => {
             // TODO: Handle the response based on all items on all controllers ready
           })

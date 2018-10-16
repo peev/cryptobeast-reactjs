@@ -82,14 +82,14 @@ const weiTradeController = (repository) => {
   };
 
   const sync = (id) => {
-    repository.rawQuery('SELECT DISTINCT ON ("txHash") * FROM "weiTradeHistory" ORDER  BY "txHash", "timestamp" DESC NULLS LAST, "weiPortfolioId"').then((transactions) => {
+    repository.rawQuery('SELECT DISTINCT ON ("txHash") * FROM "weiTradeHistory" ORDER  BY "txHash", "timestamp" DESC NULLS LAST, "weiPortfolioId"').then((items) => {
       let newest = null;
-      if(transactions[0]) {
-        newest = +new Date(transactions[0].timestamp);
+      if (items[0]) {
+        newest = +new Date(items[0].timestamp);
       } else {
-        newest = 1
+        newest = 1;
       }
-      const ethToUsd = await repository.findOne({
+      const ethToUsd = repository.findOne({
         modelName: 'WeiFiatFx',
         options: {
           where: {
@@ -97,11 +97,11 @@ const weiTradeController = (repository) => {
           },
         },
       });
-      let transactions = await WeidexService.getUserOrderHistoryByUser(id).then(res => res.json());
+      const transactions = WeidexService.getUserOrderHistoryByUser(id).then(res => res.json());
       transactions.forEach((transaction) => {
-        if(newest < +(new Date(transaction)) {
+        if (newest < +(new Date(transaction))) {
           repository.create({
-            modelName, 
+            modelName,
             newObject: {
               type: transaction.type,
               amount: transaction.amount,
@@ -112,10 +112,10 @@ const weiTradeController = (repository) => {
               timestamp: transaction.createdAt,
               txHash: transaction.txHash,
               status: transaction.status,
-              txFee: Number(((transaction.gas * 100) * (transaction.gasPrice * 100)) / 100);,
+              txFee: Number(((transaction.gas * 100) * (transaction.gasPrice * 100)) / 100),
               pair: `${transaction.token.name.toUpperCase()}-ETH`,
               weiPortfolioId: transaction.weiPortfolioId,
-            } 
+            },
           });
         }
       });

@@ -1,6 +1,13 @@
-const weiFiatFxService = (res, result) => {
-  
-  getPriceByType = (type) => {
+const { etherScanServices } = require('../../integrations/etherScan-services');
+
+const weiFiatFxService = (repository) => {
+  const marketService = require('../../services/market-service')(repository);
+
+  const getPriceByType = async (type) => {
+    let priceUsdValue;
+
+    const ethPrice = await etherScanServices().getETHUSDPrice();
+
     switch (type) {
       case 'ETH':
         priceUsdValue = await etherScanServices().getETHUSDPrice();
@@ -15,11 +22,12 @@ const weiFiatFxService = (res, result) => {
     }
 
     return priceUsdValue;
-  }
+  };
 
   return {
-    createWeiFiatFx,
+    getPriceByType,
   };
-}
+};
+
 
 module.exports = { weiFiatFxService };

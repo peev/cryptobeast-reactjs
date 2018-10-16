@@ -1,4 +1,5 @@
 const { responseHandler } = require('../utilities/response-handler');
+const { etherScanServices } = require('../../integrations/etherScan-services');
 
 const modelName = 'WeiTransaction';
 
@@ -13,9 +14,27 @@ const weiTransactionController = (repository) => {
           txHash: weiTransactionData.txHash,
         },
       },
-    }).then((transaction) => {
-      if (transaction === null) {
-        repository.create({ modelName, newObject: weiTransactionData })
+    }).then(async (transaction) => {
+      if (!transaction) {
+        const etherScanTransaction = await etherScanServices().getTransactionByHash(weiTransactionData.txHash);
+        const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
+
+        const newTransactionObject = {
+          amount: weiTransactionData.amount,
+          txHash: weiTransactionData.txHash,
+          status: weiTransactionData.status,
+          tokenName: weiTransactionData.tokenName,
+          type: weiTransactionData.type,
+          weiPortfolioId: weiTransactionData.weiPortfolioId,
+          txTimestamp: etherScanTransactionBlock.timestamp,
+          tokenPriceETH: etherScanTransaction.value,
+          tokenPriceUSD: null,
+          totalValueETH: weiTransactionData.amount * etherScanTransaction.value,
+          totalValueUSD: null,
+          ETHUSD: null,
+        };
+
+        repository.create({ modelName, newObject: newTransactionObject })
           .then((response) => {
             res.status(200).send(response);
           })

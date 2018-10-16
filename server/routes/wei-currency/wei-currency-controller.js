@@ -7,50 +7,50 @@ const weiCurrencyController = (repository) => {
 
   const createWeiCurrency = async (req, res) => {
     const weiCurrencyData = req.body;
-    const today = Math.floor(Date.now() / 1000);
-    const yesterday = today - (24 * 3600);
-    const lastWeek = today - (24 * 7 * 3600);
+    // const today = Math.floor(Date.now() / 1000);
+    // const yesterday = today - (24 * 3600);
+    // const lastWeek = today - (24 * 7 * 3600);
 
     const priceResponse = await WeidexService.getTokenTicker(weiCurrencyData.id);
-    const currencyDayStats = await WeidexService.getCurrencyStats(weiCurrencyData.id, yesterday, today);
-    const currencyWeekStats = await WeidexService.getCurrencyStats(weiCurrencyData.id, lastWeek, today);
 
-    // TODO json
+    // TODO uncomment whan staging has tickers
+    // const currencyDayStats = await WeidexService.getCurrencyStats(weiCurrencyData.id, yesterday, today);
+    // const currencyWeekStats = await WeidexService.getCurrencyStats(weiCurrencyData.id, lastWeek, today);
+    // const currencyDayStatsJson = JSON.parse(currencyDayStats);
+    // const currencyWeekStatsJson = JSON.parse(currencyWeekStats);
 
-    let volume24HStats = 0;
-    let high24HStats = 0;
-    let low24HStats = 0;
-    let change24HStats = 0;
-    let change7DStats = 0;
+    // let volume24HStats = 0;
+    // let high24HStats = 0;
+    // let low24HStats = 0;
+    // let change24HStats = 0;
+    // let change7DStats = 0;
 
-    if (currencyDayStats.length) {
-      volume24HStats = currencyDayStats.volume;
-      high24HStats = currencyDayStats.high24H;
-      low24HStats = currencyDayStats.low24H;
-      change24HStats = Number((currencyDayStats[0].close / currencyDayStats[0].open) / currencyDayStats[0].open);
-    }
+    // if (currencyDayStatsJson.length) {
+    //   volume24HStats = currencyDayStatsJson.volume;
+    //   high24HStats = currencyDayStatsJson.high24H;
+    //   low24HStats = currencyDayStatsJson.low24H;
+    //   change24HStats = Number((currencyDayStatsJson[0].close - currencyDayStatsJson[0].open) / currencyDayStatsJson[0].open);
+    // }
 
-    if (currencyWeekStats.length) {
-      console.log('------------------------------------');
-      console.log(currencyWeekStats[0]);
-      console.log('------------------------------------');
-      if (currencyWeekStats.length === 1) {
-        change7DStats = Number((currencyWeekStats[0].close / currencyWeekStats[0].open) / currencyWeekStats[0].open);
-      } else {
-        change7DStats = Number((currencyWeekStats[currencyWeekStats.length - 1].close / currencyWeekStats[0].open) / currencyWeekStats[0].open);
-      }
-    }
+    // if (currencyWeekStatsJson.length) {
+    //   if (currencyWeekStatsJson.length === 1) {
+    //     change7DStats = Number((currencyWeekStatsJson[0].close - currencyWeekStatsJson[0].open) / currencyWeekStatsJson[0].open);
+    //   } else {
+    //     change7DStats = Number((
+    //       currencyWeekStatsJson[currencyWeekStatsJson.length - 1].close - currencyWeekStatsJson[0].open) / currencyWeekStatsJson[0].open);
+    //   }
+    // }
 
     const newWeiCurrencyObject = {
       tokenId: weiCurrencyData.id,
       tokenName: weiCurrencyData.name,
       tokenNameLong: weiCurrencyData.fullName,
       lastPriceETH: priceResponse.price,
-      volume24H: volume24HStats,
-      high24H: high24HStats,
-      low24H: low24HStats,
-      change24H: change24HStats,
-      change7D: change7DStats,
+      // volume24H: volume24HStats,
+      // high24H: high24HStats,
+      // low24H: low24HStats,
+      // change24H: change24HStats,
+      // change7D: change7DStats,
       // bid: priceResponse.body.bid,
       // ask: priceResponse.body.ask,
     };

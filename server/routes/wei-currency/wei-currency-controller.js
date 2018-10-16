@@ -1,10 +1,9 @@
 const { responseHandler } = require('../utilities/response-handler');
+const { WeidexService } = require('../../services/weidex-service');
 
 const modelName = 'WeiCurrency';
 
 const weiCurrencyController = (repository) => {
-  const WeidexService = require('../../services/weidex-service')(repository);
-
   const createWeiCurrency = async (req, res) => {
     const weiCurrencyData = req.body;
     // const today = Math.floor(Date.now() / 1000);
@@ -126,7 +125,32 @@ const weiCurrencyController = (repository) => {
   };
 
   const sync = (data) => {
-    
+    const tokens = WeidexService.getAllTokens().then(res => res.json());
+    tokens.forEach((token) => {
+      const ticker = WeidexService.getTokenTicker(token.id).then(res => res.json());
+      // TODO: Get the stats from the non public api
+      repository.update({
+        modelName,
+        updatedRecord: {
+          tokenId: token.id,
+          tokenName: token.name,
+          tokenNameLong: token.fullName,
+          // volume24H: volume24HStats,
+          // high24H: high24HStats,
+          // low24H: low24HStats,
+          // change24H: change24HStats,
+          // change7D: change7DStats,
+          lastPriceETH: ticker.price,
+          bid: ticker.bid,
+          ask: ticker.ask,
+        }
+      })
+        .then((response) => {
+          res.status(200).send(response);
+        })
+        .catch(error => res.json(error));
+    });
+
   };
 
   return {

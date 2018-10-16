@@ -10,7 +10,7 @@ const weiFiatFxService = (repository) => {
 
     switch (type) {
       case 'ETH':
-        priceUsdValue = await etherScanServices().getETHUSDPrice();
+        priceUsdValue = ethPrice;
         break;
       default:
         await marketService.getTickersFromKraken(`XETHZ${type}`)

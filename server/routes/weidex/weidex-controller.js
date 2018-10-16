@@ -18,7 +18,6 @@ const weidexController = (repository) => {
     weiCurrencyController.sync(id);
     // Not ready
     weiPortfolioController.sync(id);
-    // Not ready
     weiTransactionController.sync(id);
     weiTradeHistoryController.sync(id);
     console.log('End sync');

@@ -6,6 +6,8 @@ const modelName = 'WeiCurrency';
 const weiCurrencyController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
 
+  const calculateCurrencyChange = (open, close) => Number((close - open) / open);
+
   const getCurrencyObject = async (req) => {
     let newWeiCurrencyObject;
     try {
@@ -24,34 +26,20 @@ const weiCurrencyController = (repository) => {
       const currencyDayStats = await WeidexService.getCurrencyStats(req.id, yesterday, today);
       const currencyWeekStats = await WeidexService.getCurrencyStats(req.id, lastWeek, today);
 
-      if (!Array.isArray(currencyDayStats)) {
-        currencyDayStatsJson = JSON.parse(currencyDayStats);
-      } else {
-        currencyDayStatsJson = currencyDayStats;
-      }
-
-      if (!Array.isArray(currencyWeekStats)) {
-        currencyWeekStatsJson = JSON.parse(currencyWeekStats);
-      } else {
-        currencyWeekStatsJson = currencyWeekStats;
-      }
+      currencyDayStatsJson = !Array.isArray(currencyDayStats) ? JSON.parse(currencyDayStats) : currencyDayStats;
+      currencyWeekStatsJson = !Array.isArray(currencyWeekStats) ? JSON.parse(currencyWeekStats) : currencyWeekStats;
 
       if (currencyDayStatsJson.length > 0) {
         volume24HStats = currencyDayStatsJson.volume;
         high24HStats = currencyDayStatsJson.high24H;
         low24HStats = currencyDayStatsJson.low24H;
-        change24HStats = Number((currencyDayStatsJson[0].close - currencyDayStatsJson[0].open)
-        / currencyDayStatsJson[0].open);
+        change24HStats = calculateCurrencyChange(currencyDayStatsJson[0].close, currencyDayStatsJson[0].open);
       }
 
       if (currencyWeekStatsJson.length > 0) {
-        if (currencyWeekStatsJson.length === 1) {
-          change7DStats = Number((currencyWeekStatsJson[0].close - currencyWeekStatsJson[0].open)
-           / currencyWeekStatsJson[0].open);
-        } else {
-          change7DStats = Number((currencyWeekStatsJson[currencyWeekStatsJson.length - 1].close - currencyWeekStatsJson[0].open)
-          / currencyWeekStatsJson[0].open);
-        }
+        change7DStats = currencyWeekStatsJson.length === 1 ?
+          calculateCurrencyChange(currencyWeekStatsJson[0].close, currencyWeekStatsJson[0].open) :
+          calculateCurrencyChange(currencyWeekStatsJson[currencyWeekStatsJson.length - 1].close, currencyWeekStatsJson[0].open);
       }
 
       newWeiCurrencyObject = {

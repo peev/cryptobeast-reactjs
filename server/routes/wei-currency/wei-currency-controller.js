@@ -61,38 +61,42 @@ const weiCurrencyController = (repository) => {
     return newWeiCurrencyObject;
   };
 
+  const updateAction = (req, res, id, weiCurrencyObject) => {
+    const newWeiCurrencyData = Object.assign({}, weiCurrencyObject, id);
+    repository.update({ modelName, updatedRecord: newWeiCurrencyData })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch(error => res.json(error));
+  };
+
+  const createAction = (req, res, weiCurrencyObject) => {
+    repository.create({ modelName, newObject: weiCurrencyObject })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch(error => res.json(error));
+  };
+
   const createWeiCurrency = async (req, res) => {
     const weiCurrency = req.body;
 
     const weiCurrencyObject = await getCurrencyObject(weiCurrency);
 
-    await repository.findOne({
+    const weiCurrencyFound = await repository.findOne({
       modelName,
       options: {
         where: {
           tokenName: weiCurrency.name,
         },
       },
-    }).then((currency) => {
-      if (currency === null) {
-        repository.create({ modelName, newObject: weiCurrencyObject })
-          .then((response) => {
-            res.status(200).send(response);
-          })
-          .catch((error) => {
-            res.json(error);
-          });
-      } else {
-        const newWeiCurrencyData = Object.assign({}, weiCurrencyObject, { id: currency.id });
-        repository.update({ modelName, updatedRecord: newWeiCurrencyData })
-          .then((response) => {
-            res.status(200).send(response);
-          })
-          .catch(error => res.json(error));
-      }
-    }).catch((error) => {
-      res.json(error);
     });
+
+    if (weiCurrencyFound === null) {
+      createAction(req, res, weiCurrencyObject);
+    } else {
+      updateAction(req, res, weiCurrencyFound.id, weiCurrencyObject);
+    }
   };
 
   const getWeiCurrency = (req, res) => {
@@ -108,15 +112,8 @@ const weiCurrencyController = (repository) => {
 
   const updateWeiCurrency = async (req, res) => {
     const { id } = req.params;
-
     const weiCurrency = await getCurrencyObject(req);
-
-    const newWeiCurrencyData = Object.assign({}, weiCurrency, { id });
-    repository.update({ modelName, updatedRecord: newWeiCurrencyData })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch(error => res.json(error));
+    updateAction(req, res, weiCurrency, { id });
   };
 
   const removeWeiCurrency = (req, res) => {

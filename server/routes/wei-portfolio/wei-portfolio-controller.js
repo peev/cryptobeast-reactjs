@@ -99,7 +99,7 @@ const weiPortfolioController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = (data) => {
+  const sync = () => {
     repository.find({ modelName }).then((portfolios) => {
       transactions.forEach(async (portfolio) => {
         await weiPortfolioService.calcPortfolioTotalInvestment(portfolio).then((data) => {

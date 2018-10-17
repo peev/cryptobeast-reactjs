@@ -124,7 +124,7 @@ const weiCurrencyController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = (data) => {
+  const sync = () => {
     const tokens = WeidexService.getAllTokens().then(res => res.json());
     tokens.forEach((token) => {
       const ticker = WeidexService.getTokenTicker(token.id).then(res => res.json());

@@ -26,10 +26,10 @@ const weiTransactionController = (repository) => {
           tokenName: weiTransactionData.tokenName,
           type: weiTransactionData.type,
           weiPortfolioId: weiTransactionData.weiPortfolioId,
-          txTimestamp: etherScanTransactionBlock.timestamp,
-          tokenPriceETH: etherScanTransaction.value,
+          txTimestamp: Number(etherScanTransactionBlock.timestamp),
+          tokenPriceETH: Number(etherScanTransaction.value),
           tokenPriceUSD: null,
-          totalValueETH: weiTransactionData.amount * etherScanTransaction.value,
+          totalValueETH: weiTransactionData.amount * Number(etherScanTransaction.value),
           totalValueUSD: null,
           ETHUSD: null,
         };

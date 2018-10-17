@@ -9,7 +9,7 @@ const weiCurrencyController = (repository) => {
   const getCurrencyObject = async (req) => {
     const today = Math.floor(Date.now() / 1000);
     const yesterday = today - (24 * 3600);
-    const lastWeek = today - (24 * 17 * 3600);
+    const lastWeek = today - (24 * 7 * 3600);
     let currencyDayStatsJson = null;
     let currencyWeekStatsJson = null;
     let volume24HStats = 0;

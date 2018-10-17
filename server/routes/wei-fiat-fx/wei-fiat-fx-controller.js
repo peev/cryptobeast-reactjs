@@ -104,7 +104,8 @@ const weiFiatFxController = (repository) => {
     repository.find({ modelName }).then((currencies) => {
       currencies.forEach(async (currency) => {
         let isWorldCurrency = worldCurrencies.filter((worldCurrency) => {
-          return worldCurrency.pair === currency;
+          // TODO: Add dictionarry to map the response to the normal currencies name
+          return worldCurrency.pair === currency.fxName;
         })[0];
         if (isWorldCurrency) {
           const priceUsdValue = isWorldCurrency.last;

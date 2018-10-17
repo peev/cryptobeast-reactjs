@@ -185,7 +185,11 @@ const weiAssetController = (repository) => {
             totalETH: asset.fullAmount * currency.lastPriceETH,
             totalUSD: (asset.fullAmount * currency.lastPriceETH) * ethToUsd.priceUSD,
           };
-          repository.update({ modelName, updatedRecord: assetObject });
+          repository.update({ modelName, updatedRecord: assetObject })
+            .then((response) => {
+              // TODO: Handle the response based on all items on all controllers ready
+            })
+            .catch(error => res.json(error));
         });
       });
     });

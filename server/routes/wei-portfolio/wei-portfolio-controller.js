@@ -105,7 +105,11 @@ const weiPortfolioController = (repository) => {
         await weiPortfolioService.calcPortfolioTotalInvestment(portfolio).then((data) => {
           portfolio.totalInvestment = data;
           const weiPortfolioData = Object.assign({}, portfolio, { id: portfolio.id, totalInvestment: data });
-          repository.update({ modelName, updatedRecord: weiPortfolioData });
+          repository.update({ modelName, updatedRecord: weiPortfolioData })
+            .then((response) => {
+              // TODO: Handle the response based on all items on all controllers ready
+            })
+            .catch(error => res.json(error));
         });
       });
     });

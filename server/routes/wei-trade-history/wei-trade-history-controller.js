@@ -118,7 +118,11 @@ const weiTradeController = (repository) => {
               pair: `${transaction.token.name.toUpperCase()}-ETH`,
               weiPortfolioId: transaction.weiPortfolioId,
             },
-          });
+          })
+            .then((response) => {
+              // TODO: Handle the response based on all items on all controllers ready
+            })
+            .catch(error => res.json(error));
         }
       });
     });

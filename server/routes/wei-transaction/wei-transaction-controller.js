@@ -77,7 +77,7 @@ const weiTransactionController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = (data) => {
+  const sync = () => {
     repository.find({ modelName }).then((transactions) => {
       transactions.forEach(async (transaction) => {
         const etherScanTransaction = await etherScanServices().getTransactionByHash(transaction.txHash);
@@ -92,11 +92,9 @@ const weiTransactionController = (repository) => {
           }
         })
           .then((response) => {
-            res.status(200).send(response);
+            // TODO: Handle the response based on all items on all controllers ready
           })
-          .catch((error) => {
-            res.json(error);
-          });
+          .catch(error => res.json(error));
       });
     });
   };

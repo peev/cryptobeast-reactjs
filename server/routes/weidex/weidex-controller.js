@@ -14,13 +14,11 @@ const weidexController = (repository) => {
     // Not ready
     weiAssetController.sync(id);
     weiFiatFxController.sync();
-    // Not ready
+    // Needs improvement for the ticker info when weidex are ready
     weiCurrencyController.sync(id);
     // Not ready
     weiPortfolioController.sync(id);
-    // Not ready
     weiTransactionController.sync(id);
-    // Not ready
     weiTradeHistoryController.sync(id);
     console.log('End sync');
   };

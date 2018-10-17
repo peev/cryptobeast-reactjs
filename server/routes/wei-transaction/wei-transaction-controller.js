@@ -78,7 +78,27 @@ const weiTransactionController = (repository) => {
   };
 
   const sync = (data) => {
-    
+    repository.find({ modelName }).then((transactions) => {
+      transactions.forEach(async (transaction) => {
+        const etherScanTransaction = await etherScanServices().getTransactionByHash(transaction.txHash);
+        const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(transaction.blockNumber);
+
+        repository.update({
+          modelName,
+          updatedRecord: {
+            txHash: weiTransactionData.txHash,
+            txTimestamp: etherScanTransactionBlock.timestamp,
+            tokenPriceETH: etherScanTransaction.value,
+          }
+        })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch((error) => {
+            res.json(error);
+          });
+      });
+    });
   };
 
   return {

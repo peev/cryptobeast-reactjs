@@ -24,18 +24,7 @@ const weiFiatFxService = (repository) => {
     return await marketService.getTickersFromCurrencyLayerApi().catch(err => console.log(err));
   };
 
-  const isWorldCurrency = (type) => {
-    switch(type) {
-      case 'ETH':
-      case 'BTC':
-        return false;
-      default:
-        return true;
-    }
-  }
-
   return {
-    isWorldCurrency,
     getPriceByType,
     getPricesOfWorldCurrencies
   };

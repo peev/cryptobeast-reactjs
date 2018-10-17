@@ -98,16 +98,16 @@ const weiFiatFxController = (repository) => {
       .then(result => responseHandler(res, result))
       .catch(error => res.json(error));
   };
-  
+
   const sync = () => {
     const worldCurrencies = weiFiatFxService.getPricesOfWorldCurrencies();
     repository.find({ modelName }).then((currencies) => {
-      // Update the usd price of all currencies
       currencies.forEach(async (currency) => {
-        if(weiFiatFxService.isWorldCurrency(currency.fxName)) {
-          const priceUsdValue = worldCurrencies.filter((worldCurrency) => {
-            return worldCurrency.pair === currency;
-          })[0];
+        let isWorldCurrency = worldCurrencies.filter((worldCurrency) => {
+          return worldCurrency.pair === currency;
+        })[0];
+        if (isWorldCurrency) {
+          const priceUsdValue = isWorldCurrency.last;
         } else {
           const priceUsdValue = await weiFiatFxService.getPriceByType(currency.fxName);
         }

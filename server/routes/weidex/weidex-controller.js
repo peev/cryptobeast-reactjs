@@ -11,12 +11,10 @@ const weidexController = (repository) => {
   const sync = (req, res) => {
     let id = req.params.id;
     console.log('Start sync');
-    // Not ready
     weiAssetController.sync(id);
     weiFiatFxController.sync();
     // Needs improvement for the ticker info when weidex are ready
     weiCurrencyController.sync(id);
-    // Not ready
     weiPortfolioController.sync(id);
     weiTransactionController.sync(id);
     weiTradeHistoryController.sync(id);

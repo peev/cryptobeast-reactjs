@@ -7,25 +7,37 @@ const weiFiatFxService = (repository) => {
     let priceUsdValue;
 
     const ethPrice = await etherScanServices().getETHUSDPrice();
-
-    switch (type) {
-      case 'ETH':
-        priceUsdValue = ethPrice;
-        break;
-      default:
-        await marketService.getTickersFromKraken(`XETHZ${type}`)
-          .then((data) => {
-            priceUsdValue = data[0].last / ethPrice;
-          })
-          .catch(err => console.log(err));
-        break;
+    if(type === 'ETH') {
+      priceUsdValue = ethPrice;
+    } else {
+      await marketService.getTickersFromKraken(`XETHZ${type}`)
+        .then((data) => {
+          priceUsdValue = data[0].last / ethPrice;
+        })
+        .catch(err => console.log(err));
     }
 
     return priceUsdValue;
   };
 
+  const getPricesOfWorldCurrencies = async () => {
+    return await marketService.getTickersFromCurrencyLayerApi().catch(err => console.log(err));
+  };
+
+  const isWorldCurrency = (type) => {
+    switch(type) {
+      case 'ETH':
+      case 'BTC':
+        return false;
+      default:
+        return true;
+    }
+  }
+
   return {
+    isWorldCurrency,
     getPriceByType,
+    getPricesOfWorldCurrencies
   };
 };
 

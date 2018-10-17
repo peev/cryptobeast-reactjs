@@ -2,6 +2,7 @@ const { CronJob } = require('cron');
 const { krakenServices } = require('../integrations/kraken-services');
 const { bittrexServices } = require('../integrations/bittrex-services');
 const { coinMarketCapServices } = require('../integrations/coinMarketCap-services');
+const { currencyLayerApiService } = require('../integrations/currencyLayerApi-service');
 
 const marketService = (repository) => {
   const syncSummaries = async () => {
@@ -42,6 +43,25 @@ const marketService = (repository) => {
         });
       });
 
+      return currentTickerPairs;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
+
+  const getTickersFromCurrencyLayerApi = async () => {
+    try {
+      const tickers = await currencyLayerApiServices().getTickers();
+      const currentTickerPairs = [];
+      for (let currency in tickers.quotes) {
+        if (tickers.quotes.hasOwnProperty(currency)) {
+          currentTickerPairs.push({
+            pair: currency,
+            last: tickers.quotes[currency]
+          });
+        }
+      }
       return currentTickerPairs;
     } catch (error) {
       console.log(error);

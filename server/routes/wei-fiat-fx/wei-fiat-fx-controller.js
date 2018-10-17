@@ -100,10 +100,17 @@ const weiFiatFxController = (repository) => {
   };
   
   const sync = () => {
+    const worldCurrencies = weiFiatFxService.getPricesOfWorldCurrencies();
     repository.find({ modelName }).then((currencies) => {
       // Update the usd price of all currencies
       currencies.forEach(async (currency) => {
-        const priceUsdValue = await weiFiatFxService.getPriceByType(currency.fxName);
+        if(weiFiatFxService.isWorldCurrency(currency.fxName)) {
+          const priceUsdValue = worldCurrencies.filter((worldCurrency) => {
+            return worldCurrency.pair === currency;
+          })[0];
+        } else {
+          const priceUsdValue = await weiFiatFxService.getPriceByType(currency.fxName);
+        }
         repository.update({
           modelName,
           updatedRecord: {

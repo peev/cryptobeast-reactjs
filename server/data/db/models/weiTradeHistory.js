@@ -1,4 +1,8 @@
 module.exports = (sequelize, DataTypes) => sequelize.define('weiTradeHistory', {
+  tokenName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   type: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -12,6 +16,14 @@ module.exports = (sequelize, DataTypes) => sequelize.define('weiTradeHistory', {
     allowNull: true,
   },
   priceUSD: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  priceTotalETH: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  priceTotalUSD: {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },

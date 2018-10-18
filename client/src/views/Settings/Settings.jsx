@@ -12,6 +12,8 @@ import ApiIntegrations from './../../components/CustomTables/ApiIntegrations';
 import AddApiAccount from './../../components/Modal/ApiAccountModals/AddApiAccount';
 import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
 
+import Weidex from './../../services/Weidex';
+
 
 type Props = {
   MarketStore: {
@@ -25,6 +27,13 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
     props.MarketStore.getSyncedSummaries();
     props.MarketStore.getBaseCurrencies();
     props.MarketStore.syncMarketPriceHistory();
+  };
+
+  const syncData = () => {
+    Weidex.sync({
+      id: 'Test'
+    });
+    // TODO: Set loading or something
   };
 
   return (
@@ -70,6 +79,12 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
       <ItemGrid xs={12} sm={3} md={3}>
         <RegularButton color="primary" onClick={() => getMarketSummaries()}>
           Get Markets
+        </RegularButton>
+      </ItemGrid>
+
+      <ItemGrid xs={12} sm={3} md={3}>
+        <RegularButton color="primary" onClick={() => syncData()}>
+          Sync data
         </RegularButton>
       </ItemGrid>
 

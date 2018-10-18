@@ -9,7 +9,7 @@ const assetValidator = () => {
     }
 
     if (!payload || typeof payload.tokenName !== 'string' || !validator.isLength(payload.tokenName, { min: 1, max: 4 })) {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid asset currency!' });
+      return res.status(400).send({ isSuccessful: false, message: 'Invalid asset token name!' });
     }
 
     if (!payload || typeof payload.fullAmount !== 'number' || payload.fullAmounts <= 0) {
@@ -23,7 +23,7 @@ const assetValidator = () => {
     const payload = req.body;
 
     if (!payload || typeof payload.tokenName !== 'string' || !validator.isLength(payload.tokenName, { min: 1, max: 4 })) {
-      return res.status(400).send({ isSuccessful: false, message: 'Invalid asset currency!' });
+      return res.status(400).send({ isSuccessful: false, message: 'Invalid asset token name!' });
     }
 
     if (!payload || typeof payload.fullAmount !== 'number' || payload.fullAmount <= 0) {

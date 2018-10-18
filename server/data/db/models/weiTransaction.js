@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('weiTransaction', {
     },
     allowNull: false,
   },
-  date: {
+  txTimestamp: {
     type: DataTypes.DATE,
     allowNull: true,
   },
@@ -40,6 +40,14 @@ module.exports = (sequelize, DataTypes) => sequelize.define('weiTransaction', {
     allowNull: true,
   },
   tokenPriceUSD: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  totalValueETH: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  totalValueUSD: {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },

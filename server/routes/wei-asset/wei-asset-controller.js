@@ -27,7 +27,7 @@ const weiAssetController = (repository) => {
     });
 
     const assetObject = {
-      currency: weiAssetData.tokenName,
+      tokenName: weiAssetData.tokenName,
       userID: weiAssetData.userAddress,
       balance: weiAssetData.fullAmount,
       available: weiAssetData.availableAmount,
@@ -43,7 +43,7 @@ const weiAssetController = (repository) => {
       modelName,
       options: {
         where: {
-          currency: weiAssetData.tokenName,
+          tokenName: weiAssetData.tokenName,
           weiPortfolioId: weiAssetData.weiPortfolioId,
         },
       },
@@ -103,7 +103,7 @@ const weiAssetController = (repository) => {
     });
 
     const assetObject = {
-      currency: weiAssetData.tokenName,
+      tokenName: weiAssetData.tokenName,
       userID: weiAssetData.userAddress,
       balance: weiAssetData.fullAmount,
       available: weiAssetData.availableAmount,
@@ -139,7 +139,7 @@ const weiAssetController = (repository) => {
     if (portfolio.weiAssets !== 0) {
       const assetValue = await weiPortfolioService
         .calculateEtherValueUSD(await weiPortfolioService
-          .calculateTokenValueETH(weiAssetData.currency, weiAssetData.balance));
+          .calculateTokenValueETH(weiAssetData.tokenName, weiAssetData.balance));
       await weiPortfolioService.calcPortfolioTotalValue(portfolio).then((portfolioValue) => {
         const result = (assetValue * 100) / portfolioValue;
         const newAssetData = Object.assign({}, weiAssetData, { id: weiAssetData.id, weight: result });
@@ -157,12 +157,51 @@ const weiAssetController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const sync = async (data) => {
+    const ethToUsd = await repository.findOne({
+      modelName: 'WeiFiatFx',
+      options: {
+        where: {
+          fxName: 'ETH',
+        },
+      },
+    });
+    repository.find('WeiCurrency').then((currencies) => {
+      // Update the usd price of all currencies
+      currencies.forEach(async (currency) => {
+        await repository.findOne({
+          modelName,
+          options: {
+            where: {
+              tokenName: weiAssetData.tokenName,
+              weiPortfolioId: weiAssetData.weiPortfolioId,
+            },
+          },
+        }).then((asset) => {
+          const assetObject = {
+            id: asset.id,
+            lastPriceETH: currency.lastPriceETH,
+            lastPriceUSD: currency.lastPriceETH * ethToUsd.priceUSD,
+            totalETH: asset.fullAmount * currency.lastPriceETH,
+            totalUSD: (asset.fullAmount * currency.lastPriceETH) * ethToUsd.priceUSD,
+          };
+          repository.update({ modelName, updatedRecord: assetObject })
+            .then((response) => {
+              // TODO: Handle the response based on all items on all controllers ready
+            })
+            .catch(error => res.json(error));
+        });
+      });
+    });
+  };
+
   return {
     createWeiAsset,
     getWeiAsset,
     updateWeiAsset,
     updateWeiAssetWeight,
     removeWeiAsset,
+    sync
   };
 };
 

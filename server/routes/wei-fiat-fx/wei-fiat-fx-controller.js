@@ -1,4 +1,6 @@
+const { weiFiatFxService } = require('./wei-fiat-fx-service');
 const { responseHandler } = require('../utilities/response-handler');
+const { krakenServices } = require('../../integrations/kraken-services');
 const { etherScanServices } = require('../../integrations/etherScan-services');
 
 const modelName = 'WeiFiatFx';
@@ -8,22 +10,7 @@ const weiFiatFxController = (repository) => {
 
   const createWeiFiatFx = async (req, res) => {
     const weiFiatFxData = req.body;
-    let priceUsdValue;
-
-    const ethPrice = await etherScanServices().getETHUSDPrice();
-
-    switch (weiFiatFxData.fxName) {
-      case 'ETH':
-        priceUsdValue = ethPrice;
-        break;
-      default:
-        await marketService.getTickersFromKraken(`XETHZ${weiFiatFxData.fxName}`)
-          .then((data) => {
-            priceUsdValue = data[0].last / ethPrice;
-          })
-          .catch(err => console.log(err));
-        break;
-    }
+    const priceUsdValue = await weiFiatFxService.getPriceByType(weiFiatFxData.fxName);
 
     const newWeiFiatFxObject = {
       fxName: weiFiatFxData.fxName,
@@ -112,11 +99,40 @@ const weiFiatFxController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const sync = () => {
+    const worldCurrencies = weiFiatFxService.getPricesOfWorldCurrencies();
+    repository.find({ modelName }).then((currencies) => {
+      currencies.forEach(async (currency) => {
+        let isWorldCurrency = worldCurrencies.filter((worldCurrency) => {
+          // TODO: Add dictionarry to map the response to the normal currencies names from USDBGN to BGN
+          return worldCurrency.pair === currency.fxName;
+        })[0];
+        if (isWorldCurrency) {
+          const priceUsdValue = isWorldCurrency.last;
+        } else {
+          const priceUsdValue = await weiFiatFxService.getPriceByType(currency.fxName);
+        }
+        repository.update({
+          modelName,
+          updatedRecord: {
+            id: currency.id,
+            priceUSD: priceUsdValue,
+          },
+        })
+          .then((response) => {
+            // TODO: Handle the response based on all items on all controllers ready
+          })
+          .catch(error => res.json(error));
+      });
+    });
+  };
+
   return {
     createWeiFiatFx,
     getWeiFiatFx,
     updateWeiFiatFx,
     removeWeiFiatFx,
+    sync
   };
 };
 

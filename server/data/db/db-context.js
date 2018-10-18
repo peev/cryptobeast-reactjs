@@ -59,7 +59,7 @@ const init = databaseConfig => new Promise((resolve) => {
       // db.Account.belongsTo(db.Portfolio);
 
       db.WeiPortfolio.hasMany(db.WeiTradeHistory);
-      db.WeiTransaction.belongsTo(db.WeiTradeHistory);
+      db.WeiTradeHistory.belongsTo(db.WeiPortfolio);
 
       db.WeiPortfolio.hasMany(db.WeiTransaction);
       db.WeiTransaction.belongsTo(db.WeiPortfolio);

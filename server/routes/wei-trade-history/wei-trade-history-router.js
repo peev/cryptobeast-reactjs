@@ -8,7 +8,6 @@ const attachTo = (app, data) => {
   router
     .post('/create', validator.verifyCreateWeiTradeHistory, controller.createWeiTrade)
     .get('/:id', controller.getWeiTrade)
-    .put('/update/:id', controller.updateWeiTrade)
     .delete('/delete/:id', controller.removeWeiTrade);
 
   app.use('/wei-trade', router);

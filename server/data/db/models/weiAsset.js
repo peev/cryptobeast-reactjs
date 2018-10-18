@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => sequelize.define('weiAsset', {
-  currency: {
+  tokenName: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {

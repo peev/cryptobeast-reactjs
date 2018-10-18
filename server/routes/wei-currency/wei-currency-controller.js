@@ -9,7 +9,7 @@ const weiCurrencyController = (repository) => {
   const calculateCurrencyChange = (open, close) => Number((close - open) / open);
 
   const getWeiCurrencyObject = async (tokenNameParam) => {
-    await repository.findOne({
+    return repository.findOne({
       modelName,
       options: {
         where: {
@@ -76,25 +76,13 @@ const weiCurrencyController = (repository) => {
   const updateAction = (req, res, id, weiCurrencyObject, isSyncing) => {
     const newWeiCurrencyData = Object.assign({}, weiCurrencyObject, { id });
     repository.update({ modelName, updatedRecord: newWeiCurrencyData })
-      .then((response) => {
-        if (isSyncing) {
-          res.status(200);
-        } else {
-          res.status(200).send(response);
-        }
-      })
+      .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => console.log(error));
   };
 
   const createAction = (req, res, weiCurrencyObject, isSyncing) => {
     repository.create({ modelName, newObject: weiCurrencyObject })
-      .then((response) => {
-        if (isSyncing) {
-          res.status(200);
-        } else {
-          res.status(200).send(response);
-        }
-      })
+      .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => console.log(error));
   };
 
@@ -149,13 +137,16 @@ const weiCurrencyController = (repository) => {
   };
 
   const sync = async (req, res) => {
-    const tokens = await WeidexService.getAllTokens().then(data => data.json());
+    const tokens = await WeidexService.getAllTokens()
+      .then(data => data.json())
+      .catch(error => console.log(error));
     const resolvedFinalArray = await Promise.all(tokens.map(async (token) => { // map instead of forEach
       const bodyWrapper = Object.assign({ body: token });
       return syncWeiCurrency(bodyWrapper, res);
     }));
-    Promise.resolve(resolvedFinalArray)
-      .then(() => res.status(200).send(tokens));
+    // Promise.resolve(resolvedFinalArray)
+    //   .then(() => res.status(200).send(tokens))
+    //   .catch(error => console.log(error));
   };
 
   return {

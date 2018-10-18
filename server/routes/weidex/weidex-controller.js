@@ -9,15 +9,15 @@ const weidexController = (repository) => {
   const weiTradeHistoryController = require('../wei-trade-history/wei-trade-history-controller')(repository);
 
   const sync = (req, res) => {
-    let id = req.params.id;
+    const { id } = req.params;
     console.log('Start sync');
-    weiAssetController.sync();
+    weiAssetController.sync(id);
     weiFiatFxController.sync();
     // Needs improvement for the ticker info when weidex are ready
-    weiCurrencyController.sync();
-    weiPortfolioController.sync();
-    weiTransactionController.sync();
-    weiTradeHistoryController.sync(id);
+    // weiCurrencyController.sync();
+    // weiPortfolioController.sync();
+    // weiTransactionController.sync();
+    // weiTradeHistoryController.sync(id);
     console.log('End sync');
   };
 

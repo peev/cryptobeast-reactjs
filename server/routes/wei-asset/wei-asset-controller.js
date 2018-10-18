@@ -168,8 +168,8 @@ const weiAssetController = (repository) => {
 
     assets.forEach(async (asset) => {
       const assetObject = Object.assign({}, asset, { weiPortfolioId: Number(portfolioId) });
-      const test = Object.assign({ body: assetObject });
-      await createWeiAsset(test);
+      const bodyWrapper = Object.assign({ body: assetObject });
+      await createWeiAsset(bodyWrapper);
     });
 
 

@@ -52,7 +52,7 @@ const marketService = (repository) => {
 
   const getTickersFromCurrencyLayerApi = async () => {
     try {
-      const tickers = await currencyLayerApiServices().getTickers();
+      const tickers = await currencyLayerApiService().getTickers();
       const currentTickerPairs = [];
       for (let currency in tickers.quotes) {
         if (tickers.quotes.hasOwnProperty(currency)) {
@@ -135,6 +135,7 @@ const marketService = (repository) => {
     syncCurrenciesFromApi,
     createMarketJob,
     getTickersFromKraken,
+    getTickersFromCurrencyLayerApi
   };
 };
 

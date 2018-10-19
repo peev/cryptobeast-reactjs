@@ -6,10 +6,9 @@ const attachTo = (app, repository, jobs) => {
   const validator = require('./wei-fiat-fx-validator')();
 
   router
-    .post('/create', validator.verifyCreateWeiFiatFx, controller.createWeiFiatFx)
-    .get('/:id', controller.getWeiFiatFx)
-    .put('/update/:id', controller.updateWeiFiatFx)
-    .delete('/delete/:id', controller.removeWeiFiatFx);
+    .get('/fetchInfo/:id', controller.getWeiFiatFx)
+    
+    .get('/sync', controller.sync);
 
   app.use('/wei-fiat-fx', router);
 };

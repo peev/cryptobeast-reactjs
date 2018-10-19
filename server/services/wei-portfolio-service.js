@@ -44,11 +44,11 @@ const weiPortfolioService = (repository) => {
   };
 
   const calcPortfolioTotalValue = async (portfolio) => {
-    let value = 0;
-    await Promise.all(portfolio.weiAssets.map(async (asset) => {
-      value += await calculateEtherValueUSD(await calculateTokenValueETH(asset.currency, asset.balance));
-    }));
-    return Number(value);
+    if (portfolio.weiAssets !== 0) {
+      return Promise.all(portfolio.weiAssets.map(async asset => calculateEtherValueUSD(await calculateTokenValueETH(asset.tokenName, asset.balance))))
+        .then(assets => assets.reduce((acc, a) => acc + a, 0));
+    }
+    return Promise.resolve();
   };
 
   return {

@@ -57,10 +57,11 @@ const weiAssetController = (repository) => {
         available: req.availableAmount,
         inOrder: req.fullAmount - req.availableAmount,
         weiPortfolioId: req.weiPortfolioId,
-        lastPriceETH: lastPriceETHParam,
+        lastPriceETH: lastPriceETHParam || 0,
         lastPriceUSD: lastPriceETHParam * priceUSD,
         totalETH: req.fullAmount * lastPriceETHParam,
         totalUSD: (req.fullAmount * lastPriceETHParam) * priceUSD,
+        weight: 0,
       };
     } catch (error) {
       console.log(error);
@@ -68,8 +69,8 @@ const weiAssetController = (repository) => {
     return newWeiAssetObject;
   };
 
-  const updateAction = (req, res, id, weiCurrencyObject, isSyncing) => {
-    const newWeiAssetData = Object.assign({}, weiCurrencyObject, { id });
+  const updateAction = (req, res, id, weiAssetObject, isSyncing) => {
+    const newWeiAssetData = Object.assign({}, weiAssetObject, { id });
     repository.update({ modelName, updatedRecord: newWeiAssetData })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
@@ -93,7 +94,7 @@ const weiAssetController = (repository) => {
       if (weiAssetFound === null) {
         await createAction(req, res, weiAssetObject, false);
       } else {
-        await updateAction(req, res, weiAssetFound.id, weiAssetObject, false);
+        await updateAction(req, res, Number(weiAssetFound.id), weiAssetObject, false);
       }
     } catch (error) {
       console.log(error);
@@ -112,7 +113,7 @@ const weiAssetController = (repository) => {
       if (weiAssetFound === null) {
         await createAction(req, res, weiAssetObject, true);
       } else {
-        await updateAction(req, res, weiAssetFound.id, weiAssetObject, true);
+        await updateAction(req, res, Number(weiAssetFound.id), weiAssetObject, true);
       }
     } catch (error) {
       console.log(error);
@@ -138,33 +139,55 @@ const weiAssetController = (repository) => {
     const weiFiatFx = await getWeiFiatFx();
     const weiAssetObject = await createWeiAssetObject(weiAssetData, weiCurrency.lastPriceETH, weiFiatFx.priceUSD);
 
-    updateAction(req, res, id, weiAssetObject, false);
+    updateAction(req, res, Number(id), weiAssetObject, false);
   };
 
   const updateWeiAssetWeight = async (req, res) => {
     const { id } = req.params;
 
-    const weiAssetData = await repository.findById({ modelName, id });
+    try {
+      const weiAssetData = await repository.findById({ modelName, id });
+      const portfolio = await getWeiPortfolioObject(weiAssetData.weiPortfolioId);
 
-    const portfolio = await repository.findOne({
-      modelName: 'WeiPortfolio',
-      options: {
-        where: { id: weiAssetData.weiPortfolioId },
-        include: [{ all: true }],
-      },
-    });
+      if (portfolio.weiAssets !== 0) {
+        const assetValue = await weiPortfolioService
+          .calculateEtherValueUSD(await weiPortfolioService
+            .calculateTokenValueETH(weiAssetData.tokenName, weiAssetData.balance));
+        await weiPortfolioService.calcPortfolioTotalValue(portfolio).then((portfolioValue) => {
+          const result = (assetValue * 100) / portfolioValue;
+          const newAssetData = Object.assign({}, weiAssetData, { id: weiAssetData.id, weight: result });
+          repository.update({ modelName, updatedRecord: newAssetData })
+            .then((response) => { res.status(200).send(response); })
+            .catch(error => res.json(error));
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    if (portfolio.weiAssets !== 0) {
-      const assetValue = await weiPortfolioService
-        .calculateEtherValueUSD(await weiPortfolioService
-          .calculateTokenValueETH(weiAssetData.tokenName, weiAssetData.balance));
-      await weiPortfolioService.calcPortfolioTotalValue(portfolio).then((portfolioValue) => {
-        const result = (assetValue * 100) / portfolioValue;
-        const newAssetData = Object.assign({}, weiAssetData, { id: weiAssetData.id, weight: result });
-        repository.update({ modelName, updatedRecord: newAssetData })
-          .then((response) => { res.status(200).send(response); })
-          .catch(error => res.json(error));
+  const updateWeiAssetsWeight = async (req, res, idParam) => {
+    try {
+      const portfolio = await repository.findOne({
+        modelName: 'WeiPortfolio',
+        options: {
+          where: { id: idParam },
+          include: [{ all: true }],
+        },
       });
+      const portfolioTotalValue = await weiPortfolioService.calcPortfolioTotalValue(portfolio);
+
+      await Promise.all(portfolio.weiAssets.map(async (asset) => {
+        const assetValue = await weiPortfolioService
+          .calculateEtherValueUSD(await weiPortfolioService
+            .calculateTokenValueETH(asset.tokenName, asset.balance));
+        const result = (portfolioTotalValue !== 0) ? ((assetValue * 100) / portfolioTotalValue) : 0;
+        const newAssetData = Object.assign(asset, { weight: result });
+
+        updateAction(req, res, Number(asset.id), newAssetData.dataValues, true);
+      }));
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -186,9 +209,9 @@ const weiAssetController = (repository) => {
       const bodyWrapper = Object.assign({ body: addPortfolioId });
       return syncWeiAsset(bodyWrapper, res);
     }));
-    // Promise.resolve(resolvedFinalArray)
-    //   .then(() => res.status(200).send(assets))
-    //   .catch(error => console.log(error));
+    Promise.resolve(resolvedFinalArray)
+      .then(() => updateWeiAssetsWeight(req, res, portfolioId))
+      .catch(error => console.log(error));
   };
 
   return {

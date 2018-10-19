@@ -12,7 +12,7 @@ const weidexController = (repository) => {
     const { id } = req.params;
     console.log('Start sync');
     // weiFiatFxController.sync();
-    await weiCurrencyController.sync(req, res);
+    // await weiCurrencyController.sync(req, res);
     await weiAssetController.sync(req, res, id);
     // Needs improvement for the ticker info when weidex are ready
     // weiCurrencyController.sync();

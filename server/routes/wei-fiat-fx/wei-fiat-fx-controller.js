@@ -28,9 +28,9 @@ const weiFiatFxController = (repository) => {
     let date = new Date();
     worldCurrencies.forEach(async (currency, index) => {
       let promise = createWeiFiatFx({
-        fxName: currency.pair.replace('USD'),
+        fxName: currency.pair.replace('USD', ''),
         priceUSD: currency.last,
-        timestamp: +date
+        createdAt: +date
       });
       if (index === worldCurrencies.length - 1) {
         promise.then(() => {

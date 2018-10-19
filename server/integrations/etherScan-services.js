@@ -1,7 +1,7 @@
 const requester = require('../services/requester-service');
 
 const baseURL = 'https://api.etherscan.io/api';
-const testNet = 'https://ropsten.etherscan.io/api';
+const ropsten = 'https://ropsten.etherscan.io/api';
 
 const etherScanServices = () => {
   const getETHUSDPrice = () => new Promise((resolve) => {

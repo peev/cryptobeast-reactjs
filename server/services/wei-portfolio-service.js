@@ -25,30 +25,33 @@ const weiPortfolioService = (repository) => {
     return amountETH * summary.priceUSD;
   };
 
+  const getPortfolioInvestmentSum = async (portfolio, type) => {
+    if (portfolio.weiTransactions !== 0) {
+      return Promise.all(portfolio.weiTransactions
+        .map(async (transaction) => {
+          if (transaction.type === type) {
+            // Calculates investment in eth
+            await calculateTokenValueETH(transaction.tokenName, transaction.balance);
+          }
+        }))
+        .then(transactions => transactions.reduce((acc, a) => acc + a, 0));
+    }
+    return Promise.resolve();
+  };
+
   const calcPortfolioTotalInvestment = async (portfolio) => {
-    let depositAmount = 0;
-    let withdrawAmount = 0;
-    await Promise.all(portfolio.weiTransactions.map(async (transaction) => {
-      switch (transaction.type) {
-        case 'w':
-          withdrawAmount += await calculateEtherValueUSD(await calculateTokenValueETH(transaction.tokenName, transaction.amount));
-          break;
-        case 'd':
-          depositAmount += await calculateEtherValueUSD(await calculateTokenValueETH(transaction.tokenName, transaction.amount));
-          break;
-        default:
-          break;
-      }
-    }));
+    const depositAmount = await getPortfolioInvestmentSum(portfolio, 'd');
+    const withdrawAmount = await getPortfolioInvestmentSum(portfolio, 'w');
     return Number(depositAmount - withdrawAmount);
   };
 
   const calcPortfolioTotalValue = async (portfolio) => {
-    let value = 0;
-    await Promise.all(portfolio.weiAssets.map(async (asset) => {
-      value += await calculateEtherValueUSD(await calculateTokenValueETH(asset.currency, asset.balance));
-    }));
-    return Number(value);
+    if (portfolio.weiAssets !== 0) {
+      return Promise.all(portfolio.weiAssets
+        .map(async asset => calculateEtherValueUSD(await calculateTokenValueETH(asset.tokenName, asset.balance))))
+        .then(assets => assets.reduce((acc, a) => acc + a, 0));
+    }
+    return Promise.resolve();
   };
 
   return {

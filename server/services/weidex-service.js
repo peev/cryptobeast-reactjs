@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const request = require('requestretry');
 const requester = require('../services/requester-service');
 
-const url = 'https://core.weidex.market/';
+const url = 'https://core.weidex.market';
 const staging = 'http://staging-core-java.herokuapp.com';
 const dataFeeder = 'https://production-datafeeder.herokuapp.com';
 
@@ -105,6 +105,7 @@ const WeidexService = (repository) => {
     getUserOrderHistoryByUserAndToken,
     getTokenTicker,
     getCurrencyStats,
+    getAllTokens,
   };
 };
 

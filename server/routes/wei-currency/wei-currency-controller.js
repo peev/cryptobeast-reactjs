@@ -8,17 +8,15 @@ const weiCurrencyController = (repository) => {
 
   const calculateCurrencyChange = (open, close) => Number((close - open) / open);
 
-  const getWeiCurrencyObject = async (tokenNameParam) => {
-    return repository.findOne({
-      modelName,
-      options: {
-        where: {
-          tokenName: tokenNameParam,
-        },
+  const getWeiCurrencyObject = async tokenNameParam => repository.findOne({
+    modelName,
+    options: {
+      where: {
+        tokenName: tokenNameParam,
       },
-    })
-      .catch(err => console.log(err));
-  };
+    },
+  })
+    .catch(err => console.log(err));
 
   const getCurrencyObject = async (req) => {
     let newWeiCurrencyObject;
@@ -95,7 +93,7 @@ const weiCurrencyController = (repository) => {
     if (weiCurrencyFound === null) {
       createAction(req, res, weiCurrencyObject, false);
     } else {
-      updateAction(req, res, weiCurrencyFound.id, weiCurrencyObject, false);
+      updateAction(req, res, Number(weiCurrencyFound.id), weiCurrencyObject, false);
     }
   };
 
@@ -108,7 +106,7 @@ const weiCurrencyController = (repository) => {
     if (weiCurrencyFound === null) {
       await createAction(req, res, weiCurrencyObject, true);
     } else {
-      await updateAction(req, res, weiCurrencyFound.id, weiCurrencyObject, true);
+      await updateAction(req, res, Number(weiCurrencyFound.id), weiCurrencyObject, true);
     }
   };
 
@@ -125,8 +123,8 @@ const weiCurrencyController = (repository) => {
 
   const updateWeiCurrency = async (req, res) => {
     const { id } = req.params;
-    const weiCurrency = await getCurrencyObject(req);
-    updateAction(req, res, weiCurrency, { id });
+    const weiCurrency = await getCurrencyObject(req.body);
+    return updateAction(req, res, Number(id), weiCurrency, false);
   };
 
   const removeWeiCurrency = (req, res) => {

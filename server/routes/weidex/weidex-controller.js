@@ -19,7 +19,7 @@ const weidexController = (repository) => {
     // weiPortfolioController.sync();
     // weiTransactionController.sync();
     // weiTradeHistoryController.sync(id);
-    console.log('End sync');
+    await console.log('End sync');
   };
 
   const getUser = (req, res) => {

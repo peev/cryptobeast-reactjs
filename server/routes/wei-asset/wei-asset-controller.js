@@ -47,6 +47,16 @@ const weiAssetController = (repository) => {
   })
     .catch(err => console.log(err));
 
+    const getWeiPortfolioObjectByAddress = async address => repository.findOne({
+      modelName: 'WeiPortfolio',
+      options: {
+        where: {
+          userAddress: address,
+        },
+      },
+    })
+      .catch(err => console.log(err));
+
   const createWeiAssetObject = async (req, lastPriceETHParam, priceUSD) => {
     let newWeiAssetObject;
     try {
@@ -198,19 +208,19 @@ const weiAssetController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = async (req, res, portfolioId) => {
-    const portfolio = await getWeiPortfolioObject(portfolioId);
+  const sync = async (req, res, address) => {
+    const portfolio = await getWeiPortfolioObjectByAddress(address);
     const assets = await WeidexService.getBalanceByUser(portfolio.userAddress)
       .then(data => data.json())
       .catch(error => console.log(error));
 
     const resolvedFinalArray = await Promise.all(assets.map(async (asset) => { // map instead of forEach
-      const addPortfolioId = Object.assign({}, asset, { weiPortfolioId: portfolioId });
+      const addPortfolioId = Object.assign({}, asset, { weiPortfolioId: portfolio.id });
       const bodyWrapper = Object.assign({ body: addPortfolioId });
       return syncWeiAsset(bodyWrapper, res);
     }));
     Promise.resolve(resolvedFinalArray)
-      .then(() => updateWeiAssetsWeight(req, res, portfolioId))
+      .then(() => updateWeiAssetsWeight(req, res, portfolio.id))
       .catch(error => console.log(error));
   };
 

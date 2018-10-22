@@ -93,6 +93,36 @@ const Weidex = {
   sync: data => requests.get(`/weidex/sync/${data.id}`)
 };
 
+const WeiAssets = {
+  // sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/wei-fiat-fx/sync/`)
+};
+
+const WeiCurrency = {
+  // sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/wei-fiat-fx/sync/`)
+};
+
+const WeiFiatFx = {
+  // sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/wei-fiat-fx/sync/`)
+};
+
+const WeiPortfolio = {
+  // sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/wei-fiat-fx/sync/`)
+};
+
+const WeiTradeHistory = {
+  // sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/wei-fiat-fx/sync/`)
+};
+
+const WeiTransaction = {
+  // sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/wei-fiat-fx/sync/`)
+};
+
 export default {
   Portfolio,
   Investor,

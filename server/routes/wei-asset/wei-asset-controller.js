@@ -47,15 +47,15 @@ const weiAssetController = (repository) => {
   })
     .catch(err => console.log(err));
 
-    const getWeiPortfolioObjectByAddress = async address => repository.findOne({
-      modelName: 'WeiPortfolio',
-      options: {
-        where: {
-          userAddress: address,
-        },
+  const getWeiPortfolioObjectByAddress = async address => repository.findOne({
+    modelName: 'WeiPortfolio',
+    options: {
+      where: {
+        userAddress: address,
       },
-    })
-      .catch(err => console.log(err));
+    },
+  })
+    .catch(err => console.log(err));
 
   const createWeiAssetObject = async (req, lastPriceETHParam, priceUSD) => {
     let newWeiAssetObject;

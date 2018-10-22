@@ -31,7 +31,8 @@ const weiPortfolioController = (repository) => {
     const weiPortfolio = {
       userAddress: address,
       userID: id,
-      totalInvestment: investment || 0,
+      totalInvestmentETH: investment || 0,
+      totalInvestmentUSD: null,
     };
     return weiPortfolio;
   };
@@ -59,7 +60,7 @@ const weiPortfolioController = (repository) => {
         const newWeiPortfolioObject = createWeiAssetObject(user.address, user.id, 0);
         await createAction(req, res, newWeiPortfolioObject, false);
       } else {
-        const totalInvestment = await weiPortfolioService.calcPortfolioTotalInvestment(weiPorfolioFound);
+        const totalInvestment = await weiPortfolioService.calcPortfolioTotalInvestmentETH(weiPorfolioFound);
         const newWeiPortfolioObject = createWeiAssetObject(user.address, user.id, totalInvestment);
         await updateAction(req, res, Number(weiPorfolioFound.id), newWeiPortfolioObject, false);
       }
@@ -78,7 +79,7 @@ const weiPortfolioController = (repository) => {
         const newWeiPortfolioObject = createWeiAssetObject(user.address, user.id, 0);
         await createAction(req, res, newWeiPortfolioObject, true);
       } else {
-        const totalInvestment = await weiPortfolioService.calcPortfolioTotalInvestment(weiPorfolioFound);
+        const totalInvestment = await weiPortfolioService.calcPortfolioTotalInvestmentETH(weiPorfolioFound);
         const newWeiPortfolioObject = createWeiAssetObject(user.address, user.id, totalInvestment);
         await updateAction(req, res, Number(weiPorfolioFound.id), newWeiPortfolioObject, true);
       }
@@ -93,32 +94,12 @@ const weiPortfolioController = (repository) => {
     return updateAction(req, res, Number(id), weiPortfolioData, false);
   };
 
-  // const updateWeiPortfolioTotalInvestment = async (req, res) => {
-  //   const { address } = req.params;
-  //   const portfolio = await repository.findOne({
-  //     modelName,
-  //     options: {
-  //       where: { userAddress: address },
-  //       include: [{ all: true }],
-  //     },
-  //   });
-
-  //   if (portfolio.weiTransactions !== 0) {
-  //     await weiPortfolioService.calcPortfolioTotalInvestment(portfolio).then((data) => {
-  //       portfolio.totalInvestment = data;
-  //       const weiPortfolioData = Object.assign({}, portfolio, { id: portfolio.id, totalInvestment: data });
-  //       repository.update({ modelName, updatedRecord: weiPortfolioData })
-  //         .then((response) => { res.status(200).send(response); })
-  //         .catch(error => res.json(error));
-  //     });
-  //   }
-  // };
 
   const updateWeiPortfolioTotalInvestment = async (req, res, address) => {
     const weiPortfolioFound = await getWeiPortfolioWholeObject(address);
 
     if (weiPortfolioFound.weiTransactions !== 0) {
-      await weiPortfolioService.calcPortfolioTotalInvestment(weiPortfolioFound).then((data) => {
+      await weiPortfolioService.calcPortfolioTotalInvestmentETH(weiPortfolioFound).then((data) => {
         weiPortfolioFound.totalInvestment = data;
         const weiPortfolioData = Object.assign({}, weiPortfolioFound, { id: weiPortfolioFound.id, totalInvestment: data });
         repository.update({ modelName, updatedRecord: weiPortfolioData })

@@ -14,7 +14,11 @@ module.exports = (sequelize, DataTypes) => sequelize.define('weiPortfolio', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  totalInvestment: {
+  totalInvestmentETH: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  totalInvestmentUSD: {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },

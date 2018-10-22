@@ -39,16 +39,16 @@ const weiPortfolioService = (repository) => {
     return Promise.resolve();
   };
 
-  const calcPortfolioTotalInvestment = async (portfolio) => {
+  const calcPortfolioTotalInvestmentETH = async (portfolio) => {
     const depositAmount = await getPortfolioInvestmentSum(portfolio, 'd');
     const withdrawAmount = await getPortfolioInvestmentSum(portfolio, 'w');
     return Number(depositAmount - withdrawAmount);
   };
 
-  const calcPortfolioTotalValue = async (portfolio) => {
+  const calcPortfolioTotalValueETH = async (portfolio) => {
     if (portfolio.weiAssets !== 0) {
       return Promise.all(portfolio.weiAssets
-        .map(async asset => calculateEtherValueUSD(await calculateTokenValueETH(asset.tokenName, asset.balance))))
+        .map(async asset => calculateTokenValueETH(asset.tokenName, asset.balance)))
         .then(assets => assets.reduce((acc, a) => acc + a, 0));
     }
     return Promise.resolve();
@@ -57,8 +57,8 @@ const weiPortfolioService = (repository) => {
   return {
     calculateTokenValueETH,
     calculateEtherValueUSD,
-    calcPortfolioTotalInvestment,
-    calcPortfolioTotalValue,
+    calcPortfolioTotalInvestmentETH,
+    calcPortfolioTotalValueETH,
   };
 };
 

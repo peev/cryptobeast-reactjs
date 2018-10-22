@@ -67,7 +67,7 @@ class SelectInvestor extends React.Component<Props> {
   );
 
   render() {
-    const { classes, PortfolioStore, value, style } = this.props;
+    const { classes, PortfolioStore, value } = this.props;
     const { currentPortfolioInvestors } = PortfolioStore;
     const investorsToShow = [];
     currentPortfolioInvestors.map((investor: object) => ({ value: investor.id, label: investor.fullName }))

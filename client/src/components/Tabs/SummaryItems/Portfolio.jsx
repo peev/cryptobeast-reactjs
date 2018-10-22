@@ -3,7 +3,6 @@ import React from 'react';
 import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
-import PerformanceChart from '../../HighCharts/PerformanceChart';
 import TotalAssetsValue from '../../HighCharts/TotalAssetsValue';
 
 const styles = () => ({
@@ -29,7 +28,7 @@ type Props = {
 };
 
 const Portfolio = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: Props) => {
-  const { classes, Analytics } = props;
+  const { classes } = props;
 
   return (
     <Grid container className={classes.container}>

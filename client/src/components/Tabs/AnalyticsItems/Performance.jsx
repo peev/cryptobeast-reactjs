@@ -6,19 +6,15 @@ import { inject, observer } from 'mobx-react';
 import MotionSelect from '../../Selectors/MotionSelect';
 import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 import TotalAssetsValue from '../../HighCharts/TotalAssetsValue';
-import PerformanceAssets from '../../HighCharts/PerformanceAssets';
 import SummaryPerformanceCard from '../../Cards/Analytics/SummaryPerformanceCard';
 import SharePriceChart from '../../HighCharts/SharePriceChart';
 
 const styles = () => ({
   marginTop: {
-    marginTop: '40px',
+    marginTop: '5px',
   },
   marginRight: {
     marginRight: '75px',
-  },
-  marginTop: {
-    marginTop: '5px',
   },
   marginBottom: {
     marginBottom: '20px',

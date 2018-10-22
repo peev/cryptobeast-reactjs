@@ -31,7 +31,7 @@ type Props = {
 };
 
 const SummaryPerformanceCard = inject('Analytics')(observer(({ ...props }: Props) => {
-  const { classes, Analytics } = props;
+  const { classes } = props;
 
   return (
     <Paper className={classes.container}>

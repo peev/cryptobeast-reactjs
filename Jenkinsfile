@@ -31,11 +31,17 @@ node {
       if (env.BRANCH_NAME == "refactored") {
         sh 'scp -i ~/.ssh/id_rsa -r client/build/. ubuntu@ip-172-31-35-186:/var/www/cryptobeast'
       }
+      if (env.BRANCH_NAME == "weibeast") {
+        sh 'scp -i ~/.ssh/id_rsa -r client/build/. ubuntu@ip-172-31-35-186:/var/www/weibeast'
+      }
     }
 
     stage('Deploy Back-End') {
       if (env.BRANCH_NAME == "refactored") {
         sh 'ssh ubuntu@ip-172-31-35-186 "cd crypto-deploy && bash buildanddeploy.sh"'
+      }
+      if (env.BRANCH_NAME == "weibeast") {
+        sh 'ssh ubuntu@ip-172-31-35-186 "cd weibeast-deploy && bash buildanddeploy.sh"'
       }
     }
 

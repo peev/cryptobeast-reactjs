@@ -581,21 +581,26 @@ class PortfolioStore {
   getPortfolios() {
     this.fetchingPortfolios = true;
     return new Promise((resolve, reject) => {
-      requester.Portfolio.getAll()
-        .then(action((result) => {
-          ApiAccountStore.initializeUserApis(result.data.userApis);
-          this.portfolios = result.data.portfolios;
-          if (this.selectedPortfolioId > 0) {
-            this.selectPortfolio(this.selectedPortfolioId);
-          }
-          resolve(true);
-          this.fetchingPortfolios = false;
-        }))
-        .catch(action((err) => {
-          this.fethingPortfolios = false;
-          console.log(err);
-          reject(err);
-        }));
+      this.portfolios = []
+      this.fetchingPortfolios = false;
+      resolve(true);
+      // TODO: Enable when we have portfolios
+      // We dont have user at the moment. Uncoment when we have!
+      // requester.Portfolio.getAll()
+      //   .then(action((result) => {
+      //     ApiAccountStore.initializeUserApis(result.data.userApis);
+      //     this.portfolios = result.data.portfolios;
+      //     if (this.selectedPortfolioId > 0) {
+      //       this.selectPortfolio(this.selectedPortfolioId);
+      //     }
+      //     resolve(true);
+      //     this.fetchingPortfolios = false;
+      //   }))
+      //   .catch(action((err) => {
+      //     this.fethingPortfolios = false;
+      //     console.log(err);
+      //     reject(err);
+      //   }));
     });
   }
 

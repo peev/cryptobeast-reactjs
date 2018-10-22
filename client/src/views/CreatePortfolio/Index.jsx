@@ -14,10 +14,11 @@ type Props = {
 const CreatePortfolioView = inject('PortfolioStore', 'UserStore')(observer(({ ...props }: Props) => {
   const { PortfolioStore } = props;
 
-  if (PortfolioStore.portfolios.length === 1) {
-    PortfolioStore.selectPortfolio(PortfolioStore.portfolios[0].id);
+  // TODO: Enable when we have portfolios
+  // if (PortfolioStore.portfolios.length === 1) {
+  //   PortfolioStore.selectPortfolio(PortfolioStore.portfolios[0].id);
     return <Redirect to="/summary" />;
-  }
+  // }
 
   return (
     <React.Fragment>

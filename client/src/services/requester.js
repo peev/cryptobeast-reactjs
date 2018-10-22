@@ -18,7 +18,37 @@ const requests = {
   delete: url => axios.delete(`${API_ROOT}${url}`, options), // axios.delete doesn't support body in requests !!!
 };
 
-// TODO: Add model http requests and create model store (mobx)
+// not used
+const ApiAccount = {
+  addAccount: data => requests.post('/account/add', data),
+  update: requestParams => requests.put('/account/update', requestParams),
+  delete: id => requests.delete(`/account/delete/${id}`, id),
+  getBalance: data => requests.post('/account/getBalance', data),
+};
+
+const Asset = {
+  add: data => requests.post('/asset/add', data),
+  update: requestParams => requests.put('/asset/update', requestParams),
+  delete: id => requests.delete(`/asset/delete/${id}`, id),
+  allocate: data => requests.post('/asset/allocate', data),
+  sync: data => requests.get(`/asset/sync/`)
+};
+
+const User = {
+  updateClosingTime: data => requests.post('/user/updateClosingTime', data),
+  verifiedPatchUserMetadata: (id, data) => requests.patch(`/user/verifiedPatch/${id}`, data),
+  patchUserMetadata: (id, data) => requests.patch(`/user/patch/${id}`, data),
+  deleteUserMetadata: (id, data) => requests.patch(`/user/delete/${id}`, data),
+  syncUserApiData: id => requests.put(`/user/syncApiData/${id}`),
+};
+
+const Transaction = {
+  addTrade: data => requests.post('/account/createTrade', data),
+  updateTrade: requestParams => requests.put('/account/updateTrade', requestParams),
+  deleteTrade: id => requests.delete(`/account/deleteTrade/${id}`, id),
+  getAllTrades: () => requests.get('/account/allTrades'),
+};
+
 const Portfolio = {
   getAll: () => requests.get('/portfolio/all'),
   create: portfolioName => requests.post('/portfolio/create', portfolioName),
@@ -54,82 +84,17 @@ const Market = {
   getCorrelationMatrixHistory: requestParams => requests.get('/market/correlationMatrixHistory', requestParams),
 };
 
-// not used
-const ApiAccount = {
-  addAccount: data => requests.post('/account/add', data),
-  update: requestParams => requests.put('/account/update', requestParams),
-  delete: id => requests.delete(`/account/delete/${id}`, id),
-  getBalance: data => requests.post('/account/getBalance', data),
-};
-
-const Trade = {
-  addTrade: data => requests.post('/account/createTrade', data),
-  updateTrade: requestParams => requests.put('/account/updateTrade', requestParams),
-  deleteTrade: id => requests.delete(`/account/deleteTrade/${id}`, id),
-  getAllTrades: () => requests.get('/account/allTrades'),
-};
-
-const Asset = {
-  add: data => requests.post('/asset/add', data),
-  update: requestParams => requests.put('/asset/update', requestParams),
-  delete: id => requests.delete(`/asset/delete/${id}`, id),
-  allocate: data => requests.post('/asset/allocate', data),
-  // Trades
-  // addTrade: data => requests.post('/asset/createTrade', data),
-  updateTrade: requestParams => requests.put('/asset/updateTrade', requestParams),
-  deleteTrade: id => requests.delete(`/asset/delete${id}`, id),
-  getAllTrades: () => requests.get('/asset/allTrades'),
-};
-
-const User = {
-  updateClosingTime: data => requests.post('/user/updateClosingTime', data),
-  verifiedPatchUserMetadata: (id, data) => requests.patch(`/user/verifiedPatch/${id}`, data),
-  patchUserMetadata: (id, data) => requests.patch(`/user/patch/${id}`, data),
-  deleteUserMetadata: (id, data) => requests.patch(`/user/delete/${id}`, data),
-  syncUserApiData: id => requests.put(`/user/syncApiData/${id}`),
-};
-
 const Weidex = {
   sync: data => requests.get(`/weidex/sync/${data.id}`)
 };
 
-const WeiAssets = {
-  // sync: data => requests.get(`/weidex/sync/${data.id}`)
-  sync: data => requests.get(`/wei-fiat-fx/sync/`)
-};
-
-const WeiCurrency = {
-  // sync: data => requests.get(`/weidex/sync/${data.id}`)
-  sync: data => requests.get(`/wei-fiat-fx/sync/`)
-};
-
-const WeiFiatFx = {
-  // sync: data => requests.get(`/weidex/sync/${data.id}`)
-  sync: data => requests.get(`/wei-fiat-fx/sync/`)
-};
-
-const WeiPortfolio = {
-  // sync: data => requests.get(`/weidex/sync/${data.id}`)
-  sync: data => requests.get(`/wei-fiat-fx/sync/`)
-};
-
-const WeiTradeHistory = {
-  // sync: data => requests.get(`/weidex/sync/${data.id}`)
-  sync: data => requests.get(`/wei-fiat-fx/sync/`)
-};
-
-const WeiTransaction = {
-  // sync: data => requests.get(`/weidex/sync/${data.id}`)
-  sync: data => requests.get(`/wei-fiat-fx/sync/`)
-};
-
 export default {
-  Portfolio,
-  Investor,
-  Market,
   ApiAccount,
   Asset,
   User,
-  Trade,
+  Transaction,
+  Portfolio,
+  Investor,
+  Market,
   Weidex
 };

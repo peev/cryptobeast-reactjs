@@ -2,11 +2,11 @@ const { responseHandler } = require('../utilities/response-handler');
 
 const modelName = 'WeiPortfolio';
 
-const weiPortfolioController = (repository) => {
-  const weiPortfolioService = require('../../services/wei-portfolio-service')(repository);
+const portfolioController = (repository) => {
+  const weiPortfolioService = require('../../services/portfolio-service')(repository);
   const WeidexService = require('../../services/weidex-service')(repository);
 
-  const getWeiPortfolioObject = async address => repository.findOne({
+  const getPortfolioObject = async address => repository.findOne({
     modelName,
     options: {
       where: {
@@ -16,7 +16,7 @@ const weiPortfolioController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const getWeiPortfolioWholeObject = async address => repository.findOne({
+  const getPortfolioWholeObject = async address => repository.findOne({
     modelName,
     options: {
       where: {
@@ -50,19 +50,19 @@ const weiPortfolioController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const createWeiPortfolio = async (req, res) => {
+  const createPortfolio = async (req, res) => {
     const user = req.body;
 
     try {
-      const weiPorfolioFound = await getWeiPortfolioWholeObject(user.address);
+      const weiPorfolioFound = await getPortfolioWholeObject(user.address);
 
       if (weiPorfolioFound === null) {
-        const newWeiPortfolioObject = createWeiAssetObject(user.address, user.id, 0);
-        await createAction(req, res, newWeiPortfolioObject, false);
+        const newPortfolioObject = createWeiAssetObject(user.address, user.id, 0);
+        await createAction(req, res, newPortfolioObject, false);
       } else {
         const totalInvestment = await weiPortfolioService.calcPortfolioTotalInvestmentETH(weiPorfolioFound);
-        const newWeiPortfolioObject = createWeiAssetObject(user.address, user.id, totalInvestment);
-        await updateAction(req, res, Number(weiPorfolioFound.id), newWeiPortfolioObject, false);
+        const newPortfolioObject = createWeiAssetObject(user.address, user.id, totalInvestment);
+        await updateAction(req, res, Number(weiPorfolioFound.id), newPortfolioObject, false);
       }
     } catch (error) {
       console.log(error);
@@ -73,30 +73,30 @@ const weiPortfolioController = (repository) => {
     const user = req.body;
 
     try {
-      const weiPorfolioFound = await getWeiPortfolioWholeObject(user.address);
+      const weiPorfolioFound = await getPortfolioWholeObject(user.address);
 
       if (weiPorfolioFound === null) {
-        const newWeiPortfolioObject = createWeiAssetObject(user.address, user.id, 0);
-        await createAction(req, res, newWeiPortfolioObject, true);
+        const newPortfolioObject = createWeiAssetObject(user.address, user.id, 0);
+        await createAction(req, res, newPortfolioObject, true);
       } else {
         const totalInvestment = await weiPortfolioService.calcPortfolioTotalInvestmentETH(weiPorfolioFound);
-        const newWeiPortfolioObject = createWeiAssetObject(user.address, user.id, totalInvestment);
-        await updateAction(req, res, Number(weiPorfolioFound.id), newWeiPortfolioObject, true);
+        const newPortfolioObject = createWeiAssetObject(user.address, user.id, totalInvestment);
+        await updateAction(req, res, Number(weiPorfolioFound.id), newPortfolioObject, true);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const updateWeiPortfolio = async (req, res) => {
+  const updatePortfolio = async (req, res) => {
     const { id } = req.params;
     const weiPortfolioData = Object.assign({}, req.body, { id });
     return updateAction(req, res, Number(id), weiPortfolioData, false);
   };
 
 
-  const updateWeiPortfolioTotalInvestment = async (req, res, address) => {
-    const weiPortfolioFound = await getWeiPortfolioWholeObject(address);
+  const updatePortfolioTotalInvestment = async (req, res, address) => {
+    const weiPortfolioFound = await getPortfolioWholeObject(address);
 
     if (weiPortfolioFound.weiTransactions !== 0) {
       await weiPortfolioService.calcPortfolioTotalInvestmentETH(weiPortfolioFound).then((data) => {
@@ -109,7 +109,7 @@ const weiPortfolioController = (repository) => {
     }
   };
 
-  const getWeiPortfolio = (req, res) => {
+  const getPortfolio = (req, res) => {
     const { id } = req.params;
     repository.findById({ modelName, id })
       .then((response) => {
@@ -120,7 +120,7 @@ const weiPortfolioController = (repository) => {
       });
   };
 
-  const removeWeiPortfolio = (req, res) => {
+  const removePortfolio = (req, res) => {
     const { id } = req.params;
     repository.remove({ modelName, id })
       .then(result => responseHandler(res, result))
@@ -144,13 +144,13 @@ const weiPortfolioController = (repository) => {
     //   .catch(error => console.log(error));
 
   return {
-    createWeiPortfolio,
-    updateWeiPortfolio,
-    updateWeiPortfolioTotalInvestment,
-    getWeiPortfolio,
-    removeWeiPortfolio,
+    createPortfolio,
+    updatePortfolio,
+    updatePortfolioTotalInvestment,
+    getPortfolio,
+    removePortfolio,
     sync,
   };
 };
 
-module.exports = weiPortfolioController;
+module.exports = portfolioController;

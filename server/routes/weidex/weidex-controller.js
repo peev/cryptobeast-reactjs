@@ -1,12 +1,12 @@
 const { WeidexService } = require('../../services/weidex-service');
 
 const weidexController = (repository) => {
-  const weiAssetController = require('../wei-asset/wei-asset-controller')(repository);
-  const weiFiatFxController = require('../wei-fiat-fx/wei-fiat-fx-controller')(repository);
-  const weiCurrencyController = require('../wei-currency/wei-currency-controller')(repository);
-  const weiPortfolioController = require('../wei-portfolio/wei-portfolio-controller')(repository);
-  const weiTransactionController = require('../wei-transaction/wei-transaction-controller')(repository);
-  const weiTradeHistoryController = require('../wei-trade-history/wei-trade-history-controller')(repository);
+  const weiAssetController = require('../asset/asset-controller')(repository);
+  const weiFiatFxController = require('../fiat-fx/fiat-fx-controller')(repository);
+  const weiCurrencyController = require('../currency/currency-controller')(repository);
+  const weiPortfolioController = require('../portfolio/portfolio-controller')(repository);
+  const weiTransactionController = require('../transaction/transaction-controller')(repository);
+  const weiTradeHistoryController = require('../trade-history/trade-history-controller')(repository);
 
   const sync = async (req, res) => {
     const { id } = req.params;

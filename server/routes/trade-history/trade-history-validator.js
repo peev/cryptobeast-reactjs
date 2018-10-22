@@ -1,7 +1,7 @@
 const validator = require('validator');
 
-const weiTradeHistoryValidator = () => {
-  const verifyCreateWeiTradeHistory = (req, res, next) => {
+const tradeHistoryValidator = () => {
+  const verifyCreateTradeHistory = (req, res, next) => {
     const payload = req.body;
 
     if (!payload || !payload.hasOwnProperty('weiPortfolioId') || typeof payload.weiPortfolioId !== 'number') {
@@ -36,8 +36,8 @@ const weiTradeHistoryValidator = () => {
   };
 
   return {
-    verifyCreateWeiTradeHistory,
+    verifyCreateTradeHistory,
   };
 };
 
-module.exports = weiTradeHistoryValidator;
+module.exports = tradeHistoryValidator;

@@ -1,7 +1,7 @@
 const validator = require('validator');
 
-const weiFiatFxValidator = () => {
-  const verifyCreateWeiFiatFx = (req, res, next) => {
+const fiatFxValidator = () => {
+  const verifyCreateFiatFx = (req, res, next) => {
     const payload = req.body;
 
     if (!payload || typeof payload.fxName !== 'string' || !validator.isLength(payload.fxName, { min: 1, max: 4 })) {
@@ -16,8 +16,8 @@ const weiFiatFxValidator = () => {
   };
 
   return {
-    verifyCreateWeiFiatFx,
+    verifyCreateFiatFx,
   };
 };
 
-module.exports = weiFiatFxValidator;
+module.exports = fiatFxValidator;

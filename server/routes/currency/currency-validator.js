@@ -1,7 +1,7 @@
 const validator = require('validator');
 
-const weiCurrencyValidator = () => {
-  const verifyCreateWeiCurrency = (req, res, next) => {
+const currencyValidator = () => {
+  const verifyCreateCurrency = (req, res, next) => {
     const payload = req.body;
 
     if (!payload || typeof payload.id !== 'number') {
@@ -20,8 +20,8 @@ const weiCurrencyValidator = () => {
   };
 
   return {
-    verifyCreateWeiCurrency,
+    verifyCreateCurrency,
   };
 };
 
-module.exports = weiCurrencyValidator;
+module.exports = currencyValidator;

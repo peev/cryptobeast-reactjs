@@ -1,7 +1,7 @@
 const validator = require('validator');
 
-const weiTransactionValidator = () => {
-  const verifyCreateWeiTransaction = (req, res, next) => {
+const transactionValidator = () => {
+  const verifyCreateTransaction = (req, res, next) => {
     const payload = req.body;
 
     if (!payload || !payload.hasOwnProperty('weiPortfolioId') || typeof payload.weiPortfolioId !== 'number') {
@@ -31,7 +31,7 @@ const weiTransactionValidator = () => {
     return next();
   };
 
-  const verifyUpdateWeiTransaction = (req, res, next) => {
+  const verifyUpdateTransaction = (req, res, next) => {
     const payload = req.body;
 
     if (!payload || typeof payload.type !== 'string' || !validator.isLength(payload.type, { min: 1, max: 1 })) {
@@ -58,9 +58,9 @@ const weiTransactionValidator = () => {
   };
 
   return {
-    verifyCreateWeiTransaction,
-    verifyUpdateWeiTransaction,
+    verifyCreateTransaction,
+    verifyUpdateTransaction,
   };
 };
 
-module.exports = weiTransactionValidator;
+module.exports = transactionValidator;

@@ -1,7 +1,7 @@
 const validator = require('validator');
 
-const weiPortfolioValidator = () => {
-  const verifyCreateWeiPortfolio = (req, res, next) => {
+const portfolioValidator = () => {
+  const verifyCreatePortfolio = (req, res, next) => {
     const payload = req.body;
 
     if (!payload || typeof payload.address !== 'string' || !validator.isLength(payload.address, { min: 1, max: 150 })) {
@@ -11,7 +11,7 @@ const weiPortfolioValidator = () => {
     return next();
   };
 
-  const verifyUpdateWeiPortfolio = (req, res, next) => {
+  const verifyUpdatePortfolio = (req, res, next) => {
     const payload = req.body;
 
     if (!payload || typeof payload.address !== 'string' || !validator.isLength(payload.address, { min: 1, max: 150 })) {
@@ -22,9 +22,9 @@ const weiPortfolioValidator = () => {
   };
 
   return {
-    verifyCreateWeiPortfolio,
-    verifyUpdateWeiPortfolio,
+    verifyCreatePortfolio,
+    verifyUpdatePortfolio,
   };
 };
 
-module.exports = weiPortfolioValidator;
+module.exports = portfolioValidator;

@@ -3,10 +3,10 @@ const { etherScanServices } = require('../../integrations/etherScan-services');
 
 const modelName = 'WeiTransaction';
 
-const weiTransactionController = (repository) => {
+const transactionController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
 
-  const getWeiTransactionObject = async transactionHash => repository.findOne({
+  const getTransactionObject = async transactionHash => repository.findOne({
     modelName,
     options: {
       where: {
@@ -16,7 +16,7 @@ const weiTransactionController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const getWeiPortfolioObjectByAddress = async address => repository.findOne({
+  const getPortfolioObjectByAddress = async address => repository.findOne({
     modelName: 'WeiPortfolio',
     options: {
       where: {
@@ -26,7 +26,7 @@ const weiTransactionController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const getWeiCurrencyByTokenName = async name => repository.findOne({
+  const getCurrencyByTokenName = async name => repository.findOne({
     modelName: 'WeiCurrency',
     options: {
       where: {
@@ -36,7 +36,7 @@ const weiTransactionController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const createWeiTransactionObject = async (req, timestamp, ethValue) => {
+  const createTransactionObject = async (req, timestamp, ethValue) => {
     let newTransactionObject;
     try {
       newTransactionObject = {
@@ -60,8 +60,8 @@ const weiTransactionController = (repository) => {
   };
 
   const updateAction = (req, res, id, weiTransactionObject, isSyncing) => {
-    const newWeiTransactionData = Object.assign({}, weiTransactionObject, { id });
-    repository.update({ modelName, updatedRecord: newWeiTransactionData })
+    const newTransactionData = Object.assign({}, weiTransactionObject, { id });
+    repository.update({ modelName, updatedRecord: newTransactionData })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
@@ -72,17 +72,17 @@ const weiTransactionController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const createWeiTransaction = async (req, res) => {
+  const createTransaction = async (req, res) => {
     const weiTransactionData = req.body;
 
     const etherScanTransaction = await etherScanServices().getTransactionByHash(weiTransactionData.txHash);
     const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-    const weiCurrency = await getWeiCurrencyByTokenName(weiTransactionData.tokenName);
+    const weiCurrency = await getCurrencyByTokenName(weiTransactionData.tokenName);
     const ethValue = await WeidexService.getTokenPriceByTimestamp(weiCurrency.tokenId, etherScanTransactionBlock.timestamp);
-    const weiTransactionObject = await createWeiTransactionObject(weiTransactionData, etherScanTransactionBlock.timestamp, ethValue);
+    const weiTransactionObject = await createTransactionObject(weiTransactionData, etherScanTransactionBlock.timestamp, ethValue);
 
     try {
-      const weiTransaction = await getWeiTransactionObject(weiTransactionData.txHash);
+      const weiTransaction = await getTransactionObject(weiTransactionData.txHash);
       if (weiTransaction === null) {
         await createAction(req, res, weiTransactionObject, false);
       } else {
@@ -93,17 +93,17 @@ const weiTransactionController = (repository) => {
     }
   };
 
-  const syncWeiTransaction = async (req, res) => {
+  const syncTransaction = async (req, res) => {
     const weiTransactionData = req.body;
 
     const etherScanTransaction = await etherScanServices().getTransactionByHash(weiTransactionData.txHash);
     const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-    const weiCurrency = await getWeiCurrencyByTokenName(weiTransactionData.tokenName);
+    const weiCurrency = await getCurrencyByTokenName(weiTransactionData.tokenName);
     const ethValue = await WeidexService.getTokenPriceByTimestamp(weiCurrency.tokenId, Number(etherScanTransactionBlock.timestamp));
-    const weiTransactionObject = await createWeiTransactionObject(weiTransactionData, etherScanTransactionBlock.timestamp, ethValue);
+    const weiTransactionObject = await createTransactionObject(weiTransactionData, etherScanTransactionBlock.timestamp, ethValue);
 
     try {
-      const weiTransaction = await getWeiTransactionObject(weiTransactionData.txHash);
+      const weiTransaction = await getTransactionObject(weiTransactionData.txHash);
       if (weiTransaction === null) {
         await createAction(req, res, weiTransactionObject, true);
       } else {
@@ -114,7 +114,7 @@ const weiTransactionController = (repository) => {
     }
   };
 
-  const getWeiTransaction = (req, res) => {
+  const getTransaction = (req, res) => {
     const { id } = req.params;
     repository.findById({ modelName, id })
       .then((response) => {
@@ -125,20 +125,20 @@ const weiTransactionController = (repository) => {
       });
   };
 
-  const updateWeiTransaction = async (req, res) => {
+  const updateTransaction = async (req, res) => {
     const { id } = req.params;
     const weiTransactionData = req.body;
 
     const etherScanTransaction = await etherScanServices().getTransactionByHash(weiTransactionData.txHash);
     const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-    const weiCurrency = await getWeiCurrencyByTokenName(weiTransactionData.tokenName);
+    const weiCurrency = await getCurrencyByTokenName(weiTransactionData.tokenName);
     const ethValue = await WeidexService.getTokenPriceByTimestamp(weiCurrency.tokenId, Number(etherScanTransactionBlock.timestamp));
-    const weiTransactionObject = await createWeiTransactionObject(weiTransactionData, etherScanTransactionBlock.timestamp, ethValue);
+    const weiTransactionObject = await createTransactionObject(weiTransactionData, etherScanTransactionBlock.timestamp, ethValue);
 
     updateAction(req, res, Number(id), weiTransactionObject, false);
   };
 
-  const removeWeiTransaction = (req, res) => {
+  const removeTransaction = (req, res) => {
     const { id } = req.params;
     repository.remove({ modelName, id })
       .then(result => responseHandler(res, result))
@@ -147,7 +147,7 @@ const weiTransactionController = (repository) => {
 
   const sync = async (req, res, address) => {
     try {
-      const weiPortfolio = await getWeiPortfolioObjectByAddress(address);
+      const weiPortfolio = await getPortfolioObjectByAddress(address);
       const deposits = await WeidexService.getUserDeposit(weiPortfolio.userID)
         .then(data => data.json())
         .catch(error => console.log(error));
@@ -158,12 +158,12 @@ const weiTransactionController = (repository) => {
       const resolvedDeposits = await Promise.all(deposits.map(async (deposit) => {
         const addPortfolioId = Object.assign({}, deposit, { weiPortfolioId: weiPortfolio.id, type: 'd' });
         const bodyWrapper = Object.assign({ body: addPortfolioId });
-        return syncWeiTransaction(bodyWrapper, res);
+        return syncTransaction(bodyWrapper, res);
       }));
       const resolvedWithdrawls = await Promise.all(withdrawls.map(async (withdrawl) => {
         const addPortfolioId = Object.assign({}, withdrawl, { weiPortfolioId: weiPortfolio.id, type: 'w' });
         const bodyWrapper = Object.assign({ body: addPortfolioId });
-        return syncWeiTransaction(bodyWrapper, res);
+        return syncTransaction(bodyWrapper, res);
       }));
 
       // Promise.resolve(resolvedDeposits, resolvedWithdrawls)
@@ -175,12 +175,12 @@ const weiTransactionController = (repository) => {
   };
 
   return {
-    createWeiTransaction,
-    getWeiTransaction,
-    updateWeiTransaction,
-    removeWeiTransaction,
+    createTransaction,
+    getTransaction,
+    updateTransaction,
+    removeTransaction,
     sync,
   };
 };
 
-module.exports = weiTransactionController;
+module.exports = transactionController;

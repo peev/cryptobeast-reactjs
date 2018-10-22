@@ -4,8 +4,8 @@ const { WeidexService } = require('../../services/weidex-service');
 
 const modelName = 'WeiTradeHistory';
 
-const weiTradeController = (repository) => {
-  const createWeiTrade = async (req, res) => {
+const tradeController = (repository) => {
+  const createTrade = async (req, res) => {
     const weiTrade = req.body;
 
     const tradeExist = await repository.findOne({
@@ -64,7 +64,7 @@ const weiTradeController = (repository) => {
     }
   };
 
-  const getWeiTrade = (req, res) => {
+  const getTrade = (req, res) => {
     const { id } = req.params;
     repository.findById({ modelName, id })
       .then((response) => {
@@ -75,7 +75,7 @@ const weiTradeController = (repository) => {
       });
   };
 
-  const removeWeiTrade = (req, res) => {
+  const removeTrade = (req, res) => {
     const { id } = req.params;
     repository.remove({ modelName, id })
       .then(result => responseHandler(res, result))
@@ -129,11 +129,11 @@ const weiTradeController = (repository) => {
   };
 
   return {
-    createWeiTrade,
-    getWeiTrade,
-    removeWeiTrade,
+    createTrade,
+    getTrade,
+    removeTrade,
     sync
   };
 };
 
-module.exports = weiTradeController;
+module.exports = tradeController;

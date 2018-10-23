@@ -9,18 +9,19 @@ const weidexController = (repository) => {
   const weiTradeHistoryController = require('../trade-history/trade-history-controller')(repository);
 
   const sync = async (req, res) => {
-    const { id } = req.params;
+    const addresses = req.body.map(address => address.toLowerCase());
     console.log('Start sync');
     // weiFiatFxController.sync();
+    // POST /weidex/sync ["0x5AE0d1Ffb5e06d32f3dA53aCA952439766Ab029F","0xac5e37db1c85bfc3e6474755ed77cff76d81eb67"]
     await weiCurrencyController.sync(req, res);
     await console.log('=============== END OF CURRENCY =======================================');
-    await weiPortfolioController.sync(req, res, id.toLowerCase());
+    await weiPortfolioController.sync(req, res, addresses);
     await console.log('=============== END OF PORTFOLIO =======================================');
-    await weiAssetController.sync(req, res, id.toLowerCase());
+    await weiAssetController.sync(req, res, addresses);
     await console.log('=============== END OF ASSETS =======================================');
-    await weiTransactionController.sync(req, res, id.toLowerCase());
+    await weiTransactionController.sync(req, res, addresses);
     await console.log('=============== END OF TRANSACTIONS =======================================');
-    await weiTradeHistoryController.sync(req, res, id.toLowerCase());
+    await weiTradeHistoryController.sync(req, res, addresses);
     await console.log('=============== END OF TRADES =======================================');
     await console.log('End sync');
   };

@@ -126,20 +126,22 @@ const tradeController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = async (req, res, address) => {
-    const portfolio = await getWeiPortfolioObjectByAddress(address);
-    const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
-      .then(data => data.json())
-      .catch(error => console.log(error));
+  const sync = async (req, res, addresses) => {
+    addresses.map(async (address) => {
+      const portfolio = await getWeiPortfolioObjectByAddress(address);
+      const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
+        .then(data => data.json())
+        .catch(error => console.log(error));
 
-    const resolvedFinalArray = await Promise.all(trades.map(async (trade) => {
-      const addPortfolioId = Object.assign({}, trade, { weiPortfolioId: portfolio.id });
-      const bodyWrapper = Object.assign({ body: addPortfolioId });
-      return syncTrade(bodyWrapper, res);
-    }));
-    Promise.resolve(resolvedFinalArray)
-      .then(() => console.log('success'))
-      .catch(error => console.log(error));
+      const resolvedFinalArray = await Promise.all(trades.map(async (trade) => {
+        const addPortfolioId = Object.assign({}, trade, { weiPortfolioId: portfolio.id });
+        const bodyWrapper = Object.assign({ body: addPortfolioId });
+        return syncTrade(bodyWrapper, res);
+      }));
+      Promise.resolve(resolvedFinalArray)
+        .then(() => console.log('success'))
+        .catch(error => console.log(error));
+    });
   };
 
   return {

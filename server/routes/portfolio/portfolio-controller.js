@@ -127,14 +127,16 @@ const portfolioController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = async (req, res, address) => {
+  const sync = async (req, res, addresses) => {
     try {
-      const weiPortfolio = await WeidexService.getUser(address)
-        .then(data => data.json())
-        .catch(error => console.log(error));
+      addresses.map(async (address) => {
+        const weiPortfolio = await WeidexService.getUser(address)
+          .then(data => data.json())
+          .catch(error => console.log(error));
 
-      const bodyWrapper = Object.assign({ body: weiPortfolio });
-      return syncPortfolio(bodyWrapper, res);
+        const bodyWrapper = Object.assign({ body: weiPortfolio });
+        return syncPortfolio(bodyWrapper, res);
+      });
     } catch (error) {
       console.log(error);
     }

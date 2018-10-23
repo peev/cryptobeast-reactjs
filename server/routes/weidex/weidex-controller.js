@@ -12,20 +12,16 @@ const weidexController = (repository) => {
     const { id } = req.params;
     console.log('Start sync');
     // weiFiatFxController.sync();
-  
-    await weiCurrencyController.sync(req, res);
-    await console.log('=============== END OF CURRENCY =======================================');
-    await weiPortfolioController.sync(req, res, id);
-    await console.log('=============== END OF PORTFOLIO =======================================');
-    await weiAssetController.sync(req, res, id);
-    await console.log('=============== END OF ASSETS =======================================');
-    await weiTransactionController.sync(req, res, id);
-    await console.log('=============== END OF TRANSACTIONS =======================================');
-    // Needs improvement for the ticker info when weidex are ready
-    // weiCurrencyController.sync();
-    // weiPortfolioController.sync();
-    // weiTransactionController.sync();
-    // weiTradeHistoryController.sync(id);
+    // await weiCurrencyController.sync(req, res);
+    // await console.log('=============== END OF CURRENCY =======================================');
+    // await weiPortfolioController.sync(req, res, id);
+    // await console.log('=============== END OF PORTFOLIO =======================================');
+    // await weiAssetController.sync(req, res, id);
+    // await console.log('=============== END OF ASSETS =======================================');
+    // await weiTransactionController.sync(req, res, id);
+    // await console.log('=============== END OF TRANSACTIONS =======================================');
+    await weiTradeHistoryController.sync(req, res, id);
+    await console.log('=============== END OF TRADES =======================================');
     await console.log('End sync');
   };
 

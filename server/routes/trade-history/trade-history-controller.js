@@ -1,66 +1,112 @@
 const { responseHandler } = require('../utilities/response-handler');
 const { etherScanServices } = require('../../integrations/etherScan-services');
-const { WeidexService } = require('../../services/weidex-service');
 
 const modelName = 'WeiTradeHistory';
 
 const tradeController = (repository) => {
-  const createTrade = async (req, res) => {
-    const weiTrade = req.body;
+  const WeidexService = require('../../services/weidex-service')(repository);
 
-    const tradeExist = await repository.findOne({
-      modelName,
-      options: {
-        where: {
-          txHash: weiTrade.txHash,
-        },
+  const getWeiPortfolioObjectByAddress = async address => repository.findOne({
+    modelName: 'WeiPortfolio',
+    options: {
+      where: {
+        userAddress: address,
       },
-    });
+      include: [{ all: true }],
+    },
+  })
+    .catch(err => console.log(err));
 
-    if (!tradeExist) {
-      const ethToUsd = await repository.findOne({
-        modelName: 'WeiFiatFx',
-        options: {
-          where: {
-            fxName: 'ETH',
-          },
-        },
-      });
+  const getTradeByTransactionHash = transactionHash => repository.findOne({
+    modelName,
+    options: {
+      where: {
+        txHash: transactionHash,
+      },
+    },
+  })
+    .catch(err => console.log(err));
 
-      const transaction = await etherScanServices().getTransactionByHash(weiTrade.txHash);
+  const getFiatFx = () => repository.findOne({
+    modelName: 'WeiFiatFx',
+    options: {
+      where: {
+        fxName: 'ETH',
+      },
+    },
+  })
+    .catch(err => console.log(err));
 
-      let transactonFee = null;
-
-      // Test network use another url
-      if (transaction !== null) {
-        transactonFee = Number(((transaction.gas * 100) * (transaction.gasPrice * 100)) / 100);
-      }
-
-      const newWeiTradeObject = {
-        tokenName: weiTrade.token.name,
-        type: weiTrade.type,
-        amount: weiTrade.amount,
-        priceETH: weiTrade.price,
-        priceUSD: weiTrade.price * ethToUsd.priceUSD,
-        priceTotalETH: weiTrade.amount * weiTrade.price,
-        priceTotalUSD: weiTrade.amount * (weiTrade.price * ethToUsd.priceUSD),
-        timestamp: weiTrade.createdAt,
-        txHash: weiTrade.txHash,
-        status: weiTrade.status,
+  const createTradeObject = (req, priceUsd, transactonFee) => {
+    let newTradeObject;
+    try {
+      newTradeObject = {
+        tokenName: req.token.name,
+        type: req.type,
+        amount: req.amount,
+        priceETH: req.price,
+        priceUSD: 0,
+        priceTotalETH: req.amount * req.price,
+        priceTotalUSD: 0,
+        timestamp: req.createdAt,
+        txHash: req.txHash,
+        status: req.status,
         txFee: transactonFee,
-        pair: `${weiTrade.token.name.toUpperCase()}-ETH`,
-        weiPortfolioId: weiTrade.weiPortfolioId,
+        pair: `${req.token.name.toUpperCase()}-ETH`,
+        weiPortfolioId: req.weiPortfolioId,
       };
+    } catch (error) {
+      console.log(error);
+    }
+    return newTradeObject;
+  };
 
-      repository.create({ modelName, newObject: newWeiTradeObject })
-        .then((response) => {
-          res.status(200).send(response);
-        })
-        .catch((error) => {
-          res.json(error);
-        });
-    } else {
-      res.status(200).send(weiTrade);
+  const createAction = (req, res, tradeObject, isSyncing) => {
+    repository.create({ modelName, newObject: tradeObject })
+      .then(response => (isSyncing ? null : res.status(200).send(response)))
+      .catch(error => res.json(error));
+  };
+
+  const calculateTransactionFee = transaction =>
+    ((transaction !== null) ? Number(((transaction.gas * 100) * (transaction.gasPrice * 100)) / 100) : 0);
+
+  const createTrade = async (req, res) => {
+    const trade = req.body;
+
+    try {
+      const tradeExist = await getTradeByTransactionHash(trade.txHash);
+      if (tradeExist !== null) {
+        const ethValue = await getFiatFx();
+        const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
+        const transactionFee = calculateTransactionFee(transaction);
+        const tradeObject = createTradeObject(trade, ethValue.priceUSD, transactionFee);
+
+        await createAction(req, res, tradeObject, false);
+      } else {
+        res.status(200).send(trade);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const syncTrade = async (req, res) => {
+    const trade = req.body;
+
+    try {
+      const tradeExist = await getTradeByTransactionHash(trade.txHash);
+      if (tradeExist !== null) {
+        const ethValue = await getFiatFx();
+        const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
+        const transactionFee = calculateTransactionFee(transaction);
+        const tradeObject = createTradeObject(trade, ethValue.priceUSD, transactionFee);
+
+        await createAction(req, res, tradeObject, true);
+      } else {
+        res.status(200).send(trade);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -82,57 +128,27 @@ const tradeController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = (id) => {
-    repository.rawQuery('SELECT DISTINCT ON ("txHash") * FROM "weiTradeHistory" ORDER  BY "txHash", "timestamp" DESC NULLS LAST, "weiPortfolioId"').then((items) => {
-      let newest = null;
-      if (items[0]) {
-        newest = +new Date(items[0].timestamp);
-      } else {
-        newest = 1;
-      }
-      const ethToUsd = repository.findOne({
-        modelName: 'WeiFiatFx',
-        options: {
-          where: {
-            fxName: 'ETH',
-          },
-        },
-      });
-      const transactions = WeidexService.getUserOrderHistoryByUser(id).then(res => res.json());
-      transactions.forEach((transaction) => {
-        if (newest < +(new Date(transaction))) {
-          repository.create({
-            modelName,
-            newObject: {
-              tokenName: transaction.token.name,
-              type: transaction.type,
-              amount: transaction.amount,
-              priceETH: transaction.price,
-              priceUSD: transaction.price * ethToUsd.priceUSD,
-              priceTotalETH: transaction.amount * transaction.price,
-              priceTotalUSD: transaction.amount * (transaction.price * ethToUsd.priceUSD),
-              timestamp: transaction.createdAt,
-              txHash: transaction.txHash,
-              status: transaction.status,
-              txFee: Number(((transaction.gas * 100) * (transaction.gasPrice * 100)) / 100),
-              pair: `${transaction.token.name.toUpperCase()}-ETH`,
-              weiPortfolioId: transaction.weiPortfolioId,
-            },
-          })
-            .then((response) => {
-              // TODO: Handle the response based on all items on all controllers ready
-            })
-            .catch(error => res.json(error));
-        }
-      });
-    });
+  const sync = async (req, res, address) => {
+    const portfolio = await getWeiPortfolioObjectByAddress(address);
+    const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
+      .then(data => data.json())
+      .catch(error => console.log(error));
+
+    const resolvedFinalArray = await Promise.all(trades.map(async (trade) => {
+      const addPortfolioId = Object.assign({}, trade, { weiPortfolioId: portfolio.id });
+      const bodyWrapper = Object.assign({ body: addPortfolioId });
+      return syncTrade(bodyWrapper, res);
+    }));
+    Promise.resolve(resolvedFinalArray)
+      .then(() => console.log('success'))
+      .catch(error => console.log(error));
   };
 
   return {
     createTrade,
     getTrade,
     removeTrade,
-    sync
+    sync,
   };
 };
 

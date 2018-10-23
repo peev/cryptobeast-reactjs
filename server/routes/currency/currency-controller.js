@@ -1,7 +1,6 @@
 const { responseHandler } = require('../utilities/response-handler');
-// const { WeidexService } = require('../../services/weidex-service');
 
-const modelName = 'WeiCurrency';
+const modelName = 'Currency';
 
 const currencyController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);

@@ -1,13 +1,13 @@
 const { responseHandler } = require('../utilities/response-handler');
 const { etherScanServices } = require('../../integrations/etherScan-services');
 
-const modelName = 'WeiTradeHistory';
+const modelName = 'TradeHistory';
 
 const tradeController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
 
   const getWeiPortfolioObjectByAddress = async address => repository.findOne({
-    modelName: 'WeiPortfolio',
+    modelName: 'Portfolio',
     options: {
       where: {
         userAddress: address,
@@ -28,7 +28,7 @@ const tradeController = (repository) => {
     .catch(err => console.log(err));
 
   const getFiatFx = () => repository.findOne({
-    modelName: 'WeiFiatFx',
+    modelName: 'FiatFx',
     options: {
       where: {
         fxName: 'ETH',

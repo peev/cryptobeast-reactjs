@@ -13,6 +13,8 @@ const weidexController = (repository) => {
     console.log('Start sync');
     // weiFiatFxController.sync();
     // POST /weidex/sync ["0x5AE0d1Ffb5e06d32f3dA53aCA952439766Ab029F","0xac5e37db1c85bfc3e6474755ed77cff76d81eb67"]
+    await weiFiatFxController.sync(req, res);
+    await console.log('=============== END OF FIATFX =======================================');
     await weiCurrencyController.sync(req, res);
     await console.log('=============== END OF CURRENCY =======================================');
     await weiPortfolioController.sync(req, res, addresses);

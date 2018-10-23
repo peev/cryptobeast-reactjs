@@ -186,9 +186,7 @@ const assetController = (repository) => {
       const portfolioTotalValue = await portfolioService.calcPortfolioTotalValueETH(portfolio);
 
       await Promise.all(portfolio.weiAssets.map(async (asset) => {
-        const assetValue = await portfolioService
-          .calculateEtherValueUSD(await portfolioService
-            .calculateTokenValueETH(asset.tokenName, asset.balance));
+        const assetValue = await portfolioService.calculateTokenValueETH(asset.tokenName, asset.balance);
         const result = (portfolioTotalValue !== 0) ? ((assetValue * 100) / portfolioTotalValue) : 0;
         const newAssetData = Object.assign(asset, { weight: result });
 

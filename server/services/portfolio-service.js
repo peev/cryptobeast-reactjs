@@ -26,15 +26,15 @@ const portfolioService = (repository) => {
   };
 
   const getPortfolioInvestmentSum = async (portfolio, type) => {
-    if (portfolio.transactions !== 0) {
-      return Promise.all(portfolio.transactions
+    if (portfolio.weiTransactions !== 0) {
+      return Promise.all(portfolio.weiTransactions
         .map(async (transaction) => {
           if (transaction.type === type) {
             // Calculates investment in eth
             await calculateTokenValueETH(transaction.tokenName, transaction.balance);
           }
         }))
-        .then(transactions => transactions.reduce((acc, a) => acc + a, 0));
+        .then(weiTransactions => weiTransactions.reduce((acc, a) => acc + a, 0));
     }
     return Promise.resolve();
   };
@@ -46,10 +46,10 @@ const portfolioService = (repository) => {
   };
 
   const calcPortfolioTotalValueETH = async (portfolio) => {
-    if (portfolio.assets !== 0) {
-      return Promise.all(portfolio.assets
+    if (portfolio.weiAssets !== 0) {
+      return Promise.all(portfolio.weiAssets
         .map(async asset => calculateTokenValueETH(asset.tokenName, asset.balance)))
-        .then(assets => assets.reduce((acc, a) => acc + a, 0));
+        .then(weiAssets => weiAssets.reduce((acc, a) => acc + a, 0));
     }
     return Promise.resolve();
   };

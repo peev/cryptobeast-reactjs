@@ -77,9 +77,9 @@ const init = async (repository) => {
 
   // Initialize all portfolio jobs and pass them to portfolio-controller
   const jobs = {
-    closingSharePriceJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveClosingSharePriceJob),
-    openingSharePriceJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveOpeningSharePriceJob),
-    closingPortfolioCostJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveClosingPortfolioCostJob),
+    // closingSharePriceJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveClosingSharePriceJob),
+    // openingSharePriceJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveOpeningSharePriceJob),
+    // closingPortfolioCostJobs: await portfolioService.initializeAllJobs(portfolioService.createSaveClosingPortfolioCostJob),
   };
   // #endregion
 
@@ -87,15 +87,13 @@ const init = async (repository) => {
   require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
   require('./../../routes/user/user-router').attachTo(app, repository, jobs);
   require('./../../routes/asset/asset-router').attachTo(app, repository);
-  require('./../../routes/market/market-router').attachTo(app, repository);
-  require('./../../routes/account/account-router').attachTo(app, repository);
   require('./../../routes/investor/investor-router').attachTo(app, repository);
-  require('./../../routes/wei-portfolio/wei-portfolio-router').attachTo(app, repository, jobs);
-  require('./../../routes/wei-asset/wei-asset-router').attachTo(app, repository, jobs);
-  require('./../../routes/wei-transaction/wei-transaction-router').attachTo(app, repository, jobs);
-  require('./../../routes/wei-trade-history/wei-trade-history-router').attachTo(app, repository, jobs);
-  require('./../../routes/wei-currency/wei-currency-router').attachTo(app, repository, jobs);
-  require('./../../routes/wei-fiat-fx/wei-fiat-fx-router').attachTo(app, repository, jobs);
+  require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
+  require('./../../routes/asset/asset-router').attachTo(app, repository, jobs);
+  require('./../../routes/transaction/transaction-router').attachTo(app, repository, jobs);
+  require('./../../routes/trade-history/trade-history-router').attachTo(app, repository, jobs);
+  require('./../../routes/currency/currency-router').attachTo(app, repository, jobs);
+  require('./../../routes/fiat-fx/fiat-fx-router').attachTo(app, repository, jobs);
   require('./../../routes/weidex/weidex-router').attachTo(app, repository, jobs);
 
   // Handle Errors

@@ -3,13 +3,23 @@ const { responseHandler } = require('../utilities/response-handler');
 
 const modelName = 'WeiCurrency';
 
-const weiCurrencyController = (repository) => {
+const currencyController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
 
   const calculateCurrencyChange = (open, close) => Number((close - open) / open);
 
+  const fetchCurrencyObject = async tokenNameParam => repository.findOne({
+    modelName,
+    options: {
+      where: {
+        tokenName: tokenNameParam,
+      },
+    },
+  })
+    .catch(err => console.log(err));
+
   const getCurrencyObject = async (req) => {
-    let newWeiCurrencyObject;
+    let newCurrencyObject;
     try {
       const today = Math.floor(Date.now() / 1000);
       const yesterday = today - (24 * 3600);
@@ -42,7 +52,7 @@ const weiCurrencyController = (repository) => {
           calculateCurrencyChange(currencyWeekStatsJson[currencyWeekStatsJson.length - 1].close, currencyWeekStatsJson[0].open);
       }
 
-      newWeiCurrencyObject = {
+      newCurrencyObject = {
         tokenId: req.id,
         tokenName: req.name,
         tokenNameLong: req.fullName,
@@ -52,54 +62,55 @@ const weiCurrencyController = (repository) => {
         low24H: low24HStats,
         change24H: change24HStats,
         change7D: change7DStats,
-        // bid: priceResponse.body.bid,
-        // ask: priceResponse.body.ask,
+        // bid: req.bid,
+        // ask: req.ask,
       };
     } catch (error) {
       console.log(error);
     }
-    return newWeiCurrencyObject;
+    return newCurrencyObject;
   };
 
-  const updateAction = (req, res, id, weiCurrencyObject) => {
-    const newWeiCurrencyData = Object.assign({}, weiCurrencyObject, id);
-    repository.update({ modelName, updatedRecord: newWeiCurrencyData })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch(error => res.json(error));
+  const updateAction = (req, res, id, weiCurrencyObject, isSyncing) => {
+    const newCurrencyData = Object.assign({}, weiCurrencyObject, { id });
+    repository.update({ modelName, updatedRecord: newCurrencyData })
+      .then(response => (isSyncing ? null : res.status(200).send(response)))
+      .catch(error => console.log(error));
   };
 
-  const createAction = (req, res, weiCurrencyObject) => {
+  const createAction = (req, res, weiCurrencyObject, isSyncing) => {
     repository.create({ modelName, newObject: weiCurrencyObject })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch(error => res.json(error));
+      .then(response => (isSyncing ? null : res.status(200).send(response)))
+      .catch(error => console.log(error));
   };
 
-  const createWeiCurrency = async (req, res) => {
+  const createCurrency = async (req, res) => {
     const weiCurrency = req.body;
 
     const weiCurrencyObject = await getCurrencyObject(weiCurrency);
-
-    const weiCurrencyFound = await repository.findOne({
-      modelName,
-      options: {
-        where: {
-          tokenName: weiCurrency.name,
-        },
-      },
-    });
+    const weiCurrencyFound = await fetchCurrencyObject(weiCurrency.name);
 
     if (weiCurrencyFound === null) {
-      createAction(req, res, weiCurrencyObject);
+      createAction(req, res, weiCurrencyObject, false);
     } else {
-      updateAction(req, res, weiCurrencyFound.id, weiCurrencyObject);
+      updateAction(req, res, Number(weiCurrencyFound.id), weiCurrencyObject, false);
     }
   };
 
-  const getWeiCurrency = (req, res) => {
+  const syncCurrency = async (req, res) => {
+    const weiCurrency = req.body;
+
+    const weiCurrencyObject = await getCurrencyObject(weiCurrency);
+    const weiCurrencyFound = await fetchCurrencyObject(weiCurrency.name);
+
+    if (weiCurrencyFound === null) {
+      await createAction(req, res, weiCurrencyObject, true);
+    } else {
+      await updateAction(req, res, Number(weiCurrencyFound.id), weiCurrencyObject, true);
+    }
+  };
+
+  const getCurrency = (req, res) => {
     const { id } = req.params;
     repository.findById({ modelName, id })
       .then((response) => {
@@ -110,33 +121,39 @@ const weiCurrencyController = (repository) => {
       });
   };
 
-  const updateWeiCurrency = async (req, res) => {
+  const updateCurrency = async (req, res) => {
     const { id } = req.params;
-    const weiCurrency = await getCurrencyObject(req);
-    updateAction(req, res, weiCurrency, { id });
+    const weiCurrency = await getCurrencyObject(req.body);
+    return updateAction(req, res, Number(id), weiCurrency, false);
   };
 
-  const removeWeiCurrency = (req, res) => {
+  const removeCurrency = (req, res) => {
     const { id } = req.params;
     repository.remove({ modelName, id })
       .then(result => responseHandler(res, result))
       .catch(error => res.json(error));
   };
 
-  const sync = async () => {
-    const tokens = await WeidexService.getAllTokens().then(res => res.json());
-    tokens.forEach(async (token) => {
-      await createWeiCurrency(token);
-    });
+  const sync = async (req, res) => {
+    const tokens = await WeidexService.getAllTokens()
+      .then(data => data.json())
+      .catch(error => console.log(error));
+    const resolvedFinalArray = await Promise.all(tokens.map(async (token) => { // map instead of forEach
+      const bodyWrapper = Object.assign({ body: token });
+      return syncCurrency(bodyWrapper, res);
+    }));
+    // Promise.resolve(resolvedFinalArray)
+    //   .then(() => res.status(200).send(tokens))
+    //   .catch(error => console.log(error));
   };
 
   return {
-    createWeiCurrency,
-    getWeiCurrency,
-    updateWeiCurrency,
-    removeWeiCurrency,
+    createCurrency,
+    getCurrency,
+    updateCurrency,
+    removeCurrency,
     sync,
   };
 };
 
-module.exports = weiCurrencyController;
+module.exports = currencyController;

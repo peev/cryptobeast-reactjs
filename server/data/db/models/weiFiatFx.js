@@ -3,8 +3,8 @@ module.exports = (sequelize, DataTypes) => sequelize.define('weiFiatFx', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  fxNameLong: {
-    type: DataTypes.STRING,
+  timestamp: {
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
   priceUSD: {

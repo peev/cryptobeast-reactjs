@@ -1,7 +1,7 @@
 const requester = require('../services/requester-service');
 
 const baseURL = 'https://api.etherscan.io/api';
-const testNet = 'https://ropsten.etherscan.io/api';
+const ropsten = 'https://ropsten.etherscan.io/api';
 
 const etherScanServices = () => {
   const getETHUSDPrice = () => new Promise((resolve) => {
@@ -14,7 +14,7 @@ const etherScanServices = () => {
   });
 
   const getTransactionByHash = txHash => new Promise((resolve, reject) => {
-    requester.get(`${baseURL}?module=proxy&action=eth_getTransactionByHash&txhash=${txHash}`)
+    requester.get(`${ropsten}?module=proxy&action=eth_getTransactionByHash&txhash=${txHash}`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
         resolve(parsedResult.result);
@@ -23,7 +23,7 @@ const etherScanServices = () => {
   });
 
   const getBlockByNumber = blockNumber => new Promise((resolve, reject) => {
-    requester.get(`${baseURL}?module=proxy&action=eth_getBlockByNumber&tag=${blockNumber}&boolean=true`)
+    requester.get(`${ropsten}?module=proxy&action=eth_getBlockByNumber&tag=${blockNumber}&boolean=true`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
         resolve(parsedResult.result);

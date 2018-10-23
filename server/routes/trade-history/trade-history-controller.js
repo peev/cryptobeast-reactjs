@@ -68,7 +68,7 @@ const tradeController = (repository) => {
   };
 
   const calculateTransactionFee = transaction =>
-    ((transaction !== null) ? Number(((transaction.gas * 100) * (transaction.gasPrice * 100)) / 100) : 0);
+    ((transaction !== null) ? Number(transaction.gas * transaction.gasPrice) / 1000000000000000000 : 0);
 
   const createTrade = async (req, res) => {
     const trade = req.body;
@@ -95,15 +95,13 @@ const tradeController = (repository) => {
 
     try {
       const tradeExist = await getTradeByTransactionHash(trade.txHash);
-      if (tradeExist !== null) {
+      if (tradeExist === null) {
         const ethValue = await getFiatFx();
         const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
         const transactionFee = calculateTransactionFee(transaction);
         const tradeObject = createTradeObject(trade, ethValue.priceUSD, transactionFee);
 
         await createAction(req, res, tradeObject, true);
-      } else {
-        res.status(200).send(trade);
       }
     } catch (error) {
       console.log(error);

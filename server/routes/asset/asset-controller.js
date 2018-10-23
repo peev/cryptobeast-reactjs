@@ -96,7 +96,7 @@ const assetController = (repository) => {
     const weiAssetData = req.body;
 
     try {
-      const weiCurrency = await getWeiCurrency(weiAssetData.tokenName);
+      const weiCurrency = await getCurrency(weiAssetData.tokenName);
       const weiFiatFx = await getWeiFiatFx();
       const weiAssetObject = await createAssetObject(weiAssetData, weiCurrency.lastPriceETH, weiFiatFx.priceUSD);
       const weiAssetFound = await getAssetObject(weiAssetData.tokenName, weiAssetData.weiPortfolioId);
@@ -115,7 +115,7 @@ const assetController = (repository) => {
     const weiAssetData = req.body;
 
     try {
-      const weiCurrency = await getWeiCurrency(weiAssetData.tokenName);
+      const weiCurrency = await getCurrency(weiAssetData.tokenName);
       const weiFiatFx = await getWeiFiatFx();
       const weiAssetObject = await createAssetObject(weiAssetData, weiCurrency.lastPriceETH, weiFiatFx.priceUSD);
       const weiAssetFound = await getAssetObject(weiAssetData.tokenName, weiAssetData.weiPortfolioId);
@@ -145,7 +145,7 @@ const assetController = (repository) => {
     const { id } = req.params;
     const weiAssetData = req.body;
 
-    const weiCurrency = await getWeiCurrency(weiAssetData.tokenName);
+    const weiCurrency = await getCurrency(weiAssetData.tokenName);
     const weiFiatFx = await getWeiFiatFx();
     const weiAssetObject = await createAssetObject(weiAssetData, weiCurrency.lastPriceETH, weiFiatFx.priceUSD);
 

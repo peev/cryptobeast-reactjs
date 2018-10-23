@@ -145,33 +145,35 @@ const transactionController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = async (req, res, address) => {
-    try {
-      const weiPortfolio = await getPortfolioObjectByAddress(address);
-      const deposits = await WeidexService.getUserDeposit(weiPortfolio.userID)
-        .then(data => data.json())
-        .catch(error => console.log(error));
-      const withdrawls = await WeidexService.getUserWithdraw(weiPortfolio.userID)
-        .then(data => data.json())
-        .catch(error => console.log(error));
+  const sync = async (req, res, addresses) => {
+    addresses.map(async (address) => {
+      try {
+        const weiPortfolio = await getPortfolioObjectByAddress(address);
+        const deposits = await WeidexService.getUserDeposit(weiPortfolio.userID)
+          .then(data => data.json())
+          .catch(error => console.log(error));
+        const withdrawls = await WeidexService.getUserWithdraw(weiPortfolio.userID)
+          .then(data => data.json())
+          .catch(error => console.log(error));
 
-      const resolvedDeposits = await Promise.all(deposits.map(async (deposit) => {
-        const addPortfolioId = Object.assign({}, deposit, { weiPortfolioId: weiPortfolio.id, type: 'd' });
-        const bodyWrapper = Object.assign({ body: addPortfolioId });
-        return syncTransaction(bodyWrapper, res);
-      }));
-      const resolvedWithdrawls = await Promise.all(withdrawls.map(async (withdrawl) => {
-        const addPortfolioId = Object.assign({}, withdrawl, { weiPortfolioId: weiPortfolio.id, type: 'w' });
-        const bodyWrapper = Object.assign({ body: addPortfolioId });
-        return syncTransaction(bodyWrapper, res);
-      }));
+        const resolvedDeposits = await Promise.all(deposits.map(async (deposit) => {
+          const addPortfolioId = Object.assign({}, deposit, { weiPortfolioId: weiPortfolio.id, type: 'd' });
+          const bodyWrapper = Object.assign({ body: addPortfolioId });
+          return syncTransaction(bodyWrapper, res);
+        }));
+        const resolvedWithdrawls = await Promise.all(withdrawls.map(async (withdrawl) => {
+          const addPortfolioId = Object.assign({}, withdrawl, { weiPortfolioId: weiPortfolio.id, type: 'w' });
+          const bodyWrapper = Object.assign({ body: addPortfolioId });
+          return syncTransaction(bodyWrapper, res);
+        }));
 
-      // Promise.resolve(resolvedDeposits, resolvedWithdrawls)
-      //   .then(() => res.status(200).send('transaction sync success'))
-      //   .catch(error => console.log(error));
-    } catch (error) {
-      console.log(error);
-    }
+        // Promise.resolve(resolvedDeposits, resolvedWithdrawls)
+        //   .then(() => res.status(200).send('transaction sync success'))
+        //   .catch(error => console.log(error));
+      } catch (error) {
+        console.log(error);
+      }
+    });
   };
 
   return {

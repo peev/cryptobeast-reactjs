@@ -204,20 +204,22 @@ const assetController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = async (req, res, address) => {
-    const portfolio = await getWeiPortfolioObjectByAddress(address);
-    const assets = await WeidexService.getBalanceByUser(portfolio.userAddress)
-      .then(data => data.json())
-      .catch(error => console.log(error));
+  const sync = async (req, res, addresses) => {
+    addresses.map(async (address) => {
+      const portfolio = await getWeiPortfolioObjectByAddress(address);
+      const assets = await WeidexService.getBalanceByUser(portfolio.userAddress)
+        .then(data => data.json())
+        .catch(error => console.log(error));
 
-    const resolvedFinalArray = await Promise.all(assets.map(async (asset) => { // map instead of forEach
-      const addPortfolioId = Object.assign({}, asset, { weiPortfolioId: portfolio.id });
-      const bodyWrapper = Object.assign({ body: addPortfolioId });
-      return syncAsset(bodyWrapper, res);
-    }));
-    Promise.resolve(resolvedFinalArray)
-      .then(() => updateAssetsWeight(req, res, portfolio.id))
-      .catch(error => console.log(error));
+      const resolvedFinalArray = await Promise.all(assets.map(async (asset) => { // map instead of forEach
+        const addPortfolioId = Object.assign({}, asset, { weiPortfolioId: portfolio.id });
+        const bodyWrapper = Object.assign({ body: addPortfolioId });
+        return syncAsset(bodyWrapper, res);
+      }));
+      Promise.resolve(resolvedFinalArray)
+        .then(() => updateAssetsWeight(req, res, portfolio.id))
+        .catch(error => console.log(error));
+    });
   };
 
   return {

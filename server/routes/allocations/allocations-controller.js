@@ -1,6 +1,6 @@
 const allocationsController = (repository) => {
   const marketService = require('../../services/market-service')(repository);
-  const modelName = 'WeiFiatFx';
+  const modelName = 'Allocation';
 
   const getAllocations = (req, res) => {
     const { fxName } = req.params;

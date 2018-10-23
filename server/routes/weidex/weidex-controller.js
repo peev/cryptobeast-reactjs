@@ -11,7 +11,8 @@ const weidexController = (repository) => {
   const sync = async (req, res) => {
     const { id } = req.params;
     console.log('Start sync');
-    // weiFiatFxController.sync();
+    await weiFiatFxController.sync(req, res);
+    await console.log('=============== END OF FIATFX =======================================');
     await weiCurrencyController.sync(req, res);
     await console.log('=============== END OF CURRENCY =======================================');
     await weiPortfolioController.sync(req, res, id.toLowerCase());

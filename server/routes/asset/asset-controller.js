@@ -1,13 +1,13 @@
 const { responseHandler } = require('../utilities/response-handler');
 
-const modelName = 'WeiAsset';
+const modelName = 'Asset';
 
 const assetController = (repository) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
   const WeidexService = require('../../services/weidex-service')(repository);
 
   const getCurrency = async tokenNameParam => repository.findOne({
-    modelName: 'WeiCurrency',
+    modelName: 'Currency',
     options: {
       where: {
         tokenName: tokenNameParam,
@@ -28,7 +28,7 @@ const assetController = (repository) => {
     .catch(err => console.log(err));
 
   const getWeiFiatFx = async () => repository.findOne({
-    modelName: 'WeiFiatFx',
+    modelName: 'FiatFx',
     options: {
       where: {
         fxName: 'ETH',
@@ -38,7 +38,7 @@ const assetController = (repository) => {
     .catch(err => console.log(err));
 
   const getWeiPortfolioObject = async portfolioId => repository.findOne({
-    modelName: 'WeiPortfolio',
+    modelName: 'Portfolio',
     options: {
       where: {
         id: portfolioId,
@@ -48,7 +48,7 @@ const assetController = (repository) => {
     .catch(err => console.log(err));
 
   const getWeiPortfolioObjectByAddress = async address => repository.findOne({
-    modelName: 'WeiPortfolio',
+    modelName: 'Portfolio',
     options: {
       where: {
         userAddress: address,

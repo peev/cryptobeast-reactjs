@@ -1,6 +1,6 @@
 const { responseHandler } = require('../utilities/response-handler');
 
-const modelName = 'WeiPortfolio';
+const modelName = 'Portfolio';
 
 const portfolioController = (repository) => {
   const weiPortfolioService = require('../../services/portfolio-service')(repository);

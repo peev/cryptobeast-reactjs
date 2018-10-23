@@ -33,11 +33,7 @@ const fiatFxController = (repository) => {
         createdAt: +date
       });
       if (index === worldCurrencies.length - 1) {
-        promise.then(() => {
-          res.status(200).send({
-            status: 'success'
-          });
-        });
+        return promise
       }
     });
   };

@@ -3,8 +3,8 @@ const allocationsController = (repository) => {
   const modelName = 'Allocation';
 
   const getAllocations = (req, res) => {
-    const { fxName } = req.params;
-    repository.findById({ modelName, fxName })
+    const { portfolioId } = req.params;
+    repository.find({ modelName, portfolioId })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -13,39 +13,31 @@ const allocationsController = (repository) => {
       });
   };
 
-  const createAllocations = async (weiFiatFxData) => {
-    return repository.create({ modelName, newObject: weiFiatFxData })
+  const createAllocation = async (allocationData) => {
+    return repository.create({ modelName, newObject: allocationData })
       .then((response) => {
         console.log(response);
       })
       .catch(error => console.log(error));
   };
 
-  const sync = async (req, res) => {
-    const worldCurrencies = await marketService.getTickersFromCurrencyLayerApi().catch(err => {
-      console.log(err)
-    });
-    let date = new Date();
-    worldCurrencies.forEach(async (currency, index) => {
-      let promise = createFiatFx({
-        fxName: currency.pair.replace('USD', ''),
-        priceUSD: currency.last,
-        createdAt: +date
+  const insertAllocation = async (req, res) => {
+    this.createAllocation.then((res) => {
+      res.status(200).send({
+        status: 'success'
       });
-      if (index === worldCurrencies.length - 1) {
-        promise.then(() => {
-          res.status(200).send({
-            status: 'success'
-          });
-        });
-      }
+    })
+    .catch(error => {
+      res.status(500).send({
+        status: 'fail',
+        error: error
+      });
     });
   };
 
   return {
-    createAllocations,
-    getAllocations,
-    sync
+    insertAllocation,
+    getAllocations
   };
 };
 

@@ -1,30 +1,25 @@
 module.exports = (sequelize, DataTypes) => sequelize.define('portfolio', {
-  name: {
+  userAddress: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 50],
+      len: [1, 150],
     },
   },
-  owner: {
-    type: DataTypes.STRING, // user email
+  userID: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  cost: {
-    type: DataTypes.DOUBLE,
-    // min: 0.000001,
-  },
-  baseCurrency: {
+  portfolioName: {
     type: DataTypes.STRING,
     allowNull: true,
-    validate: {
-      len: [1, 50],
-    },
   },
-  shares: {
+  totalInvestmentETH: {
     type: DataTypes.DOUBLE,
-    validate: {
-      min: 0,
-    },
+    allowNull: true,
+  },
+  totalInvestmentUSD: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
   },
 });

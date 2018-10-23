@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => sequelize.define('weiFiatFx', {
+module.exports = (sequelize, DataTypes) => sequelize.define('fiatFx', {
   fxName: {
     type: DataTypes.STRING,
     allowNull: false,

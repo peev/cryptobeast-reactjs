@@ -1,8 +1,8 @@
-const fiatFxController = (repository) => {
+const allocationsController = (repository) => {
   const marketService = require('../../services/market-service')(repository);
-  const modelName = 'FiatFx';
+  const modelName = 'WeiFiatFx';
 
-  const getFiatFx = (req, res) => {
+  const getAllocations = (req, res) => {
     const { fxName } = req.params;
     repository.findById({ modelName, fxName })
       .then((response) => {
@@ -13,7 +13,7 @@ const fiatFxController = (repository) => {
       });
   };
 
-  const createFiatFx = async (weiFiatFxData) => {
+  const createAllocations = async (weiFiatFxData) => {
     return repository.create({ modelName, newObject: weiFiatFxData })
       .then((response) => {
         console.log(response);
@@ -43,10 +43,10 @@ const fiatFxController = (repository) => {
   };
 
   return {
-    createFiatFx,
-    getFiatFx,
+    createAllocations,
+    getAllocations,
     sync
   };
 };
 
-module.exports = fiatFxController;
+module.exports = allocationsController;

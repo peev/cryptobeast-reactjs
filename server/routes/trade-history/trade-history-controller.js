@@ -6,7 +6,7 @@ const modelName = 'TradeHistory';
 const tradeController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
 
-  const getWeiPortfolioObjectByAddress = async address => repository.findOne({
+  const getPortfolioObjectByAddress = async address => repository.findOne({
     modelName: 'Portfolio',
     options: {
       where: {
@@ -119,7 +119,7 @@ const tradeController = (repository) => {
     const resolvedFinalArray = await Promise.all(addresses.map(async (address) => {
       try {
         const lastPriceUSD = await etherScanServices().getETHUSDPrice();
-        const portfolio = await getWeiPortfolioObjectByAddress(address);
+        const portfolio = await getPortfolioObjectByAddress(address);
         const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
           .then(data => data.json())
           .catch(error => console.log(error));

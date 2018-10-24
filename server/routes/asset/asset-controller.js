@@ -48,6 +48,15 @@ const assetController = (repository) => {
   })
     .catch(err => console.log(err));
 
+  const getPortfolioObjectIncludeAll = async idParam => repository.findOne({
+    modelName: 'Portfolio',
+    options: {
+      where: { id: idParam },
+      include: [{ all: true }],
+    },
+  })
+    .catch(err => console.log(err));
+
   const createAssetObject = async (req, lastPriceETHParam, priceUSD) => {
     let newAssetObject;
     try {
@@ -166,13 +175,7 @@ const assetController = (repository) => {
 
   const updateAssetsWeight = async (req, res, idParam) => {
     try {
-      const portfolio = await repository.findOne({
-        modelName: 'Portfolio',
-        options: {
-          where: { id: idParam },
-          include: [{ all: true }],
-        },
-      });
+      const portfolio = await getPortfolioObjectIncludeAll(idParam);
       const portfolioTotalValue = await portfolioService.calcPortfolioTotalValueETH(portfolio);
 
       await Promise.all(portfolio.assets.map(async (asset) => {
@@ -195,22 +198,28 @@ const assetController = (repository) => {
   };
 
   const sync = async (req, res, addresses) => {
-    addresses.map(async (address) => {
-      const lastPriceUSD = await etherScanServices().getETHUSDPrice();
-      const portfolio = await getPortfolioObjectByAddress(address);
-      const assets = await WeidexService.getBalanceByUser(portfolio.userAddress)
-        .then(data => data.json())
-        .catch(error => console.log(error));
+    const resolvedFinalArray = await Promise.all(addresses.map(async (address) => {
+      try {
+        const lastPriceUSD = await etherScanServices().getETHUSDPrice();
+        const portfolio = await getPortfolioObjectByAddress(address);
+        const assets = await WeidexService.getBalanceByUser(portfolio.userAddress)
+          .then(data => data.json())
+          .catch(error => console.log(error));
 
-      const resolvedFinalArray = await Promise.all(assets.map(async (asset) => { // map instead of forEach
-        const addPortfolioId = Object.assign({}, asset, { portfolioId: portfolio.id });
-        const bodyWrapper = Object.assign({ body: addPortfolioId });
-        return syncAsset(bodyWrapper, res, lastPriceUSD);
-      }));
-      Promise.resolve(resolvedFinalArray)
-        .then(() => updateAssetsWeight(req, res, portfolio.id))
-        .catch(error => console.log(error));
-    });
+        await assets.map(async (asset) => {
+          const addPortfolioId = Object.assign({}, asset, { portfolioId: portfolio.id });
+          const bodyWrapper = Object.assign({ body: addPortfolioId });
+          await syncAsset(bodyWrapper, res, lastPriceUSD);
+        });
+
+        await updateAssetsWeight(req, res, portfolio.id);
+      } catch (error) {
+        console.log(error);
+      }
+    }));
+    return Promise.resolve(resolvedFinalArray)
+      .then(() => console.log('=============== END OF ASSETS ======================================='))
+      .catch(error => console.log(error));
   };
 
   return {

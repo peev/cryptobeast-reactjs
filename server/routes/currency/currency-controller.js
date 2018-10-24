@@ -70,42 +70,42 @@ const currencyController = (repository) => {
     return newCurrencyObject;
   };
 
-  const updateAction = (req, res, id, weiCurrencyObject, isSyncing) => {
-    const newCurrencyData = Object.assign({}, weiCurrencyObject, { id });
+  const updateAction = (req, res, id, currencyObject, isSyncing) => {
+    const newCurrencyData = Object.assign({}, currencyObject, { id });
     repository.update({ modelName, updatedRecord: newCurrencyData })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => console.log(error));
   };
 
-  const createAction = (req, res, weiCurrencyObject, isSyncing) => {
-    repository.create({ modelName, newObject: weiCurrencyObject })
+  const createAction = (req, res, currencyObject, isSyncing) => {
+    repository.create({ modelName, newObject: currencyObject })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => console.log(error));
   };
 
   const createCurrency = async (req, res) => {
-    const weiCurrency = req.body;
+    const currency = req.body;
 
-    const weiCurrencyObject = await getCurrencyObject(weiCurrency);
-    const weiCurrencyFound = await fetchCurrencyObject(weiCurrency.name);
+    const currencyObject = await getCurrencyObject(currency);
+    const currencyFound = await fetchCurrencyObject(currency.name);
 
-    if (weiCurrencyFound === null) {
-      createAction(req, res, weiCurrencyObject, false);
+    if (currencyFound === null) {
+      createAction(req, res, currencyObject, false);
     } else {
-      updateAction(req, res, Number(weiCurrencyFound.id), weiCurrencyObject, false);
+      updateAction(req, res, Number(currencyFound.id), currencyObject, false);
     }
   };
 
   const syncCurrency = async (req, res) => {
-    const weiCurrency = req.body;
+    const currency = req.body;
 
-    const weiCurrencyObject = await getCurrencyObject(weiCurrency);
-    const weiCurrencyFound = await fetchCurrencyObject(weiCurrency.name);
+    const currencyObject = await getCurrencyObject(currency);
+    const currencyFound = await fetchCurrencyObject(currency.name);
 
-    if (weiCurrencyFound === null) {
-      await createAction(req, res, weiCurrencyObject, true);
+    if (currencyFound === null) {
+      await createAction(req, res, currencyObject, true);
     } else {
-      await updateAction(req, res, Number(weiCurrencyFound.id), weiCurrencyObject, true);
+      await updateAction(req, res, Number(currencyFound.id), currencyObject, true);
     }
   };
 
@@ -122,8 +122,8 @@ const currencyController = (repository) => {
 
   const updateCurrency = async (req, res) => {
     const { id } = req.params;
-    const weiCurrency = await getCurrencyObject(req.body);
-    return updateAction(req, res, Number(id), weiCurrency, false);
+    const currency = await getCurrencyObject(req.body);
+    return updateAction(req, res, Number(id), currency, false);
   };
 
   const removeCurrency = (req, res) => {
@@ -139,9 +139,9 @@ const currencyController = (repository) => {
       .catch(error => console.log(error));
     const resolvedFinalArray = await Promise.all(tokens.map(async (token) => {
       const bodyWrapper = Object.assign({ body: token });
-      return syncCurrency(bodyWrapper, res);
+      await syncCurrency(bodyWrapper, res);
     }));
-    Promise.resolve(resolvedFinalArray)
+    return Promise.resolve(resolvedFinalArray)
       .then(() => console.log('=============== END OF CURRENCY ======================================='))
       .catch(error => console.log(error));
   };

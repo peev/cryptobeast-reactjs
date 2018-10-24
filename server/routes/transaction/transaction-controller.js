@@ -146,7 +146,7 @@ const transactionController = (repository) => {
   };
 
   const sync = async (req, res, addresses) => {
-    addresses.map(async (address) => {
+    const resolvedFinalArray = await Promise.all(addresses.map(async (address) => {
       try {
         const weiPortfolio = await getPortfolioObjectByAddress(address);
         const deposits = await WeidexService.getUserDeposit(weiPortfolio.userID)
@@ -156,24 +156,23 @@ const transactionController = (repository) => {
           .then(data => data.json())
           .catch(error => console.log(error));
 
-        const resolvedDeposits = await Promise.all(deposits.map(async (deposit) => {
+        await deposits.map(async (deposit) => {
           const addPortfolioId = Object.assign({}, deposit, { portfolioId: weiPortfolio.id, type: 'd' });
           const bodyWrapper = Object.assign({ body: addPortfolioId });
           return syncTransaction(bodyWrapper, res);
-        }));
-        const resolvedWithdrawls = await Promise.all(withdrawls.map(async (withdrawl) => {
+        });
+        await withdrawls.map(async (withdrawl) => {
           const addPortfolioId = Object.assign({}, withdrawl, { portfolioId: weiPortfolio.id, type: 'w' });
           const bodyWrapper = Object.assign({ body: addPortfolioId });
           return syncTransaction(bodyWrapper, res);
-        }));
-
-        // Promise.resolve(resolvedDeposits, resolvedWithdrawls)
-        //   .then(() => res.status(200).send('transaction sync success'))
-        //   .catch(error => console.log(error));
+        });
       } catch (error) {
         console.log(error);
       }
-    });
+    }));
+    return Promise.resolve(resolvedFinalArray)
+      .then(() => console.log('=============== END OF TRANSACTIONS ======================================='))
+      .catch(error => console.log(error));
   };
 
   return {

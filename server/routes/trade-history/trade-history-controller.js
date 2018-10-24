@@ -116,22 +116,26 @@ const tradeController = (repository) => {
   };
 
   const sync = async (req, res, addresses) => {
-    addresses.map(async (address) => {
-      const lastPriceUSD = await etherScanServices().getETHUSDPrice();
-      const portfolio = await getWeiPortfolioObjectByAddress(address);
-      const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
-        .then(data => data.json())
-        .catch(error => console.log(error));
+    const resolvedFinalArray = await Promise.all(addresses.map(async (address) => {
+      try {
+        const lastPriceUSD = await etherScanServices().getETHUSDPrice();
+        const portfolio = await getWeiPortfolioObjectByAddress(address);
+        const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
+          .then(data => data.json())
+          .catch(error => console.log(error));
 
-      const resolvedFinalArray = await Promise.all(trades.map(async (trade) => {
-        const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolio.id });
-        const bodyWrapper = Object.assign({ body: addPortfolioId });
-        return syncTrade(bodyWrapper, res, lastPriceUSD);
-      }));
-      Promise.resolve(resolvedFinalArray)
-        .then(() => console.log('success'))
-        .catch(error => console.log(error));
-    });
+        await trades.map(async (trade) => {
+          const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolio.id });
+          const bodyWrapper = Object.assign({ body: addPortfolioId });
+          return syncTrade(bodyWrapper, res, lastPriceUSD);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }));
+    return Promise.resolve(resolvedFinalArray)
+      .then(() => console.log('=============== END OF TRADES ======================================='))
+      .catch(error => console.log(error));
   };
 
   return {

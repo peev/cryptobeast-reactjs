@@ -18,12 +18,8 @@ const weidexController = (repository) => {
     await currencyController.sync(req, res);
     await portfolioController.sync(req, res, addresses);
     await assetController.sync(req, res, addresses);
-    await console.log('=============== END OF ASSETS =======================================');
     await transactionController.sync(req, res, addresses);
-    await console.log('=============== END OF TRANSACTIONS =======================================');
     await tradeHistoryController.sync(req, res, addresses);
-    await console.log('=============== END OF TRADES =======================================');
-    await console.log('End sync');
   };
 
   const getUser = (req, res) => {

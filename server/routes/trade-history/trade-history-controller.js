@@ -27,16 +27,6 @@ const tradeController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const getFiatFx = () => repository.findOne({
-    modelName: 'FiatFx',
-    options: {
-      where: {
-        fxName: 'ETH',
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
   const createTradeObject = (req, priceUsd, transactonFee) => {
     let newTradeObject;
     try {
@@ -76,10 +66,10 @@ const tradeController = (repository) => {
     try {
       const tradeExist = await getTradeByTransactionHash(trade.txHash);
       if (tradeExist !== null) {
-        const ethValue = await getFiatFx();
+        const lastPriceUSD = await etherScanServices().getETHUSDPrice();
         const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
         const transactionFee = calculateTransactionFee(transaction);
-        const tradeObject = createTradeObject(trade, ethValue.priceUSD, transactionFee);
+        const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee);
 
         await createAction(req, res, tradeObject, false);
       } else {
@@ -90,16 +80,15 @@ const tradeController = (repository) => {
     }
   };
 
-  const syncTrade = async (req, res) => {
+  const syncTrade = async (req, res, lastPriceUSD) => {
     const trade = req.body;
 
     try {
       const tradeExist = await getTradeByTransactionHash(trade.txHash);
       if (tradeExist === null) {
-        const ethValue = await getFiatFx();
         const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
         const transactionFee = calculateTransactionFee(transaction);
-        const tradeObject = createTradeObject(trade, ethValue.priceUSD, transactionFee);
+        const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee);
 
         await createAction(req, res, tradeObject, true);
       }
@@ -128,6 +117,7 @@ const tradeController = (repository) => {
 
   const sync = async (req, res, addresses) => {
     addresses.map(async (address) => {
+      const lastPriceUSD = await etherScanServices().getETHUSDPrice();
       const portfolio = await getWeiPortfolioObjectByAddress(address);
       const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
         .then(data => data.json())
@@ -136,7 +126,7 @@ const tradeController = (repository) => {
       const resolvedFinalArray = await Promise.all(trades.map(async (trade) => {
         const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolio.id });
         const bodyWrapper = Object.assign({ body: addPortfolioId });
-        return syncTrade(bodyWrapper, res);
+        return syncTrade(bodyWrapper, res, lastPriceUSD);
       }));
       Promise.resolve(resolvedFinalArray)
         .then(() => console.log('success'))

@@ -16,7 +16,7 @@ const fiatFxController = (repository) => {
   const createFiatFx = async (weiFiatFxData) => {
     return repository.create({ modelName, newObject: weiFiatFxData })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
       })
       .catch(error => console.log(error));
   };

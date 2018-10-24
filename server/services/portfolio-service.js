@@ -12,19 +12,6 @@ const portfolioService = (repository) => {
     return amount * currency.lastPriceETH;
   };
 
-  const calculateEtherValueUSD = async (amountETH) => {
-    const summary = await repository.findOne({
-      modelName: 'FiatFx',
-      options: {
-        where: {
-          fxName: 'ETH',
-        },
-      },
-    });
-
-    return amountETH * summary.priceUSD;
-  };
-
   const getPortfolioInvestmentSum = async (portfolio, type) => {
     if (portfolio.transactions !== 0) {
       return Promise.all(portfolio.transactions
@@ -56,7 +43,6 @@ const portfolioService = (repository) => {
 
   return {
     calculateTokenValueETH,
-    calculateEtherValueUSD,
     calcPortfolioTotalInvestmentETH,
     calcPortfolioTotalValueETH,
   };

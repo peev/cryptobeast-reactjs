@@ -16,12 +16,12 @@ const assetController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const getAssetObject = async (tokenNameParam, portfolioId) => repository.findOne({
+  const getAssetObject = async (tokenNameParam, portfolioIdParam) => repository.findOne({
     modelName,
     options: {
       where: {
         tokenName: tokenNameParam,
-        weiPortfolioId: portfolioId,
+        portfolioId: portfolioIdParam,
       },
     },
   })
@@ -66,7 +66,7 @@ const assetController = (repository) => {
         balance: req.fullAmount,
         available: req.availableAmount,
         inOrder: req.fullAmount - req.availableAmount,
-        weiPortfolioId: req.weiPortfolioId,
+        portfolioId: req.portfolioId,
         lastPriceETH: lastPriceETHParam || 0,
         lastPriceUSD: lastPriceETHParam * priceUSD,
         totalETH: req.fullAmount * lastPriceETHParam,
@@ -99,7 +99,7 @@ const assetController = (repository) => {
       const weiCurrency = await getCurrency(weiAssetData.tokenName);
       const weiFiatFx = await getWeiFiatFx();
       const weiAssetObject = await createAssetObject(weiAssetData, weiCurrency.lastPriceETH, weiFiatFx.priceUSD);
-      const weiAssetFound = await getAssetObject(weiAssetData.tokenName, weiAssetData.weiPortfolioId);
+      const weiAssetFound = await getAssetObject(weiAssetData.tokenName, weiAssetData.portfolioId);
 
       if (weiAssetFound === null) {
         await createAction(req, res, weiAssetObject, false);
@@ -118,7 +118,7 @@ const assetController = (repository) => {
       const weiCurrency = await getCurrency(weiAssetData.tokenName);
       const weiFiatFx = await getWeiFiatFx();
       const weiAssetObject = await createAssetObject(weiAssetData, weiCurrency.lastPriceETH, weiFiatFx.priceUSD);
-      const weiAssetFound = await getAssetObject(weiAssetData.tokenName, weiAssetData.weiPortfolioId);
+      const weiAssetFound = await getAssetObject(weiAssetData.tokenName, weiAssetData.portfolioId);
 
       if (weiAssetFound === null) {
         await createAction(req, res, weiAssetObject, true);
@@ -157,7 +157,7 @@ const assetController = (repository) => {
 
     try {
       const weiAssetData = await repository.findById({ modelName, id });
-      const portfolio = await getWeiPortfolioObject(weiAssetData.weiPortfolioId);
+      const portfolio = await getWeiPortfolioObject(weiAssetData.portfolioId);
 
       if (portfolio.weiAssets !== 0) {
         const assetValue = await portfolioService.calculateTokenValueETH(weiAssetData.tokenName, weiAssetData.balance);
@@ -212,7 +212,7 @@ const assetController = (repository) => {
         .catch(error => console.log(error));
 
       const resolvedFinalArray = await Promise.all(assets.map(async (asset) => { // map instead of forEach
-        const addPortfolioId = Object.assign({}, asset, { weiPortfolioId: portfolio.id });
+        const addPortfolioId = Object.assign({}, asset, { portfolioId: portfolio.id });
         const bodyWrapper = Object.assign({ body: addPortfolioId });
         return syncAsset(bodyWrapper, res);
       }));

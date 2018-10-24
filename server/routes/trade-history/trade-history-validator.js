@@ -4,7 +4,7 @@ const tradeHistoryValidator = () => {
   const verifyCreateTradeHistory = (req, res, next) => {
     const payload = req.body;
 
-    if (!payload || !payload.hasOwnProperty('weiPortfolioId') || typeof payload.weiPortfolioId !== 'number') {
+    if (!payload || !payload.hasOwnProperty('portfolioId') || typeof payload.portfolioId !== 'number') {
       return res.status(400).send({ isSuccessful: false, message: 'Provide a portfolio ID as number!' });
     }
 

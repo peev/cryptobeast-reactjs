@@ -45,7 +45,7 @@ const transactionController = (repository) => {
         status: req.status,
         tokenName: req.tokenName,
         type: req.type,
-        weiPortfolioId: req.weiPortfolioId,
+        portfolioId: req.portfolioId,
         txTimestamp: Number(timestamp) * 1000,
         tokenPriceETH: Number(ethValue) || 0,
         totalValueETH: req.amount * Number(ethValue) || 0,
@@ -157,12 +157,12 @@ const transactionController = (repository) => {
           .catch(error => console.log(error));
 
         const resolvedDeposits = await Promise.all(deposits.map(async (deposit) => {
-          const addPortfolioId = Object.assign({}, deposit, { weiPortfolioId: weiPortfolio.id, type: 'd' });
+          const addPortfolioId = Object.assign({}, deposit, { portfolioId: weiPortfolio.id, type: 'd' });
           const bodyWrapper = Object.assign({ body: addPortfolioId });
           return syncTransaction(bodyWrapper, res);
         }));
         const resolvedWithdrawls = await Promise.all(withdrawls.map(async (withdrawl) => {
-          const addPortfolioId = Object.assign({}, withdrawl, { weiPortfolioId: weiPortfolio.id, type: 'w' });
+          const addPortfolioId = Object.assign({}, withdrawl, { portfolioId: weiPortfolio.id, type: 'w' });
           const bodyWrapper = Object.assign({ body: addPortfolioId });
           return syncTransaction(bodyWrapper, res);
         }));

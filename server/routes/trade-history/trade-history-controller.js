@@ -53,7 +53,7 @@ const tradeController = (repository) => {
         status: req.status,
         txFee: transactonFee,
         pair: `${req.token.name.toUpperCase()}-ETH`,
-        weiPortfolioId: req.weiPortfolioId,
+        portfolioId: req.portfolioId,
       };
     } catch (error) {
       console.log(error);
@@ -134,7 +134,7 @@ const tradeController = (repository) => {
         .catch(error => console.log(error));
 
       const resolvedFinalArray = await Promise.all(trades.map(async (trade) => {
-        const addPortfolioId = Object.assign({}, trade, { weiPortfolioId: portfolio.id });
+        const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolio.id });
         const bodyWrapper = Object.assign({ body: addPortfolioId });
         return syncTrade(bodyWrapper, res);
       }));

@@ -41,7 +41,7 @@ const fiatFxController = (repository) => {
   return {
     createFiatFx,
     getFiatFx,
-    sync
+    sync,
   };
 };
 

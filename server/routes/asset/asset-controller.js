@@ -198,7 +198,7 @@ const assetController = (repository) => {
   };
 
   const sync = async (req, res, addresses) => {
-    const resolvedFinalArray = await Promise.all(addresses.map(async (address) => {
+    addresses.map(async (address) => {
       try {
         const lastPriceUSD = await etherScanServices().getETHUSDPrice();
         const portfolio = await getPortfolioObjectByAddress(address);
@@ -216,10 +216,7 @@ const assetController = (repository) => {
       } catch (error) {
         console.log(error);
       }
-    }));
-    return Promise.resolve(resolvedFinalArray)
-      .then(() => console.log('=============== END OF ASSETS ======================================='))
-      .catch(error => console.log(error));
+    });
   };
 
   return {

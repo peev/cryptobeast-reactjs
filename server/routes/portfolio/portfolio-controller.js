@@ -117,19 +117,18 @@ const portfolioController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = async (req, res, addresses) => {
-    const resolvedFinalArray = await Promise.all(addresses.map(async (address) => {
+  const sync = async (req, res, addresses) => addresses.map(async (address) => {
+    try {
       const portfolio = await WeidexService.getUser(address)
         .then(data => data.json())
         .catch(error => console.log(error));
-
       const bodyWrapper = Object.assign({ body: portfolio });
+
       await syncPortfolio(bodyWrapper, res);
-    }));
-    return Promise.resolve(resolvedFinalArray)
-      .then(() => console.log('=============== END OF PORTFOLIOS ======================================='))
-      .catch(error => console.log(error));
-  };
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
   return {
     createPortfolio,

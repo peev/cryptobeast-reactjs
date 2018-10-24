@@ -137,13 +137,10 @@ const currencyController = (repository) => {
     const tokens = await WeidexService.getAllTokens()
       .then(data => data.json())
       .catch(error => console.log(error));
-    const resolvedFinalArray = await Promise.all(tokens.map(async (token) => {
+    tokens.map(async (token) => {
       const bodyWrapper = Object.assign({ body: token });
       await syncCurrency(bodyWrapper, res);
-    }));
-    return Promise.resolve(resolvedFinalArray)
-      .then(() => console.log('=============== END OF CURRENCY ======================================='))
-      .catch(error => console.log(error));
+    });
   };
 
   return {

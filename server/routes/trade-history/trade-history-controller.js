@@ -116,7 +116,7 @@ const tradeController = (repository) => {
   };
 
   const sync = async (req, res, addresses) => {
-    const resolvedFinalArray = await Promise.all(addresses.map(async (address) => {
+    addresses.map(async (address) => {
       try {
         const lastPriceUSD = await etherScanServices().getETHUSDPrice();
         const portfolio = await getPortfolioObjectByAddress(address);
@@ -124,18 +124,15 @@ const tradeController = (repository) => {
           .then(data => data.json())
           .catch(error => console.log(error));
 
-        await trades.map(async (trade) => {
+        trades.map(async (trade) => {
           const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolio.id });
           const bodyWrapper = Object.assign({ body: addPortfolioId });
-          return syncTrade(bodyWrapper, res, lastPriceUSD);
+          await syncTrade(bodyWrapper, res, lastPriceUSD);
         });
       } catch (error) {
         console.log(error);
       }
-    }));
-    return Promise.resolve(resolvedFinalArray)
-      .then(() => console.log('=============== END OF TRADES ======================================='))
-      .catch(error => console.log(error));
+    });
   };
 
   return {

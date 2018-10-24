@@ -124,11 +124,13 @@ const tradeController = (repository) => {
           .then(data => data.json())
           .catch(error => console.log(error));
 
-        trades.map(async (trade) => {
-          const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolio.id });
-          const bodyWrapper = Object.assign({ body: addPortfolioId });
-          await syncTrade(bodyWrapper, res, lastPriceUSD);
-        });
+        if (trades) {
+          trades.map(async (trade) => {
+            const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolio.id });
+            const bodyWrapper = Object.assign({ body: addPortfolioId });
+            await syncTrade(bodyWrapper, res, lastPriceUSD);
+          });
+        }
       } catch (error) {
         console.log(error);
       }

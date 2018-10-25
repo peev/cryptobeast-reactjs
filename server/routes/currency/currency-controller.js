@@ -7,7 +7,7 @@ const currencyController = (repository) => {
 
   const calculateCurrencyChange = (open, close) => Number((close - open) / open);
 
-  const fetchCurrencyObject = async tokenNameParam => repository.findOne({
+  const fetchCurrencyObject = tokenNameParam => repository.findOne({
     modelName,
     options: {
       where: {
@@ -83,11 +83,11 @@ const currencyController = (repository) => {
       .catch(error => console.log(error));
   };
 
-  const createCurrency = async (req, res) => {
+  const createCurrency = (req, res) => {
     const currency = req.body;
 
-    const currencyObject = await getCurrencyObject(currency);
-    const currencyFound = await fetchCurrencyObject(currency.name);
+    const currencyObject = getCurrencyObject(currency);
+    const currencyFound = fetchCurrencyObject(currency.name);
 
     if (currencyFound === null) {
       createAction(req, res, currencyObject, false);
@@ -103,9 +103,9 @@ const currencyController = (repository) => {
     const currencyFound = await fetchCurrencyObject(currency.name);
 
     if (currencyFound === null) {
-      await createAction(req, res, currencyObject, true);
+      createAction(req, res, currencyObject, true);
     } else {
-      await updateAction(req, res, Number(currencyFound.id), currencyObject, true);
+      updateAction(req, res, Number(currencyFound.id), currencyObject, true);
     }
   };
 
@@ -122,7 +122,7 @@ const currencyController = (repository) => {
 
   const updateCurrency = async (req, res) => {
     const { id } = req.params;
-    const currency = await getCurrencyObject(req.body);
+    const currency = getCurrencyObject(req.body);
     return updateAction(req, res, Number(id), currency, false);
   };
 
@@ -133,14 +133,16 @@ const currencyController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = async (req, res) => {
-    const tokens = await WeidexService.getAllTokens()
-      .then(data => data.json())
-      .catch(error => console.log(error));
-    tokens.map(async (token) => {
-      const bodyWrapper = Object.assign({ body: token });
-      await syncCurrency(bodyWrapper, res);
-    });
+  const sync = (req, res) => {
+    (async () => {
+      const tokens = await WeidexService.getAllTokens()
+        .then(data => data.json())
+        .catch(error => console.log(error));
+      await tokens.map((token) => {
+        const bodyWrapper = Object.assign({ body: token });
+        syncCurrency(bodyWrapper, res);
+      });
+    })();
   };
 
   return {

@@ -72,14 +72,14 @@ const currencyController = (repository) => {
 
   const updateAction = (req, res, id, currencyObject, isSyncing) => {
     const newCurrencyData = Object.assign({}, currencyObject, { id });
-    repository.update({ modelName, updatedRecord: newCurrencyData })
-      .then(response => (isSyncing ? null : res.status(200).send(response)))
+    return repository.update({ modelName, updatedRecord: newCurrencyData })
+      .then(response => (isSyncing ? newCurrencyData : res.status(200).send(response)))
       .catch(error => console.log(error));
   };
 
   const createAction = (req, res, currencyObject, isSyncing) => {
     repository.create({ modelName, newObject: currencyObject })
-      .then(response => (isSyncing ? null : res.status(200).send(response)))
+      .then(response => (isSyncing ? currencyObject : res.status(200).send(response)))
       .catch(error => console.log(error));
   };
 
@@ -90,10 +90,9 @@ const currencyController = (repository) => {
     const currencyFound = fetchCurrencyObject(currency.name);
 
     if (currencyFound === null) {
-      createAction(req, res, currencyObject, false);
-    } else {
-      updateAction(req, res, Number(currencyFound.id), currencyObject, false);
+      return createAction(req, res, currencyObject, false);
     }
+    return updateAction(req, res, Number(currencyFound.id), currencyObject, false);
   };
 
   const syncCurrency = async (req, res) => {
@@ -138,9 +137,12 @@ const currencyController = (repository) => {
       const tokens = await WeidexService.getAllTokens()
         .then(data => data.json())
         .catch(error => console.log(error));
-      await tokens.map((token) => {
+      const tokenArray = await tokens.map((token) => {
         const bodyWrapper = Object.assign({ body: token });
-        syncCurrency(bodyWrapper, res);
+        return syncCurrency(bodyWrapper, res);
+      });
+      await Promise.all(tokenArray).then(() => {
+        console.log('================== END CURRENCY =========================================');
       });
     })();
   };

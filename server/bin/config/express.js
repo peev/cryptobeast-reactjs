@@ -95,6 +95,7 @@ const init = async (repository) => {
   require('./../../routes/currency/currency-router').attachTo(app, repository, jobs);
   require('./../../routes/fiat-fx/fiat-fx-router').attachTo(app, repository, jobs);
   require('./../../routes/weidex/weidex-router').attachTo(app, repository, jobs);
+  require('./../../routes/utilities/health-check-router').attachTo(app, repository);
 
   // Handle Errors
   // catch 404 and forward to error handler

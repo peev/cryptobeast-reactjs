@@ -1,6 +1,6 @@
 const fiatFxController = (repository) => {
   const marketService = require('../../services/market-service')(repository);
-  const modelName = 'WeiFiatFx';
+  const modelName = 'FiatFx';
 
   const getFiatFx = (req, res) => {
     const { fxName } = req.params;
@@ -16,7 +16,7 @@ const fiatFxController = (repository) => {
   const createFiatFx = async (weiFiatFxData) => {
     return repository.create({ modelName, newObject: weiFiatFxData })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
       })
       .catch(error => console.log(error));
   };
@@ -33,11 +33,7 @@ const fiatFxController = (repository) => {
         createdAt: +date
       });
       if (index === worldCurrencies.length - 1) {
-        promise.then(() => {
-          res.status(200).send({
-            status: 'success'
-          });
-        });
+        return promise
       }
     });
   };
@@ -45,7 +41,7 @@ const fiatFxController = (repository) => {
   return {
     createFiatFx,
     getFiatFx,
-    sync
+    sync,
   };
 };
 

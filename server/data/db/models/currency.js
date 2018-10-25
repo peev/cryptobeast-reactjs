@@ -1,35 +1,52 @@
-// TODO: REMOVE IF IT IS NOT USED. IT IS PROBABLY NOT.
 module.exports = (sequelize, DataTypes) => sequelize.define('currency', {
-  currency: {
+  tokenId: {
     type: DataTypes.STRING,
-    primaryKey: true,
+    allowNull: false,
   },
-  currencyLong: {
+  tokenName: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
+    validate: {
+      len: [1, 4],
+    },
   },
-  minConfirmation: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
+  tokenNameLong: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      len: [1, 50],
+    },
   },
-  txFee: {
+  bid: {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
-  isActive: {
-    type: DataTypes.BOOLEAN,
+  ask: {
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
-  coinType: {
-    type: DataTypes.STRING,
+  lastPriceETH: {
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
-  baseAddress: {
-    type: DataTypes.STRING,
+  volume24H: {
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
-}, {
-  timestamps: true,
-  freezeTableName: true,
-  tableName: 'currencies',
+  high24H: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  low24H: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  change24H: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  change7D: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
 });

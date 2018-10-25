@@ -84,17 +84,18 @@ const init = async (repository) => {
   // #endregion
 
   // TODO: Create router for every new model and add it here
-  require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
   require('./../../routes/user/user-router').attachTo(app, repository, jobs);
-  require('./../../routes/asset/asset-router').attachTo(app, repository);
   require('./../../routes/investor/investor-router').attachTo(app, repository);
-  require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
   require('./../../routes/asset/asset-router').attachTo(app, repository, jobs);
+  require('./../../routes/weidex/weidex-router').attachTo(app, repository, jobs);
+  require('./../../routes/fiat-fx/fiat-fx-router').attachTo(app, repository, jobs);
+  require('./../../routes/currency/currency-router').attachTo(app, repository, jobs);
+  require('./../../routes/allocations/allocations-router').attachTo(app, repository);
+  require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
+  require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
   require('./../../routes/transaction/transaction-router').attachTo(app, repository, jobs);
   require('./../../routes/trade-history/trade-history-router').attachTo(app, repository, jobs);
-  require('./../../routes/currency/currency-router').attachTo(app, repository, jobs);
-  require('./../../routes/fiat-fx/fiat-fx-router').attachTo(app, repository, jobs);
-  require('./../../routes/weidex/weidex-router').attachTo(app, repository, jobs);
+  require('./../../routes/main/main-router').attachTo(app, repository, jobs);
 
   // Handle Errors
   // catch 404 and forward to error handler

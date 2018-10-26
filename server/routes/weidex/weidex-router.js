@@ -3,9 +3,10 @@ const { Router } = require('express');
 const attachTo = (app, data) => {
   const router = new Router();
   const weidexController = require('./weidex-controller')(data);
+  const validator = require('./weidex-validator')();
 
   router
-    .post('/sync', (req, res) => weidexController.sync(req, res))
+    .post('/sync', validator.verifySync, weidexController.sync)
     .get('/sync/:id', (req, res) => weidexController.sync(req, res))
     .get('/user/:address', (req, res) => weidexController.getUser(req, res))
     .get('/token/all', (req, res) => weidexController.getAllTokens(req, res))

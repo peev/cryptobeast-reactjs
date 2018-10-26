@@ -91,7 +91,7 @@ const Market = {
 };
 
 const Weidex = {
-  sync: requestParams => requests.post('/', requestParams),
+  sync: requestParams => requests.post('/weidex/sync', requestParams),
 };
 
 export default {

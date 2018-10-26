@@ -1,11 +1,11 @@
 const validator = require('validator');
 
-const mainValidator = () => {
+const weidexValidator = () => {
   const verifySync = (req, res, next) => {
     const payload = req.body;
 
     if (!payload.length) {
-      return res.status(400).send({ isSuccessful: false, message: 'Provide a portfolio ID as number!' });
+      return res.status(400).send({ isSuccessful: false, message: 'Provide a valid wallet!' });
     }
 
     return next();
@@ -16,4 +16,4 @@ const mainValidator = () => {
   };
 };
 
-module.exports = mainValidator;
+module.exports = weidexValidator;

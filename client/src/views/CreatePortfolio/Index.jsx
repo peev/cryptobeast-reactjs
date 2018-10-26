@@ -18,9 +18,11 @@ type Props = {
 @observer
 class CreatePortfolioView extends React.Component<Props> {
   componentWillMount() {
-    const addresses = this.props.location.search.split('?id=').slice(1);
+    const addresses = this.getAddresses(this.props.location.search);
     this.props.WeidexStore.sync(addresses);
   }
+
+  getAddresses = (locationSearch: string) => locationSearch.replace('&w=', 'w=').substring(1).split('w=').slice(1);
 
   // TODO: Enable when we have portfolios
   // if (PortfolioStore.portfolios.length === 1) {

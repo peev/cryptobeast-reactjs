@@ -91,7 +91,7 @@ const Market = {
 };
 
 const Weidex = {
-  sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: requestParams => requests.post('/', requestParams),
 };
 
 export default {
@@ -102,5 +102,5 @@ export default {
   Portfolio,
   Investor,
   Market,
-  Weidex
+  Weidex,
 };

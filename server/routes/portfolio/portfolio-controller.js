@@ -117,19 +117,17 @@ const portfolioController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = (req, res, addresses) => {
-    (async () => {
-      const portfolioArray = addresses.map(async (address) => {
-        const portfolio = await WeidexService.getUser(address)
-          .then(data => data.json())
-          .catch(error => res.status(404).send({ isSuccessful: false, message: error }));
-        const bodyWrapper = Object.assign({ body: portfolio });
-        await syncPortfolio(bodyWrapper, res);
-      });
-      await Promise.all(portfolioArray).then(() => {
-        console.log('================== END PORTFOLIOS =========================================');
-      });
-    })();
+  const sync = async (req, res, addresses) => {
+    const portfolioArray = addresses.map(async (address) => {
+      const portfolio = await WeidexService.getUser(address)
+        .then(data => data.json())
+        .catch(error => res.status(404).send({ isSuccessful: false, message: error }));
+      const bodyWrapper = Object.assign({ body: portfolio });
+      await syncPortfolio(bodyWrapper, res);
+    });
+    await Promise.all(portfolioArray).then(() => {
+      console.log('================== END PORTFOLIOS =========================================');
+    });
   };
 
   return {

@@ -12,8 +12,11 @@ const weidexController = (repository) => {
     const addresses = req.body.map(address => address.toLowerCase());
     // POST /weidex/sync ["0x5AE0d1Ffb5e06d32f3dA53aCA952439766Ab029F","0xac5e37db1c85bfc3e6474755ed77cff76d81eb67"]
     await fiatFxController.sync(req, res);
-    currencyController.sync(req, res);
-    portfolioController.sync(req, res, addresses);
+    console.log('================== START CURRENCY ==================');
+    await currencyController.sync(req, res)
+      .then(() => console.log('================== START PORTFOLIO =================='));
+    await portfolioController.sync(req, res, addresses)
+      .then(() => console.log('================== START ASSETS =================='));
     await assetController.sync(req, res, addresses);
     await transactionController.sync(req, res, addresses);
     await tradeHistoryController.sync(req, res, addresses);
@@ -122,6 +125,7 @@ const weidexController = (repository) => {
   return {
     sync,
     getUser,
+    getAllTokens,
     getBalanceByUser,
     getUserDeposit,
     getUserWithdraw,

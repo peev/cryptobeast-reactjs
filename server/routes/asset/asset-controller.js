@@ -79,15 +79,15 @@ const assetController = (repository) => {
     return newAssetObject;
   };
 
-  const updateAction = (req, res, id, assetObject, isSyncing) => {
+  const updateAction = async (req, res, id, assetObject, isSyncing) => {
     const newAssetData = Object.assign({}, assetObject, { id });
-    repository.update({ modelName, updatedRecord: newAssetData })
+    await repository.update({ modelName, updatedRecord: newAssetData })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
 
-  const createAction = (req, res, assetObject, isSyncing) => {
-    repository.create({ modelName, newObject: assetObject })
+  const createAction = async (req, res, assetObject, isSyncing) => {
+    await repository.create({ modelName, newObject: assetObject })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
@@ -148,7 +148,7 @@ const assetController = (repository) => {
     const lastPriceUSD = await etherScanServices().getETHUSDPrice();
     const assetObject = await createAssetObject(assetData, currency.lastPriceETH, lastPriceUSD);
 
-    updateAction(req, res, Number(id), assetObject, false);
+    await updateAction(req, res, Number(id), assetObject, false);
   };
 
   const updateAssetWeight = async (req, res) => {
@@ -183,7 +183,7 @@ const assetController = (repository) => {
         const result = (portfolioTotalValue !== 0) ? ((assetValue * 100) / portfolioTotalValue) : 0;
         const newAssetData = Object.assign(asset, { weight: result });
 
-        updateAction(req, res, Number(asset.id), newAssetData.dataValues, true);
+        await updateAction(req, res, Number(asset.id), newAssetData.dataValues, true);
       }));
     } catch (error) {
       console.log(error);
@@ -198,7 +198,7 @@ const assetController = (repository) => {
   };
 
   const sync = async (req, res, addresses) => {
-    addresses.map(async (address) => {
+    const addressesArray = addresses.map(async (address) => {
       try {
         const lastPriceUSD = await etherScanServices().getETHUSDPrice();
         const portfolio = await getPortfolioObjectByAddress(address);
@@ -216,6 +216,9 @@ const assetController = (repository) => {
       } catch (error) {
         console.log(error);
       }
+    });
+    await Promise.all(addressesArray).then(() => {
+      console.log('================== END ASSETS =========================================');
     });
   };
 

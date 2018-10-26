@@ -132,19 +132,17 @@ const currencyController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = (req, res) => {
-    (async () => {
-      const tokens = await WeidexService.getAllTokens()
-        .then(data => data.json())
-        .catch(error => console.log(error));
-      const tokenArray = await tokens.map((token) => {
-        const bodyWrapper = Object.assign({ body: token });
-        return syncCurrency(bodyWrapper, res);
-      });
-      await Promise.all(tokenArray).then(() => {
-        console.log('================== END CURRENCY =========================================');
-      });
-    })();
+  const sync = async (req, res) => {
+    const tokens = await WeidexService.getAllTokens()
+      .then(data => data.json())
+      .catch(error => console.log(error));
+    const tokenArray = await tokens.map((token) => {
+      const bodyWrapper = Object.assign({ body: token });
+      return syncCurrency(bodyWrapper, res);
+    });
+    await Promise.all(tokenArray).then(() => {
+      console.log('================== END CURRENCY ==================');
+    });
   };
 
   return {

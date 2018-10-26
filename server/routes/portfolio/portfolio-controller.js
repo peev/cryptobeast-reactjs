@@ -27,16 +27,16 @@ const portfolioController = (repository) => {
     return portfolio;
   };
 
-  const updateAction = (req, res, id, portfolioObject, isSyncing) => {
+  const updateAction = async (req, res, id, portfolioObject, isSyncing) => {
     const newPortfolioData = Object.assign({}, portfolioObject, { id });
-    repository.update({ modelName, updatedRecord: newPortfolioData })
-      .then(response => (isSyncing ? null : res.status(200).send(response)))
+    await repository.update({ modelName, updatedRecord: newPortfolioData })
+      .then(response => (isSyncing ? response : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
 
-  const createAction = (req, res, portfolioObject, isSyncing) => {
-    repository.create({ modelName, newObject: portfolioObject })
-      .then(response => (isSyncing ? null : res.status(200).send(response)))
+  const createAction = async (req, res, portfolioObject, isSyncing) => {
+    await repository.create({ modelName, newObject: portfolioObject })
+      .then(response => (isSyncing ? response : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
 
@@ -81,7 +81,7 @@ const portfolioController = (repository) => {
   const updatePortfolio = async (req, res) => {
     const { id } = req.params;
     const portfolioData = Object.assign({}, req.body, { id });
-    return updateAction(req, res, Number(id), portfolioData, false);
+    await updateAction(req, res, Number(id), portfolioData, false);
   };
 
 
@@ -117,18 +117,20 @@ const portfolioController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = async (req, res, addresses) => addresses.map(async (address) => {
-    try {
-      const portfolio = await WeidexService.getUser(address)
-        .then(data => data.json())
-        .catch(error => res.status(404).send({ isSuccessful: false, message: error }));
-      const bodyWrapper = Object.assign({ body: portfolio });
-
-      await syncPortfolio(bodyWrapper, res);
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  const sync = (req, res, addresses) => {
+    (async () => {
+      const portfolioArray = addresses.map(async (address) => {
+        const portfolio = await WeidexService.getUser(address)
+          .then(data => data.json())
+          .catch(error => res.status(404).send({ isSuccessful: false, message: error }));
+        const bodyWrapper = Object.assign({ body: portfolio });
+        await syncPortfolio(bodyWrapper, res);
+      });
+      await Promise.all(portfolioArray).then(() => {
+        console.log('================== END PORTFOLIOS =========================================');
+      });
+    })();
+  };
 
   return {
     createPortfolio,

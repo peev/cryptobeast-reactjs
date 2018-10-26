@@ -70,29 +70,29 @@ const currencyController = (repository) => {
     return newCurrencyObject;
   };
 
-  const updateAction = (req, res, id, currencyObject, isSyncing) => {
+  const updateAction = async (req, res, id, currencyObject, isSyncing) => {
     const newCurrencyData = Object.assign({}, currencyObject, { id });
-    return repository.update({ modelName, updatedRecord: newCurrencyData })
-      .then(response => (isSyncing ? newCurrencyData : res.status(200).send(response)))
-      .catch(error => console.log(error));
+    await repository.update({ modelName, updatedRecord: newCurrencyData })
+      .then(response => (isSyncing ? response : res.status(200).send(response)))
+      .catch(error => res.status(400).send({ message: error }));
   };
 
-  const createAction = (req, res, currencyObject, isSyncing) => {
-    repository.create({ modelName, newObject: currencyObject })
-      .then(response => (isSyncing ? currencyObject : res.status(200).send(response)))
-      .catch(error => console.log(error));
+  const createAction = async (req, res, currencyObject, isSyncing) => {
+    await repository.create({ modelName, newObject: currencyObject })
+      .then(response => (isSyncing ? response : res.status(200).send(response)))
+      .catch(error => res.status(400).send({ message: error }));
   };
 
-  const createCurrency = (req, res) => {
+  const createCurrency = async (req, res) => {
     const currency = req.body;
 
     const currencyObject = getCurrencyObject(currency);
     const currencyFound = fetchCurrencyObject(currency.name);
 
     if (currencyFound === null) {
-      return createAction(req, res, currencyObject, false);
+      await createAction(req, res, currencyObject, false);
     }
-    return updateAction(req, res, Number(currencyFound.id), currencyObject, false);
+    await updateAction(req, res, Number(currencyFound.id), currencyObject, false);
   };
 
   const syncCurrency = async (req, res) => {
@@ -102,9 +102,9 @@ const currencyController = (repository) => {
     const currencyFound = await fetchCurrencyObject(currency.name);
 
     if (currencyFound === null) {
-      createAction(req, res, currencyObject, true);
+      await createAction(req, res, currencyObject, true);
     } else {
-      updateAction(req, res, Number(currencyFound.id), currencyObject, true);
+      await updateAction(req, res, Number(currencyFound.id), currencyObject, true);
     }
   };
 

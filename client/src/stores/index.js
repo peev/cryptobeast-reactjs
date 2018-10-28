@@ -4,6 +4,7 @@ import InvestorStore from './InvestorStore';
 import MarketStore from './MarketStore';
 import ApiAccountStore from './ApiAccountStore';
 import UserStore from './UserStore';
+import WeidexStore from './WeidexStore';
 import NotificationStore from './NotificationStore';
 import Analytics from './Analytics';
 import Allocations from './Allocations';
@@ -25,8 +26,8 @@ const stores = {
   Allocations,
   Currencies,
   FiatCurrencies
-
   TradeHistoryStore,
+  WeidexStore,
 };
 
 export default stores;

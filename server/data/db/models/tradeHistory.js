@@ -47,7 +47,4 @@ module.exports = (sequelize, DataTypes) => sequelize.define('tradeHistory', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-}, {
-  freezeTableName: true,
-  tableName: 'weiTradeHistory',
 });

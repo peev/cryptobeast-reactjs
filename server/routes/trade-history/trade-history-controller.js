@@ -6,7 +6,7 @@ const modelName = 'TradeHistory';
 const tradeController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
 
-  const getWeiPortfolioObjectByAddress = async address => repository.findOne({
+  const getPortfolioObjectByAddress = async address => repository.findOne({
     modelName: 'Portfolio',
     options: {
       where: {
@@ -22,16 +22,6 @@ const tradeController = (repository) => {
     options: {
       where: {
         txHash: transactionHash,
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
-  const getFiatFx = () => repository.findOne({
-    modelName: 'FiatFx',
-    options: {
-      where: {
-        fxName: 'ETH',
       },
     },
   })
@@ -53,7 +43,7 @@ const tradeController = (repository) => {
         status: req.status,
         txFee: transactonFee,
         pair: `${req.token.name.toUpperCase()}-ETH`,
-        weiPortfolioId: req.weiPortfolioId,
+        portfolioId: req.portfolioId,
       };
     } catch (error) {
       console.log(error);
@@ -76,10 +66,10 @@ const tradeController = (repository) => {
     try {
       const tradeExist = await getTradeByTransactionHash(trade.txHash);
       if (tradeExist !== null) {
-        const ethValue = await getFiatFx();
+        const lastPriceUSD = await etherScanServices().getETHUSDPrice();
         const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
         const transactionFee = calculateTransactionFee(transaction);
-        const tradeObject = createTradeObject(trade, ethValue.priceUSD, transactionFee);
+        const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee);
 
         await createAction(req, res, tradeObject, false);
       } else {
@@ -90,16 +80,15 @@ const tradeController = (repository) => {
     }
   };
 
-  const syncTrade = async (req, res) => {
+  const syncTrade = async (req, res, lastPriceUSD) => {
     const trade = req.body;
 
     try {
       const tradeExist = await getTradeByTransactionHash(trade.txHash);
       if (tradeExist === null) {
-        const ethValue = await getFiatFx();
         const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
         const transactionFee = calculateTransactionFee(transaction);
-        const tradeObject = createTradeObject(trade, ethValue.priceUSD, transactionFee);
+        const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee);
 
         await createAction(req, res, tradeObject, true);
       }
@@ -128,19 +117,23 @@ const tradeController = (repository) => {
 
   const sync = async (req, res, addresses) => {
     addresses.map(async (address) => {
-      const portfolio = await getWeiPortfolioObjectByAddress(address);
-      const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
-        .then(data => data.json())
-        .catch(error => console.log(error));
+      try {
+        const lastPriceUSD = await etherScanServices().getETHUSDPrice();
+        const portfolio = await getPortfolioObjectByAddress(address);
+        const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
+          .then(data => data.json())
+          .catch(error => console.log(error));
 
-      const resolvedFinalArray = await Promise.all(trades.map(async (trade) => {
-        const addPortfolioId = Object.assign({}, trade, { weiPortfolioId: portfolio.id });
-        const bodyWrapper = Object.assign({ body: addPortfolioId });
-        return syncTrade(bodyWrapper, res);
-      }));
-      Promise.resolve(resolvedFinalArray)
-        .then(() => console.log('success'))
-        .catch(error => console.log(error));
+        if (trades) {
+          trades.map(async (trade) => {
+            const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolio.id });
+            const bodyWrapper = Object.assign({ body: addPortfolioId });
+            await syncTrade(bodyWrapper, res, lastPriceUSD);
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     });
   };
 

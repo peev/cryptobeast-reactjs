@@ -8,23 +8,35 @@ import SelectFromPortfolios from '../../components/Tabs/SelectFromPortfolios/Sel
 type Props = {
   PortfolioStore: Object,
   portfolios: Array<object>,
+  WeidexStore: Object,
   selectedPortfolioId: number,
+  location: Object,
 };
 
-const CreatePortfolioView = inject('PortfolioStore', 'UserStore')(observer(({ ...props }: Props) => {
-  const { PortfolioStore } = props;
+
+@inject('PortfolioStore', 'UserStore', 'ApiAccountStore', 'WeidexStore', 'location')
+@observer
+class CreatePortfolioView extends React.Component<Props> {
+  componentWillMount() {
+    const addresses = this.getAddresses(this.props.location.search);
+    this.props.WeidexStore.sync(addresses);
+  }
+
+  getAddresses = (locationSearch: string) => locationSearch.replace('&w=', 'w=').substring(1).split('w=').slice(1);
 
   // TODO: Enable when we have portfolios
   // if (PortfolioStore.portfolios.length === 1) {
   //   PortfolioStore.selectPortfolio(PortfolioStore.portfolios[0].id);
-    return <Redirect to="/summary" />;
+  //  return <Redirect to="/summary" />;
   // }
 
-  return (
-    <React.Fragment>
-      <SelectFromPortfolios />
-    </React.Fragment>
-  );
-}));
+  render() {
+    return (
+      <React.Fragment>
+        <SelectFromPortfolios />
+      </React.Fragment>
+    );
+  }
+}
 
 export default CreatePortfolioView;

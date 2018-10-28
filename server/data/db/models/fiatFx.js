@@ -11,7 +11,4 @@ module.exports = (sequelize, DataTypes) => sequelize.define('fiatFx', {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
-}, {
-  freezeTableName: true,
-  tableName: 'weiFiatFX',
 });

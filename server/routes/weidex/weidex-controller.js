@@ -1,31 +1,25 @@
 const { WeidexService } = require('../../services/weidex-service');
 
 const weidexController = (repository) => {
-  const weiAssetController = require('../asset/asset-controller')(repository);
-  const weiFiatFxController = require('../fiat-fx/fiat-fx-controller')(repository);
-  const weiCurrencyController = require('../currency/currency-controller')(repository);
-  const weiPortfolioController = require('../portfolio/portfolio-controller')(repository);
-  const weiTransactionController = require('../transaction/transaction-controller')(repository);
-  const weiTradeHistoryController = require('../trade-history/trade-history-controller')(repository);
+  const assetController = require('../asset/asset-controller')(repository);
+  const fiatFxController = require('../fiat-fx/fiat-fx-controller')(repository);
+  const currencyController = require('../currency/currency-controller')(repository);
+  const portfolioController = require('../portfolio/portfolio-controller')(repository);
+  const transactionController = require('../transaction/transaction-controller')(repository);
+  const tradeHistoryController = require('../trade-history/trade-history-controller')(repository);
 
   const sync = async (req, res) => {
     const addresses = req.body.map(address => address.toLowerCase());
-    console.log('Start sync');
-    // weiFiatFxController.sync();
     // POST /weidex/sync ["0x5AE0d1Ffb5e06d32f3dA53aCA952439766Ab029F","0xac5e37db1c85bfc3e6474755ed77cff76d81eb67"]
-    await weiFiatFxController.sync(req, res);
-    await console.log('=============== END OF FIATFX =======================================');
-    await weiCurrencyController.sync(req, res);
-    await console.log('=============== END OF CURRENCY =======================================');
-    await weiPortfolioController.sync(req, res, addresses);
-    await console.log('=============== END OF PORTFOLIO =======================================');
-    await weiAssetController.sync(req, res, addresses);
-    await console.log('=============== END OF ASSETS =======================================');
-    await weiTransactionController.sync(req, res, addresses);
-    await console.log('=============== END OF TRANSACTIONS =======================================');
-    await weiTradeHistoryController.sync(req, res, addresses);
-    await console.log('=============== END OF TRADES =======================================');
-    await console.log('End sync');
+    await fiatFxController.sync(req, res);
+    console.log('================== START CURRENCY ==================');
+    await currencyController.sync(req, res)
+      .then(() => console.log('================== START PORTFOLIO =================='));
+    await portfolioController.sync(req, res, addresses)
+      .then(() => console.log('================== START ASSETS =================='));
+    await assetController.sync(req, res, addresses);
+    await transactionController.sync(req, res, addresses);
+    await tradeHistoryController.sync(req, res, addresses);
   };
 
   const getUser = (req, res) => {
@@ -131,6 +125,7 @@ const weidexController = (repository) => {
   return {
     sync,
     getUser,
+    getAllTokens,
     getBalanceByUser,
     getUserDeposit,
     getUserWithdraw,
@@ -138,7 +133,7 @@ const weidexController = (repository) => {
     getUserOpenOrdersByOrderType,
     getUserOrderHistoryByToken,
     getUserOrderHistoryByUser,
-    getUserOrderHistoryByUserAndToken
+    getUserOrderHistoryByUserAndToken,
   };
 };
 

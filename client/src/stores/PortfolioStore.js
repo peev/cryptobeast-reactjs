@@ -415,36 +415,41 @@ class PortfolioStore {
   get currentPortfolioCostInUSD() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
-    if (this.selectedPortfolio &&
-      MarketStore.baseCurrencies.length > 0) {
-      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this is USD
-      return this.currentPortfolioAssets.reduce((accumulator, asset) => {
-        let assetUSDValue;
-        switch (asset.currency) {
-          case 'JPY':
-          case 'EUR':
-          case 'USD': {
-            const wantedCurrency = MarketStore.baseCurrencies.filter(x => x.pair === asset.currency)[0];
-            assetUSDValue = (asset.balance / wantedCurrency.last) * valueOfUSD;
-            break;
-          }
-          case 'BTC': {
-            assetUSDValue = asset.balance * valueOfUSD;
-            break;
-          }
-          default: {
-            const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${asset.currency}`]
-              ? (MarketStore.marketSummaries[`BTC-${asset.currency}`].Last * asset.balance)
-              : 0;
-            assetUSDValue = assetBTCEquiv * valueOfUSD;
-            break;
-          }
-        }
-        return accumulator + assetUSDValue;
-      }, 0);
+    if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
+      return this.currentPortfolioAssets.reduce((accumulator, asset) => accumulator + asset.totalUSD);
     }
-
     return 0;
+
+    // TODO FOR DELETE
+    // if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
+    //   const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this is USD
+    //   return this.currentPortfolioAssets.reduce((accumulator, asset) => {
+    //     let assetUSDValue;
+    //     switch (asset.currency) {
+    //       case 'JPY':
+    //       case 'EUR':
+    //       case 'USD': {
+    //         const wantedCurrency = MarketStore.baseCurrencies.filter(x => x.pair === asset.currency)[0];
+    //         assetUSDValue = (asset.balance / wantedCurrency.last) * valueOfUSD;
+    //         break;
+    //       }
+    //       case 'BTC': {
+    //         assetUSDValue = asset.balance * valueOfUSD;
+    //         break;
+    //       }
+    //       default: {
+    //         const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${asset.currency}`]
+    //           ? (MarketStore.marketSummaries[`BTC-${asset.currency}`].Last * asset.balance)
+    //           : 0;
+    //         assetUSDValue = assetBTCEquiv * valueOfUSD;
+    //         break;
+    //       }
+    //     }
+    //     return accumulator + assetUSDValue;
+    //   }, 0);
+    // }
+
+    // return 0;
   }
 
   @computed
@@ -627,11 +632,12 @@ class PortfolioStore {
 
   @action.bound
   getCurrentPortfolioAssets() {
-    const searchedItem = {
-      portfolioId: this.selectedPortfolioId,
-      item: 'Asset',
-    };
-    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
+    // TODO FOR DELETE
+    // const searchedItem = {
+    //   portfolioId: this.selectedPortfolioId,
+    //   item: 'Asset',
+    // };
+    requester.Portfolio.getPortfolioAssetsByPortfolioId(this.selectedPortfolio.id)
       .then(action((result) => {
         this.currentPortfolioAssets = result.data;
       }));

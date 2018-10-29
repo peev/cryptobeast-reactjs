@@ -84,7 +84,6 @@ const portfolioController = (repository) => {
     await updateAction(req, res, Number(id), portfolioData, false);
   };
 
-
   const updatePortfolioTotalInvestment = async (req, res, address) => {
     const portfolioFound = await getPortfolioWholeObject(address);
 

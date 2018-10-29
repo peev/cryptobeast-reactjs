@@ -4,7 +4,7 @@ const { etherScanServices } = require('../../integrations/etherScan-services');
 const modelName = 'Transaction';
 
 const transactionController = (repository) => {
-  const WeidexService = require('../../services/weidex-service')(repository);
+  const weidexService = require('../../services/weidex-service')(repository);
 
   const getTransactionObject = async transactionHash => repository.findOne({
     modelName,
@@ -36,7 +36,7 @@ const transactionController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const createTransactionObject = async (req, timestamp, ethValue) => {
+  const createTransactionObject = (req, timestamp, ethValue) => {
     let newTransactionObject;
     try {
       newTransactionObject = {
@@ -59,35 +59,32 @@ const transactionController = (repository) => {
     return newTransactionObject;
   };
 
-  const updateAction = (req, res, id, transactionObject, isSyncing) => {
+  const updateAction = async (req, res, id, transactionObject, isSyncing) => {
     const newTransactionData = Object.assign({}, transactionObject, { id });
-    repository.update({ modelName, updatedRecord: newTransactionData })
+    await repository.update({ modelName, updatedRecord: newTransactionData })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
 
-  const createAction = (req, res, transactionObject, isSyncing) => {
-    repository.create({ modelName, newObject: transactionObject })
+  const createAction = async (req, res, transactionObject, isSyncing) => {
+    await repository.create({ modelName, newObject: transactionObject })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
 
   const createTransaction = async (req, res) => {
-    const transactionData = req.body;
-
-    const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
-    const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-    const currency = await getCurrencyByTokenName(transactionData.tokenName);
-    const ethValue = await WeidexService.getTokenPriceByTimestamp(currency.tokenId, etherScanTransactionBlock.timestamp);
-    const transactionObject = await createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
-
     try {
+      const transactionData = req.body;
+      const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
+      const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
+      const currency = await getCurrencyByTokenName(transactionData.tokenName);
+      const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, etherScanTransactionBlock.timestamp);
+      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
       const transaction = await getTransactionObject(transactionData.txHash);
       if (transaction === null) {
-        await createAction(req, res, transactionObject, false);
-      } else {
-        await updateAction(req, res, Number(transaction.id), transactionObject, false);
+        return createAction(req, res, transactionObject, false);
       }
+      return updateAction(req, res, Number(transaction.id), transactionObject, false);
     } catch (error) {
       console.log(error);
     }
@@ -95,20 +92,17 @@ const transactionController = (repository) => {
 
   const syncTransaction = async (req, res) => {
     const transactionData = req.body;
-
-    const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
-    const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-    const currency = await getCurrencyByTokenName(transactionData.tokenName);
-    const ethValue = await WeidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
-    const transactionObject = await createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
-
     try {
+      const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
+      const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
+      const currency = await getCurrencyByTokenName(transactionData.tokenName);
+      const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
       const transaction = await getTransactionObject(transactionData.txHash);
       if (transaction === null) {
         await createAction(req, res, transactionObject, true);
-      } else {
-        await updateAction(req, res, Number(transaction.id), transactionObject, true);
       }
+      await updateAction(req, res, Number(transaction.id), transactionObject, true);
     } catch (error) {
       console.log(error);
     }
@@ -128,14 +122,17 @@ const transactionController = (repository) => {
   const updateTransaction = async (req, res) => {
     const { id } = req.params;
     const transactionData = req.body;
+    try {
+      const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
+      const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
+      const currency = await getCurrencyByTokenName(transactionData.tokenName);
+      const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
 
-    const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
-    const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-    const currency = await getCurrencyByTokenName(transactionData.tokenName);
-    const ethValue = await WeidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
-    const transactionObject = await createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
-
-    updateAction(req, res, Number(id), transactionObject, false);
+      await updateAction(req, res, Number(id), transactionObject, false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const removeTransaction = (req, res) => {
@@ -145,30 +142,44 @@ const transactionController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const getDeposits = async (req, res, portfolioID, userID) => {
+    try {
+      const deposits = await weidexService.getUserDepositHttp(userID);
+      await Promise.all(deposits.map(async (deposit) => {
+        const addPortfolioId = Object.assign({}, deposit, { portfolioId: portfolioID, type: 'd' });
+        const bodyWrapper = Object.assign({ body: addPortfolioId });
+        await syncTransaction(bodyWrapper, res);
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getWithDrawls = async (req, res, portfolioID, userID) => {
+    try {
+      const withdrawls = await weidexService.getUserWithdrawHttp(userID);
+      await Promise.all(withdrawls.map(async (withdrawl) => {
+        const addPortfolioId = Object.assign({}, withdrawl, { portfolioId: portfolioID, type: 'w' });
+        const bodyWrapper = Object.assign({ body: addPortfolioId });
+        await syncTransaction(bodyWrapper, res);
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const sync = async (req, res, addresses) => {
-    addresses.map(async (address) => {
+    const portfolioArray = addresses.map(async (address) => {
       try {
         const portfolio = await getPortfolioObjectByAddress(address);
-        const deposits = await WeidexService.getUserDeposit(portfolio.userID)
-          .then(data => data.json())
-          .catch(error => console.log(error));
-        const withdrawls = await WeidexService.getUserWithdraw(portfolio.userID)
-          .then(data => data.json())
-          .catch(error => console.log(error));
-
-        deposits.map(async (deposit) => {
-          const addPortfolioId = Object.assign({}, deposit, { portfolioId: portfolio.id, type: 'd' });
-          const bodyWrapper = Object.assign({ body: addPortfolioId });
-          await syncTransaction(bodyWrapper, res);
-        });
-        withdrawls.map(async (withdrawl) => {
-          const addPortfolioId = Object.assign({}, withdrawl, { portfolioId: portfolio.id, type: 'w' });
-          const bodyWrapper = Object.assign({ body: addPortfolioId });
-          await syncTransaction(bodyWrapper, res);
-        });
+        await getDeposits(req, res, portfolio.id, portfolio.userID);
+        await getWithDrawls(req, res, portfolio.id, portfolio.userID);
       } catch (error) {
         console.log(error);
       }
+    });
+    return Promise.all(portfolioArray).then(() => {
+      console.log('================== END TRANSACTIONS ==================');
     });
   };
 

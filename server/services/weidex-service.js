@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const request = require('requestretry');
 const requester = require('../services/requester-service');
+const http = require('../services/http');
 
 const url = 'https://core.weidex.market';
 const staging = 'http://staging-core-java.herokuapp.com';
@@ -98,10 +99,81 @@ const WeidexService = (repository) => {
     { method: 'GET' },
   );
 
+  const getUserDepositHttp = id => new Promise((resolve, reject) => {
+    http.get(`${staging}/deposit/user/${id}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
+  });
+
+  const getUserWithdrawHttp = id => new Promise((resolve, reject) => {
+    http.get(`${staging}/withdraw/user/${id}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
+  });
+
+  const getUserOrderHistoryByUserHttp = userId => new Promise((resolve, reject) => {
+    http.get(`${staging}/orderHistory/user/${userId}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
+  });
+
+  const getUserHttp = address => new Promise((resolve, reject) => {
+    http.get(`${staging}/user/${address}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
+  });
+
+  const getAllTokensHttp = () => new Promise((resolve, reject) => {
+    http.get(`${staging}/token/all`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
+  });
+
+  const getBalanceByUserHttp = address => new Promise((resolve, reject) => {
+    http.get(`${staging}/balance/user/${address}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
+  });
+
   return {
     getUser,
+    getUserHttp,
     getBalanceByUser,
+    getBalanceByUserHttp,
     getUserDeposit,
+    getUserDepositHttp,
+    getUserWithdrawHttp,
+    getUserOrderHistoryByUserHttp,
     getUserWithdraw,
     getUserOpenOrders,
     getUserOpenOrdersByOrderType,
@@ -111,6 +183,7 @@ const WeidexService = (repository) => {
     getTokenTicker,
     getCurrencyStats,
     getAllTokens,
+    getAllTokensHttp,
     getTokenPriceByTimestamp,
   };
 };

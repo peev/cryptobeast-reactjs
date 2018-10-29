@@ -51,8 +51,8 @@ const tradeController = (repository) => {
     return newTradeObject;
   };
 
-  const createAction = (req, res, tradeObject, isSyncing) => {
-    repository.create({ modelName, newObject: tradeObject })
+  const createAction = async (req, res, tradeObject, isSyncing) => {
+    await repository.create({ modelName, newObject: tradeObject })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
@@ -115,25 +115,34 @@ const tradeController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const getTrades = async (req, res, trades, portfolioID, lastPriceUSD) => {
+    try {
+      await Promise.all(trades.map(async (trade) => {
+        const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolioID });
+        const bodyWrapper = Object.assign({ body: addPortfolioId });
+        await syncTrade(bodyWrapper, res, lastPriceUSD);
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const sync = async (req, res, addresses) => {
-    addresses.map(async (address) => {
+    const portfolioArray = addresses.map(async (address) => {
       try {
         const lastPriceUSD = await etherScanServices().getETHUSDPrice();
         const portfolio = await getPortfolioObjectByAddress(address);
-        const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
-          .then(data => data.json())
-          .catch(error => console.log(error));
-
+        const trades = await WeidexService.getUserOrderHistoryByUserHttp(portfolio.userID);
         if (trades) {
-          trades.map(async (trade) => {
-            const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolio.id });
-            const bodyWrapper = Object.assign({ body: addPortfolioId });
-            await syncTrade(bodyWrapper, res, lastPriceUSD);
-          });
+          await getTrades(req, res, trades, portfolio.id, lastPriceUSD);
         }
       } catch (error) {
         console.log(error);
       }
+    });
+    return Promise.all(portfolioArray).then(() => {
+      console.log('================== END TRADES ==================');
+      return res.status(200).send('Sync finished');
     });
   };
 

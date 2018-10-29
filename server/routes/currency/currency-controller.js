@@ -55,14 +55,14 @@ const currencyController = (repository) => {
         tokenId: req.id,
         tokenName: req.name,
         tokenNameLong: req.fullName,
-        lastPriceETH: priceResponse.price,
+        lastPriceETH: priceResponse.lastPrice,
         volume24H: volume24HStats,
         high24H: high24HStats,
         low24H: low24HStats,
         change24H: change24HStats,
         change7D: change7DStats,
-        // bid: req.bid,
-        // ask: req.ask,
+        bid: priceResponse.bid,
+        ask: priceResponse.ask,
       };
     } catch (error) {
       console.log(error);
@@ -70,29 +70,29 @@ const currencyController = (repository) => {
     return newCurrencyObject;
   };
 
-  const updateAction = (req, res, id, currencyObject, isSyncing) => {
+  const updateAction = async (req, res, id, currencyObject, isSyncing) => {
     const newCurrencyData = Object.assign({}, currencyObject, { id });
-    return repository.update({ modelName, updatedRecord: newCurrencyData })
-      .then(response => (isSyncing ? newCurrencyData : res.status(200).send(response)))
-      .catch(error => console.log(error));
+    await repository.update({ modelName, updatedRecord: newCurrencyData })
+      .then(response => (isSyncing ? response : res.status(200).send(response)))
+      .catch(error => res.status(400).send({ message: error }));
   };
 
-  const createAction = (req, res, currencyObject, isSyncing) => {
-    repository.create({ modelName, newObject: currencyObject })
-      .then(response => (isSyncing ? currencyObject : res.status(200).send(response)))
-      .catch(error => console.log(error));
+  const createAction = async (req, res, currencyObject, isSyncing) => {
+    await repository.create({ modelName, newObject: currencyObject })
+      .then(response => (isSyncing ? response : res.status(200).send(response)))
+      .catch(error => res.status(400).send({ message: error }));
   };
 
-  const createCurrency = (req, res) => {
+  const createCurrency = async (req, res) => {
     const currency = req.body;
 
     const currencyObject = getCurrencyObject(currency);
     const currencyFound = fetchCurrencyObject(currency.name);
 
     if (currencyFound === null) {
-      return createAction(req, res, currencyObject, false);
+      await createAction(req, res, currencyObject, false);
     }
-    return updateAction(req, res, Number(currencyFound.id), currencyObject, false);
+    await updateAction(req, res, Number(currencyFound.id), currencyObject, false);
   };
 
   const syncCurrency = async (req, res) => {
@@ -102,9 +102,9 @@ const currencyController = (repository) => {
     const currencyFound = await fetchCurrencyObject(currency.name);
 
     if (currencyFound === null) {
-      createAction(req, res, currencyObject, true);
+      await createAction(req, res, currencyObject, true);
     } else {
-      updateAction(req, res, Number(currencyFound.id), currencyObject, true);
+      await updateAction(req, res, Number(currencyFound.id), currencyObject, true);
     }
   };
 
@@ -132,19 +132,15 @@ const currencyController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = (req, res) => {
-    (async () => {
-      const tokens = await WeidexService.getAllTokens()
-        .then(data => data.json())
-        .catch(error => console.log(error));
-      const tokenArray = await tokens.map((token) => {
-        const bodyWrapper = Object.assign({ body: token });
-        return syncCurrency(bodyWrapper, res);
-      });
-      await Promise.all(tokenArray).then(() => {
-        console.log('================== END CURRENCY =========================================');
-      });
-    })();
+  const sync = async (req, res) => {
+    const tokens = await WeidexService.getAllTokensHttp();
+    const tokenArray = await tokens.map((token) => {
+      const bodyWrapper = Object.assign({ body: token });
+      return syncCurrency(bodyWrapper, res);
+    });
+    await Promise.all(tokenArray).then(() => {
+      console.log('================== END CURRENCY ==================');
+    });
   };
 
   return {

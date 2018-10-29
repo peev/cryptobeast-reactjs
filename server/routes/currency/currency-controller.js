@@ -61,8 +61,8 @@ const currencyController = (repository) => {
         low24H: low24HStats,
         change24H: change24HStats,
         change7D: change7DStats,
-        // bid: req.bid,
-        // ask: req.ask,
+        bid: req.bid,
+        ask: req.ask,
       };
     } catch (error) {
       console.log(error);

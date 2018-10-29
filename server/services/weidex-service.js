@@ -121,12 +121,24 @@ const WeidexService = (repository) => {
       }); // eslint-disable-line
   });
 
+  const getUserOrderHistoryByUserHttp = userId => new Promise((resolve, reject) => {
+    http.get(`${staging}/orderHistory/user/${userId}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      }); // eslint-disable-line
+  });
+
   return {
     getUser,
     getBalanceByUser,
     getUserDeposit,
     getUserDepositHttp,
     getUserWithdrawHttp,
+    getUserOrderHistoryByUserHttp,
     getUserWithdraw,
     getUserOpenOrders,
     getUserOpenOrdersByOrderType,

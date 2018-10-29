@@ -19,7 +19,8 @@ const weidexController = (repository) => {
       .then(() => console.log('================== START ASSETS =================='));
     await assetController.sync(req, res, addresses)
       .then(() => console.log('================== START TRANSACTIONS =================='));
-    await transactionController.sync(req, res, addresses);
+    await transactionController.sync(req, res, addresses)
+      .then(() => console.log('================== START TRADES =================='));
     await tradeHistoryController.sync(req, res, addresses);
   };
 

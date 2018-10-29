@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const request = require('requestretry');
 const requester = require('../services/requester-service');
+const http = require('../services/http');
 
 const url = 'https://core.weidex.market';
 const staging = 'http://staging-core-java.herokuapp.com';
@@ -98,10 +99,34 @@ const WeidexService = (repository) => {
     { method: 'GET' },
   );
 
+  const getUserDepositHttp = id => new Promise((resolve, reject) => {
+    http.get(`${staging}/deposit/user/${id}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      }); // eslint-disable-line
+  });
+
+  const getUserWithdrawHttp = id => new Promise((resolve, reject) => {
+    http.get(`${staging}/withdraw/user/${id}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      }); // eslint-disable-line
+  });
+
   return {
     getUser,
     getBalanceByUser,
     getUserDeposit,
+    getUserDepositHttp,
+    getUserWithdrawHttp,
     getUserWithdraw,
     getUserOpenOrders,
     getUserOpenOrdersByOrderType,

@@ -1,6 +1,6 @@
-const { WeidexService } = require('../../services/weidex-service');
 
 const weidexController = (repository) => {
+  const WeidexService = require('../../services/weidex-service')(repository);
   const assetController = require('../asset/asset-controller')(repository);
   const fiatFxController = require('../fiat-fx/fiat-fx-controller')(repository);
   const currencyController = require('../currency/currency-controller')(repository);
@@ -17,7 +17,8 @@ const weidexController = (repository) => {
       .then(() => console.log('================== START PORTFOLIO =================='));
     await portfolioController.sync(req, res, addresses)
       .then(() => console.log('================== START ASSETS =================='));
-    await assetController.sync(req, res, addresses);
+    await assetController.sync(req, res, addresses)
+      .then(() => console.log('================== START TRANSACTIONS =================='));
     await transactionController.sync(req, res, addresses);
     await tradeHistoryController.sync(req, res, addresses);
   };

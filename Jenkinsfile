@@ -39,6 +39,13 @@ node {
       }
     }
 
+    stage('Remove Dependencies') {
+      // Ensure deps are deleted to save space
+      // This will save us 1GB of storage on each build
+      sh 'cd client && rm -rf node_modules/'
+      sh 'cd server && rm -rf node_modules/'
+    }
+
     // slackSend(color: '#4BB543', message: "JOB: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}), BRANCH: '${env.BRANCH_NAME}' COMMIT-ID: '${commit_id}'")
   } catch(e) {
     // slackSend(color: '#FF0000', message: "JOB: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}), BRANCH: '${env.BRANCH_NAME}' COMMIT-ID: '${commit_id}'")

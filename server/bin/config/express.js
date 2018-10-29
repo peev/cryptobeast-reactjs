@@ -37,20 +37,24 @@ const init = async (repository) => {
   });
 
   // Middleware for checking the JWT
-  const checkJwt = jwt({
-    // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint
-    secret: jwksRsa.expressJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: 'https://cryptobeast.eu.auth0.com/.well-known/jwks.json',
-    }),
-
-    // Validate the audience and the issuer
-    audience: 'ro3TfD3x5qWYVH7EhI7IlpoHPK330NeQ',
-    issuer: 'https://cryptobeast.eu.auth0.com/',
-    algorithms: ['RS256'],
-  });
+  const checkJwt = (req, res, next) => {
+    if ( req.path == '/health/check') return next();
+    const authCheck = jwt({
+      // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint
+      secret: jwksRsa.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: 'https://cryptobeast.eu.auth0.com/.well-known/jwks.json',
+      }),
+  
+      // Validate the audience and the issuer
+      audience: 'ro3TfD3x5qWYVH7EhI7IlpoHPK330NeQ',
+      issuer: 'https://cryptobeast.eu.auth0.com/',
+      algorithms: ['RS256'],
+    });
+    return authCheck(req, res, next);
+  }
 
   // Enable Authentication on all API Endpoints
   app.use(checkJwt);
@@ -90,6 +94,7 @@ const init = async (repository) => {
   require('./../../routes/market/market-router').attachTo(app, repository);
   require('./../../routes/account/account-router').attachTo(app, repository);
   require('./../../routes/investor/investor-router').attachTo(app, repository);
+  require('./../../routes/utilities/health-check-router').attachTo(app, repository);
 
   // Handle Errors
   // catch 404 and forward to error handler

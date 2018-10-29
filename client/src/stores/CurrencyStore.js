@@ -20,15 +20,15 @@ class Currencies {
         this.currencies = result.data;
       }));
   }
-}
-// Array of ids of the currencies we want to fetch their history 
-@action.bound
-getCurrenciesHistory(currencies) {
-  requester.Currencies.getCurrenciesHistory(currencies)
-    .then(action((result) => {
-      this.currenciesHistory = result.data;
-    }));
-}
+
+  // Array of ids of the currencies we want to fetch their history
+  @action.bound
+  getCurrenciesHistory(currencies) {
+    requester.Currencies.getCurrenciesHistory(currencies)
+      .then(action((result) => {
+        this.currenciesHistory = result.data;
+      }));
+  }
 }
 
 export default new Currencies();

@@ -1,4 +1,5 @@
 import { observable, action, computed, onBecomeObserved } from 'mobx';
+import PortfolioStore from './PortfolioStore';
 import requester from '../services/requester';
 
 class Allocations {
@@ -13,7 +14,7 @@ class Allocations {
   @action.bound
   getAllocations() {
     const searchedHistoryItems = {
-      portfolioId: PortfolioStore.selectedPortfolioId
+      portfolioId: PortfolioStore.selectedPortfolioId,
     };
 
     requester.Allocations.getSharePriceHistory(searchedHistoryItems)

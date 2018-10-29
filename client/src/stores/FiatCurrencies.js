@@ -20,15 +20,15 @@ class FiatCurrencies {
         this.fiatCurrencies = result.data;
       }));
   }
-}
-// Array of ids of the currencies we want to fetch their history 
-@action.bound
-getFiatCurrenciesHistory(currencies) {
-  requester.FiatCurrencies.getFiatCurrenciesHistory(currencies)
-    .then(action((result) => {
-      this.fiatCurrenciesHistory = result.data;
-    }));
-}
+
+  // Array of ids of the currencies we want to fetch their history
+  @action.bound
+  getFiatCurrenciesHistory(currencies) {
+    requester.FiatCurrencies.getFiatCurrenciesHistory(currencies)
+      .then(action((result) => {
+        this.fiatCurrenciesHistory = result.data;
+      }));
+  }
 }
 
 export default new FiatCurrencies();

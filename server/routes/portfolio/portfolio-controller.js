@@ -118,9 +118,7 @@ const portfolioController = (repository) => {
 
   const sync = async (req, res, addresses) => {
     const portfolioArray = addresses.map(async (address) => {
-      const portfolio = await WeidexService.getUser(address)
-        .then(data => data.json())
-        .catch(error => res.status(404).send({ isSuccessful: false, message: error }));
+      const portfolio = await WeidexService.getUserHttp(address);
       const bodyWrapper = Object.assign({ body: portfolio });
       await syncPortfolio(bodyWrapper, res);
     });

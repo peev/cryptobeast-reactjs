@@ -202,9 +202,7 @@ const assetController = (repository) => {
       try {
         const lastPriceUSD = await etherScanServices().getETHUSDPrice();
         const portfolio = await getPortfolioObjectByAddress(address);
-        const assets = await WeidexService.getBalanceByUser(portfolio.userAddress)
-          .then(data => data.json())
-          .catch(error => console.log(error));
+        const assets = await WeidexService.getBalanceByUserHttp(portfolio.userAddress);
 
         await assets.map(async (asset) => {
           const addPortfolioId = Object.assign({}, asset, { portfolioId: portfolio.id });

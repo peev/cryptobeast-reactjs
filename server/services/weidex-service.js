@@ -107,7 +107,7 @@ const WeidexService = (repository) => {
       .catch((err) => {
         console.log(err);
         return reject(err);
-      }); // eslint-disable-line
+      });
   });
 
   const getUserWithdrawHttp = id => new Promise((resolve, reject) => {
@@ -118,7 +118,7 @@ const WeidexService = (repository) => {
       .catch((err) => {
         console.log(err);
         return reject(err);
-      }); // eslint-disable-line
+      });
   });
 
   const getUserOrderHistoryByUserHttp = userId => new Promise((resolve, reject) => {
@@ -129,12 +129,47 @@ const WeidexService = (repository) => {
       .catch((err) => {
         console.log(err);
         return reject(err);
-      }); // eslint-disable-line
+      });
+  });
+
+  const getUserHttp = address => new Promise((resolve, reject) => {
+    http.get(`${staging}/user/${address}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
+  });
+
+  const getAllTokensHttp = () => new Promise((resolve, reject) => {
+    http.get(`${staging}/token/all`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
+  });
+
+  const getBalanceByUserHttp = address => new Promise((resolve, reject) => {
+    http.get(`${staging}/balance/user/${address}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
   });
 
   return {
     getUser,
+    getUserHttp,
     getBalanceByUser,
+    getBalanceByUserHttp,
     getUserDeposit,
     getUserDepositHttp,
     getUserWithdrawHttp,
@@ -148,6 +183,7 @@ const WeidexService = (repository) => {
     getTokenTicker,
     getCurrencyStats,
     getAllTokens,
+    getAllTokensHttp,
     getTokenPriceByTimestamp,
   };
 };

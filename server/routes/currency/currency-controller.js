@@ -133,9 +133,7 @@ const currencyController = (repository) => {
   };
 
   const sync = async (req, res) => {
-    const tokens = await WeidexService.getAllTokens()
-      .then(data => data.json())
-      .catch(error => console.log(error));
+    const tokens = await WeidexService.getAllTokensHttp();
     const tokenArray = await tokens.map((token) => {
       const bodyWrapper = Object.assign({ body: token });
       return syncCurrency(bodyWrapper, res);

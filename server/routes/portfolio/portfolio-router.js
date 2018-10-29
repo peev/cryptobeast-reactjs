@@ -6,6 +6,7 @@ const attachTo = (app, repository, jobs) => {
   const validator = require('./portfolio-validator')();
 
   router
+    .post('/getPortfoliosByAddresses', controller.getPortfoliosByAddresses)
     .post('/create', validator.verifyCreatePortfolio, controller.createPortfolio)
     .get('/:address', controller.getPortfolio)
     .put('/update/:id', validator.verifyUpdatePortfolio, controller.updatePortfolio)

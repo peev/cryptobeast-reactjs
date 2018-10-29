@@ -109,6 +109,24 @@ const portfolioController = (repository) => {
       });
   };
 
+  const getPortfoliosByAddresses = (req, res) => {
+    const addresses = req.body;
+    repository.find({
+      modelName,
+      options: {
+        where: {
+          userAddress: addresses,
+        },
+      },
+    })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   const removePortfolio = (req, res) => {
     const { id } = req.params;
     repository.remove({ modelName, id })
@@ -134,6 +152,7 @@ const portfolioController = (repository) => {
     getPortfolio,
     removePortfolio,
     sync,
+    getPortfoliosByAddresses,
   };
 };
 

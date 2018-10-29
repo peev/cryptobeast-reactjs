@@ -604,6 +604,27 @@ class PortfolioStore {
     });
   }
 
+  @action
+  getPortfoliosByUserAddresses(addresses) {
+    this.fetchingPortfolios = true;
+    return new Promise((resolve, reject) => {
+      requester.Portfolio.getPortfoliosByUserAddresses(addresses)
+        .then(action((result) => {
+          this.portfolios = result.data;
+          if (this.selectedPortfolioId > 0) {
+            this.selectPortfolio(this.selectedPortfolioId);
+          }
+          resolve(true);
+          this.fetchingPortfolios = false;
+        }))
+        .catch(action((err) => {
+          this.fethingPortfolios = false;
+          console.log(err);
+          reject(err);
+        }));
+    });
+  }
+
   @action.bound
   getCurrentPortfolioAssets() {
     const searchedItem = {

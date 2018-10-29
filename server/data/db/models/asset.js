@@ -1,39 +1,41 @@
 module.exports = (sequelize, DataTypes) => sequelize.define('asset', {
-  currency: {
+  tokenName: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 50],
+      len: [1, 4],
     },
   },
   balance: {
     type: DataTypes.DOUBLE,
+    allowNull: false,
   },
   available: {
     type: DataTypes.DOUBLE,
-    allowNull: true,
+    allowNull: false,
   },
-  pending: {
+  inOrder: {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
-  cryptoAddress: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  requested: {
-    type: DataTypes.BOOLEAN,
-    allowNull: true,
-  },
-  uuid: {
-    type: DataTypes.UUID,
-    allowNull: true,
-  },
-  origin: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  lastBTCEquivalent: {
+  lastPriceETH: {
     type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  lastPriceUSD: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  totalUSD: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  totalETH: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  weight: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
   },
 });

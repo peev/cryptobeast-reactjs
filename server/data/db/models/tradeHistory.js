@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) => sequelize.define('weiTradeHistory', {
+module.exports = (sequelize, DataTypes) => sequelize.define('tradeHistory', {
   tokenName: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -47,7 +47,4 @@ module.exports = (sequelize, DataTypes) => sequelize.define('weiTradeHistory', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-}, {
-  freezeTableName: true,
-  tableName: 'weiTradeHistory',
 });

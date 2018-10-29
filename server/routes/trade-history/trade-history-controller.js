@@ -1,13 +1,13 @@
 const { responseHandler } = require('../utilities/response-handler');
 const { etherScanServices } = require('../../integrations/etherScan-services');
 
-const modelName = 'WeiTradeHistory';
+const modelName = 'TradeHistory';
 
 const tradeController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
 
-  const getWeiPortfolioObjectByAddress = async address => repository.findOne({
-    modelName: 'WeiPortfolio',
+  const getPortfolioObjectByAddress = async address => repository.findOne({
+    modelName: 'Portfolio',
     options: {
       where: {
         userAddress: address,
@@ -22,16 +22,6 @@ const tradeController = (repository) => {
     options: {
       where: {
         txHash: transactionHash,
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
-  const getFiatFx = () => repository.findOne({
-    modelName: 'WeiFiatFx',
-    options: {
-      where: {
-        fxName: 'ETH',
       },
     },
   })
@@ -53,7 +43,7 @@ const tradeController = (repository) => {
         status: req.status,
         txFee: transactonFee,
         pair: `${req.token.name.toUpperCase()}-ETH`,
-        weiPortfolioId: req.weiPortfolioId,
+        portfolioId: req.portfolioId,
       };
     } catch (error) {
       console.log(error);
@@ -68,7 +58,7 @@ const tradeController = (repository) => {
   };
 
   const calculateTransactionFee = transaction =>
-    ((transaction !== null) ? Number(((transaction.gas * 100) * (transaction.gasPrice * 100)) / 100) : 0);
+    ((transaction !== null) ? Number(transaction.gas * transaction.gasPrice) / 1000000000000000000 : 0);
 
   const createTrade = async (req, res) => {
     const trade = req.body;
@@ -76,10 +66,10 @@ const tradeController = (repository) => {
     try {
       const tradeExist = await getTradeByTransactionHash(trade.txHash);
       if (tradeExist !== null) {
-        const ethValue = await getFiatFx();
+        const lastPriceUSD = await etherScanServices().getETHUSDPrice();
         const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
         const transactionFee = calculateTransactionFee(transaction);
-        const tradeObject = createTradeObject(trade, ethValue.priceUSD, transactionFee);
+        const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee);
 
         await createAction(req, res, tradeObject, false);
       } else {
@@ -90,20 +80,17 @@ const tradeController = (repository) => {
     }
   };
 
-  const syncTrade = async (req, res) => {
+  const syncTrade = async (req, res, lastPriceUSD) => {
     const trade = req.body;
 
     try {
       const tradeExist = await getTradeByTransactionHash(trade.txHash);
-      if (tradeExist !== null) {
-        const ethValue = await getFiatFx();
+      if (tradeExist === null) {
         const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
         const transactionFee = calculateTransactionFee(transaction);
-        const tradeObject = createTradeObject(trade, ethValue.priceUSD, transactionFee);
+        const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee);
 
         await createAction(req, res, tradeObject, true);
-      } else {
-        res.status(200).send(trade);
       }
     } catch (error) {
       console.log(error);
@@ -128,20 +115,26 @@ const tradeController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const sync = async (req, res, address) => {
-    const portfolio = await getWeiPortfolioObjectByAddress(address);
-    const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
-      .then(data => data.json())
-      .catch(error => console.log(error));
+  const sync = async (req, res, addresses) => {
+    addresses.map(async (address) => {
+      try {
+        const lastPriceUSD = await etherScanServices().getETHUSDPrice();
+        const portfolio = await getPortfolioObjectByAddress(address);
+        const trades = await WeidexService.getUserOrderHistoryByUser(portfolio.userID)
+          .then(data => data.json())
+          .catch(error => console.log(error));
 
-    const resolvedFinalArray = await Promise.all(trades.map(async (trade) => {
-      const addPortfolioId = Object.assign({}, trade, { weiPortfolioId: portfolio.id });
-      const bodyWrapper = Object.assign({ body: addPortfolioId });
-      return syncTrade(bodyWrapper, res);
-    }));
-    Promise.resolve(resolvedFinalArray)
-      .then(() => console.log('success'))
-      .catch(error => console.log(error));
+        if (trades) {
+          trades.map(async (trade) => {
+            const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolio.id });
+            const bodyWrapper = Object.assign({ body: addPortfolioId });
+            await syncTrade(bodyWrapper, res, lastPriceUSD);
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    });
   };
 
   return {

@@ -5,6 +5,7 @@ const attachTo = (app, data) => {
   const weidexController = require('./weidex-controller')(data);
 
   router
+    .post('/sync', (req, res) => weidexController.sync(req, res))
     .get('/sync/:id', (req, res) => weidexController.sync(req, res))
     .get('/user/:address', (req, res) => weidexController.getUser(req, res))
     .get('/token/all', (req, res) => weidexController.getAllTokens(req, res))

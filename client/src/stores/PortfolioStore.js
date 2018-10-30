@@ -561,8 +561,8 @@ class PortfolioStore {
 
   @action.bound
   selectPortfolio(id) {
+    this.selectedPortfolioId = id;
     this.selectedPortfolio = this.portfolios.find(porfolio => id === porfolio.id);
-    console.log(this.selectedPortfolio);
     if (this.selectedPortfolio) {
       this.getCurrentPortfolioAssets();
     }

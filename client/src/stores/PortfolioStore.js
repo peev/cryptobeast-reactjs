@@ -415,8 +415,9 @@ class PortfolioStore {
   get currentPortfolioCostInUSD() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
-    if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
-      return this.currentPortfolioAssets.reduce((accumulator, asset) => accumulator + asset.totalUSD);
+    if (this.selectedPortfolio) {
+      const totals = this.currentPortfolioAssets.map(asset => asset.totalUSD);
+      return totals.reduce((accumulator, value) => accumulator + value);
     }
     return 0;
 

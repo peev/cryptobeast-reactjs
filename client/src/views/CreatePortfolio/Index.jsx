@@ -1,21 +1,16 @@
 // @flow
 import * as React from 'react';
 import { inject, observer } from 'mobx-react';
-import { Redirect } from 'react-router-dom';
-
 import SelectFromPortfolios from '../../components/Tabs/SelectFromPortfolios/SelectFromPortfolios';
-import CreateStartPortfolio from '../../components/Tabs/CreatePortfolio/CreateStartPortfolio';
 
 type Props = {
   PortfolioStore: Object,
-  portfolios: Array<object>,
   WeidexStore: Object,
-  selectedPortfolioId: number,
   location: Object,
 };
 
 
-@inject('PortfolioStore', 'UserStore', 'ApiAccountStore', 'WeidexStore', 'location')
+@inject('PortfolioStore', 'WeidexStore', 'location')
 @observer
 class CreatePortfolioView extends React.Component<Props> {
   componentWillMount() {
@@ -26,16 +21,18 @@ class CreatePortfolioView extends React.Component<Props> {
 
   getAddresses = (locationSearch: string) => locationSearch.replace('&w=', 'w=').substring(1).split('w=').slice(1);
 
-  // TODO: Enable when we have portfolios
-  // if (PortfolioStore.portfolios.length === 1) {
-  //   PortfolioStore.selectPortfolio(PortfolioStore.portfolios[0].id);
-  //  return <Redirect to="/summary" />;
-  // }
-
   render() {
+    const { PortfolioStore } = this.props;
+    const handlePortfoliosLength = () => {
+      if (PortfolioStore.portfolios.length === 0) {
+        return ('Please use valid external link');
+      } else {
+        return <SelectFromPortfolios />;
+      }
+    };
     return (
       <React.Fragment>
-        <SelectFromPortfolios />
+        {handlePortfoliosLength()}
       </React.Fragment>
     );
   }

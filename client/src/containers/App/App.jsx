@@ -8,7 +8,9 @@ import {
   AppBar,
   Toolbar,
   IconButton,
+  CircularProgress,
 } from '@material-ui/core';
+import blueGrey from '@material-ui/core/colors/blueGrey';
 
 import appRoutes from './../../routes/app';
 import { Header, Sidebar } from './../../components';
@@ -25,10 +27,11 @@ type Props = {
   PortfolioStore: Object,
   MarketStore: Object,
   UserStore: Object,
+  WeidexStore: Object,
   children?: React.Node
 };
 
-@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'ApiAccountStore')
+@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'ApiAccountStore', 'WeidexStore')
 @observer
 class App extends React.Component<Props> {
   state = {
@@ -44,7 +47,7 @@ class App extends React.Component<Props> {
   };
 
   render() {
-    const { classes, theme, PortfolioStore, children, ...rest } = this.props;
+    const { classes, theme, PortfolioStore, WeidexStore, children, ...rest } = this.props;
     const { fetchingPortfolios } = PortfolioStore;
 
     // if (fetchingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
@@ -54,6 +57,12 @@ class App extends React.Component<Props> {
 
     return (
       <div className={classes.root}>
+        {!WeidexStore.snycingData
+          ? null
+          : (<div className={classes.progressHolder}>
+              <CircularProgress className={classes.progress} size={50} style={{ color: blueGrey[800] }} />
+             </div>
+            )}
         {checkPortfolioNumber
           ? null
           : (<AppBar

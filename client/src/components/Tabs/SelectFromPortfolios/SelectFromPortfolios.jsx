@@ -17,8 +17,8 @@ const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ .
   const { classes, PortfolioStore, UserStore } = props;
 
   const handleClick = (id: number) => {
-    // PortfolioStore.selectPortfolio(id);
-    UserStore.setPortfolio(id);
+    PortfolioStore.selectPortfolio(id);
+    // UserStore.setPortfolio(id);
     history.push('/summary');
   };
 
@@ -28,7 +28,7 @@ const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ .
         <Paper className={classes.paper}>
           <div>
             <div>
-              <p className={`${classes.generalPStyle} ${classes.portfolioName}`}>{el.name}</p>
+              <p className={`${classes.generalPStyle} ${classes.portfolioName}`}>{el.userAddress}</p>
               <span className={`${classes.portfolioPercent} ${i >= 0 ? classes.positivePercent : classes.negativePercent}`}>{` ^ ${8.45 + i}%`}</span>
             </div>
 

@@ -123,6 +123,20 @@ const appStyles = (theme: object) => ({
   headerPortfolios: {
     padding: '0 0 0 73px',
   },
+  progress: {
+    margin: theme.spacing.unit * 2,
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+  },
+  progressHolder: {
+    background: '#ffffffe6',
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    overflow: 'hidden',
+    zIndex: 1,
+  },
 });
 
 export default appStyles;

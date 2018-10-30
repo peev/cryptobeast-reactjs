@@ -61,11 +61,12 @@ class PortfolioStore {
   // #region Summary Page
   @computed
   get summaryTotalNumberOfShares() {
-    if (this.selectedPortfolio !== null && this.selectedPortfolio.shares !== null) {
-      return this.selectedPortfolio.shares;
-    }
-
     return 0;
+    // if (this.selectedPortfolio !== null && this.selectedPortfolio.shares !== null) {
+    //   return this.selectedPortfolio.shares;
+    // }
+
+    // return 0;
   }
 
   @computed
@@ -415,7 +416,7 @@ class PortfolioStore {
   get currentPortfolioCostInUSD() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
-    if (this.selectedPortfolio) {
+    if (this.selectedPortfolio && this.currentPortfolioAssets.length) {
       const totals = this.currentPortfolioAssets.map(asset => asset.totalUSD);
       return totals.reduce((accumulator, value) => accumulator + value);
     }
@@ -559,28 +560,34 @@ class PortfolioStore {
 
   @action.bound
   selectPortfolio(id) {
-    InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
-    if (id !== 0) {
-      this.selectedPortfolioId = id;
+    this.selectedPortfolio = this.portfolios.find(porfolio => id === porfolio.id);
+    console.log(this.selectedPortfolio);
+    if (this.selectedPortfolio) {
+      this.getCurrentPortfolioAssets();
     }
-    if (this.portfolios.length) {
-      this.portfolios.forEach((el) => {
-        // Returns only needed values from selected portfolio
-        if (el.id === id) {
-          this.selectedPortfolio = { ...el };
+    // FOR DELETE
+    // InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
+    // if (id !== 0) {
+    //   this.selectedPortfolioId = id;
+    // }
+    // if (this.portfolios.length) {
+    //   this.portfolios.forEach((el) => {
+    //     // Returns only needed values from selected portfolio
+    //     if (el.id === id) {
+    //       this.selectedPortfolio = { ...el };
 
-          // removed eager loading and all data is separated
-          this.getCurrentPortfolioAssets();
-          this.getCurrentPortfolioPrices();
-          this.getCurrentPortfolioInvestors();
-          this.getCurrentPortfolioTrades();
-          this.getCurrentPortfolioTransactions();
-        }
-      });
-      InvestorStore.selectedInvestorIndividualSummary = null;
-      // Analytics.btcPriceHistoryForPeriod();
-      Analytics.getClosingSharePriceHistory();
-    }
+    //       // removed eager loading and all data is separated
+    //       this.getCurrentPortfolioAssets();
+    //       this.getCurrentPortfolioPrices();
+    //       this.getCurrentPortfolioInvestors();
+    //       this.getCurrentPortfolioTrades();
+    //       this.getCurrentPortfolioTransactions();
+    //     }
+    //   });
+    //   InvestorStore.selectedInvestorIndividualSummary = null;
+    //   // Analytics.btcPriceHistoryForPeriod();
+    //   Analytics.getClosingSharePriceHistory();
+    // }
   }
 
   @action

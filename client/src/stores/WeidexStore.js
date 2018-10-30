@@ -1,5 +1,7 @@
 import { action, observable } from 'mobx';
 import requester from '../services/requester';
+import userApi from '../services/user';
+import PortfolioStore from './PortfolioStore';
 
 class WeidexStore {
   @observable snycingData;
@@ -12,6 +14,8 @@ class WeidexStore {
     this.snycingData = true;
     requester.Weidex.sync(addresses)
       .then(() => {
+        userApi.setPortfolioAddresses(addresses);
+        PortfolioStore.getPortfoliosByUserAddresses();
         this.snycingData = false;
       })
       .catch((err) => {

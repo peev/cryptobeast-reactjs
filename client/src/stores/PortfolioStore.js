@@ -15,6 +15,7 @@ import AssetStore from './AssetStore';
 import Analytics from './Analytics';
 import ApiAccountStore from './ApiAccountStore';
 import history from '../services/History';
+import userApi from '../services/user';
 
 const persistedUserData = JSON.parse(window.localStorage.getItem('cb_user')); // eslint-disable-line
 
@@ -618,24 +619,26 @@ class PortfolioStore {
   }
 
   @action
-  getPortfoliosByUserAddresses(addresses) {
+  getPortfoliosByUserAddresses() {
     this.fetchingPortfolios = true;
-    return new Promise((resolve, reject) => {
-      requester.Portfolio.getPortfoliosByUserAddresses(addresses)
-        .then(action((result) => {
-          this.portfolios = result.data;
-          if (this.selectedPortfolioId > 0) {
-            this.selectPortfolio(this.selectedPortfolioId);
-          }
-          resolve(true);
-          this.fetchingPortfolios = false;
-        }))
-        .catch(action((err) => {
-          this.fethingPortfolios = false;
-          console.log(err);
-          reject(err);
-        }));
-    });
+    userApi.getPortfolioAddresses().then(action((data) => {
+      return new Promise((resolve, reject) => {
+        requester.Portfolio.getPortfoliosByUserAddresses(data)
+          .then(action((result) => {
+            this.portfolios = result.data;
+            if (this.selectedPortfolioId > 0) {
+              this.selectPortfolio(this.selectedPortfolioId);
+            }
+            resolve(true);
+            this.fetchingPortfolios = false;
+          }))
+          .catch(action((err) => {
+            this.fethingPortfolios = false;
+            console.log(err);
+            reject(err);
+          }));
+      });
+    }));
   }
 
   @action.bound

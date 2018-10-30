@@ -27,6 +27,20 @@ const User = {
       resolve(newUserData);
     }, 500);
   }),
+
+  setPortfolioAddresses: addresses => new Promise((resolve) => {
+    setTimeout(() => {
+      window.localStorage.setItem('addresses', JSON.stringify(addresses));
+      resolve(addresses);
+    }, 500);
+  }),
+
+  getPortfolioAddresses: () => new Promise((resolve) => {
+    setTimeout(() => {
+      const addressesData = JSON.parse(window.localStorage.getItem('addresses'));
+      resolve(addressesData || []);
+    }, 500);
+  }),
 };
 
 export default User;

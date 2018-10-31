@@ -6,41 +6,32 @@ import history from '../../services/History';
 
 type Props = {
   PortfolioStore: Object,
-  WeidexStore: Object,
   UserStore: Object,
-  location: Object,
+  WeidexStore: Object,
 };
 
+const CreatePortfolioView = inject('PortfolioStore', 'UserStore', 'WeidexStore')(observer(({ ...props }: Props) => {
+  const { PortfolioStore, UserStore, WeidexStore } = props;
 
-@inject('PortfolioStore', 'WeidexStore', 'UserStore', 'location')
-@observer
-class CreatePortfolioView extends React.Component<Props> {
-  componentWillMount() {
-    const addresses = this.getAddresses(this.props.location.search);
-    this.props.WeidexStore.sync(addresses);
-  }
+  const handlePortfoliosLength = () => {
+    if (PortfolioStore.portfolios.length === 0) {
+      return ('Please use valid external link');
+    } else if (PortfolioStore.portfolios.length === 1) {
+      PortfolioStore.selectPortfolio(PortfolioStore.portfolios[0].id);
+      UserStore.setPortfolio(PortfolioStore.portfolios[0].id);
+      return history.push('/summary');
+    } else {
+      PortfolioStore.selectPortfolio(0);
+      UserStore.setPortfolio(0);
+      return <SelectFromPortfolios />;
+    }
+  };
 
-  getAddresses = (locationSearch: string) => locationSearch.replace('&w=', 'w=').substring(1).split('w=').slice(1);
-
-  render() {
-    const { PortfolioStore, WeidexStore, UserStore } = this.props;
-    const handlePortfoliosLength = () => {
-      if (PortfolioStore.portfolios.length === 0) {
-        return ('Please use valid external link');
-      } else if (PortfolioStore.portfolios.length === 1) {
-        PortfolioStore.selectPortfolio(PortfolioStore.portfolios[0].id);
-        UserStore.setPortfolio(PortfolioStore.portfolios[0].id);
-        return history.push('/summary');
-      } else {
-        return <SelectFromPortfolios />;
-      }
-    };
-    return (
-      <React.Fragment>
-        {!WeidexStore.snycingData && !PortfolioStore.fetchingPortfolios ? handlePortfoliosLength() : null}
-      </React.Fragment>
-    );
-  }
-}
+  return (
+    <React.Fragment>
+      {!WeidexStore.snycingData && !PortfolioStore.fetchingPortfolios ? handlePortfoliosLength() : null}
+    </React.Fragment>
+  );
+}));
 
 export default CreatePortfolioView;

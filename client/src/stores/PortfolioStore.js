@@ -627,7 +627,7 @@ class PortfolioStore {
           .then(action((result) => {
             userApi.setPortfolioAddresses(data);
             this.portfolios = result.data;
-            if (this.selectedPortfolioId === 1) {
+            if (this.selectedPortfolioId > 0) {
               this.selectPortfolio(this.selectedPortfolioId);
             }
             resolve(true);
@@ -647,7 +647,7 @@ class PortfolioStore {
     requester.Portfolio.getPortfoliosByUserAddresses(addresses)
       .then(action((result) => {
         this.portfolios = result.data;
-        if (this.selectedPortfolioId === 1) {
+        if (this.selectedPortfolioId > 0) {
           this.selectPortfolio(this.selectedPortfolioId);
         }
         this.fetchingPortfolios = false;

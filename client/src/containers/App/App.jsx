@@ -31,12 +31,27 @@ type Props = {
   children?: React.Node
 };
 
-@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'ApiAccountStore', 'WeidexStore')
+@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'ApiAccountStore', 'WeidexStore', 'location')
 @observer
 class App extends React.Component<Props> {
   state = {
     open: false,
   };
+
+  componentWillMount() {
+    if (this.props.location.pathname === '/') {
+      const addresses = this.getAddresses(this.props.location.search);
+      if (addresses.length) {
+        this.props.WeidexStore.sync(addresses);
+      } else {
+        this.props.PortfolioStore.getPortfoliosByUserAddresses();
+      }
+    } else {
+      this.props.PortfolioStore.getPortfoliosByUserAddresses();
+    }
+  }
+
+  getAddresses = (locationSearch: string) => locationSearch.replace('&w=', 'w=').substring(1).split('w=').slice(1);
 
   handleDrawerOpen = () => {
     this.setState({ open: true });
@@ -50,7 +65,7 @@ class App extends React.Component<Props> {
     const { classes, theme, PortfolioStore, WeidexStore, children, ...rest } = this.props;
     const { fetchingPortfolios } = PortfolioStore;
 
-    // if (fetchingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
+    // if (WeidexStore.snycingData) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
 
     // this is used for portfolio select start screen, because those views doesn't have header
     const checkPortfolioNumber = this.props.location.pathname === '/' && (PortfolioStore.portfolios.length === 0 || PortfolioStore.portfolios.length > 1);

@@ -44,10 +44,10 @@ class App extends React.Component<Props> {
       if (addresses.length) {
         this.props.WeidexStore.sync(addresses);
       } else {
-        this.props.PortfolioStore.getPortfoliosByUserAddresses();
+        this.props.PortfolioStore.getPortfoliosOnStartup();
       }
     } else {
-      this.props.PortfolioStore.getPortfoliosByUserAddresses();
+      this.props.PortfolioStore.getPortfoliosOnStartup();
     }
   }
 
@@ -65,7 +65,13 @@ class App extends React.Component<Props> {
     const { classes, theme, PortfolioStore, WeidexStore, children, ...rest } = this.props;
     const { fetchingPortfolios } = PortfolioStore;
 
-    // if (WeidexStore.snycingData) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
+    if (PortfolioStore.fetchingPortfolios) {
+      return (
+        <div className={classes.progressHolder}>
+          <CircularProgress className={classes.progress} size={50} style={{ color: blueGrey[800] }} />
+        </div>
+      );
+    }
 
     // this is used for portfolio select start screen, because those views doesn't have header
     const checkPortfolioNumber = this.props.location.pathname === '/' && (PortfolioStore.portfolios.length === 0 || PortfolioStore.portfolios.length > 1);

@@ -621,7 +621,7 @@ class PortfolioStore {
   }
 
   @action
-  getPortfoliosByUserAddresses() {
+  getPortfoliosOnStartup() {
     this.fetchingPortfolios = true;
     storage.getPortfolioAddresses()
       .then(action(data => new Promise((resolve, reject) => {
@@ -644,7 +644,7 @@ class PortfolioStore {
   }
 
   @action
-  getPortfoliosByUser(addresses) {
+  getPortfoliosByAddresses(addresses) {
     this.fetchingPortfolios = true;
     requester.Portfolio.getPortfoliosByUserAddresses(addresses)
       .then(action((result) => {

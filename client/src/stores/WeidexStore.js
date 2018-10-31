@@ -14,7 +14,7 @@ class WeidexStore {
     this.snycingData = true;
     requester.Weidex.sync(addresses)
       .then(() => {
-        PortfolioStore.getPortfoliosByUser(addresses);
+        PortfolioStore.getPortfoliosByAddresses(addresses);
         this.snycingData = false;
       })
       .catch((err) => {

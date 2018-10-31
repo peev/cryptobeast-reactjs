@@ -18,7 +18,6 @@ const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ .
 
   const handleClick = (id: number) => {
     PortfolioStore.selectPortfolio(id);
-    UserStore.setPortfolio(id);
     history.push('/summary');
   };
 

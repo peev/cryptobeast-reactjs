@@ -18,7 +18,7 @@ type Props = {
 class PortfolioSelect extends React.Component<Props> {
   handleChange = (event: SyntheticEvent) => {
     const { value } = event.target;
-    this.props.UserStore.setPortfolio(value);
+    // this.props.UserStore.setPortfolio(value);
     this.props.PortfolioStore.selectPortfolio(value);
 
     // TODO FOR DELETE

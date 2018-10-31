@@ -16,8 +16,9 @@ import Analytics from './Analytics';
 import ApiAccountStore from './ApiAccountStore';
 import history from '../services/History';
 import userApi from '../services/user';
+import storage from '../services/storage';
 
-const persistedUserData = JSON.parse(window.localStorage.getItem('cb_user')); // eslint-disable-line
+const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
 class PortfolioStore {
   @observable fetchingPortfolios;
@@ -36,7 +37,7 @@ class PortfolioStore {
     this.portfolios = [];
     this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
-    this.selectedPortfolioId = persistedUserData ? persistedUserData.selectedPortfolio : 0;
+    this.selectedPortfolioId = persistedUserData ? persistedUserData : 0;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
@@ -562,6 +563,7 @@ class PortfolioStore {
   @action.bound
   selectPortfolio(id) {
     this.selectedPortfolioId = id;
+    this.saveSelectedPortfolioId();
     this.selectedPortfolio = this.portfolios.find(porfolio => id === porfolio.id);
     if (this.selectedPortfolio) {
       this.getCurrentPortfolioAssets();
@@ -621,11 +623,11 @@ class PortfolioStore {
   @action
   getPortfoliosByUserAddresses() {
     this.fetchingPortfolios = true;
-    userApi.getPortfolioAddresses()
+    storage.getPortfolioAddresses()
       .then(action(data => new Promise((resolve, reject) => {
         requester.Portfolio.getPortfoliosByUserAddresses(data)
           .then(action((result) => {
-            userApi.setPortfolioAddresses(data);
+            storage.setPortfolioAddresses(data);
             this.portfolios = result.data;
             if (this.selectedPortfolioId > 0) {
               this.selectPortfolio(this.selectedPortfolioId);
@@ -646,6 +648,7 @@ class PortfolioStore {
     this.fetchingPortfolios = true;
     requester.Portfolio.getPortfoliosByUserAddresses(addresses)
       .then(action((result) => {
+        storage.setPortfolioAddresses(addresses);
         this.portfolios = result.data;
         if (this.selectedPortfolioId > 0) {
           this.selectPortfolio(this.selectedPortfolioId);
@@ -656,6 +659,11 @@ class PortfolioStore {
         this.fethingPortfolios = false;
         console.log(err);
       }));
+  }
+
+  @action
+  saveSelectedPortfolioId() {
+    storage.setSelectedPortfolioId(this.selectedPortfolioId);
   }
 
   @action.bound

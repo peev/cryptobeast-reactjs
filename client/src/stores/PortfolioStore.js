@@ -621,12 +621,13 @@ class PortfolioStore {
   @action
   getPortfoliosByUserAddresses() {
     this.fetchingPortfolios = true;
-    userApi.getPortfolioAddresses().then(action((data) => {
-      return new Promise((resolve, reject) => {
+    userApi.getPortfolioAddresses()
+      .then(action(data => new Promise((resolve, reject) => {
         requester.Portfolio.getPortfoliosByUserAddresses(data)
           .then(action((result) => {
+            userApi.setPortfolioAddresses(data);
             this.portfolios = result.data;
-            if (this.selectedPortfolioId > 0) {
+            if (this.selectedPortfolioId === 1) {
               this.selectPortfolio(this.selectedPortfolioId);
             }
             resolve(true);
@@ -637,8 +638,24 @@ class PortfolioStore {
             console.log(err);
             reject(err);
           }));
-      });
-    }));
+      })));
+  }
+
+  @action
+  getPortfoliosByUser(addresses) {
+    this.fetchingPortfolios = true;
+    requester.Portfolio.getPortfoliosByUserAddresses(addresses)
+      .then(action((result) => {
+        this.portfolios = result.data;
+        if (this.selectedPortfolioId === 1) {
+          this.selectPortfolio(this.selectedPortfolioId);
+        }
+        this.fetchingPortfolios = false;
+      }))
+      .catch(action((err) => {
+        this.fethingPortfolios = false;
+        console.log(err);
+      }));
   }
 
   @action.bound

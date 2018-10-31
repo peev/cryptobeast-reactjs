@@ -37,7 +37,7 @@ class CreatePortfolioView extends React.Component<Props> {
     };
     return (
       <React.Fragment>
-        {!WeidexStore.snycingData ? handlePortfoliosLength() : null}
+        {!WeidexStore.snycingData && !PortfolioStore.fetchingPortfolios ? handlePortfoliosLength() : null}
       </React.Fragment>
     );
   }

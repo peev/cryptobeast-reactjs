@@ -32,14 +32,14 @@ const User = {
     setTimeout(() => {
       window.localStorage.setItem('addresses', JSON.stringify(addresses));
       resolve(addresses);
-    }, 500);
+    }, 1);
   }),
 
   getPortfolioAddresses: () => new Promise((resolve) => {
     setTimeout(() => {
       const addressesData = JSON.parse(window.localStorage.getItem('addresses'));
       resolve(addressesData || []);
-    }, 500);
+    }, 1);
   }),
 };
 

@@ -102,21 +102,17 @@ function getSorting(order: string, orderBy: string) {
     : (a: Object, b: Object) => (a[orderBy] < b[orderBy] ? -1 : 1);
 }
 
-
 function createAssetObjectFromArray(assetAsArray: Array) {
-  if (assetAsArray.length === 8) {
-    return {
-      ticker: assetAsArray[0],
-      holdings: assetAsArray[1],
-      priceBTC: assetAsArray[2],
-      priceUSD: assetAsArray[3],
-      totalUSD: assetAsArray[4],
-      assetWeight: assetAsArray[5],
-      '24Change': assetAsArray[6],
-      '7Change': assetAsArray[7],
-    };
-  }
-  return null;
+  return {
+    ticker: assetAsArray.tokenName,
+    holdings: assetAsArray.balance,
+    priceETH: assetAsArray.lastPriceETH,
+    priceUSD: assetAsArray.lastPriceUSD,
+    totalUSD: assetAsArray.totalUSD,
+    assetWeight: assetAsArray.weight.toFixed(4),
+    '24Change': 0,
+    '7Change': 0,
+  };
 }
 
 const TableHeader = ({
@@ -205,7 +201,7 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
       />
     );
 
-    const tableBodyContent = PortfolioStore.summaryPortfolioAssets
+    const tableBodyContent = PortfolioStore.currentPortfolioAssets
       .map(createAssetObjectFromArray)
       .sort(getSorting(order, orderBy))
       .map((ROW: Object) => (

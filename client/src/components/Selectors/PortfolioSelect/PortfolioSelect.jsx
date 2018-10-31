@@ -18,23 +18,25 @@ type Props = {
 class PortfolioSelect extends React.Component<Props> {
   handleChange = (event: SyntheticEvent) => {
     const { value } = event.target;
+    // this.props.UserStore.setPortfolio(value);
+    this.props.PortfolioStore.selectPortfolio(value);
 
-    this.props.UserStore.setPortfolio(value);
+    // TODO FOR DELETE
+    // this.updateUserDataInterval = null;
+    // if (this.props.ApiAccountStore.convertUserApis.length > 0) {
+    //   this.props.ApiAccountStore.syncUserApiData();
 
-    this.updateUserDataInterval = null;
-    if (this.props.ApiAccountStore.convertUserApis.length > 0) {
-      this.props.ApiAccountStore.syncUserApiData();
-
-      this.updateUserDataInterval = setInterval(() => this.props.ApiAccountStore.syncUserApiData(), 30000);
-    }
+    //   this.updateUserDataInterval = setInterval(() => this.props.ApiAccountStore.syncUserApiData(), 30000);
+    // }
   };
 
-  componentDidMount() {
-    if (this.props.ApiAccountStore.convertUserApis.length > 0) {
-      this.props.ApiAccountStore.syncUserApiData();
-      this.updateUserDataInterval = setInterval(() => this.props.ApiAccountStore.syncUserApiData(), 30000);
-    }
-  }
+  // TODO FOR DELETE
+  // componentDidMount() {
+  //   if (this.props.ApiAccountStore.convertUserApis.length > 0) {
+  //     this.props.ApiAccountStore.syncUserApiData();
+  //     this.updateUserDataInterval = setInterval(() => this.props.ApiAccountStore.syncUserApiData(), 30000);
+  //   }
+  // }
 
   render() {
     const { classes, PortfolioStore } = this.props;
@@ -49,7 +51,7 @@ class PortfolioSelect extends React.Component<Props> {
       // select={i === 1 ? el.id : undefined}
       >
         <div className={classes.listItemContainer}>
-          <div className={classes.listItemName}>{el.name}</div>
+          <div className={classes.listItemName}>{el.userAddress}</div>
           <div className={classes.listItemDescription}>
             <div style={{ padding: '0 15px', margin: '0 -7px' }}>
               <DropDownArrow className={classes.upArrow} />

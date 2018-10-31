@@ -8,7 +8,9 @@ import {
   AppBar,
   Toolbar,
   IconButton,
+  CircularProgress,
 } from '@material-ui/core';
+import blueGrey from '@material-ui/core/colors/blueGrey';
 
 import appRoutes from './../../routes/app';
 import { Header, Sidebar } from './../../components';
@@ -25,15 +27,31 @@ type Props = {
   PortfolioStore: Object,
   MarketStore: Object,
   UserStore: Object,
+  WeidexStore: Object,
   children?: React.Node
 };
 
-@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'ApiAccountStore')
+@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'ApiAccountStore', 'WeidexStore', 'location')
 @observer
 class App extends React.Component<Props> {
   state = {
     open: false,
   };
+
+  componentWillMount() {
+    if (this.props.location.pathname === '/') {
+      const addresses = this.getAddresses(this.props.location.search);
+      if (addresses.length) {
+        this.props.WeidexStore.sync(addresses);
+      } else {
+        this.props.PortfolioStore.getPortfoliosOnStartup();
+      }
+    } else {
+      this.props.PortfolioStore.getPortfoliosOnStartup();
+    }
+  }
+
+  getAddresses = (locationSearch: string) => locationSearch.replace('&w=', 'w=').substring(1).split('w=').slice(1);
 
   handleDrawerOpen = () => {
     this.setState({ open: true });
@@ -44,16 +62,28 @@ class App extends React.Component<Props> {
   };
 
   render() {
-    const { classes, theme, PortfolioStore, children, ...rest } = this.props;
+    const { classes, theme, PortfolioStore, WeidexStore, children, ...rest } = this.props;
     const { fetchingPortfolios } = PortfolioStore;
 
-    // if (fetchingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
+    if (PortfolioStore.fetchingPortfolios) {
+      return (
+        <div className={classes.progressHolder}>
+          <CircularProgress className={classes.progress} size={50} style={{ color: blueGrey[800] }} />
+        </div>
+      );
+    }
 
     // this is used for portfolio select start screen, because those views doesn't have header
     const checkPortfolioNumber = this.props.location.pathname === '/' && (PortfolioStore.portfolios.length === 0 || PortfolioStore.portfolios.length > 1);
 
     return (
       <div className={classes.root}>
+        {!WeidexStore.snycingData
+          ? null
+          : (<div className={classes.progressHolder}>
+              <CircularProgress className={classes.progress} size={50} style={{ color: blueGrey[800] }} />
+             </div>
+            )}
         {checkPortfolioNumber
           ? null
           : (<AppBar

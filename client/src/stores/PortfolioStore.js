@@ -15,8 +15,10 @@ import AssetStore from './AssetStore';
 import Analytics from './Analytics';
 import ApiAccountStore from './ApiAccountStore';
 import history from '../services/History';
+import userApi from '../services/user';
+import storage from '../services/storage';
 
-const persistedUserData = JSON.parse(window.localStorage.getItem('cb_user')); // eslint-disable-line
+const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
 class PortfolioStore {
   @observable fetchingPortfolios;
@@ -35,7 +37,7 @@ class PortfolioStore {
     this.portfolios = [];
     this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
-    this.selectedPortfolioId = persistedUserData ? persistedUserData.selectedPortfolio : 0;
+    this.selectedPortfolioId = persistedUserData ? persistedUserData : 0;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
@@ -61,11 +63,12 @@ class PortfolioStore {
   // #region Summary Page
   @computed
   get summaryTotalNumberOfShares() {
-    if (this.selectedPortfolio !== null && this.selectedPortfolio.shares !== null) {
-      return this.selectedPortfolio.shares;
-    }
-
     return 0;
+    // if (this.selectedPortfolio !== null && this.selectedPortfolio.shares !== null) {
+    //   return this.selectedPortfolio.shares;
+    // }
+
+    // return 0;
   }
 
   @computed
@@ -415,36 +418,42 @@ class PortfolioStore {
   get currentPortfolioCostInUSD() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
-    if (this.selectedPortfolio &&
-      MarketStore.baseCurrencies.length > 0) {
-      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this is USD
-      return this.currentPortfolioAssets.reduce((accumulator, asset) => {
-        let assetUSDValue;
-        switch (asset.currency) {
-          case 'JPY':
-          case 'EUR':
-          case 'USD': {
-            const wantedCurrency = MarketStore.baseCurrencies.filter(x => x.pair === asset.currency)[0];
-            assetUSDValue = (asset.balance / wantedCurrency.last) * valueOfUSD;
-            break;
-          }
-          case 'BTC': {
-            assetUSDValue = asset.balance * valueOfUSD;
-            break;
-          }
-          default: {
-            const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${asset.currency}`]
-              ? (MarketStore.marketSummaries[`BTC-${asset.currency}`].Last * asset.balance)
-              : 0;
-            assetUSDValue = assetBTCEquiv * valueOfUSD;
-            break;
-          }
-        }
-        return accumulator + assetUSDValue;
-      }, 0);
+    if (this.selectedPortfolio && this.currentPortfolioAssets.length) {
+      const totals = this.currentPortfolioAssets.map(asset => asset.totalUSD);
+      return totals.reduce((accumulator, value) => accumulator + value);
     }
-
     return 0;
+
+    // TODO FOR DELETE
+    // if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
+    //   const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this is USD
+    //   return this.currentPortfolioAssets.reduce((accumulator, asset) => {
+    //     let assetUSDValue;
+    //     switch (asset.currency) {
+    //       case 'JPY':
+    //       case 'EUR':
+    //       case 'USD': {
+    //         const wantedCurrency = MarketStore.baseCurrencies.filter(x => x.pair === asset.currency)[0];
+    //         assetUSDValue = (asset.balance / wantedCurrency.last) * valueOfUSD;
+    //         break;
+    //       }
+    //       case 'BTC': {
+    //         assetUSDValue = asset.balance * valueOfUSD;
+    //         break;
+    //       }
+    //       default: {
+    //         const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${asset.currency}`]
+    //           ? (MarketStore.marketSummaries[`BTC-${asset.currency}`].Last * asset.balance)
+    //           : 0;
+    //         assetUSDValue = assetBTCEquiv * valueOfUSD;
+    //         break;
+    //       }
+    //     }
+    //     return accumulator + assetUSDValue;
+    //   }, 0);
+    // }
+
+    // return 0;
   }
 
   @computed
@@ -553,28 +562,35 @@ class PortfolioStore {
 
   @action.bound
   selectPortfolio(id) {
-    InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
-    if (id !== 0) {
-      this.selectedPortfolioId = id;
+    this.selectedPortfolioId = id;
+    this.saveSelectedPortfolioId();
+    this.selectedPortfolio = this.portfolios.find(porfolio => id === porfolio.id);
+    if (this.selectedPortfolio) {
+      this.getCurrentPortfolioAssets();
     }
-    if (this.portfolios.length) {
-      this.portfolios.forEach((el) => {
-        // Returns only needed values from selected portfolio
-        if (el.id === id) {
-          this.selectedPortfolio = { ...el };
+    // FOR DELETE
+    // InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
+    // if (id !== 0) {
+    //   this.selectedPortfolioId = id;
+    // }
+    // if (this.portfolios.length) {
+    //   this.portfolios.forEach((el) => {
+    //     // Returns only needed values from selected portfolio
+    //     if (el.id === id) {
+    //       this.selectedPortfolio = { ...el };
 
-          // removed eager loading and all data is separated
-          this.getCurrentPortfolioAssets();
-          this.getCurrentPortfolioPrices();
-          this.getCurrentPortfolioInvestors();
-          this.getCurrentPortfolioTrades();
-          this.getCurrentPortfolioTransactions();
-        }
-      });
-      InvestorStore.selectedInvestorIndividualSummary = null;
-      // Analytics.btcPriceHistoryForPeriod();
-      Analytics.getClosingSharePriceHistory();
-    }
+    //       // removed eager loading and all data is separated
+    //       this.getCurrentPortfolioAssets();
+    //       this.getCurrentPortfolioPrices();
+    //       this.getCurrentPortfolioInvestors();
+    //       this.getCurrentPortfolioTrades();
+    //       this.getCurrentPortfolioTransactions();
+    //     }
+    //   });
+    //   InvestorStore.selectedInvestorIndividualSummary = null;
+    //   // Analytics.btcPriceHistoryForPeriod();
+    //   Analytics.getClosingSharePriceHistory();
+    // }
   }
 
   @action
@@ -604,13 +620,60 @@ class PortfolioStore {
     });
   }
 
+  @action
+  getPortfoliosOnStartup() {
+    this.fetchingPortfolios = true;
+    storage.getPortfolioAddresses()
+      .then(action(data => new Promise((resolve, reject) => {
+        requester.Portfolio.getPortfoliosByUserAddresses(data)
+          .then(action((result) => {
+            storage.setPortfolioAddresses(data);
+            this.portfolios = result.data;
+            if (this.selectedPortfolioId > 0) {
+              this.selectPortfolio(this.selectedPortfolioId);
+            }
+            resolve(true);
+            this.fetchingPortfolios = false;
+          }))
+          .catch(action((err) => {
+            this.fethingPortfolios = false;
+            console.log(err);
+            reject(err);
+          }));
+      })));
+  }
+
+  @action
+  getPortfoliosByAddresses(addresses) {
+    this.fetchingPortfolios = true;
+    requester.Portfolio.getPortfoliosByUserAddresses(addresses)
+      .then(action((result) => {
+        storage.setPortfolioAddresses(addresses);
+        this.portfolios = result.data;
+        if (this.selectedPortfolioId > 0) {
+          this.selectPortfolio(this.selectedPortfolioId);
+        }
+        this.fetchingPortfolios = false;
+      }))
+      .catch(action((err) => {
+        this.fethingPortfolios = false;
+        console.log(err);
+      }));
+  }
+
+  @action
+  saveSelectedPortfolioId() {
+    storage.setSelectedPortfolioId(this.selectedPortfolioId);
+  }
+
   @action.bound
   getCurrentPortfolioAssets() {
-    const searchedItem = {
-      portfolioId: this.selectedPortfolioId,
-      item: 'Asset',
-    };
-    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
+    // TODO FOR DELETE
+    // const searchedItem = {
+    //   portfolioId: this.selectedPortfolioId,
+    //   item: 'Asset',
+    // };
+    requester.Portfolio.getPortfolioAssetsByPortfolioId(this.selectedPortfolio.id)
       .then(action((result) => {
         this.currentPortfolioAssets = result.data;
       }));

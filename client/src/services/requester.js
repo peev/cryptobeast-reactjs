@@ -53,6 +53,8 @@ const Transaction = {
 };
 
 const Portfolio = {
+  getPortfoliosByUserAddresses: addresses => requests.post('/portfolio/getPortfoliosByAddresses', addresses),
+  getPortfolioAssetsByPortfolioId: id => requests.get(`/portfolio/getAssets/${id}`),
   getAll: () => requests.get('/portfolio/all'),
   create: portfolioName => requests.post('/portfolio/create', portfolioName),
   searchItemsInCurrentPortfolio: requestParams => requests.get(`/portfolio/${requestParams.portfolioId}/${requestParams.item}`),
@@ -62,7 +64,7 @@ const Portfolio = {
   getPriceHistoryForPeriod: requestParams => requests.post('/portfolio/periodPriceHistory', requestParams),
   update: (requestParams, id) => requests.put(`/portfolio/update/${id}`, requestParams), // id + newName
   delete: id => requests.delete(`/portfolio/delete/${id}`),
-  sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
 const Investor = {

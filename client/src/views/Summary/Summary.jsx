@@ -62,7 +62,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={TotalIcon}
             iconColor="gray"
             title="Total number of shares"
-            description={PortfolioStore.summaryTotalNumberOfShares}
+            // description={PortfolioStore.summaryTotalNumberOfShares}
           />
 
           <SummaryCard

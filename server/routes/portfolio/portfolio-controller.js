@@ -45,12 +45,11 @@ const portfolioController = (repository) => {
 
     try {
       const porfolioFound = await getPortfolioWholeObject(user.address);
-
+      const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(porfolioFound);
       if (porfolioFound === null) {
-        const newPortfolioObject = createPortfolioObject(user.address, user.id, 0);
+        const newPortfolioObject = createPortfolioObject(user.address, user.id, porfolioFound);
         await createAction(req, res, newPortfolioObject, false);
       } else {
-        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(porfolioFound);
         const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
         await updateAction(req, res, Number(porfolioFound.id), newPortfolioObject, false);
       }
@@ -64,12 +63,11 @@ const portfolioController = (repository) => {
 
     try {
       const porfolioFound = await getPortfolioWholeObject(user.address);
-
+      const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(porfolioFound);
       if (porfolioFound === null) {
-        const newPortfolioObject = createPortfolioObject(user.address, user.id, 0);
+        const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
         await createAction(req, res, newPortfolioObject, true);
       } else {
-        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(porfolioFound);
         const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
         await updateAction(req, res, Number(porfolioFound.id), newPortfolioObject, true);
       }
@@ -109,6 +107,41 @@ const portfolioController = (repository) => {
       });
   };
 
+  const getPortfoliosByAddresses = (req, res) => {
+    const addresses = req.body;
+    repository.find({
+      modelName,
+      options: {
+        where: {
+          userAddress: addresses,
+        },
+      },
+    })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
+  const getPortfolioAssetsByPortfolioId = async (req, res) => {
+    const { id } = req.params;
+    try {
+      const foundAssets = await repository.find({
+        modelName: 'Asset',
+        options: {
+          where: {
+            portfolioId: id,
+          },
+        },
+      });
+      return res.status(200).send(foundAssets);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  };
+
   const removePortfolio = (req, res) => {
     const { id } = req.params;
     repository.remove({ modelName, id })
@@ -134,6 +167,8 @@ const portfolioController = (repository) => {
     getPortfolio,
     removePortfolio,
     sync,
+    getPortfoliosByAddresses,
+    getPortfolioAssetsByPortfolioId,
   };
 };
 

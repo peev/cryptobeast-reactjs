@@ -6,8 +6,10 @@ const attachTo = (app, repository, jobs) => {
   const validator = require('./portfolio-validator')();
 
   router
+    .post('/getPortfoliosByAddresses', controller.getPortfoliosByAddresses)
     .post('/create', validator.verifyCreatePortfolio, controller.createPortfolio)
     .get('/:address', controller.getPortfolio)
+    .get('/getAssets/:id', controller.getPortfolioAssetsByPortfolioId)
     .put('/update/:id', validator.verifyUpdatePortfolio, controller.updatePortfolio)
     .put('/updatePortfolioTotalInvastments/:address', controller.updatePortfolioTotalInvestment)
     .delete('/delete/:id', controller.removePortfolio);

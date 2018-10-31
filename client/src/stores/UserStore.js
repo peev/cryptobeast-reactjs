@@ -19,10 +19,10 @@ class UserStore {
 
     this.getUserData();
 
-    reaction(
-      () => this.data.selectedPortfolio,
-      portfolioId => PortfolioStore.selectPortfolio(portfolioId),
-    );
+    // reaction(
+    //   () => this.data.selectedPortfolio,
+    //   portfolioId => PortfolioStore.selectPortfolio(portfolioId),
+    // );
   }
 
   @action

@@ -1,42 +1,34 @@
 // @flow
 import * as React from 'react';
 import { inject, observer } from 'mobx-react';
-import { Redirect } from 'react-router-dom';
-
 import SelectFromPortfolios from '../../components/Tabs/SelectFromPortfolios/SelectFromPortfolios';
+import history from '../../services/History';
 
 type Props = {
   PortfolioStore: Object,
-  portfolios: Array<object>,
   WeidexStore: Object,
-  selectedPortfolioId: number,
-  location: Object,
 };
 
+const CreatePortfolioView = inject('PortfolioStore', 'WeidexStore')(observer(({ ...props }: Props) => {
+  const { PortfolioStore, WeidexStore } = props;
 
-@inject('PortfolioStore', 'UserStore', 'ApiAccountStore', 'WeidexStore', 'location')
-@observer
-class CreatePortfolioView extends React.Component<Props> {
-  componentWillMount() {
-    const addresses = this.getAddresses(this.props.location.search);
-    this.props.WeidexStore.sync(addresses);
-  }
+  const handlePortfoliosLength = () => {
+    if (PortfolioStore.portfolios.length === 0) {
+      return ('Please use valid external link');
+    } else if (PortfolioStore.portfolios.length === 1) {
+      PortfolioStore.selectPortfolio(PortfolioStore.portfolios[0].id);
+      return history.push('/summary');
+    } else {
+      PortfolioStore.selectPortfolio(0);
+      return <SelectFromPortfolios />;
+    }
+  };
 
-  getAddresses = (locationSearch: string) => locationSearch.replace('&w=', 'w=').substring(1).split('w=').slice(1);
-
-  // TODO: Enable when we have portfolios
-  // if (PortfolioStore.portfolios.length === 1) {
-  //   PortfolioStore.selectPortfolio(PortfolioStore.portfolios[0].id);
-  //  return <Redirect to="/summary" />;
-  // }
-
-  render() {
-    return (
-      <React.Fragment>
-        <SelectFromPortfolios />
-      </React.Fragment>
-    );
-  }
-}
+  return (
+    <React.Fragment>
+      {!WeidexStore.snycingData && !PortfolioStore.fetchingPortfolios ? handlePortfoliosLength() : null}
+    </React.Fragment>
+  );
+}));
 
 export default CreatePortfolioView;

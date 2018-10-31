@@ -11,18 +11,17 @@ import TimeSettings from '../../components/Cards/TimeSettings';
 import ApiIntegrations from './../../components/CustomTables/ApiIntegrations';
 import AddApiAccount from './../../components/Modal/ApiAccountModals/AddApiAccount';
 import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
-
-import Weidex from './../../services/Weidex';
-
+import storage from '../../services/storage';
 
 type Props = {
   MarketStore: {
     getSyncedSummaries: Function,
     getBaseCurrencies: Function,
   },
+  WeidexStore: Object,
 };
 
-const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
+const Settings = inject('MarketStore', 'WeidexStore')(observer(({ ...props }: Props) => {
   const getMarketSummaries = () => {
     props.MarketStore.getSyncedSummaries();
     props.MarketStore.getBaseCurrencies();
@@ -30,10 +29,8 @@ const Settings = inject('MarketStore')(observer(({ ...props }: Props) => {
   };
 
   const syncData = () => {
-    Weidex.sync({
-      id: 'Test'
-    });
-    // TODO: Set loading or something
+    storage.getPortfolioAddresses()
+      .then((data: Array<string>) => props.WeidexStore.sync(data));
   };
 
   return (

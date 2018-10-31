@@ -13,17 +13,25 @@ const portfolioService = (repository) => {
   };
 
   const getPortfolioInvestmentSum = async (portfolio, type) => {
-    if (portfolio.transactions !== 0) {
-      return Promise.all(portfolio.transactions
-        .map(async (transaction) => {
-          if (transaction.type === type) {
-            // Calculates investment in eth
-            await calculateTokenValueETH(transaction.tokenName, transaction.balance);
-          }
-        }))
-        .then(transactions => transactions.reduce((acc, a) => acc + a, 0));
-    }
-    return Promise.resolve();
+    const transactionsArray = portfolio.transactions.map(async (transaction) => {
+      if (transaction.type === type) {
+        // Calculates investment in eth
+        await calculateTokenValueETH(transaction.tokenName, transaction.balance);
+      }
+    });
+    await Promise.all(transactionsArray).then(transactions => transactions.reduce((acc, a) => acc + a, 0));
+    // TODO FOR DELETE
+    // if (portfolio.transactions !== 0) {
+    //   return Promise.all(portfolio.transactions
+    //     .map(async (transaction) => {
+    //       if (transaction.type === type) {
+    //         // Calculates investment in eth
+    //         await calculateTokenValueETH(transaction.tokenName, transaction.balance);
+    //       }
+    //     }))
+    //     .then(transactions => transactions.reduce((acc, a) => acc + a, 0));
+    // }
+    // return Promise.resolve();
   };
 
   const calcPortfolioTotalInvestmentETH = async (portfolio) => {

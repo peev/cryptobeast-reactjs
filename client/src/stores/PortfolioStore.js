@@ -8,6 +8,7 @@ import {
   onBecomeObserved,
 } from 'mobx';
 import requester from '../services/requester';
+import FiatCurrenciesStore from './FiatCurrenciesStore';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
@@ -237,13 +238,14 @@ class PortfolioStore {
   get summaryPortfolioAssets() {
     // NOTE: all the conditions needs to be fulfilled in order to create
     // portfolio asset summary
+    debugger;
     if (this.selectedPortfolio &&
       this.currentPortfolioAssets.length > 0 &&
-      MarketStore.baseCurrencies.length > 0 &&
+      FiatCurrenciesStore.fiatCurrencies.length > 0 &&
       MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
       const { marketPriceHistory } = MarketStore;
       const currentAssets = this.groupedCurrentPortfolioAssets;
-      const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this if USD
+      const valueOfUSD = FiatCurrenciesStore.fiatCurrencies[3].last; // NOTE: this if USD
       const selectedPortfolioSummary = [];
 
       // Creates the needed array, that will be shown in the view

@@ -57,14 +57,14 @@ const currencyController = (repository) => {
         tokenId: req.id,
         tokenName: req.name,
         tokenNameLong: req.fullName,
-        lastPriceETH: priceResponse.lastPrice,
-        volume24H: volume24HStats,
-        high24H: high24HStats,
-        low24H: low24HStats,
-        change24H: change24HStats,
-        change7D: change7DStats,
-        bid: priceResponse.bid,
-        ask: priceResponse.ask,
+        lastPriceETH: priceResponse.lastPrice || 0,
+        volume24H: volume24HStats || 0,
+        high24H: high24HStats || 0,
+        low24H: low24HStats || 0,
+        change24H: change24HStats || 0,
+        change7D: change7DStats || 0,
+        bid: priceResponse.bid || 0,
+        ask: priceResponse.ask || 0,
       };
     } catch (error) {
       console.log(error);

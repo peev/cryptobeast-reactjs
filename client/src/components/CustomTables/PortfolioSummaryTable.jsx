@@ -16,7 +16,7 @@ import { inject, observer } from 'mobx-react';
 import tableStyle from '../../variables/styles/tableStyle';
 import UpArrowIcon from '../CustomIcons/Summary/UpArrowIcon';
 import DownArrowIcon from '../CustomIcons/Summary/DownArrowIcon';
-
+import { BigNumber } from 'bignumber.js';
 
 const styles = () => ({
   paper: {
@@ -114,10 +114,10 @@ function getChange7D(allCurrencies: Array, assetAsArray: Array) {
 function createAssetObjectFromArray(assetAsArray: Array, allCurrencies: Array) {
   return {
     ticker: assetAsArray.tokenName,
-    holdings: assetAsArray.balance,
-    priceETH: assetAsArray.lastPriceETH,
-    priceUSD: assetAsArray.lastPriceUSD.toFixed(2),
-    totalUSD: assetAsArray.totalUSD.toFixed(2),
+    holdings: new BigNumber(assetAsArray.balance).toFixed(8),
+    priceETH: new BigNumber(assetAsArray.lastPriceETH).toFixed(8),
+    priceUSD: new BigNumber(assetAsArray.lastPriceUSD).toFixed(2),
+    totalUSD: new BigNumber(assetAsArray.totalUSD).toFixed(2),
     assetWeight: assetAsArray.weight.toFixed(2),
     '24Change': getChange24H(allCurrencies, assetAsArray),
     '7Change': getChange7D(allCurrencies, assetAsArray),

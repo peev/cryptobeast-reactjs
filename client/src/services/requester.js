@@ -81,7 +81,7 @@ const Market = {
   getBaseCurrencies: () => requests.get('/market/baseCurrencies'),
   getAllTickers: () => requests.get('/market/allTickers'),
   syncCurrencies: () => requests.get('/market/syncCurrencies'),
-  getAllCurrencies: () => requests.get('/market/allCurrencies'),
+  getAllCurrencies: () => requests.get('/currency/all'),
   getBaseTickers: searchedCurrencies => requests.post('/market/syncBaseTickers', searchedCurrencies),
   syncMarketPriceHistory: convertCurrency => requests.post('/market/syncMarketPriceHistory', convertCurrency),
   getMarketPriceHistory: () => requests.get('/market/getMarketPriceHistory'),
@@ -89,7 +89,7 @@ const Market = {
   getProfitAndLossHistory: requestParams => requests.get('/market/profitAndLossHistory', requestParams),
   getLiquidityHistory: requestParams => requests.get('/market/liquidityHistory', requestParams),
   getCorrelationMatrixHistory: requestParams => requests.get('/market/correlationMatrixHistory', requestParams),
-  sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
 const Weidex = {

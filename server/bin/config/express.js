@@ -66,13 +66,13 @@ const init = async (repository) => {
   // }
 
   // Market jobs
-  marketService.createMarketJob(marketService.syncCurrenciesFromApi, { hour: 23, minute: 59 });
-  marketService.createMarketJob(marketService.syncSummaries, { second: 0 }); // sync every minute
-  marketService.createMarketJob(marketService.syncTickersFromKraken, { second: 0 }); // sync every minute
-  marketService.createMarketJob(marketService.syncTickersFromCoinMarketCap, { minute: 0 }); // sync every hour
-  // Save to history
-  marketService.createMarketJob(marketService.saveSummariesToHistory, { minute: 0 }); // sync every hour
-  marketService.createMarketJob(marketService.saveTickersFromKrakenToHistory, { minute: 0 }); // sync every hour
+  // marketService.createMarketJob(marketService.syncCurrenciesFromApi, { hour: 23, minute: 59 });
+  // marketService.createMarketJob(marketService.syncSummaries, { second: 0 }); // sync every minute
+  // marketService.createMarketJob(marketService.syncTickersFromKraken, { second: 0 }); // sync every minute
+  // marketService.createMarketJob(marketService.syncTickersFromCoinMarketCap, { minute: 0 }); // sync every hour
+  // // Save to history
+  // marketService.createMarketJob(marketService.saveSummariesToHistory, { minute: 0 }); // sync every hour
+  // marketService.createMarketJob(marketService.saveTickersFromKrakenToHistory, { minute: 0 }); // sync every hour
 
 
   // Initialize all portfolio jobs and pass them to portfolio-controller

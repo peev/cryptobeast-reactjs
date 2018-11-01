@@ -4,6 +4,8 @@ const modelName = 'Currency';
 
 const currencyController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
+  const Sequelize = require('sequelize');
+  const op = Sequelize.Op;
 
   const calculateCurrencyChange = (open, close) => Number((close - open) / open);
 
@@ -119,6 +121,16 @@ const currencyController = (repository) => {
       });
   };
 
+  const getAllCurrencies = (req, res) => {
+    repository.find({ modelName })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   const updateCurrency = async (req, res) => {
     const { id } = req.params;
     const currency = getCurrencyObject(req.body);
@@ -146,6 +158,7 @@ const currencyController = (repository) => {
   return {
     createCurrency,
     getCurrency,
+    getAllCurrencies,
     updateCurrency,
     removeCurrency,
     sync,

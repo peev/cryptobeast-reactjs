@@ -29,50 +29,53 @@ class MarketStore {
   }
 
   init() {
-    // Setups the database. This request gives the back-end what
-    // currencies to get from internet, writes them to database.
-    // After that, fetches information from  database.
-    requester.Market.getBaseTickers({
-      currencies: 'XXBTZUSD,XXBTZEUR,XXBTZJPY,XETHXXBT',
-    })
-      .then(() => this.getBaseCurrencies())
-      .catch((err: object) => console.log(err));
-
-    // gets all currencies(name representation) from api and sync them into database
-    // and then calls them back
-    requester.Market.syncCurrencies()
+    requester.Market.getAllCurrencies()
       .then(() => this.getAllCurrencies())
       .catch((err: object) => console.log(err));
+    // // Setups the database. This request gives the back-end what
+    // // currencies to get from internet, writes them to database.
+    // // After that, fetches information from  database.
+    // requester.Market.getBaseTickers({
+    //   currencies: 'XXBTZUSD,XXBTZEUR,XXBTZJPY,XETHXXBT',
+    // })
+    //   .then(() => this.getBaseCurrencies())
+    //   .catch((err: object) => console.log(err));
 
-    // gets all the tickers(name pairs, equivalent) saved in database
-    requester.Market.getAllTickers()
-      .then(action(result => this.allTickers = result.data)) // eslint-disable-line
-      .catch((err: object) => console.log(err));
+    // // gets all currencies(name representation) from api and sync them into database
+    // // and then calls them back
+    // requester.Market.syncCurrencies()
+    //   .then(() => this.getAllCurrencies())
+    //   .catch((err: object) => console.log(err));
 
-    // get the summary to the market for the past 24h
-    requester.Market.getSummaries()
-      .then(this.convertMarketSummaries)
-      .catch((err: object) => console.log(err));
+    // // gets all the tickers(name pairs, equivalent) saved in database
+    // requester.Market.getAllTickers()
+    //   .then(action(result => this.allTickers = result.data)) // eslint-disable-line
+    //   .catch((err: object) => console.log(err));
 
-    // get market price history from database (Coin Market Cap)
-    requester.Market.getMarketPriceHistory()
-      .then(this.convertMarketPriceHistory)
-      .catch((err: object) => console.log(err));
+    // // get the summary to the market for the past 24h
+    // requester.Market.getSummaries()
+    //   .then(this.convertMarketSummaries)
+    //   .catch((err: object) => console.log(err));
+
+    // // get market price history from database (Coin Market Cap)
+    // requester.Market.getMarketPriceHistory()
+    //   .then(this.convertMarketPriceHistory)
+    //   .catch((err: object) => console.log(err));
     
-    // get profit and loss history from database (Coin Market Cap)
-    requester.Market.getProfitAndLossHistory()
-      .then(this.getCurrenciesHistory)
-      .catch((err: object) => console.log(err));
+    // // get profit and loss history from database (Coin Market Cap)
+    // requester.Market.getProfitAndLossHistory()
+    //   .then(this.getCurrenciesHistory)
+    //   .catch((err: object) => console.log(err));
     
-    // get liquidity history from database (Coin Market Cap)
-    requester.Market.getLiquidityHistory()
-      .then(action(result => this.liquidity = result.data))
-      .catch((err: object) => console.log(err));
+    // // get liquidity history from database (Coin Market Cap)
+    // requester.Market.getLiquidityHistory()
+    //   .then(action(result => this.liquidity = result.data))
+    //   .catch((err: object) => console.log(err));
     
-    // get correlation matrix history from database (Coin Market Cap)
-    requester.Market.getCorrelationMatrixHistory()
-      .then(this.getCorrelationMatrixHistory)
-      .catch((err: object) => console.log(err));
+    // // get correlation matrix history from database (Coin Market Cap)
+    // requester.Market.getCorrelationMatrixHistory()
+    //   .then(this.getCorrelationMatrixHistory)
+    //   .catch((err: object) => console.log(err));
   }
 
   @computed
@@ -125,11 +128,13 @@ class MarketStore {
   getAllCurrencies() {
     requester.Market.getAllCurrencies()
       .then(action((response: object) => {
-        this.allCurrencies = response.data.map((el: oject) => ({
-          value: el.currency,
-          label: `${el.currencyLong} [${el.currency}]`,
-          // label: el.currency,
-        }));
+        this.allCurrencies = response.data;
+        // TODO FOR DELETE
+        // this.allCurrencies = response.data.map((el: oject) => ({
+        //   value: el.currency,
+        //   label: `${el.currencyLong} [${el.currency}]`,
+        //   // label: el.currency,
+        // }));
       }))
       .catch((err: object) => console.log(err));
   }

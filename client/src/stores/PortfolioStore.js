@@ -238,149 +238,17 @@ class PortfolioStore {
   get summaryPortfolioAssets() {
     // NOTE: all the conditions needs to be fulfilled in order to create
     // portfolio asset summary
-    debugger;
+    // debugger;
     if (this.selectedPortfolio &&
       this.currentPortfolioAssets.length > 0 &&
-      FiatCurrenciesStore.fiatCurrencies.length > 0 &&
-      MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
+      FiatCurrenciesStore.fiatCurrencies.length > 0 ) {
       const { marketPriceHistory } = MarketStore;
       const currentAssets = this.groupedCurrentPortfolioAssets;
-      const valueOfUSD = FiatCurrenciesStore.fiatCurrencies[3].last; // NOTE: this if USD
       const selectedPortfolioSummary = [];
 
       // Creates the needed array, that will be shown in the view
       currentAssets.forEach((asset) => {
-        const currentRow = [];
-        Object.keys(asset).forEach((keyName, ind) => {
-          // 1. Ticker
-          if (keyName === 'currency') {
-            currentRow.push(asset[keyName]);
-          }
-          // 2. Holdings
-          if (keyName === 'balance') {
-            currentRow.push(asset[keyName]);
-          }
-          // ------------------------------
-          // Depends on array's 0 index
-          let assetBTCEquiv;
-          switch (true) {
-            case currentRow[0] === 'BTC' && ind > 1:
-              assetBTCEquiv = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].Last;
-              break;
-            case currentRow[0] === 'USD' && ind > 1:
-              assetBTCEquiv = 1 / MarketStore.baseCurrencies[3].last;
-              break;
-            case currentRow[0] === 'JPY' && ind > 1:
-              assetBTCEquiv = 1 / MarketStore.baseCurrencies[2].last;
-              break;
-            case currentRow[0] === 'EUR' && ind > 1:
-              assetBTCEquiv = 1 / MarketStore.baseCurrencies[1].last;
-              break;
-            case currentRow[0] === 'USDT' && ind > 1:
-              assetBTCEquiv = 1 / MarketStore.marketSummaries['USDT-BTC'].Last;
-              break;
-            default:
-              assetBTCEquiv = MarketStore.marketSummaries[`BTC-${currentRow[0]}`]
-                ? MarketStore.marketSummaries[`BTC-${currentRow[0]}`].Last
-                : 0;
-              break;
-          }
-
-          // ------------------------------
-          // 3. Price(BTC)
-          if (ind === 2) {
-            let calcPriceBTC;
-            if (currentRow[0] === 'BTC') {
-              calcPriceBTC = asset.balance;
-            } else {
-              calcPriceBTC = Math.round(assetBTCEquiv * (10 ** 12)) / (10 ** 12);
-            }
-
-            currentRow.push(calcPriceBTC);
-          }
-          // 4. Price(USD)
-          if (ind === 3) {
-            let calculatedUSDPrice;
-            // for BTC, value is already
-            if (currentRow[0] === 'BTC') {
-              calculatedUSDPrice = valueOfUSD;
-            } else {
-              calculatedUSDPrice = (assetBTCEquiv * valueOfUSD);
-            }
-
-            const roundedCalcPriceUSD = Math.round(calculatedUSDPrice * (10 ** 12)) / (10 ** 12);
-            currentRow.push(roundedCalcPriceUSD);
-          }
-          // 5. Total Value(USD)
-          if (ind === 4) {
-            const calcPriceUSD = currentRow[3] * asset.balance;
-            const roundedCalcPriceUSD = Math.round(calcPriceUSD * (10 ** 12)) / (10 ** 12);
-            currentRow.push(roundedCalcPriceUSD);
-          }
-          // 6. Asset Weight
-          if (ind === 5) {
-            const ifPortfolioCost = this.currentPortfolioCostInUSD !== 0 ?
-              this.currentPortfolioCostInUSD : 1;
-            const percentOfItem = ((currentRow[4] / ifPortfolioCost) * 100).toFixed(0);
-            currentRow.push(percentOfItem);
-          }
-          // 7. 24H Change
-          if (ind === 6) {
-            let yesterdayCost;
-            let changeFromYesterday;
-            switch (currentRow[0]) {
-              case 'USD':
-              case 'EUR':
-              case 'JPY':
-                changeFromYesterday = 'n/a';
-                break;
-              case 'BTC':
-                yesterdayCost = MarketStore.marketSummaries[`USDT-${currentRow[0]}`].PrevDay;
-                changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
-                  .toFixed(2);
-                break;
-              case 'USDT':
-                yesterdayCost = 1 / MarketStore.marketSummaries['USDT-BTC'].PrevDay;
-                changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
-                  .toFixed(2);
-                break;
-              default:
-                if (MarketStore.marketSummaries[`BTC-${currentRow[0]}`]) {
-                  yesterdayCost = MarketStore.marketSummaries[`BTC-${currentRow[0]}`].PrevDay;
-                  changeFromYesterday = (((assetBTCEquiv - yesterdayCost) / yesterdayCost) * 100)
-                    .toFixed(2);
-                  break;
-                } else {
-                  changeFromYesterday = 'n/a';
-                  break;
-                }
-            }
-
-            currentRow.push(changeFromYesterday);
-          }
-          // 8. 7D Change
-          if (ind === 7) {
-            switch (currentRow[0]) {
-              case 'USD':
-              case 'EUR':
-              case 'JPY':
-                currentRow.push('n/a');
-                break;
-              case 'BTC':
-                currentRow.push(0);
-                break;
-              default:
-                if (marketPriceHistory[currentRow[0]]) {
-                  currentRow.push(marketPriceHistory[currentRow[0]].percentChangeFor7d);
-                } else {
-                  currentRow.push('n/a');
-                }
-                break;
-            }
-          }
-        });
-
-        selectedPortfolioSummary.push(currentRow);
+        
       });
 
       return selectedPortfolioSummary;

@@ -6,6 +6,16 @@ const portfolioController = (repository) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
   const WeidexService = require('../../services/weidex-service')(repository);
 
+  const getPortfolioObject = async address => repository.findOne({
+    modelName,
+    options: {
+      where: {
+        userAddress: address,
+      },
+    },
+  })
+    .catch(err => console.log(err));
+
   const getPortfolioWholeObject = async address => repository.findOne({
     modelName,
     options: {
@@ -22,7 +32,7 @@ const portfolioController = (repository) => {
       userAddress: address,
       userID: id,
       totalInvestmentETH: investment || 0,
-      totalInvestmentUSD: null,
+      totalInvestmentUSD: 0,
     };
     return portfolio;
   };
@@ -44,12 +54,14 @@ const portfolioController = (repository) => {
     const user = req.body;
 
     try {
-      const porfolioFound = await getPortfolioWholeObject(user.address);
-      const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(porfolioFound);
+      const porfolioFound = await getPortfolioObject(user.address);
       if (porfolioFound === null) {
-        const newPortfolioObject = createPortfolioObject(user.address, user.id, porfolioFound);
+        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentEthExternal(user.address);
+        const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
         await createAction(req, res, newPortfolioObject, false);
       } else {
+        const portfolio = await getPortfolioWholeObject(user.address);
+        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(portfolio);
         const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
         await updateAction(req, res, Number(porfolioFound.id), newPortfolioObject, false);
       }
@@ -62,12 +74,14 @@ const portfolioController = (repository) => {
     const user = req.body;
 
     try {
-      const porfolioFound = await getPortfolioWholeObject(user.address);
-      const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(porfolioFound);
+      const porfolioFound = await getPortfolioObject(user.address);
       if (porfolioFound === null) {
+        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentEthExternal(user.address);
         const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
         await createAction(req, res, newPortfolioObject, true);
       } else {
+        const portfolio = await getPortfolioWholeObject(user.address);
+        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(portfolio);
         const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
         await updateAction(req, res, Number(porfolioFound.id), newPortfolioObject, true);
       }

@@ -7,9 +7,9 @@ const attachTo = (app, repository, jobs) => {
 
   router
     .post('/getPortfoliosByAddresses', controller.getPortfoliosByAddresses)
+    .get('/getPortfolioAssetsByPortfolioId/:id', controller.getPortfolioAssetsByPortfolioId)
     .post('/create', validator.verifyCreatePortfolio, controller.createPortfolio)
     .get('/:address', controller.getPortfolio)
-    .get('/getAssets/:id', controller.getPortfolioAssetsByPortfolioId)
     .put('/update/:id', validator.verifyUpdatePortfolio, controller.updatePortfolio)
     .put('/updatePortfolioTotalInvastments/:address', controller.updatePortfolioTotalInvestment)
     .delete('/delete/:id', controller.removePortfolio);

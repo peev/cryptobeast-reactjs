@@ -9,7 +9,7 @@ import NotificationStore from './NotificationStore';
 import Analytics from './Analytics';
 import Allocations from './Allocations';
 import Currencies from './CurrencyStore';
-import FiatCurrencies from './FiatCurrencies';
+import FiatCurrencies from './FiatCurrenciesStore';
 
 import TradeHistoryStore from '../features/TransactionHistory/TradeHistory/TradeHistoryStore';
 

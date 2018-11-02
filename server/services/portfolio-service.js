@@ -34,13 +34,11 @@ const portfolioService = (repository) => {
     } else {
       items = await weidexService().getUserWithdrawHttp(user.id);
     }
-    const transactionsArray = await items.map(async (transaction) => {
+    const transactionsArray = await items.map(async transaction =>
       // Calculates investment in eth
-      return calculateTokenValueETH(transaction.tokenName, transaction.amount);
-    });
-    return Promise.all(transactionsArray).then((transactions) => {
-      return transactions.reduce((acc, a) => (bigNumberService().sum(acc, a)), 0);
-    });
+      calculateTokenValueETH(transaction.tokenName, transaction.amount));
+    return Promise.all(transactionsArray).then(transactions =>
+      transactions.reduce((acc, a) => (bigNumberService().sum(acc, a)), 0));
   };
 
   const calcPortfolioTotalInvestmentETH = async (portfolio) => {

@@ -13,6 +13,10 @@ class FiatCurrencies {
     onBecomeObserved(this, 'fiatCurrenciesHistory', this.fiatCurrenciesHistory);
   }
 
+  init() {
+    this.getFiatCurrencies();
+  }
+
   @action.bound
   getFiatCurrencies() {
     requester.FiatCurrencies.getFiatCurrencies()

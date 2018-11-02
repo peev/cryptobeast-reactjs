@@ -12,7 +12,7 @@ const portfolioService = (repository) => {
       },
     });
 
-    return Number(bigNumberService().product(amount, currency.lastPriceETH));
+    return bigNumberService().product(amount, currency.lastPriceETH);
   };
 
   const getPortfolioInvestmentSum = async (portfolio, type) => {
@@ -23,7 +23,7 @@ const portfolioService = (repository) => {
       }
     });
     await Promise.all(transactionsArray).then(transactions =>
-      transactions.reduce((acc, a) => Number(bigNumberService().sum(acc, a)), 0));
+      transactions.reduce((acc, a) => (bigNumberService().sum(acc, a)), 0));
   };
 
   const getPortfolioInvestmentSumExternal = async (address, fetchDeposits) => {
@@ -39,26 +39,26 @@ const portfolioService = (repository) => {
       await calculateTokenValueETH(transaction.tokenName, transaction.amount);
     });
     await Promise.all(transactionsArray).then(transactions =>
-      transactions.reduce((acc, a) => Number(bigNumberService().sum(acc, a)), 0));
+      transactions.reduce((acc, a) => (bigNumberService().sum(acc, a)), 0));
   };
 
   const calcPortfolioTotalInvestmentETH = async (portfolio) => {
     const depositAmount = await getPortfolioInvestmentSum(portfolio, 'd');
     const withdrawAmount = await getPortfolioInvestmentSum(portfolio, 'w');
-    return Number(bigNumberService().difference(depositAmount, withdrawAmount));
+    return bigNumberService().difference(depositAmount, withdrawAmount);
   };
 
   const calcPortfolioTotalInvestmentEthExternal = async (portfolioAddress) => {
     const depositAmount = await getPortfolioInvestmentSumExternal(portfolioAddress, true);
     const withdrawAmount = await getPortfolioInvestmentSumExternal(portfolioAddress, false);
-    return Number(bigNumberService().difference(depositAmount, withdrawAmount));
+    return bigNumberService().difference(depositAmount, withdrawAmount);
   };
 
   const calcPortfolioTotalValueETH = async (portfolio) => {
     if (portfolio.assets !== 0) {
       return Promise.all(portfolio.assets
         .map(async asset => calculateTokenValueETH(asset.tokenName, asset.balance)))
-        .then(assets => assets.reduce((acc, a) => Number(bigNumberService().sum(acc, a)), 0));
+        .then(assets => assets.reduce((acc, a) => (bigNumberService().sum(acc, a)), 0));
     }
     return Promise.resolve();
   };

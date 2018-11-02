@@ -181,12 +181,6 @@ const assetController = (repository) => {
 
       await Promise.all(portfolio.assets.map(async (asset) => {
         const assetValue = await portfolioService.calculateTokenValueETH(asset.tokenName, asset.balance);
-        console.log('------------------------------------');
-        console.log(portfolio.id);
-        console.log(portfolioTotalValue);
-        console.log(asset.tokenName);
-        console.log(assetValue);
-        console.log('------------------------------------');
         const result = (portfolioTotalValue !== 0) ?
           bigNumberService().quotient(bigNumberService().product(assetValue, 100), portfolioTotalValue) : 0;
         const newAssetData = Object.assign(asset, { weight: result });

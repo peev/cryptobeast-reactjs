@@ -60,7 +60,7 @@ const tradeController = (repository) => {
 
   const calculateTransactionFee = transaction =>
     ((transaction !== null) ?
-      Number(bigNumberService().quotient(bigNumberService().product(transaction.gas, transaction.gasPrice), 1000000000000000000)) : 0);
+      bigNumberService().quotient(bigNumberService().product(transaction.gas, transaction.gasPrice), 1000000000000000000) : 0);
 
   const createTrade = async (req, res) => {
     const trade = req.body;

@@ -12,7 +12,7 @@ const portfolioService = (repository) => {
       },
     });
 
-    return bigNumberService().product(amount, currency.lastPriceETH);
+    return amount * currency.lastPriceETH;
   };
 
   const getPortfolioInvestmentSum = async (portfolio, type) => {
@@ -34,12 +34,13 @@ const portfolioService = (repository) => {
     } else {
       items = await weidexService().getUserWithdrawHttp(user.id);
     }
-    const transactionsArray = items.map(async (transaction) => {
+    const transactionsArray = await items.map(async (transaction) => {
       // Calculates investment in eth
-      await calculateTokenValueETH(transaction.tokenName, transaction.amount);
+      return calculateTokenValueETH(transaction.tokenName, transaction.amount);
     });
-    await Promise.all(transactionsArray).then(transactions =>
-      transactions.reduce((acc, a) => (bigNumberService().sum(acc, a)), 0));
+    return Promise.all(transactionsArray).then((transactions) => {
+      return transactions.reduce((acc, a) => (bigNumberService().sum(acc, a)), 0);
+    });
   };
 
   const calcPortfolioTotalInvestmentETH = async (portfolio) => {

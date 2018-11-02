@@ -12,7 +12,7 @@ const portfolioService = (repository) => {
       },
     });
 
-    return amount * currency.lastPriceETH;
+    return bigNumberService().product(amount, currency.lastPriceETH);
   };
 
   const getPortfolioInvestmentSum = async (portfolio, type) => {

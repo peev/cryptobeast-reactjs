@@ -94,6 +94,7 @@ const Market = {
 
 const Weidex = {
   sync: requestParams => requests.post('/weidex/sync', requestParams),
+  validateAddresses: requestParams => requests.post('/weidex/validateAddresses', requestParams),
 };
 
 export default {

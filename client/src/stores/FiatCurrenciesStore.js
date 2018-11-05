@@ -9,8 +9,12 @@ class FiatCurrencies {
     this.fiatCurrencies = [];
     this.fiatCurrenciesHistory = [];
 
-    onBecomeObserved(this, 'fiatCurrencies', this.getFiatCurrencies);
-    onBecomeObserved(this, 'fiatCurrenciesHistory', this.fiatCurrenciesHistory);
+    // onBecomeObserved(this, 'fiatCurrencies', this.getFiatCurrencies);
+    // onBecomeObserved(this, 'fiatCurrenciesHistory', this.fiatCurrenciesHistory);
+  }
+
+  init() {
+    // this.getFiatCurrencies();
   }
 
   @action.bound

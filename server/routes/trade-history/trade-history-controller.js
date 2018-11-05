@@ -5,6 +5,7 @@ const modelName = 'TradeHistory';
 
 const tradeController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
+  const bigNumberService = require('../../services/big-number-service');
 
   const getPortfolioObjectByAddress = async address => repository.findOne({
     modelName: 'Portfolio',
@@ -33,10 +34,10 @@ const tradeController = (repository) => {
       newTradeObject = {
         tokenName: req.token.name,
         type: req.type,
-        amount: req.amount,
-        priceETH: req.price,
+        amount: req.amount || 0,
+        priceETH: req.price || 0,
         priceUSD: 0,
-        priceTotalETH: req.amount * req.price,
+        priceTotalETH: bigNumberService().product(req.amount, req.price) || 0,
         priceTotalUSD: 0,
         timestamp: req.createdAt,
         txHash: req.txHash,
@@ -58,7 +59,8 @@ const tradeController = (repository) => {
   };
 
   const calculateTransactionFee = transaction =>
-    ((transaction !== null) ? Number(transaction.gas * transaction.gasPrice) / 1000000000000000000 : 0);
+    ((transaction !== null) ?
+      bigNumberService().quotient(bigNumberService().product(transaction.gas, transaction.gasPrice), 1000000000000000000) : 0);
 
   const createTrade = async (req, res) => {
     const trade = req.body;

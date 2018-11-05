@@ -54,7 +54,7 @@ const Transaction = {
 
 const Portfolio = {
   getPortfoliosByUserAddresses: addresses => requests.post('/portfolio/getPortfoliosByAddresses', addresses),
-  getPortfolioAssetsByPortfolioId: id => requests.get(`/portfolio/getAssets/${id}`),
+  getPortfolioAssetsByPortfolioId: id => requests.get(`/portfolio/getPortfolioAssetsByPortfolioId/${id}`),
   getAll: () => requests.get('/portfolio/all'),
   create: portfolioName => requests.post('/portfolio/create', portfolioName),
   searchItemsInCurrentPortfolio: requestParams => requests.get(`/portfolio/${requestParams.portfolioId}/${requestParams.item}`),
@@ -81,7 +81,7 @@ const Market = {
   getBaseCurrencies: () => requests.get('/market/baseCurrencies'),
   getAllTickers: () => requests.get('/market/allTickers'),
   syncCurrencies: () => requests.get('/market/syncCurrencies'),
-  getAllCurrencies: () => requests.get('/market/allCurrencies'),
+  getAllCurrencies: () => requests.get('/currency/all'),
   getBaseTickers: searchedCurrencies => requests.post('/market/syncBaseTickers', searchedCurrencies),
   syncMarketPriceHistory: convertCurrency => requests.post('/market/syncMarketPriceHistory', convertCurrency),
   getMarketPriceHistory: () => requests.get('/market/getMarketPriceHistory'),
@@ -89,11 +89,12 @@ const Market = {
   getProfitAndLossHistory: requestParams => requests.get('/market/profitAndLossHistory', requestParams),
   getLiquidityHistory: requestParams => requests.get('/market/liquidityHistory', requestParams),
   getCorrelationMatrixHistory: requestParams => requests.get('/market/correlationMatrixHistory', requestParams),
-  sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
 const Weidex = {
   sync: requestParams => requests.post('/weidex/sync', requestParams),
+  validateAddresses: requestParams => requests.post('/weidex/validateAddresses', requestParams),
 };
 
 export default {

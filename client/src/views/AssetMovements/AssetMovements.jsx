@@ -17,7 +17,7 @@ const AssetMovements = () => (
         tableHead={[
           { id: 'ticker', numberic: false, disablePadding: false, label: 'Ticker' },
           { id: 'holdings', numberic: true, disablePadding: false, label: 'Holdings' },
-          { id: 'priceBTC', numberic: true, disablePadding: false, label: 'Price (BTC)' },
+          { id: 'priceBTC', numberic: true, disablePadding: false, label: 'Price (ETH)' },
           { id: 'priceUSD', numberic: true, disablePadding: false, label: 'Price (USD)' },
           { id: 'totalUSD', numberic: true, disablePadding: false, label: 'Total Value (USD)' },
           { id: 'assetWeight', numberic: false, disablePadding: false, label: 'Asset Weight' },

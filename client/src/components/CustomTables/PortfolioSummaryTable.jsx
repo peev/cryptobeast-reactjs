@@ -11,6 +11,7 @@ import {
   Tooltip,
   TableSortLabel,
 } from '@material-ui/core';
+import { BigNumber } from 'bignumber.js';
 import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
 import tableStyle from '../../variables/styles/tableStyle';
@@ -89,6 +90,7 @@ type Props = {
   classes: Object,
   tableHead: Array<string>,
   PortfolioStore: Object,
+  MarketStore: Object,
 };
 
 type State = {
@@ -102,21 +104,25 @@ function getSorting(order: string, orderBy: string) {
     : (a: Object, b: Object) => (a[orderBy] < b[orderBy] ? -1 : 1);
 }
 
+function getChange24H(allCurrencies: Array, assetAsArray: Array) {
+  return Number(allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName).change24H).toFixed(2) || 0;
+}
 
-function createAssetObjectFromArray(assetAsArray: Array) {
-  if (assetAsArray.length === 8) {
-    return {
-      ticker: assetAsArray[0],
-      holdings: assetAsArray[1],
-      priceBTC: assetAsArray[2],
-      priceUSD: assetAsArray[3],
-      totalUSD: assetAsArray[4],
-      assetWeight: assetAsArray[5],
-      '24Change': assetAsArray[6],
-      '7Change': assetAsArray[7],
-    };
-  }
-  return null;
+function getChange7D(allCurrencies: Array, assetAsArray: Array) {
+  return Number(allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName).change7D).toFixed(2) || 0;
+}
+
+function createAssetObjectFromArray(assetAsArray: Array, allCurrencies: Array) {
+  return {
+    ticker: assetAsArray.tokenName,
+    holdings: new BigNumber(assetAsArray.balance).toFixed(8),
+    priceETH: new BigNumber(assetAsArray.lastPriceETH).toFixed(8),
+    priceUSD: new BigNumber(assetAsArray.lastPriceUSD).toFixed(2),
+    totalUSD: new BigNumber(assetAsArray.totalUSD).toFixed(2),
+    assetWeight: assetAsArray.weight.toFixed(2),
+    '24Change': getChange24H(allCurrencies, assetAsArray),
+    '7Change': getChange7D(allCurrencies, assetAsArray),
+  };
 }
 
 const TableHeader = ({
@@ -147,9 +153,9 @@ const TableHeader = ({
             sortDirection={orderBy === headerItem.id ? order : false}
           >
             {(() => {
-              if (index === 7) {
-                return headerItem.label;
-              }
+              // if (index === 7) {
+              //   return headerItem.label;
+              // }
               return (
                 <Tooltip
                   title="Sort"
@@ -172,7 +178,7 @@ const TableHeader = ({
     </TableHead>
   );
 };
-@inject('PortfolioStore')
+@inject('PortfolioStore', 'MarketStore')
 @observer
 class PortfolioSummaryTable extends React.Component<Props, State> {
   state = {
@@ -192,7 +198,7 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, tableHead, PortfolioStore } = this.props;
+    const { classes, tableHead, PortfolioStore, MarketStore } = this.props;
     const { order, orderBy } = this.state;
 
     const header = (
@@ -205,8 +211,8 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
       />
     );
 
-    const tableBodyContent = PortfolioStore.summaryPortfolioAssets
-      .map(createAssetObjectFromArray)
+    const tableBodyContent = PortfolioStore.currentPortfolioAssets
+      .map((assetsArray: Array) => createAssetObjectFromArray(assetsArray, MarketStore.allCurrencies))
       .sort(getSorting(order, orderBy))
       .map((ROW: Object) => (
         <TableRow key={uuid()}>

@@ -42,7 +42,7 @@ class App extends React.Component<Props> {
     if (this.props.location.pathname === '/') {
       const addresses = this.getAddresses(this.props.location.search);
       if (addresses.length) {
-        this.props.WeidexStore.sync(addresses);
+        this.props.WeidexStore.validateAddresses(addresses);
       } else {
         this.props.PortfolioStore.getPortfoliosOnStartup();
       }
@@ -51,7 +51,7 @@ class App extends React.Component<Props> {
     }
   }
 
-  getAddresses = (locationSearch: string) => locationSearch.replace('&w=', 'w=').substring(1).split('w=').slice(1);
+  getAddresses = (locationSearch: string) => locationSearch.replace(/&w=/g, 'w=').substring(1).split('w=').slice(1);
 
   handleDrawerOpen = () => {
     this.setState({ open: true });

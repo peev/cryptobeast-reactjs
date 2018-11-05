@@ -7,6 +7,7 @@ const attachTo = (app, repository, jobs) => {
 
   router
     .post('/create', validator.verifyCreateCurrency, controller.createCurrency)
+    .get('/all', controller.getAllCurrencies)
     .get('/:id', controller.getCurrency)
     .put('/update/:id', controller.updateCurrency)
     .delete('/delete/:id', controller.removeCurrency);

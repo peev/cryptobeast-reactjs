@@ -25,6 +25,7 @@ import stores from './stores';
 // stores.PortfolioStore.getPortfoliosByUserAddresses();
 // ====================================
 // For easier debugging MobX
+stores.MarketStore.init();
 function enableDevtools() {
   require(['mobx-react-devtools'], mobxDevtools => {//eslint-disable-line
     const wrapper = document.createElement('div');

@@ -2,7 +2,7 @@
 import React from 'react';
 import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-
+import { BigNumber } from 'bignumber.js';
 import summaryStyle from './../../variables/styles/summaryStyle';
 
 import AnalyticsIcon from './../../components/CustomIcons/Summary/AnalyticsIcon';

@@ -7,6 +7,7 @@ import {
   computed,
   onBecomeObserved,
 } from 'mobx';
+import { BigNumber } from 'bignumber.js';
 import requester from '../services/requester';
 import FiatCurrenciesStore from './FiatCurrenciesStore';
 import MarketStore from './MarketStore';
@@ -290,7 +291,7 @@ class PortfolioStore {
     // because the value from database is incorrect
     if (this.selectedPortfolio && this.currentPortfolioAssets.length) {
       const totals = this.currentPortfolioAssets.map(asset => asset.totalUSD);
-      return totals.reduce((accumulator, value) => accumulator + value);
+      return totals.reduce((accumulator, value) => new BigNumber(String(accumulator)).plus(new BigNumber(String(value))));
     }
     return 0;
 

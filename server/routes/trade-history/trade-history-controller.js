@@ -5,12 +5,24 @@ const modelName = 'TradeHistory';
 
 const tradeController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
+  const bigNumberService = require('../../services/big-number-service');
 
   const getPortfolioObjectByAddress = async address => repository.findOne({
     modelName: 'Portfolio',
     options: {
       where: {
         userAddress: address,
+      },
+      include: [{ all: true }],
+    },
+  })
+    .catch(err => console.log(err));
+
+  const getPortfolioObjectById = async idParam => repository.findOne({
+    modelName: 'Portfolio',
+    options: {
+      where: {
+        id: idParam,
       },
       include: [{ all: true }],
     },
@@ -33,10 +45,10 @@ const tradeController = (repository) => {
       newTradeObject = {
         tokenName: req.token.name,
         type: req.type,
-        amount: req.amount,
-        priceETH: req.price,
+        amount: req.amount || 0,
+        priceETH: req.price || 0,
         priceUSD: 0,
-        priceTotalETH: req.amount * req.price,
+        priceTotalETH: bigNumberService().product(req.amount, req.price) || 0,
         priceTotalUSD: 0,
         timestamp: req.createdAt,
         txHash: req.txHash,
@@ -58,7 +70,8 @@ const tradeController = (repository) => {
   };
 
   const calculateTransactionFee = transaction =>
-    ((transaction !== null) ? Number(transaction.gas * transaction.gasPrice) / 1000000000000000000 : 0);
+    ((transaction !== null) ?
+      bigNumberService().quotient(bigNumberService().product(transaction.gas, transaction.gasPrice), 1000000000000000000) : 0);
 
   const createTrade = async (req, res) => {
     const trade = req.body;
@@ -97,9 +110,24 @@ const tradeController = (repository) => {
     }
   };
 
-  const getTrade = (req, res) => {
+  const getAllTradesByPortfolioId = async (req, res) => {
+    const { portfolioId } = req.params;
+    try {
+      await getPortfolioObjectById(portfolioId)
+        .then((portfolio) => {
+          res.status(200).send(portfolio.tradeHistories);
+        })
+        .catch((error) => {
+          res.json(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getTrade = async (req, res) => {
     const { id } = req.params;
-    repository.findById({ modelName, id })
+    await repository.findById({ modelName, id })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -151,6 +179,7 @@ const tradeController = (repository) => {
     getTrade,
     removeTrade,
     sync,
+    getAllTradesByPortfolioId,
   };
 };
 

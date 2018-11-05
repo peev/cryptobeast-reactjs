@@ -26,15 +26,13 @@ const TradeHistoryWrapper = ({ classes }: Props) => (
           <TradeHistory
             tableHead={[
               { id: 'tradeDate', numeric: false, disablePadding: false, label: 'Trade Date' },
-              { id: 'source', numeric: false, disablePadding: false, label: 'Source' },
               { id: 'pair', numeric: false, disablePadding: false, label: 'Pair' },
               { id: 'type', numeric: false, disablePadding: false, label: 'Type' },
-              { id: 'price', numeric: false, disablePadding: false, label: 'Price' },
-              { id: 'filled', numeric: false, disablePadding: false, label: 'Filled' },
+              { id: 'amount', numeric: false, disablePadding: false, label: 'Amount' },
+              { id: 'price_eth', numeric: false, disablePadding: false, label: 'Price ETH' },
               { id: 'fee', numeric: false, disablePadding: false, label: 'Fee' },
-              { id: 'total', numeric: false, disablePadding: false, label: 'Total' },
-              { id: 'edit', numeric: false, disablePadding: false, label: '' },
-              { id: 'remove', numeric: false, disablePadding: false, label: '' },
+              { id: 'total_eth', numeric: false, disablePadding: false, label: 'Total ETH' },
+              { id: 'total_usd', numeric: false, disablePadding: false, label: 'Total USD' },
             ]}
           />
         </div>

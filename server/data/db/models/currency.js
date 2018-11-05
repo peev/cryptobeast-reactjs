@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => sequelize.define('currency', {
       len: [1, 50],
     },
   },
+  decimals: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
   bid: {
     type: DataTypes.DOUBLE,
     allowNull: true,

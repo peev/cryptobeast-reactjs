@@ -4,10 +4,10 @@ const modelName = 'Currency';
 
 const currencyController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
-  const Sequelize = require('sequelize');
-  const op = Sequelize.Op;
+  const bigNumberService = require('../../services/big-number-service');
 
-  const calculateCurrencyChange = (open, close) => Number((close - open) / open);
+  const calculateCurrencyChange = (open, close) =>
+    Number(bigNumberService().quotient(bigNumberService().difference(close, open), open));
 
   const fetchCurrencyObject = tokenNameParam => repository.findOne({
     modelName,
@@ -57,6 +57,7 @@ const currencyController = (repository) => {
         tokenId: req.id,
         tokenName: req.name,
         tokenNameLong: req.fullName,
+        decimals: req.decimals,
         lastPriceETH: priceResponse.lastPrice || 0,
         volume24H: volume24HStats || 0,
         high24H: high24HStats || 0,

@@ -11,12 +11,13 @@ import {
   Tooltip,
   TableSortLabel,
 } from '@material-ui/core';
+import { BigNumber } from 'bignumber.js';
 import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
 import tableStyle from '../../variables/styles/tableStyle';
 import UpArrowIcon from '../CustomIcons/Summary/UpArrowIcon';
 import DownArrowIcon from '../CustomIcons/Summary/DownArrowIcon';
-import { BigNumber } from 'bignumber.js';
+
 
 const styles = () => ({
   paper: {

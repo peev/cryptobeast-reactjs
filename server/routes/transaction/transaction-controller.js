@@ -5,6 +5,7 @@ const modelName = 'Transaction';
 
 const transactionController = (repository) => {
   const weidexService = require('../../services/weidex-service')(repository);
+  const bigNumberService = require('../../services/big-number-service');
 
   const getTransactionObject = async transactionHash => repository.findOne({
     modelName,
@@ -48,10 +49,10 @@ const transactionController = (repository) => {
         portfolioId: req.portfolioId,
         txTimestamp: Number(timestamp) * 1000,
         tokenPriceETH: Number(ethValue) || 0,
-        totalValueETH: req.amount * Number(ethValue) || 0,
-        tokenPriceUSD: null,
-        totalValueUSD: null,
-        ETHUSD: null,
+        totalValueETH: bigNumberService().product(req.amount, ethValue) || 0,
+        tokenPriceUSD: 0,
+        totalValueUSD: 0,
+        ETHUSD: 0,
       };
     } catch (error) {
       console.log(error);
@@ -101,8 +102,9 @@ const transactionController = (repository) => {
       const transaction = await getTransactionObject(transactionData.txHash);
       if (transaction === null) {
         await createAction(req, res, transactionObject, true);
+      } else {
+        await updateAction(req, res, Number(transaction.id), transactionObject, true);
       }
-      await updateAction(req, res, Number(transaction.id), transactionObject, true);
     } catch (error) {
       console.log(error);
     }

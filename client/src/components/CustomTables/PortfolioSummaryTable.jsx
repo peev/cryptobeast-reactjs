@@ -11,12 +11,12 @@ import {
   Tooltip,
   TableSortLabel,
 } from '@material-ui/core';
-import { BigNumber } from 'bignumber.js';
 import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
 import tableStyle from '../../variables/styles/tableStyle';
 import UpArrowIcon from '../CustomIcons/Summary/UpArrowIcon';
 import DownArrowIcon from '../CustomIcons/Summary/DownArrowIcon';
+import BigNumberService from '../../services/BigNumber';
 
 
 const styles = () => ({
@@ -113,13 +113,15 @@ function getChange7D(allCurrencies: Array, assetAsArray: Array) {
 }
 
 function createAssetObjectFromArray(assetAsArray: Array, allCurrencies: Array) {
+  // eslint-disable-next-line prefer-destructuring
+  const { decimals } = allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName);
   return {
     ticker: assetAsArray.tokenName,
-    holdings: new BigNumber(assetAsArray.balance).toFixed(8),
-    priceETH: new BigNumber(assetAsArray.lastPriceETH).toFixed(8),
-    priceUSD: new BigNumber(assetAsArray.lastPriceUSD).toFixed(2),
-    totalUSD: new BigNumber(assetAsArray.totalUSD).toFixed(2),
-    assetWeight: assetAsArray.weight.toFixed(2),
+    holdings: BigNumberService.tokenToEth(assetAsArray.balance, decimals),
+    priceETH: BigNumberService.toFixed(assetAsArray.lastPriceETH),
+    priceUSD: BigNumberService.toFixedParam(assetAsArray.lastPriceUSD, 2),
+    totalUSD: BigNumberService.toFixedParam(BigNumberService.tokenToEth(assetAsArray.totalUSD, decimals), 2),
+    assetWeight: BigNumberService.toFixedParam(assetAsArray.weight, 2),
     '24Change': getChange24H(allCurrencies, assetAsArray),
     '7Change': getChange7D(allCurrencies, assetAsArray),
   };

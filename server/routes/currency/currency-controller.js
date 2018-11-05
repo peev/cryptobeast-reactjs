@@ -58,7 +58,9 @@ const currencyController = (repository) => {
         tokenName: req.name,
         tokenNameLong: req.fullName,
         decimals: req.decimals,
-        lastPriceETH: priceResponse.lastPrice || 0,
+        // TODO remove hardcodded ETH last price = 1
+        // eslint-disable-next-line no-nested-ternary
+        lastPriceETH: priceResponse.lastPrice !== null && priceResponse.lastPrice !== undefined ? priceResponse.lastPrice : req.name === 'ETH' ? 1 : 0,
         volume24H: volume24HStats || 0,
         high24H: high24HStats || 0,
         low24H: low24HStats || 0,
@@ -104,7 +106,7 @@ const currencyController = (repository) => {
     const currencyObject = await getCurrencyObject(currency);
     const currencyFound = await fetchCurrencyObject(currency.name);
 
-    if (currencyFound === null) {
+    if (currencyFound === null || currencyFound === undefined) {
       await createAction(req, res, currencyObject, true);
     } else {
       await updateAction(req, res, Number(currencyFound.id), currencyObject, true);

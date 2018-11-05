@@ -68,7 +68,8 @@ const assetController = (repository) => {
         available: req.availableAmount,
         inOrder: bigNumberService().difference(req.fullAmount, req.availableAmount),
         portfolioId: req.portfolioId,
-        lastPriceETH: lastPriceETHParam || 0,
+        // eslint-disable-next-line no-nested-ternary
+        lastPriceETH: lastPriceETHParam !== null && lastPriceETHParam !== undefined ? lastPriceETHParam : req.tokenName === 'ETH' ? 1 : 0,
         lastPriceUSD: bigNumberService().product(lastPriceETHParam, priceUSD) || 0,
         totalETH: bigNumberService().product(req.fullAmount, lastPriceETHParam) || 0,
         totalUSD: bigNumberService().product(bigNumberService().product(req.fullAmount, lastPriceETHParam), priceUSD) || 0,
@@ -120,7 +121,7 @@ const assetController = (repository) => {
       const assetObject = await createAssetObject(assetData, currency.lastPriceETH, lastPriceUSD);
       const assetFound = await getAssetObject(assetData.tokenName, assetData.portfolioId);
 
-      if (assetFound === null) {
+      if (assetFound === null || assetFound === undefined) {
         await createAction(req, res, assetObject, true);
       } else {
         await updateAction(req, res, Number(assetFound.id), assetObject, true);

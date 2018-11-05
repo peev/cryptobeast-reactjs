@@ -19,6 +19,7 @@ import UpdateTradeModal from './elements/UpdateTrade';
 import TablePaginationActions from './elements/TablePaginationActions';
 import tableStyle from '../../../variables/styles/tableStyle';
 import ConfirmationModal from '../../../components/Modal/ConfirmationModal';
+import BigNumberService from '../../../services/BigNumber';
 
 type Props = {
   classes: Object,
@@ -46,11 +47,11 @@ function getTransationSortableObject(transationAsArray: Object) {
     tradeDate: transationAsArray.timestamp,
     pair: transationAsArray.pair,
     type: transationAsArray.type,
-    amount: transationAsArray.amount,
-    price_eth: transationAsArray.priceETH,
-    fee: transationAsArray.txFee,
-    total_eth: transationAsArray.priceTotalETH,
-    total_usd: transationAsArray.priceTotalUSD,
+    amount: BigNumberService.toNumber(transationAsArray.amount).toString(),
+    price_eth: BigNumberService.toNumber(transationAsArray.priceETH).toString(),
+    fee: BigNumberService.toNumber(transationAsArray.txFee).toString(),
+    total_eth: BigNumberService.toNumber(transationAsArray.priceTotalETH).toString(),
+    total_usd: BigNumberService.toNumber(transationAsArray.priceTotalUSD).toString(),
   });
 }
 

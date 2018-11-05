@@ -57,6 +57,7 @@ const currencyController = (repository) => {
         tokenId: req.id,
         tokenName: req.name,
         tokenNameLong: req.fullName,
+        decimals: req.decimals,
         lastPriceETH: priceResponse.lastPrice || 0,
         volume24H: volume24HStats || 0,
         high24H: high24HStats || 0,

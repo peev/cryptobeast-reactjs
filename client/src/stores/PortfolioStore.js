@@ -546,10 +546,12 @@ class PortfolioStore {
     //   portfolioId: this.selectedPortfolioId,
     //   item: 'Asset',
     // };
-    requester.Portfolio.getPortfolioAssetsByPortfolioId(this.selectedPortfolio.id)
-      .then(action((result) => {
-        this.currentPortfolioAssets = result.data;
-      }));
+    if (this.selectedPortfolio) {
+      requester.Portfolio.getPortfolioAssetsByPortfolioId(this.selectedPortfolio.id)
+        .then(action((result) => {
+          this.currentPortfolioAssets = result.data;
+        }));
+    }
   }
 
   @action.bound

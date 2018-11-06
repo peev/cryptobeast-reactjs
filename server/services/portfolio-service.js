@@ -19,7 +19,7 @@ const portfolioService = (repository) => {
     const transactionsArray = portfolio.transactions.map(async (transaction) => {
       if (transaction.type === type) {
         // Calculates investment in eth
-        await calculateTokenValueETH(transaction.tokenName, transaction.amount);
+        return calculateTokenValueETH(transaction.tokenName, transaction.amount);
       }
     });
     await Promise.all(transactionsArray).then(transactions =>

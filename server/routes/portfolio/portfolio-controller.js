@@ -75,7 +75,7 @@ const portfolioController = (repository) => {
 
     try {
       const porfolioFound = await getPortfolioObject(user.address);
-      if (porfolioFound === null) {
+      if (porfolioFound === null || porfolioFound === undefined) {
         const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentEthExternal(user.address);
         const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
         await createAction(req, res, newPortfolioObject, true);

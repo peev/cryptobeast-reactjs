@@ -82,7 +82,7 @@ const transactionController = (repository) => {
       const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, etherScanTransactionBlock.timestamp);
       const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
       const transaction = await getTransactionObject(transactionData.txHash);
-      if (transaction === null) {
+      if (transaction === null || transaction === undefined) {
         return createAction(req, res, transactionObject, false);
       }
       return updateAction(req, res, Number(transaction.id), transactionObject, false);
@@ -100,7 +100,7 @@ const transactionController = (repository) => {
       const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
       const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
       const transaction = await getTransactionObject(transactionData.txHash);
-      if (transaction === null) {
+      if (transaction === null || transaction === undefined) {
         await createAction(req, res, transactionObject, true);
       } else {
         await updateAction(req, res, Number(transaction.id), transactionObject, true);

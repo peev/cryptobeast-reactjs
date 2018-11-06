@@ -1,3 +1,4 @@
+// @flow
 /* eslint no-console: 0 */
 /* eslint no-prototype-builtins: 0 */
 
@@ -7,18 +8,15 @@ import {
   computed,
   onBecomeObserved,
 } from 'mobx';
-import { BigNumber } from 'bignumber.js';
 import requester from '../services/requester';
 import FiatCurrenciesStore from './FiatCurrenciesStore';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
 import AssetStore from './AssetStore';
-import Analytics from './Analytics';
-import ApiAccountStore from './ApiAccountStore';
 import history from '../services/History';
-import userApi from '../services/user';
 import storage from '../services/storage';
+import BigNumberService from '../services/BigNumber';
 
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
@@ -289,9 +287,12 @@ class PortfolioStore {
   get currentPortfolioCostInUSD() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
-    if (this.selectedPortfolio && this.currentPortfolioAssets.length) {
-      const totals = this.currentPortfolioAssets.map(asset => asset.totalUSD);
-      return totals.reduce((accumulator, value) => new BigNumber(String(accumulator)).plus(new BigNumber(String(value))));
+    if (this.selectedPortfolio && this.currentPortfolioAssets.length && MarketStore.allCurrencies.length) {
+      const totals = this.currentPortfolioAssets.map((asset: object) => {
+        const { decimals } = MarketStore.allCurrencies.find((currency: object) => currency.tokenName === asset.tokenName);
+        return BigNumberService.tokenToEth(asset.totalUSD, decimals);
+      });
+      return totals.reduce((accumulator: number, value: number) => BigNumberService.sum(accumulator, value));
     }
     return 0;
 

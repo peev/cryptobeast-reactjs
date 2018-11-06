@@ -81,7 +81,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             title="USD equivalent"
             // description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
             description={PortfolioStore.currentPortfolioCostInUSD !== 0
-              ? `$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2)}`
+              ? `$${BigNumberService.toFixedParam(PortfolioStore.currentPortfolioCostInUSD, 2)}`
               : ''}
             hasInfo={PortfolioStore.currentPortfolioCostInUSD === 0}
             infoMessage="Please add assets to your portfolio"

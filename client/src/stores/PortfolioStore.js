@@ -277,9 +277,9 @@ class PortfolioStore {
   }
 
   get summaryAssetsBreakdown() {
-    return this.summaryPortfolioAssets.map(el => ({
-      y: parseInt(el[5], 10),
-      name: `${el[0]} (${el[5]}%)`,
+    return this.currentPortfolioAssets.map(el => ({
+      y: el.balance,
+      name: `${el.tokenName}`,
     }));
   }
 

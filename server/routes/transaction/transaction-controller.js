@@ -48,8 +48,8 @@ const transactionController = (repository) => {
         type: req.type,
         portfolioId: req.portfolioId,
         txTimestamp: Number(timestamp) * 1000,
-        tokenPriceETH: Number(ethValue) || 0,
-        totalValueETH: bigNumberService().product(req.amount, ethValue) || 0,
+        tokenPriceETH: 0,
+        totalValueETH: ethValue || 0,
         tokenPriceUSD: 0,
         totalValueUSD: 0,
         ETHUSD: 0,
@@ -79,7 +79,8 @@ const transactionController = (repository) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
       const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
       const currency = await getCurrencyByTokenName(transactionData.tokenName);
-      const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, etherScanTransactionBlock.timestamp);
+      // const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      const ethValue = await bigNumberService().toNumber(etherScanTransaction.value);
       const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
       const transaction = await getTransactionObject(transactionData.txHash);
       if (transaction === null || transaction === undefined) {
@@ -97,7 +98,8 @@ const transactionController = (repository) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
       const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
       const currency = await getCurrencyByTokenName(transactionData.tokenName);
-      const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      // const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      const ethValue = await bigNumberService().toNumber(etherScanTransaction.value);
       const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
       const transaction = await getTransactionObject(transactionData.txHash);
       if (transaction === null || transaction === undefined) {
@@ -128,7 +130,9 @@ const transactionController = (repository) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
       const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
       const currency = await getCurrencyByTokenName(transactionData.tokenName);
-      const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      // TODO Change from ropsten to microservice
+      // const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      const ethValue = await bigNumberService().toNumber(etherScanTransaction.value);
       const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
 
       await updateAction(req, res, Number(id), transactionObject, false);

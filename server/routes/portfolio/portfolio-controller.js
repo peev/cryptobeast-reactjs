@@ -56,7 +56,7 @@ const portfolioController = (repository) => {
     try {
       const porfolioFound = await getPortfolioObject(user.address);
       if (porfolioFound === null) {
-        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentEthExternal(user.address);
+        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentEthExternal(user.address).then(data => data);
         const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
         await createAction(req, res, newPortfolioObject, false);
       } else {
@@ -76,7 +76,7 @@ const portfolioController = (repository) => {
     try {
       const porfolioFound = await getPortfolioObject(user.address);
       if (porfolioFound === null || porfolioFound === undefined) {
-        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentEthExternal(user.address);
+        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentEthExternal(user.address).then(data => data);
         const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
         await createAction(req, res, newPortfolioObject, true);
       } else {

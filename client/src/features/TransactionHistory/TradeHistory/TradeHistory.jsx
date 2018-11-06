@@ -47,11 +47,11 @@ function getTransationSortableObject(transationAsArray: Object, allTrades: Array
     tradeDate: transationAsArray.timestamp,
     pair: transationAsArray.pair,
     type: transationAsArray.type,
-    amount: BigNumberService.tokenToEth(transationAsArray.amount, decimals),
-    price_eth: BigNumberService.toFixed(transationAsArray.priceETH),
-    fee: BigNumberService.toFixed(transationAsArray.txFee),
-    total_eth: BigNumberService.tokenToEth(transationAsArray.priceTotalETH, decimals),
-    total_usd: BigNumberService.toFixedParam(BigNumberService.tokenToEth(transationAsArray.priceTotalUSD, decimals), 2),
+    amount: BigNumberService.toNumber(BigNumberService.tokenToEth(transationAsArray.amount, decimals)),
+    price_eth: BigNumberService.toNumber(transationAsArray.priceETH),
+    fee: BigNumberService.toNumber(transationAsArray.txFee),
+    total_eth: BigNumberService.toNumber(BigNumberService.tokenToEth(transationAsArray.priceTotalETH, decimals)),
+    total_usd: BigNumberService.toNumber(BigNumberService.tokenToEth(transationAsArray.priceTotalUSD, decimals)),
   });
 }
 
@@ -183,6 +183,20 @@ class HistoryTable extends React.Component<Props, State> {
                             </TableCell>
                           );
                         }
+                        if (ind === 3 || ind === 4 || ind === 5 || ind === 6) {
+                          return (
+                            <TableCell className={classes.tableCellBuy} key={uuid()}>
+                              {BigNumberService.toFixed(transaction[el])}
+                            </TableCell>
+                          );
+                        }
+                        if (ind === 7) {
+                          return (
+                            <TableCell className={classes.tableCellBuy} key={uuid()}>
+                              {BigNumberService.toFixedParam(transaction[el], 2)}
+                            </TableCell>
+                          );
+                        }
                         return (
                           <TableCell className={classes.tableCellBuy} key={uuid()}>
                             {transaction[el]}
@@ -193,6 +207,20 @@ class HistoryTable extends React.Component<Props, State> {
                           return (
                             <TableCell className={classes.tableCellSell} key={uuid()}>
                               {moment(transaction[el]).format('LL')}
+                            </TableCell>
+                          );
+                        }
+                        if (ind === 3 || ind === 4 || ind === 5 || ind === 6) {
+                          return (
+                            <TableCell className={classes.tableCellSell} key={uuid()}>
+                              {BigNumberService.toFixed(transaction[el])}
+                            </TableCell>
+                          );
+                        }
+                        if (ind === 7) {
+                          return (
+                            <TableCell className={classes.tableCellSell} key={uuid()}>
+                              {BigNumberService.toFixedParam(transaction[el], 2)}
                             </TableCell>
                           );
                         }

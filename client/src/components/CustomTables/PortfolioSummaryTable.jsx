@@ -117,11 +117,11 @@ function createAssetObjectFromArray(assetAsArray: Array, allCurrencies: Array) {
   const { decimals } = allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName);
   return {
     ticker: assetAsArray.tokenName,
-    holdings: BigNumberService.tokenToEth(assetAsArray.balance, decimals),
-    priceETH: BigNumberService.toFixed(assetAsArray.lastPriceETH),
-    priceUSD: BigNumberService.toFixedParam(assetAsArray.lastPriceUSD, 2),
-    totalUSD: BigNumberService.toFixedParam(BigNumberService.tokenToEth(assetAsArray.totalUSD, decimals), 2),
-    assetWeight: BigNumberService.toFixedParam(assetAsArray.weight, 2),
+    holdings: BigNumberService.toNumber(BigNumberService.tokenToEth(assetAsArray.balance, decimals)),
+    priceETH: BigNumberService.toNumber(assetAsArray.lastPriceETH),
+    priceUSD: BigNumberService.toNumber(assetAsArray.lastPriceUSD),
+    totalUSD: BigNumberService.toNumber(BigNumberService.tokenToEth(assetAsArray.totalUSD, decimals)),
+    assetWeight: BigNumberService.toNumber(assetAsArray.weight),
     '24Change': getChange24H(allCurrencies, assetAsArray),
     '7Change': getChange7D(allCurrencies, assetAsArray),
   };
@@ -219,10 +219,24 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
       .map((ROW: Object) => (
         <TableRow key={uuid()}>
           {Object.values(ROW).map((COL: Object, i: number) => {
+            if (i === 1 || i === 2) {
+              return (
+                <TableCell className={classes.tableCell} key={uuid()}>
+                  {BigNumberService.toFixed(COL)}
+                </TableCell>
+              );
+            }
+            if (i === 3 || i === 4) {
+              return (
+                <TableCell className={classes.tableCell} key={uuid()}>
+                  {BigNumberService.toFixedParam(COL, 2)}
+                </TableCell>
+              );
+            }
             if (i === 5) {
               return (
                 <TableCell className={classes.tableCell} key={uuid()}>
-                  <div className={classes.progressBar} data-label={`${COL}%`}>
+                  <div className={classes.progressBar} data-label={`${BigNumberService.toFixedParam(COL, 2)}%`}>
                     <span className={classes.value} style={{ width: `${COL}px` }} />
                   </div>
                 </TableCell>

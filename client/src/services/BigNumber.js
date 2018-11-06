@@ -1,11 +1,11 @@
 import { BigNumber } from 'bignumber.js';
 
 const BigNumberService = {
-  gweiToEth: gwei => new BigNumber(String(gwei)).shiftedBy(-18).toFixed(),
+  gweiToEth: gwei => new BigNumber(String(gwei)).shiftedBy(-18),
 
-  tokenToEth: (token, decimals) => new BigNumber(String(token)).shiftedBy(-decimals).toFixed(),
+  tokenToEth: (token, decimals) => new BigNumber(String(token)).shiftedBy(-decimals),
 
-  toNumber: number => new BigNumber(String(number)).toFixed(),
+  toNumber: number => new BigNumber(String(number)).toNumber(),
 
   toFixed: number => new BigNumber(String(number)).toFixed(),
 

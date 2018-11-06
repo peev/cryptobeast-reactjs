@@ -15,16 +15,15 @@ import {
 import { inject, observer } from 'mobx-react';
 import uuid from 'uuid/v4';
 import moment from 'moment';
-import UpdateTradeModal from './elements/UpdateTrade';
 import TablePaginationActions from './elements/TablePaginationActions';
 import tableStyle from '../../../variables/styles/tableStyle';
-import ConfirmationModal from '../../../components/Modal/ConfirmationModal';
 import BigNumberService from '../../../services/BigNumber';
 
 type Props = {
   classes: Object,
   PortfolioStore: Object,
   TradeHistoryStore: Object,
+  MarketStore: Object,
   tableHead: Array<Object>,
   tableHeaderColor: string,
 };
@@ -42,16 +41,17 @@ function getSorting(order: string, orderBy: string) {
     : (a: Object, b: Object) => (a[orderBy] < b[orderBy] ? -1 : 1);
 }
 
-function getTransationSortableObject(transationAsArray: Object) {
+function getTransationSortableObject(transationAsArray: Object, allTrades: Array) {
+  const { decimals } = allTrades.find((trade: object) => trade.tokenName === transationAsArray.tokenName);
   return Object.assign({}, {
     tradeDate: transationAsArray.timestamp,
     pair: transationAsArray.pair,
     type: transationAsArray.type,
-    amount: BigNumberService.toNumber(transationAsArray.amount).toString(),
-    price_eth: BigNumberService.toNumber(transationAsArray.priceETH).toString(),
-    fee: BigNumberService.toNumber(transationAsArray.txFee).toString(),
-    total_eth: BigNumberService.toNumber(transationAsArray.priceTotalETH).toString(),
-    total_usd: BigNumberService.toNumber(transationAsArray.priceTotalUSD).toString(),
+    amount: BigNumberService.tokenToEth(transationAsArray.amount, decimals),
+    price_eth: BigNumberService.toFixed(transationAsArray.priceETH),
+    fee: BigNumberService.toFixed(transationAsArray.txFee),
+    total_eth: BigNumberService.tokenToEth(transationAsArray.priceTotalETH, decimals),
+    total_usd: BigNumberService.toFixedParam(BigNumberService.tokenToEth(transationAsArray.priceTotalUSD, decimals), 2),
   });
 }
 
@@ -111,7 +111,7 @@ const TableHeader = ({
   );
 };
 
-@inject('PortfolioStore', 'TradeHistoryStore')
+@inject('PortfolioStore', 'TradeHistoryStore', 'MarketStore')
 @observer
 // eslint-disable-next-line
 class HistoryTable extends React.Component<Props, State> {
@@ -141,7 +141,7 @@ class HistoryTable extends React.Component<Props, State> {
     this.setState({ rowsPerPage: event.target.value });
   };
   render() {
-    const { classes, tableHead, tableHeaderColor, PortfolioStore, TradeHistoryStore } = this.props;
+    const { classes, tableHead, tableHeaderColor, PortfolioStore, TradeHistoryStore, MarketStore } = this.props;
     const { tradeHistory } = TradeHistoryStore;
     const trades = PortfolioStore.currentPortfolioTrades;
     const { order, orderBy } = this.state;
@@ -168,7 +168,7 @@ class HistoryTable extends React.Component<Props, State> {
           {tableHead !== undefined ? header : null}
           <TableBody>
             {trades
-              .map(getTransationSortableObject)
+              .map((tradesArray: Array) => getTransationSortableObject(tradesArray, MarketStore.allCurrencies))
               .sort(getSorting(order, orderBy))
               .map((obj: Object) => Object.values(obj))
               .slice(this.state.page * this.state.rowsPerPage, (this.state.page * this.state.rowsPerPage) + this.state.rowsPerPage)

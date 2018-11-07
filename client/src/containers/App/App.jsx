@@ -45,7 +45,9 @@ class App extends React.Component<Props> {
       const addresses = storage.getPortfolioAddresses();
       const selectedPortfolioId = storage.getSelectedPortfolioId();
       Promise.all([addresses, selectedPortfolioId]).then(([addressesData, portfolioIdData]: any) => {
-        if (!addressesData.length || portfolioIdData.selectedPortfolio === 0) {
+        if (addressesData.length && portfolioIdData && portfolioIdData > 0) {
+          this.props.PortfolioStore.getPortfoliosByAddresses(addressesData);
+        } else {
           history.push('/');
         }
       });
@@ -66,7 +68,7 @@ class App extends React.Component<Props> {
     const { classes, theme, PortfolioStore, WeidexStore, children, ...rest } = this.props;
     const { fetchingPortfolios } = PortfolioStore;
 
-    if (PortfolioStore.fetchingPortfolios) {
+    if (fetchingPortfolios) {
       return (
         <div className={classes.progressHolder}>
           <CircularProgress className={classes.progress} size={50} style={{ color: blueGrey[800] }} />

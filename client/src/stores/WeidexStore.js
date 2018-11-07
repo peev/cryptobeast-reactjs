@@ -14,18 +14,21 @@ class WeidexStore {
 
   @action
   validateAddresses = (addresses) => {
+    this.snycingData = true;
     requester.Weidex.validateAddresses(addresses)
       .then((res) => {
         this.validAddresses = res.data;
         this.sync(this.validAddresses);
       })
-      .catch(err => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        this.snycingData = false;
+      });
   }
 
   @action
   sync = (addresses) => {
     if (this.validAddresses.length > 0) {
-      this.snycingData = true;
       requester.Weidex.sync(addresses)
         .then(() => {
           PortfolioStore.getPortfoliosByAddresses(addresses);
@@ -35,6 +38,8 @@ class WeidexStore {
           console.log(err);
           this.snycingData = false;
         });
+    } else {
+      this.snycingData = false;
     }
   };
 }

@@ -55,7 +55,7 @@ class PortfolioStore {
   }
 
   @action
-  setFetchingPortfolios(value) {
+  setFetchingPortfolios(value: boolean) {
     this.fethingPortfolios = value;
   }
   // ======= Computed =======
@@ -447,7 +447,7 @@ class PortfolioStore {
   // #endregion
 
   @action.bound
-  selectPortfolio(id) {
+  selectPortfolio(id: number) {
     this.selectedPortfolioId = id;
     this.saveSelectedPortfolioId();
     this.selectedPortfolio = this.portfolios.find(porfolio => id === porfolio.id);
@@ -482,10 +482,10 @@ class PortfolioStore {
 
   @action
   getPortfolios() {
-    this.fetchingPortfolios = true;
+    // this.fetchingPortfolios = true;
     return new Promise((resolve, reject) => {
       this.portfolios = []
-      this.fetchingPortfolios = false;
+      // this.fetchingPortfolios = false;
       resolve(true);
       // TODO: Enable when we have portfolios
       // We dont have user at the moment. Uncoment when we have!
@@ -510,6 +510,7 @@ class PortfolioStore {
   @action
   getPortfoliosByAddresses(addresses: Array<string>) {
     // this.fetchingPortfolios = true;
+    this.setFetchingPortfolios(true);
     requester.Portfolio.getPortfoliosByUserAddresses(addresses)
       .then(action((result: object) => {
         storage.setPortfolioAddresses(addresses);
@@ -517,10 +518,10 @@ class PortfolioStore {
         if (this.selectedPortfolioId > 0) {
           this.selectPortfolio(this.selectedPortfolioId);
         }
-        this.fetchingPortfolios = false;
+        this.setFetchingPortfolios(false);
       }))
       .catch(action((err: object) => {
-        this.fethingPortfolios = false;
+        this.setFetchingPortfolios(false);
         console.log(err);
       }));
   }

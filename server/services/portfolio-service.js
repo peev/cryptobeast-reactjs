@@ -1,6 +1,7 @@
 const portfolioService = (repository) => {
   const bigNumberService = require('./big-number-service');
   const weidexService = require('./weidex-service');
+  const { etherScanServices } = require('../integrations/etherScan-services');
 
   const calculateTokenValueETH = async (name, amount) => {
     const currency = await repository.findOne({
@@ -19,11 +20,13 @@ const portfolioService = (repository) => {
     const transactionsArray = portfolio.transactions.map(async (transaction) => {
       if (transaction.type === type) {
         // Calculates investment in eth
-        await calculateTokenValueETH(transaction.tokenName, transaction.amount);
+        // return calculateTokenValueETH(transaction.tokenName, transaction.amount);
+        return transaction.totalValueETH;
       }
+      return 0;
     });
-    await Promise.all(transactionsArray).then(transactions =>
-      transactions.reduce((acc, a) => (bigNumberService().sum(acc, a)), 0));
+    return Promise.all(transactionsArray).then(transactions =>
+      transactions.reduce((acc, a) => ((acc !== undefined) ? bigNumberService().sum(acc, a) : 0)));
   };
 
   const getPortfolioInvestmentSumExternal = async (address, fetchDeposits) => {
@@ -34,9 +37,12 @@ const portfolioService = (repository) => {
     } else {
       items = await weidexService().getUserWithdrawHttp(user.id);
     }
-    const transactionsArray = await items.map(async transaction =>
+    const transactionsArray = await items.map(async (transaction) => {
       // Calculates investment in eth
-      calculateTokenValueETH(transaction.tokenName, transaction.amount));
+      // calculateTokenValueETH(transaction.tokenName, transaction.amount));
+      const etherScanTransaction = await etherScanServices().getTransactionByHash(transaction.txHash);
+      return (etherScanTransaction !== null && etherScanTransaction !== undefined) ? etherScanTransaction.value : 0;
+    });
     return Promise.all(transactionsArray).then(transactions =>
       transactions.reduce((acc, a) => (bigNumberService().sum(acc, a)), 0));
   };

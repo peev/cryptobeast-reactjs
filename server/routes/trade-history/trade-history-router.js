@@ -7,6 +7,7 @@ const attachTo = (app, data) => {
 
   router
     .post('/create', validator.verifyCreateTradeHistory, controller.createTrade)
+    .get('/all/:portfolioId', controller.getAllTradesByPortfolioId)
     .get('/:id', controller.getTrade)
     .delete('/delete/:id', controller.removeTrade);
 

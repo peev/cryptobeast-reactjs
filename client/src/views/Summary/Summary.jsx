@@ -2,7 +2,6 @@
 import React from 'react';
 import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-import { BigNumber } from 'bignumber.js';
 import summaryStyle from './../../variables/styles/summaryStyle';
 
 import AnalyticsIcon from './../../components/CustomIcons/Summary/AnalyticsIcon';
@@ -14,6 +13,7 @@ import SummaryCard from './../../components/Cards/Summary/SummaryCard';
 import AssetBreakdown from './../../components/Cards/Summary/AssetBreakdown';
 import SummaryTabs from './../../components/Tabs/SummaryTabs';
 import PortfolioSummaryTable from './../../components/CustomTables/PortfolioSummaryTable';
+import BigNumberService from '../../services/BigNumber';
 
 const styles = () => ({
   container: {
@@ -81,7 +81,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             title="USD equivalent"
             // description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
             description={PortfolioStore.currentPortfolioCostInUSD !== 0
-              ? `$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2)}`
+              ? `$${BigNumberService.toFixedParam(PortfolioStore.currentPortfolioCostInUSD, 2)}`
               : ''}
             hasInfo={PortfolioStore.currentPortfolioCostInUSD === 0}
             infoMessage="Please add assets to your portfolio"
@@ -90,7 +90,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
           <SummaryCard
             icon={CoinIcon}
             iconColor="gray"
-            title="Total purchase price"
+            title="Total investment"
             description={PortfolioStore.summaryTotalInvestmentInUSD !== 0
               ? `$${PortfolioStore.summaryTotalInvestmentInUSD}`
               : ''}
@@ -129,7 +129,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
               tableHead={[
                 { id: 'ticker', numeric: false, disablePadding: false, label: 'Ticker' },
                 { id: 'holdings', numeric: false, disablePadding: false, label: 'Holdings' },
-                { id: 'priceBTC', numeric: false, disablePadding: false, label: 'Price (ETH)' },
+                { id: 'priceETH', numeric: false, disablePadding: false, label: 'Price (ETH)' },
                 { id: 'priceUSD', numeric: false, disablePadding: false, label: 'Price (USD)' },
                 { id: 'totalUSD', numeric: false, disablePadding: false, label: 'Total Value (USD)' },
                 { id: 'assetWeight', numeric: false, disablePadding: false, label: 'Asset Weight' },

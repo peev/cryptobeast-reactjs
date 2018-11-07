@@ -18,6 +18,17 @@ const tradeController = (repository) => {
   })
     .catch(err => console.log(err));
 
+  const getPortfolioObjectById = async idParam => repository.findOne({
+    modelName: 'Portfolio',
+    options: {
+      where: {
+        id: idParam,
+      },
+      include: [{ all: true }],
+    },
+  })
+    .catch(err => console.log(err));
+
   const getTradeByTransactionHash = transactionHash => repository.findOne({
     modelName,
     options: {
@@ -99,9 +110,24 @@ const tradeController = (repository) => {
     }
   };
 
-  const getTrade = (req, res) => {
+  const getAllTradesByPortfolioId = async (req, res) => {
+    const { portfolioId } = req.params;
+    try {
+      await getPortfolioObjectById(portfolioId)
+        .then((portfolio) => {
+          res.status(200).send(portfolio.tradeHistories);
+        })
+        .catch((error) => {
+          res.json(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getTrade = async (req, res) => {
     const { id } = req.params;
-    repository.findById({ modelName, id })
+    await repository.findById({ modelName, id })
       .then((response) => {
         res.status(200).send(response);
       })
@@ -153,6 +179,7 @@ const tradeController = (repository) => {
     getTrade,
     removeTrade,
     sync,
+    getAllTradesByPortfolioId,
   };
 };
 

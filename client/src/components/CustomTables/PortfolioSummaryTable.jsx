@@ -11,12 +11,12 @@ import {
   Tooltip,
   TableSortLabel,
 } from '@material-ui/core';
-import { BigNumber } from 'bignumber.js';
 import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
 import tableStyle from '../../variables/styles/tableStyle';
 import UpArrowIcon from '../CustomIcons/Summary/UpArrowIcon';
 import DownArrowIcon from '../CustomIcons/Summary/DownArrowIcon';
+import BigNumberService from '../../services/BigNumber';
 
 
 const styles = () => ({
@@ -113,13 +113,15 @@ function getChange7D(allCurrencies: Array, assetAsArray: Array) {
 }
 
 function createAssetObjectFromArray(assetAsArray: Array, allCurrencies: Array) {
+  // eslint-disable-next-line prefer-destructuring
+  const { decimals } = allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName);
   return {
     ticker: assetAsArray.tokenName,
-    holdings: new BigNumber(assetAsArray.balance).toFixed(8),
-    priceETH: new BigNumber(assetAsArray.lastPriceETH).toFixed(8),
-    priceUSD: new BigNumber(assetAsArray.lastPriceUSD).toFixed(2),
-    totalUSD: new BigNumber(assetAsArray.totalUSD).toFixed(2),
-    assetWeight: assetAsArray.weight.toFixed(2),
+    holdings: BigNumberService.toNumber(BigNumberService.tokenToEth(assetAsArray.balance, decimals)),
+    priceETH: BigNumberService.toNumber(assetAsArray.lastPriceETH),
+    priceUSD: BigNumberService.toNumber(assetAsArray.lastPriceUSD),
+    totalUSD: BigNumberService.toNumber(BigNumberService.tokenToEth(assetAsArray.totalUSD, decimals)),
+    assetWeight: BigNumberService.toNumber(assetAsArray.weight),
     '24Change': getChange24H(allCurrencies, assetAsArray),
     '7Change': getChange7D(allCurrencies, assetAsArray),
   };
@@ -217,10 +219,24 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
       .map((ROW: Object) => (
         <TableRow key={uuid()}>
           {Object.values(ROW).map((COL: Object, i: number) => {
+            if (i === 1 || i === 2) {
+              return (
+                <TableCell className={classes.tableCell} key={uuid()}>
+                  {BigNumberService.toFixed(COL)}
+                </TableCell>
+              );
+            }
+            if (i === 3 || i === 4) {
+              return (
+                <TableCell className={classes.tableCell} key={uuid()}>
+                  {BigNumberService.toFixedParam(COL, 2)}
+                </TableCell>
+              );
+            }
             if (i === 5) {
               return (
                 <TableCell className={classes.tableCell} key={uuid()}>
-                  <div className={classes.progressBar} data-label={`${COL}%`}>
+                  <div className={classes.progressBar} data-label={`${BigNumberService.toFixedParam(COL, 2)}%`}>
                     <span className={classes.value} style={{ width: `${COL}px` }} />
                   </div>
                 </TableCell>

@@ -9,11 +9,17 @@ const bigNumberService = () => {
 
   const quotient = (a, b) => (new BigNumber(a).dividedBy(new BigNumber(b)).toNumber());
 
+  const gweiToEth = gwei => new BigNumber(String(gwei)).shiftedBy(-18);
+
+  const toNumber = number => new BigNumber(String(number)).toNumber();
+
   return {
     sum,
     difference,
     product,
     quotient,
+    gweiToEth,
+    toNumber,
   };
 };
 

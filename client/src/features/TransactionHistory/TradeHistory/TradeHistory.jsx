@@ -15,15 +15,15 @@ import {
 import { inject, observer } from 'mobx-react';
 import uuid from 'uuid/v4';
 import moment from 'moment';
-import UpdateTradeModal from './elements/UpdateTrade';
 import TablePaginationActions from './elements/TablePaginationActions';
 import tableStyle from '../../../variables/styles/tableStyle';
-import ConfirmationModal from '../../../components/Modal/ConfirmationModal';
+import BigNumberService from '../../../services/BigNumber';
 
 type Props = {
   classes: Object,
   PortfolioStore: Object,
   TradeHistoryStore: Object,
+  MarketStore: Object,
   tableHead: Array<Object>,
   tableHeaderColor: string,
 };
@@ -41,24 +41,19 @@ function getSorting(order: string, orderBy: string) {
     : (a: Object, b: Object) => (a[orderBy] < b[orderBy] ? -1 : 1);
 }
 
-function getTransationSortableObject(transationAsArray: Object) {
-  if (transationAsArray.length === 10) {
-    return Object.assign({}, {
-      tradeDate: transationAsArray[0],
-      source: transationAsArray[1],
-      pair: transationAsArray[2],
-      type: transationAsArray[3],
-      price: transationAsArray[4],
-      filled: transationAsArray[5],
-      fee: transationAsArray[6],
-      total: transationAsArray[7],
-      edit: transationAsArray[8],
-      remove: transationAsArray[9],
-    });
-  }
-  return null;
+function getTransationSortableObject(transationAsArray: Object, allTrades: Array) {
+  const { decimals } = allTrades.find((trade: object) => trade.tokenName === transationAsArray.tokenName);
+  return Object.assign({}, {
+    tradeDate: transationAsArray.timestamp,
+    pair: transationAsArray.pair,
+    type: transationAsArray.type,
+    amount: BigNumberService.toNumber(BigNumberService.tokenToEth(transationAsArray.amount, decimals)),
+    price_eth: BigNumberService.toNumber(transationAsArray.priceETH),
+    fee: BigNumberService.toNumber(transationAsArray.txFee),
+    total_eth: BigNumberService.toNumber(BigNumberService.tokenToEth(transationAsArray.priceTotalETH, decimals)),
+    total_usd: BigNumberService.toNumber(BigNumberService.tokenToEth(transationAsArray.priceTotalUSD, decimals)),
+  });
 }
-
 
 const TableHeader = ({
   onRequestSort,
@@ -116,7 +111,7 @@ const TableHeader = ({
   );
 };
 
-@inject('PortfolioStore', 'TradeHistoryStore')
+@inject('PortfolioStore', 'TradeHistoryStore', 'MarketStore')
 @observer
 // eslint-disable-next-line
 class HistoryTable extends React.Component<Props, State> {
@@ -138,10 +133,6 @@ class HistoryTable extends React.Component<Props, State> {
     this.setState({ order, orderBy });
   };
 
-  handleRemove = (trade: Object) => {
-    this.props.PortfolioStore.deleteTrade(trade);
-  };
-
   handleChangePage = (event: Event, page: number) => {
     this.setState({ page });
   };
@@ -150,7 +141,7 @@ class HistoryTable extends React.Component<Props, State> {
     this.setState({ rowsPerPage: event.target.value });
   };
   render() {
-    const { classes, tableHead, tableHeaderColor, PortfolioStore, TradeHistoryStore } = this.props;
+    const { classes, tableHead, tableHeaderColor, PortfolioStore, TradeHistoryStore, MarketStore } = this.props;
     const { tradeHistory } = TradeHistoryStore;
     const trades = PortfolioStore.currentPortfolioTrades;
     const { order, orderBy } = this.state;
@@ -176,48 +167,33 @@ class HistoryTable extends React.Component<Props, State> {
         <Table className={classes.table}>
           {tableHead !== undefined ? header : null}
           <TableBody>
-            {tradeHistory
-              .map(getTransationSortableObject)
+            {trades
+              .map((tradesArray: Array) => getTransationSortableObject(tradesArray, MarketStore.allCurrencies))
               .sort(getSorting(order, orderBy))
               .map((obj: Object) => Object.values(obj))
               .slice(this.state.page * this.state.rowsPerPage, (this.state.page * this.state.rowsPerPage) + this.state.rowsPerPage)
-              .map((transaction: Object, i: number, allTransactions: Array) => {
-                const restOfTableRows = allTransactions.filter((t: Array, ti: number) => ti > i);
-                const displayDeleteButton = restOfTableRows.reduce((trueOrFalse: boolean, tArray: Array) => {
-                  if (tArray.includes('Manually Added')) {
-                    return false;
-                  }
-                  return true;
-                }, true);
-                return (
+              .map((transaction: Object) => (
                   <TableRow key={uuid()} >
                     {Object.keys(transaction).map((el: Object, ind: number) => {
-                      if (ind === 9 && transaction.includes('Manually Added') && displayDeleteButton) {
-                        return (
-                          <TableCell className={`${classes.tableCellBuy} ${classes.buttonsWidth}`} key={uuid()}>
-                            {transaction[el]}
-                            <ConfirmationModal onSave={() => this.handleRemove(trades[i])} message="Are you sure you want to delete this transaction?" />
-                          </TableCell>
-                        );
-                      }
-                      if (ind === 9 && transaction.includes('Manually Added') && displayDeleteButton) {
-                        return (
-                          <TableCell className={`${classes.tableCellBuy} ${classes.buttonsWidth}`} key={uuid()}>
-                            {transaction[el]}
-                            <UpdateTradeModal trade={trades[i]} />
-                          </TableCell>
-                        );
-                      } else if (ind === 8 && transaction[1] !== 'Manually Added') {
-                        return (
-                          <TableCell className={classes.tableCellBuy} key={uuid()}>
-                            {transaction[el]}
-                          </TableCell>
-                        );
-                      } else if (transaction[3] === 'BUY') {
+                     if (transaction[2] === 'BUY') {
                         if (ind === 0) {
                           return (
                             <TableCell className={classes.tableCellBuy} key={uuid()}>
                               {moment(transaction[el]).format('LL')}
+                            </TableCell>
+                          );
+                        }
+                        if (ind === 3 || ind === 4 || ind === 5 || ind === 6) {
+                          return (
+                            <TableCell className={classes.tableCellBuy} key={uuid()}>
+                              {BigNumberService.toFixed(transaction[el])}
+                            </TableCell>
+                          );
+                        }
+                        if (ind === 7) {
+                          return (
+                            <TableCell className={classes.tableCellBuy} key={uuid()}>
+                              {BigNumberService.toFixedParam(transaction[el], 2)}
                             </TableCell>
                           );
                         }
@@ -234,6 +210,20 @@ class HistoryTable extends React.Component<Props, State> {
                             </TableCell>
                           );
                         }
+                        if (ind === 3 || ind === 4 || ind === 5 || ind === 6) {
+                          return (
+                            <TableCell className={classes.tableCellSell} key={uuid()}>
+                              {BigNumberService.toFixed(transaction[el])}
+                            </TableCell>
+                          );
+                        }
+                        if (ind === 7) {
+                          return (
+                            <TableCell className={classes.tableCellSell} key={uuid()}>
+                              {BigNumberService.toFixedParam(transaction[el], 2)}
+                            </TableCell>
+                          );
+                        }
                         return (
                           <TableCell className={classes.tableCellSell} key={uuid()}>
                             {transaction[el]}
@@ -242,8 +232,7 @@ class HistoryTable extends React.Component<Props, State> {
                       }
                     })}
                   </TableRow>
-                );
-              })}
+                ))}
             {emptyRows > 0 && (
               <TableRow style={{ height: 48 * emptyRows }}>
                 <TableCell colSpan={6} />

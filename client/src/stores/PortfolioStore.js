@@ -1,3 +1,4 @@
+// @flow
 /* eslint no-console: 0 */
 /* eslint no-prototype-builtins: 0 */
 
@@ -7,18 +8,15 @@ import {
   computed,
   onBecomeObserved,
 } from 'mobx';
-import { BigNumber } from 'bignumber.js';
 import requester from '../services/requester';
 import FiatCurrenciesStore from './FiatCurrenciesStore';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
 import AssetStore from './AssetStore';
-import Analytics from './Analytics';
-import ApiAccountStore from './ApiAccountStore';
 import history from '../services/History';
-import userApi from '../services/user';
 import storage from '../services/storage';
+import BigNumberService from '../services/BigNumber';
 
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
@@ -75,17 +73,31 @@ class PortfolioStore {
 
   @computed
   get summaryTotalInvestmentInUSD() {
-    if (this.selectedPortfolio && this.currentPortfolioTransactions.length > 0) {
-      let totalAmount = 0;
-      this.currentPortfolioTransactions.forEach((el) => {
-        totalAmount += el.amountInUSD;
-      });
-
-      return totalAmount.toFixed(2);
+    if (this.selectedPortfolio) {
+      return this.selectedPortfolio.totalInvestmentUSD;
     }
+    return 0;
+    // TODO FOR DELETE
+    // if (this.selectedPortfolio && this.currentPortfolioTransactions.length > 0) {
+    //   let totalAmount = 0;
+    //   this.currentPortfolioTransactions.forEach((el) => {
+    //     totalAmount += el.amountInUSD;
+    //   });
 
+    //   return totalAmount.toFixed(2);
+    // }
+
+    // return 0;
+  }
+
+  @computed
+  get summaryTotalInvestmentInETH() {
+    if (this.selectedPortfolio) {
+      return this.selectedPortfolio.totalInvestmentETH;
+    }
     return 0;
   }
+
 
   @computed
   get summaryTotalProfitLoss() {
@@ -279,9 +291,9 @@ class PortfolioStore {
   }
 
   get summaryAssetsBreakdown() {
-    return this.summaryPortfolioAssets.map(el => ({
-      y: parseInt(el[5], 10),
-      name: `${el[0]} (${el[5]}%)`,
+    return this.currentPortfolioAssets.map(el => ({
+      y: el.balance,
+      name: `${el.tokenName}`,
     }));
   }
 
@@ -289,9 +301,12 @@ class PortfolioStore {
   get currentPortfolioCostInUSD() {
     // NOTE: Portfolio cost is calculated here,
     // because the value from database is incorrect
-    if (this.selectedPortfolio && this.currentPortfolioAssets.length) {
-      const totals = this.currentPortfolioAssets.map(asset => asset.totalUSD);
-      return totals.reduce((accumulator, value) => new BigNumber(String(accumulator)).plus(new BigNumber(String(value))));
+    if (this.selectedPortfolio && this.currentPortfolioAssets.length && MarketStore.allCurrencies.length) {
+      const totals = this.currentPortfolioAssets.map((asset: object) => {
+        const { decimals } = MarketStore.allCurrencies.find((currency: object) => currency.tokenName === asset.tokenName);
+        return BigNumberService.tokenToEth(asset.totalUSD, decimals);
+      });
+      return totals.reduce((accumulator: number, value: number) => BigNumberService.sum(accumulator, value));
     }
     return 0;
 
@@ -438,6 +453,7 @@ class PortfolioStore {
     this.selectedPortfolio = this.portfolios.find(porfolio => id === porfolio.id);
     if (this.selectedPortfolio) {
       this.getCurrentPortfolioAssets();
+      this.getCurrentPortfolioTrades();
     }
     // FOR DELETE
     // InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
@@ -544,10 +560,12 @@ class PortfolioStore {
     //   portfolioId: this.selectedPortfolioId,
     //   item: 'Asset',
     // };
-    requester.Portfolio.getPortfolioAssetsByPortfolioId(this.selectedPortfolio.id)
-      .then(action((result) => {
-        this.currentPortfolioAssets = result.data;
-      }));
+    if (this.selectedPortfolio) {
+      requester.Portfolio.getPortfolioAssetsByPortfolioId(this.selectedPortfolio.id)
+        .then(action((result) => {
+          this.currentPortfolioAssets = result.data;
+        }));
+    }
   }
 
   @action.bound
@@ -589,14 +607,11 @@ class PortfolioStore {
 
   @action.bound
   getCurrentPortfolioTrades() {
-    const searchedItem = {
-      portfolioId: this.selectedPortfolioId,
-      item: 'Trade',
-    };
-    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
+    requester.Portfolio.getPortfolioTradesByPortfolioId(this.selectedPortfolioId)
       .then(action((result) => {
-        this.currentPortfolioTrades = result.data.tradeHistory;
-        this.currentPortfolioApiTradeHistory = result.data.apiTradeHistory;
+        this.currentPortfolioTrades = result.data;
+        // TODO FOR DELETE
+        // this.currentPortfolioApiTradeHistory = result.data;
       }));
   }
 

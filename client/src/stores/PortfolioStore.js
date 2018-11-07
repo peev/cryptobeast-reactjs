@@ -508,33 +508,10 @@ class PortfolioStore {
   }
 
   @action
-  getPortfoliosOnStartup() {
-    this.fetchingPortfolios = true;
-    storage.getPortfolioAddresses()
-      .then(action(data => new Promise((resolve, reject) => {
-        requester.Portfolio.getPortfoliosByUserAddresses(data)
-          .then(action((result) => {
-            storage.setPortfolioAddresses(data);
-            this.portfolios = result.data;
-            if (this.selectedPortfolioId > 0) {
-              this.selectPortfolio(this.selectedPortfolioId);
-            }
-            resolve(true);
-            this.fetchingPortfolios = false;
-          }))
-          .catch(action((err) => {
-            this.fethingPortfolios = false;
-            console.log(err);
-            reject(err);
-          }));
-      })));
-  }
-
-  @action
-  getPortfoliosByAddresses(addresses) {
-    this.fetchingPortfolios = true;
+  getPortfoliosByAddresses(addresses: Array<string>) {
+    // this.fetchingPortfolios = true;
     requester.Portfolio.getPortfoliosByUserAddresses(addresses)
-      .then(action((result) => {
+      .then(action((result: object) => {
         storage.setPortfolioAddresses(addresses);
         this.portfolios = result.data;
         if (this.selectedPortfolioId > 0) {
@@ -542,7 +519,7 @@ class PortfolioStore {
         }
         this.fetchingPortfolios = false;
       }))
-      .catch(action((err) => {
+      .catch(action((err: object) => {
         this.fethingPortfolios = false;
         console.log(err);
       }));

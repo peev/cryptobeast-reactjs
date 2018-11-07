@@ -19,6 +19,8 @@ import LogoText from '../../components/CustomIcons/Sidebar/LogoText';
 import SidebarRightArrows from '../../components/CustomIcons/Sidebar/SidebarRightArrows';
 import SidebarLeftArrows from '../../components/CustomIcons/Sidebar/SidebarLeftArrows';
 import AppStyles from './AppStyles';
+import storage from '../../services/storage';
+import history from '../../services/History';
 
 type Props = {
   classes: Object,
@@ -39,15 +41,14 @@ class App extends React.Component<Props> {
   };
 
   componentWillMount() {
-    if (this.props.location.pathname === '/') {
-      const addresses = this.getAddresses(this.props.location.search);
-      if (addresses.length) {
-        this.props.WeidexStore.validateAddresses(addresses);
-      } else {
-        this.props.PortfolioStore.getPortfoliosOnStartup();
-      }
-    } else {
-      this.props.PortfolioStore.getPortfoliosOnStartup();
+    if (this.props.location.pathname !== '/') {
+      const addresses = storage.getPortfolioAddresses();
+      const selectedPortfolioId = storage.getSelectedPortfolioId();
+      Promise.all([addresses, selectedPortfolioId]).then(([addressesData, portfolioIdData]: any) => {
+        if (!addressesData.length || portfolioIdData.selectedPortfolio === 0) {
+          history.push('/');
+        }
+      });
     }
   }
 

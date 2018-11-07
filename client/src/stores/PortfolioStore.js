@@ -73,17 +73,31 @@ class PortfolioStore {
 
   @computed
   get summaryTotalInvestmentInUSD() {
-    if (this.selectedPortfolio && this.currentPortfolioTransactions.length > 0) {
-      let totalAmount = 0;
-      this.currentPortfolioTransactions.forEach((el) => {
-        totalAmount += el.amountInUSD;
-      });
-
-      return totalAmount.toFixed(2);
+    if (this.selectedPortfolio) {
+      return this.selectedPortfolio.totalInvestmentUSD;
     }
+    return 0;
+    // TODO FOR DELETE
+    // if (this.selectedPortfolio && this.currentPortfolioTransactions.length > 0) {
+    //   let totalAmount = 0;
+    //   this.currentPortfolioTransactions.forEach((el) => {
+    //     totalAmount += el.amountInUSD;
+    //   });
 
+    //   return totalAmount.toFixed(2);
+    // }
+
+    // return 0;
+  }
+
+  @computed
+  get summaryTotalInvestmentInETH() {
+    if (this.selectedPortfolio) {
+      return this.selectedPortfolio.totalInvestmentETH;
+    }
     return 0;
   }
+
 
   @computed
   get summaryTotalProfitLoss() {

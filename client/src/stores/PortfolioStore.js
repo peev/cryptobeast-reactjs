@@ -464,8 +464,8 @@ class PortfolioStore {
     this.saveSelectedPortfolioId();
     this.selectedPortfolio = this.portfolios.find(porfolio => id === porfolio.id);
     if (this.selectedPortfolio) {
-      this.getCurrentPortfolioAssets();
-      this.getCurrentPortfolioTrades();
+      //this.getCurrentPortfolioAssets();
+      //this.getCurrentPortfolioTrades();
     }
     // FOR DELETE
     // InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
@@ -547,12 +547,17 @@ class PortfolioStore {
   @action.bound
   getCurrentPortfolioAssets() {
     if (this.selectedPortfolio) {
+      action(() => {
+        LoadingStore.setShowLoading(true);
+      });
       requester.Portfolio.getPortfolioAssetsByPortfolioId(this.selectedPortfolio.id)
         .then(action((result: object) => {
           this.currentPortfolioAssets = result.data;
+          LoadingStore.setShowLoading(false);
         }))
         .catch(action((err: object) => {
           console.log(err);
+          LoadingStore.setShowLoading(false);
         }));
     }
   }
@@ -596,11 +601,17 @@ class PortfolioStore {
 
   @action.bound
   getCurrentPortfolioTrades() {
+    action(() => {
+      LoadingStore.setShowLoading(true);
+    });
     requester.Portfolio.getPortfolioTradesByPortfolioId(this.selectedPortfolioId)
-      .then(action((result) => {
+      .then(action((result: object) => {
         this.currentPortfolioTrades = result.data;
-        // TODO FOR DELETE
-        // this.currentPortfolioApiTradeHistory = result.data;
+        LoadingStore.setShowLoading(false);
+      }))
+      .catch(action((err: object) => {
+        console.log(err);
+        LoadingStore.setShowLoading(false);
       }));
   }
 

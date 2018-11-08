@@ -1,5 +1,4 @@
 // @flow
-/* eslint no-console: 0 */
 import { action, observable } from 'mobx';
 
 class LoadingStore {

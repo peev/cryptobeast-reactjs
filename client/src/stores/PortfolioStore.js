@@ -460,12 +460,12 @@ class PortfolioStore {
 
   @action.bound
   selectPortfolio(id: number) {
-    this.selectedPortfolioId = id;
-    this.saveSelectedPortfolioId();
-    this.selectedPortfolio = this.portfolios.find(porfolio => id === porfolio.id);
-    if (this.selectedPortfolio) {
-      //this.getCurrentPortfolioAssets();
-      //this.getCurrentPortfolioTrades();
+    this.selectedPortfolio = this.portfolios.find((porfolio: object) => id === porfolio.id);
+    if (this.selectedPortfolioId !== id) {
+      this.selectedPortfolioId = id;
+      this.saveSelectedPortfolioId();
+      this.getCurrentPortfolioAssets();
+      this.getCurrentPortfolioTrades();
     }
     // FOR DELETE
     // InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable

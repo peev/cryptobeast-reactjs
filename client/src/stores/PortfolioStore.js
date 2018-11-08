@@ -21,6 +21,7 @@ import BigNumberService from '../services/BigNumber';
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
 class PortfolioStore {
+  @observable showContent;
   @observable fetchingPortfolios;
   @observable portfolios;
   @observable selectedPortfolio;
@@ -34,6 +35,7 @@ class PortfolioStore {
   @observable newPortfolioName;
 
   constructor() {
+    this.showContent = false;
     this.portfolios = [];
     this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
@@ -519,8 +521,10 @@ class PortfolioStore {
           this.selectPortfolio(this.selectedPortfolioId);
         }
         this.setFetchingPortfolios(false);
+        this.showContent = true;
       }))
       .catch(action((err: object) => {
+        this.showContent = true;
         this.setFetchingPortfolios(false);
         console.log(err);
       }));

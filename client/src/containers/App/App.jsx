@@ -68,79 +68,98 @@ class App extends React.Component<Props> {
     const { classes, theme, PortfolioStore, WeidexStore, children, ...rest } = this.props;
     const { fetchingPortfolios } = PortfolioStore;
 
-    if (fetchingPortfolios) {
-      return (
-        <div className={classes.progressHolder}>
-          <CircularProgress className={classes.progress} size={50} style={{ color: blueGrey[800] }} />
-        </div>
-      );
-    }
+    // if (fetchingPortfolios) {
+    //   return (
+    //     <div className={classes.progressHolder}>
+    //       <CircularProgress className={classes.progress} size={50} style={{ color: blueGrey[800] }} />
+    //     </div>
+    //   );
+    // }
 
     // this is used for portfolio select start screen, because those views doesn't have header
     const checkPortfolioNumber = this.props.location.pathname === '/' && (PortfolioStore.portfolios.length === 0 || PortfolioStore.portfolios.length > 1);
+    const showContent = (this.props.location.pathname !== '/' && this.props.PortfolioStore.showContent) || this.props.location.pathname === '/';
 
     return (
-      <div className={classes.root}>
-        {!WeidexStore.snycingData
-          ? null
-          : (<div className={classes.progressHolder}>
-              <CircularProgress className={classes.progress} size={50} style={{ color: blueGrey[800] }} />
-             </div>
-            )}
-        {checkPortfolioNumber
-          ? null
-          : (<AppBar
-            position="absolute"
-            className={classNames(classes.appBar, this.state.open && classes.appBarShift, this.state.open && classes.appBarNoPadding)}
-            style={{ backgroundColor: '#143141' }}
-          >
-            <Toolbar className={classNames(!this.state.open && classes.headerPortfolios)}>
-              <Header {...rest} />
-            </Toolbar>
-          </AppBar>)}
-
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
-          }}
-          open={this.state.open}
-        >
-          <div className={`${classes.toolbar} ${classes.combinedLogoContainer}`}>
-            <div className={classes.combinedLogo}>
-              <Logo className={classes.logo} />
-              <LogoText className={classes.logoText} />
+      <div>
+        {showContent
+          ?
+          (
+            <div className={classes.root}>
+              {checkPortfolioNumber
+              ? null
+              : (
+                <AppBar
+                  position="absolute"
+                  className={classNames(classes.appBar, this.state.open && classes.appBarShift, this.state.open && classes.appBarNoPadding)}
+                  style={{ backgroundColor: '#143141' }}
+                >
+                  <Toolbar className={classNames(!this.state.open && classes.headerPortfolios)}>
+                    <Header {...rest} />
+                  </Toolbar>
+                </AppBar>
+                )
+              }
+              <Drawer
+                variant="permanent"
+                classes={{
+                  paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
+                }}
+                open={this.state.open}
+              >
+                <div className={`${classes.toolbar} ${classes.combinedLogoContainer}`}>
+                  <div className={classes.combinedLogo}>
+                    <Logo className={classes.logo} />
+                    <LogoText className={classes.logoText} />
+                  </div>
+                </div>
+                <Sidebar
+                  routes={appRoutes}
+                  handleDrawerToggle={this.handleDrawerToggle}
+                  disabled={checkPortfolioNumber}
+                  closed={this.state.open}
+                  {...rest}
+                />
+                <div className={classes.toolbar}>
+                  {checkPortfolioNumber ?
+                    <SidebarRightArrows className={classes.centerDisabledSidebarArrows} /> :
+                    (checkPortfolioNumber === false && this.state.open === false) ?
+                      <IconButton>
+                        <SidebarRightArrows
+                          className={classes.centerActiveSidebarArrows}
+                          onClick={this.handleDrawerOpen}
+                        />
+                      </IconButton> :
+                      (checkPortfolioNumber === false && this.state.open === true) ?
+                        <IconButton>
+                          <SidebarLeftArrows onClick={this.handleDrawerClose} />
+                        </IconButton>
+                        : null
+                  }
+                </div>
+              </Drawer>
+              {
+                !this.props.PortfolioStore.showContent
+                ?
+                (
+                <div className={classes.progressHolder}>
+                  <CircularProgress className={classes.progress} size={50} style={{ color: blueGrey[800] }} />
+                </div>
+                )
+                :
+                null
+              }
+              <main className={`${classes.content} ${this.state.open ? classes.contentOpen : classes.contentClose}`}>
+                {children}
+              </main>
             </div>
+          )
+          :
+          <div className={classes.progressHolder}>
+            <CircularProgress className={classes.progress} size={50} style={{ color: blueGrey[800] }} />
           </div>
-          <Sidebar
-            routes={appRoutes}
-            handleDrawerToggle={this.handleDrawerToggle}
-            disabled={checkPortfolioNumber}
-            closed={this.state.open}
-            {...rest}
-          />
-          <div className={classes.toolbar}>
-            {checkPortfolioNumber ?
-              <SidebarRightArrows className={classes.centerDisabledSidebarArrows} /> :
-              (checkPortfolioNumber === false && this.state.open === false) ?
-                <IconButton>
-                  <SidebarRightArrows
-                    className={classes.centerActiveSidebarArrows}
-                    onClick={this.handleDrawerOpen}
-                  />
-                </IconButton> :
-                (checkPortfolioNumber === false && this.state.open === true) ?
-                  <IconButton>
-                    <SidebarLeftArrows onClick={this.handleDrawerClose} />
-                  </IconButton>
-                  : null
-            }
-          </div>
-        </Drawer>
-        <main className={`${classes.content} ${this.state.open ? classes.contentOpen : classes.contentClose}`} >
-          {children}
-        </main>
-      </div >
+        }
+      </div>
     );
   }
 }

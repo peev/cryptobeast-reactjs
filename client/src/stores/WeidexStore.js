@@ -23,6 +23,7 @@ class WeidexStore {
       .catch((err) => {
         console.log(err);
         this.snycingData = false;
+        this.PortfolioStore.showContent = true;
       });
   }
 
@@ -40,6 +41,7 @@ class WeidexStore {
         });
     } else {
       this.snycingData = false;
+      PortfolioStore.showContent = true;
     }
   };
 }

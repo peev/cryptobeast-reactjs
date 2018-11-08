@@ -20,8 +20,13 @@ class CreatePortfolioView extends React.Component<Props> {
       this.props.WeidexStore.validateAddresses(addresses);
     } else {
       const storageAddresses = storage.getPortfolioAddresses();
-      Promise.resolve(storageAddresses).then((addressesData: Array<string>) =>
-        this.props.WeidexStore.validateAddresses(addressesData));
+      Promise.resolve(storageAddresses).then((addressesData: Array<string>) => {
+        if (addressesData.length) {
+          return this.props.WeidexStore.validateAddresses(addressesData);
+        } else {
+          this.props.PortfolioStore.showContent = true;
+        }
+      });
     }
   }
 
@@ -42,7 +47,7 @@ class CreatePortfolioView extends React.Component<Props> {
   render() {
     return (
       <React.Fragment>
-        {!this.props.WeidexStore.snycingData && !this.props.PortfolioStore.fetchingPortfolios ? this.handlePortfoliosLength() : null}
+        {this.props.PortfolioStore.showContent ? this.handlePortfoliosLength() : null}
       </React.Fragment>
     );
   }

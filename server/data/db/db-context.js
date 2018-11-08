@@ -25,6 +25,7 @@ const init = databaseConfig => new Promise((resolve) => {
       // TODO: Add new models here
       db.Portfolio = sequelize.import(path.join(__dirname, '/models/portfolio.js'));
       // db.Account = sequelize.import(path.join(__dirname, '/models/account.js'));
+      db.Allocation = sequelize.import(path.join(__dirname, '/models/allocation.js'));
       db.Asset = sequelize.import(path.join(__dirname, '/models/asset.js'));
       db.Investor = sequelize.import(path.join(__dirname, '/models/investor.js'));
       db.MarketSummary = sequelize.import(path.join(__dirname, '/models/marketSummary.js'));

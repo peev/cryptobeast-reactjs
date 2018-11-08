@@ -17,6 +17,7 @@ import AssetStore from './AssetStore';
 import history from '../services/History';
 import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
+import LoadingStore from './LoadingStore';
 
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
@@ -55,7 +56,7 @@ class PortfolioStore {
   }
 
   @action
-  setFetchingPortfolios(value) {
+  setFetchingPortfolios(value: boolean) {
     this.fethingPortfolios = value;
   }
   // ======= Computed =======
@@ -98,6 +99,17 @@ class PortfolioStore {
     return 0;
   }
 
+  @action
+  sync = (addresses: Array<string>) => {
+    requester.Weidex.sync(addresses)
+      .then(() => {
+        this.getPortfoliosByAddresses(addresses);
+      })
+      .catch((err: object) => {
+        console.log(err);
+        LoadingStore.setShowContent(true);
+      });
+  };
 
   @computed
   get summaryTotalProfitLoss() {
@@ -447,7 +459,7 @@ class PortfolioStore {
   // #endregion
 
   @action.bound
-  selectPortfolio(id) {
+  selectPortfolio(id: number) {
     this.selectedPortfolioId = id;
     this.saveSelectedPortfolioId();
     this.selectedPortfolio = this.portfolios.find(porfolio => id === porfolio.id);
@@ -482,10 +494,10 @@ class PortfolioStore {
 
   @action
   getPortfolios() {
-    this.fetchingPortfolios = true;
+    // this.fetchingPortfolios = true;
     return new Promise((resolve, reject) => {
       this.portfolios = []
-      this.fetchingPortfolios = false;
+      // this.fetchingPortfolios = false;
       resolve(true);
       // TODO: Enable when we have portfolios
       // We dont have user at the moment. Uncoment when we have!
@@ -508,42 +520,21 @@ class PortfolioStore {
   }
 
   @action
-  getPortfoliosOnStartup() {
-    this.fetchingPortfolios = true;
-    storage.getPortfolioAddresses()
-      .then(action(data => new Promise((resolve, reject) => {
-        requester.Portfolio.getPortfoliosByUserAddresses(data)
-          .then(action((result) => {
-            storage.setPortfolioAddresses(data);
-            this.portfolios = result.data;
-            if (this.selectedPortfolioId > 0) {
-              this.selectPortfolio(this.selectedPortfolioId);
-            }
-            resolve(true);
-            this.fetchingPortfolios = false;
-          }))
-          .catch(action((err) => {
-            this.fethingPortfolios = false;
-            console.log(err);
-            reject(err);
-          }));
-      })));
-  }
-
-  @action
-  getPortfoliosByAddresses(addresses) {
-    this.fetchingPortfolios = true;
+  getPortfoliosByAddresses(addresses: Array<string>) {
+    this.setFetchingPortfolios(true);
     requester.Portfolio.getPortfoliosByUserAddresses(addresses)
-      .then(action((result) => {
+      .then(action((result: object) => {
         storage.setPortfolioAddresses(addresses);
         this.portfolios = result.data;
         if (this.selectedPortfolioId > 0) {
           this.selectPortfolio(this.selectedPortfolioId);
         }
-        this.fetchingPortfolios = false;
+        this.setFetchingPortfolios(false);
+        LoadingStore.setShowContent(true);
       }))
-      .catch(action((err) => {
-        this.fethingPortfolios = false;
+      .catch(action((err: object) => {
+        LoadingStore.setShowContent(true);
+        this.setFetchingPortfolios(false);
         console.log(err);
       }));
   }
@@ -555,15 +546,13 @@ class PortfolioStore {
 
   @action.bound
   getCurrentPortfolioAssets() {
-    // TODO FOR DELETE
-    // const searchedItem = {
-    //   portfolioId: this.selectedPortfolioId,
-    //   item: 'Asset',
-    // };
     if (this.selectedPortfolio) {
       requester.Portfolio.getPortfolioAssetsByPortfolioId(this.selectedPortfolio.id)
-        .then(action((result) => {
+        .then(action((result: object) => {
           this.currentPortfolioAssets = result.data;
+        }))
+        .catch(action((err: object) => {
+          console.log(err);
         }));
     }
   }

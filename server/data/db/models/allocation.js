@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('allocation', {
     },
   },
   balance: {
-    type: DataTypes.Number,
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
 }, {

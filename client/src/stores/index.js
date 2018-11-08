@@ -10,6 +10,7 @@ import Analytics from './Analytics';
 import Allocations from './Allocations';
 import Currencies from './CurrencyStore';
 import FiatCurrencies from './FiatCurrenciesStore';
+import LoadingStore from './LoadingStore';
 
 import TradeHistoryStore from '../features/TransactionHistory/TradeHistory/TradeHistoryStore';
 
@@ -28,6 +29,7 @@ const stores = {
   FiatCurrencies,
   TradeHistoryStore,
   WeidexStore,
+  LoadingStore,
 };
 
 export default stores;

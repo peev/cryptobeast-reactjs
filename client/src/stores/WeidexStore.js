@@ -1,42 +1,25 @@
-import { action, observable, onBecomeObserved } from 'mobx';
+// @flow
+/* eslint no-console: 0 */
+import { action } from 'mobx';
 import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
-import weidexApi from '../services/Weidex';
+import LoadingStore from './LoadingStore';
 
 class WeidexStore {
-  @observable snycingData;
-  @observable validAddresses;
-
-  constructor() {
-    this.snycingData = false;
-    this.validAddresses = [];
-  }
-
   @action
-  validateAddresses = (addresses) => {
+  validateAddresses = (addresses: Array<string>) => {
+    LoadingStore.setShowContent(false);
     requester.Weidex.validateAddresses(addresses)
-      .then((res) => {
-        this.validAddresses = res.data;
-        this.sync(this.validAddresses);
+      .then((res: Array<string>) => {
+        const addressesData = res.data;
+        return (addressesData.length && addressesData.length > 0) ?
+          PortfolioStore.sync(addressesData) : LoadingStore.setShowContent(true);
       })
-      .catch(err => console.log(err));
+      .catch((err: object) => {
+        console.log(err);
+        LoadingStore.setShowContent(true);
+      });
   }
-
-  @action
-  sync = (addresses) => {
-    if (this.validAddresses.length > 0) {
-      this.snycingData = true;
-      requester.Weidex.sync(addresses)
-        .then(() => {
-          PortfolioStore.getPortfoliosByAddresses(addresses);
-          this.snycingData = false;
-        })
-        .catch((err) => {
-          console.log(err);
-          this.snycingData = false;
-        });
-    }
-  };
 }
 
 export default new WeidexStore();

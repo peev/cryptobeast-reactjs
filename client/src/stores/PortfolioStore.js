@@ -546,15 +546,13 @@ class PortfolioStore {
 
   @action.bound
   getCurrentPortfolioAssets() {
-    // TODO FOR DELETE
-    // const searchedItem = {
-    //   portfolioId: this.selectedPortfolioId,
-    //   item: 'Asset',
-    // };
     if (this.selectedPortfolio) {
       requester.Portfolio.getPortfolioAssetsByPortfolioId(this.selectedPortfolio.id)
-        .then(action((result) => {
+        .then(action((result: object) => {
           this.currentPortfolioAssets = result.data;
+        }))
+        .catch(action((err: object) => {
+          console.log(err);
         }));
     }
   }

@@ -42,6 +42,10 @@ class App extends React.Component<Props> {
   };
 
   componentWillMount() {
+    this.handleStart();
+  }
+
+  handleStart = () => {
     if (this.props.location.pathname !== '/') {
       const addresses = storage.getPortfolioAddresses();
       const selectedPortfolioId = storage.getSelectedPortfolioId();

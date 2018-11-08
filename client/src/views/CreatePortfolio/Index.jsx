@@ -16,6 +16,10 @@ type Props = {
 @observer
 class CreatePortfolioView extends React.Component<Props> {
   componentWillMount() {
+    this.handleStart();
+  }
+
+  handleStart = () => {
     const addresses = this.getAddresses(this.props.location.search);
     if (addresses.length) {
       this.props.WeidexStore.validateAddresses(addresses);
@@ -25,7 +29,7 @@ class CreatePortfolioView extends React.Component<Props> {
         if (addressesData.length) {
           return this.props.WeidexStore.validateAddresses(addressesData);
         } else {
-          this.props.LoadingStore.setShowContent(true);
+          return this.props.LoadingStore.setShowContent(true);
         }
       });
     }

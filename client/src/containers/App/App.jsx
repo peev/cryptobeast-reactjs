@@ -30,10 +30,11 @@ type Props = {
   MarketStore: Object,
   UserStore: Object,
   WeidexStore: Object,
+  LoadingStore: Object,
   children?: React.Node
 };
 
-@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'ApiAccountStore', 'WeidexStore', 'location')
+@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'ApiAccountStore', 'WeidexStore', 'location', 'LoadingStore')
 @observer
 class App extends React.Component<Props> {
   state = {
@@ -65,7 +66,7 @@ class App extends React.Component<Props> {
   };
 
   render() {
-    const { classes, theme, PortfolioStore, WeidexStore, children, ...rest } = this.props;
+    const { classes, theme, PortfolioStore, WeidexStore, LoadingStore, location, children, ...rest } = this.props;
     const { fetchingPortfolios } = PortfolioStore;
 
     // if (fetchingPortfolios) {
@@ -77,8 +78,8 @@ class App extends React.Component<Props> {
     // }
 
     // this is used for portfolio select start screen, because those views doesn't have header
-    const checkPortfolioNumber = this.props.location.pathname === '/' && (PortfolioStore.portfolios.length === 0 || PortfolioStore.portfolios.length > 1);
-    const showContent = (this.props.location.pathname !== '/' && this.props.PortfolioStore.showContent) || this.props.location.pathname === '/';
+    const checkPortfolioNumber = location.pathname === '/' && (PortfolioStore.portfolios.length === 0 || PortfolioStore.portfolios.length > 1);
+    const showContent = (location.pathname !== '/' && LoadingStore.showContent) || location.pathname === '/';
 
     return (
       <div>
@@ -139,7 +140,7 @@ class App extends React.Component<Props> {
                 </div>
               </Drawer>
               {
-                !this.props.PortfolioStore.showContent
+                !LoadingStore.showContent || LoadingStore.showLoading
                 ?
                 (
                 <div className={classes.progressHolder}>

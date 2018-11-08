@@ -9,9 +9,10 @@ type Props = {
   PortfolioStore: Object,
   WeidexStore: Object,
   location: Object,
+  LoadingStore: Object,
 };
 
-@inject('PortfolioStore', 'WeidexStore', 'location')
+@inject('PortfolioStore', 'WeidexStore', 'location', 'LoadingStore')
 @observer
 class CreatePortfolioView extends React.Component<Props> {
   componentWillMount() {
@@ -24,7 +25,7 @@ class CreatePortfolioView extends React.Component<Props> {
         if (addressesData.length) {
           return this.props.WeidexStore.validateAddresses(addressesData);
         } else {
-          this.props.PortfolioStore.showContent = true;
+          this.props.LoadingStore.setShowContent(true);
         }
       });
     }
@@ -47,7 +48,7 @@ class CreatePortfolioView extends React.Component<Props> {
   render() {
     return (
       <React.Fragment>
-        {this.props.PortfolioStore.showContent ? this.handlePortfoliosLength() : null}
+        {this.props.LoadingStore.showContent ? this.handlePortfoliosLength() : null}
       </React.Fragment>
     );
   }

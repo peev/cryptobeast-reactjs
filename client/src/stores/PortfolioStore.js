@@ -17,11 +17,11 @@ import AssetStore from './AssetStore';
 import history from '../services/History';
 import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
+import LoadingStore from './LoadingStore';
 
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
 class PortfolioStore {
-  @observable showContent;
   @observable fetchingPortfolios;
   @observable portfolios;
   @observable selectedPortfolio;
@@ -35,7 +35,6 @@ class PortfolioStore {
   @observable newPortfolioName;
 
   constructor() {
-    this.showContent = false;
     this.portfolios = [];
     this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
@@ -100,6 +99,17 @@ class PortfolioStore {
     return 0;
   }
 
+  @action
+  sync = (addresses: Array<string>) => {
+    requester.Weidex.sync(addresses)
+      .then(() => {
+        this.getPortfoliosByAddresses(addresses);
+      })
+      .catch((err: object) => {
+        console.log(err);
+        LoadingStore.setShowContent(true);
+      });
+  };
 
   @computed
   get summaryTotalProfitLoss() {
@@ -511,7 +521,6 @@ class PortfolioStore {
 
   @action
   getPortfoliosByAddresses(addresses: Array<string>) {
-    // this.fetchingPortfolios = true;
     this.setFetchingPortfolios(true);
     requester.Portfolio.getPortfoliosByUserAddresses(addresses)
       .then(action((result: object) => {
@@ -521,10 +530,10 @@ class PortfolioStore {
           this.selectPortfolio(this.selectedPortfolioId);
         }
         this.setFetchingPortfolios(false);
-        this.showContent = true;
+        LoadingStore.setShowContent(true);
       }))
       .catch(action((err: object) => {
-        this.showContent = true;
+        LoadingStore.setShowContent(true);
         this.setFetchingPortfolios(false);
         console.log(err);
       }));

@@ -7,6 +7,7 @@ const weidexController = (repository) => {
   const portfolioController = require('../portfolio/portfolio-controller')(repository);
   const transactionController = require('../transaction/transaction-controller')(repository);
   const tradeHistoryController = require('../trade-history/trade-history-controller')(repository);
+  const allocationsController = require('../allocations/allocations-controller')(repository);
 
   const validateAddresses = async (req, res) => {
     const addresses = req.body.map(address => address.toLowerCase());
@@ -38,6 +39,8 @@ const weidexController = (repository) => {
     await transactionController.sync(req, res, addresses)
       .then(() => console.log('================== START TRADES =================='));
     await tradeHistoryController.sync(req, res, addresses);
+    //   .then(() => console.log('================== START ALLOCATIONS =================='));
+    // await allocationsController.sync(req, res, addresses);
   };
 
   const getUser = (req, res) => {

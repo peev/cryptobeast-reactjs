@@ -13,11 +13,7 @@ class Allocations {
 
   @action.bound
   getAllocations() {
-    const searchedHistoryItems = {
-      portfolioId: PortfolioStore.selectedPortfolioId,
-    };
-
-    requester.Allocations.getSharePriceHistory(searchedHistoryItems)
+    requester.Allocations.getAllocations(PortfolioStore.selectedPortfolioId)
       .then(action((result) => {
         this.allocations = result.data;
       }));

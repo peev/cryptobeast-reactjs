@@ -24,16 +24,16 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
-  Analytics: Object,
+  Allocations: Object,
 };
 
-const Portfolio = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: Props) => {
-  const { classes, Analytics } = props;
+const Portfolio = inject('Analytics', 'PortfolioStore', 'Allocations')(observer(({ ...props }: Props) => {
+  const { classes, Allocations } = props;
 
   return (
     <Grid container className={classes.container}>
       <Grid item xs={12} sm={12} md={12} className={classes.gridItem}>
-        {Analytics.currentPortfolioClosingSharePricesBreakdown.length > 0 ? <PerformanceChart /> : ''}
+        {Allocations.allocations.length > 0 ? <PerformanceChart /> : ''}
       </Grid>
     </Grid>
   );

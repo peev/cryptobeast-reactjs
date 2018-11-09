@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => sequelize.define('allocation', {
   portfolioID: {
-    type: DataTypes.UUID,
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
   triggerType: {
     type: DataTypes.STRING,
@@ -15,14 +15,14 @@ module.exports = (sequelize, DataTypes) => sequelize.define('allocation', {
     defaultValue: DataTypes.NOW,
   },
   tokenID: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
   tokenName: {
     type: DataTypes.STRING,
     allowNull: true,
     validate: {
-      len: [1, 50],
+      len: [1, 4],
     },
   },
   balance: {

@@ -26,16 +26,27 @@ const allocationsController = (repository) => {
   })
     .catch(err => console.log(err));
 
+  const getPortfolioAssets = async idParam => repository.find({
+    modelName: 'Asset',
+    options: {
+      where: {
+        portfolioId: idParam,
+      },
+    },
+  })
+    .catch(err => console.log(err));
+
   const getTrades = async (portfolioIdParam, timestampParam) => repository.find({
     modelName: 'TradeHistory',
     options: {
       where: {
         portfolioId: portfolioIdParam,
+        status: 'FILLED',
         timestamp: {
           [op.gt]: timestampParam,
         },
-        status: 'FILLED',
       },
+      order: [['timestamp', 'DESC']],
     },
   })
     .catch(err => console.log(err));
@@ -45,11 +56,12 @@ const allocationsController = (repository) => {
     options: {
       where: {
         portfolioId: portfolioIdParam,
+        status: 'SUCCESS',
         txTimestamp: {
           [op.gt]: timestampParam,
         },
-        status: 'SUCCESS',
       },
+      order: [['txTimestamp', 'DESC']],
     },
   })
     .catch(err => console.log(err));
@@ -86,11 +98,44 @@ const allocationsController = (repository) => {
       try {
         const portfolio = await getPortfolioObject(address);
         const lastAllocation = await getLastAllocation(portfolio.id);
+        const assets = await getPortfolioAssets(portfolio.id);
         const trades = await getTrades(portfolio.id, lastAllocation.timestamp);
         const transactions = await getTransactions(portfolio.id, lastAllocation.timestamp);
+
+        // const deposits = transactions.filter(transaction => transaction.type === 'd');
+        // const withdraws = transactions.filter(transaction => transaction.type === 'w');
+        // const buys = trades.filter(trade => trade.type === 'BUY');
+        // const sells = trades.filter(trade => trade.type === 'SELL');
+
+        // const tradesTimestamps = trades.map(trade => trade.timestamp);
+        // const transactionsTimestamps = transactions.map(transaction => transaction.txTimestamp);
+        // const timestamps = trades.concat(transactions).sort((a, b) => a.getTime() - b.getTime());
+
+        // TODO concat trades and transactions, sort by timestamp (unify txTampstamp),
+        // TODO foreact item
+        // TODO foreach asset from last (assets) add or remove transaction quantity value (get from weidex by tampstamp)
+        transactions.forEach((transaction) => {
+          const assetsBreakdownArr = [];
+          assets.forEach((asset) => {
+            const assetBreakdown = {
+              tokenName: asset.tokenName,
+              totalETH: asset.totalETH,
+              totalUSD: asset.totalUSD,
+            };
+            assetsBreakdownArr.push(assetBreakdown);
+            // calculate current one and add others
+            const allocation = {
+              portfolioID: portfolio.id,
+              triggerType: transaction.type, // SELL BUY d w
+              timestamp: transaction.timestamp, // unify
+              tokenID: 55, // not needed
+              tokenName: transaction.tokenName,
+              balance: 234, // { "ETH", asset.totalValueETH +/- transaction.totalValueETH, asset.totalValueUSD +/- transaction.totalValueUSD  
+              // !!! if trade calculate both pairs}
+            };
+          });
+        });
         console.log('------------------------------------');
-        console.log(lastAllocation.timestamp);
-        console.log(trades);
         console.log(transactions);
         console.log('------------------------------------');
       } catch (error) {

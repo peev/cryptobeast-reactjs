@@ -3,7 +3,10 @@
 const allocationsController = (repository) => {
   const modelName = 'Allocation';
   const Sequelize = require('sequelize');
+  const bigNumberService = require('../../services/big-number-service');
+  const portfolioService = require('../../services/portfolio-service')(repository);
   const op = Sequelize.Op;
+  let valueToAddToEth = 0;
 
   const getPortfolioObject = async address => repository.findOne({
     modelName: 'Portfolio',
@@ -47,6 +50,7 @@ const allocationsController = (repository) => {
         },
       },
       order: [['timestamp', 'DESC']],
+      raw: true,
     },
   })
     .catch(err => console.log(err));
@@ -62,6 +66,7 @@ const allocationsController = (repository) => {
         },
       },
       order: [['txTimestamp', 'DESC']],
+      raw: true,
     },
   })
     .catch(err => console.log(err));
@@ -93,6 +98,40 @@ const allocationsController = (repository) => {
       });
   };
 
+  const addToEth = (amount) => {
+    valueToAddToEth = bigNumberService().sum(valueToAddToEth, amount);
+  };
+
+  const removeFromEth = (amount) => {
+    valueToAddToEth = bigNumberService().difference(valueToAddToEth, amount);
+  };
+
+  const calculateCurrentAssetTotalETH = (transaction, totalAssetObject) => {
+    if (totalAssetObject.tokenName === transaction.tokenName) {
+      switch (transaction.type) {
+        case 'd': return bigNumberService().difference(totalAssetObject.balance, transaction.totalValueETH);
+        case 'w': return bigNumberService().sum(totalAssetObject.balance, transaction.totalValueETH);
+        case 'BUY':
+          if (transaction.tokenName === 'ETH') {
+            const transactionBalance = bigNumberService().sum(transaction.priceTotalETH, valueToAddToEth);
+            return bigNumberService().difference(totalAssetObject.balance, transactionBalance);
+          }
+          removeFromEth(transaction.priceTotalETH);
+          return bigNumberService().sum(totalAssetObject.balance, transaction.priceTotalETH);
+        case 'SELL':
+          if (transaction.tokenName === 'ETH') {
+            const transactionBalance = bigNumberService().sum(transaction.priceTotalETH, valueToAddToEth);
+            return bigNumberService().sum(totalAssetObject.balance, transactionBalance);
+          }
+          addToEth(transaction.priceTotalETH);
+          return bigNumberService().difference(totalAssetObject.balance, transaction.priceTotalETH);
+        default: return 0;
+      }
+    } else {
+      return totalAssetObject.balance;
+    }
+  };
+
   const sync = async (req, res, addresses) => {
     const allocationsArray = addresses.map(async (address) => {
       try {
@@ -101,43 +140,46 @@ const allocationsController = (repository) => {
         const assets = await getPortfolioAssets(portfolio.id);
         const trades = await getTrades(portfolio.id, lastAllocation.timestamp);
         const transactions = await getTransactions(portfolio.id, lastAllocation.timestamp);
+        const concat = trades.concat(transactions).sort(((a, b) =>
+          (new Date((b.timestamp !== undefined) ? b.timestamp.toString() : b.txTimestamp.toString()).getTime() -
+            new Date((a.timestamp !== undefined) ? a.timestamp.toString() : a.txTimestamp.toString()).getTime()
+          )
+        ));
 
-        // const deposits = transactions.filter(transaction => transaction.type === 'd');
-        // const withdraws = transactions.filter(transaction => transaction.type === 'w');
-        // const buys = trades.filter(trade => trade.type === 'BUY');
-        // const sells = trades.filter(trade => trade.type === 'SELL');
-
-        // const tradesTimestamps = trades.map(trade => trade.timestamp);
-        // const transactionsTimestamps = transactions.map(transaction => transaction.txTimestamp);
-        // const timestamps = trades.concat(transactions).sort((a, b) => a.getTime() - b.getTime());
-
-        // TODO concat trades and transactions, sort by timestamp (unify txTampstamp),
-        // TODO foreact item
-        // TODO foreach asset from last (assets) add or remove transaction quantity value (get from weidex by tampstamp)
-        transactions.forEach((transaction) => {
-          const assetsBreakdownArr = [];
-          assets.forEach((asset) => {
-            const assetBreakdown = {
-              tokenName: asset.tokenName,
-              totalETH: asset.totalETH,
-              totalUSD: asset.totalUSD,
-            };
-            assetsBreakdownArr.push(assetBreakdown);
-            // calculate current one and add others
-            const allocation = {
-              portfolioID: portfolio.id,
-              triggerType: transaction.type, // SELL BUY d w
-              timestamp: transaction.timestamp, // unify
-              tokenID: 55, // not needed
-              tokenName: transaction.tokenName,
-              balance: 234, // { "ETH", asset.totalValueETH +/- transaction.totalValueETH, asset.totalValueUSD +/- transaction.totalValueUSD  
-              // !!! if trade calculate both pairs}
-            };
+        const currentAssetBalanceArray = [];
+        assets.forEach((asset) => {
+          currentAssetBalanceArray.push({
+            tokenName: asset.tokenName,
+            balance: asset.totalETH,
           });
         });
-        console.log('------------------------------------');
-        console.log(transactions);
-        console.log('------------------------------------');
+
+        concat.forEach((transaction) => {
+          const assetBalanceArray = [];
+          currentAssetBalanceArray.forEach((item) => {
+            if (item.tokenName !== 'ETH') {
+              assetBalanceArray.push({
+                tokenName: item.tokenName,
+                balance: calculateCurrentAssetTotalETH(transaction, item),
+              });
+            }
+          });
+          currentAssetBalanceArray.forEach((item) => {
+            if (item.tokenName === 'ETH') {
+              assetBalanceArray.push({
+                tokenName: item.tokenName,
+                balance: calculateCurrentAssetTotalETH(transaction, item),
+              });
+            }
+          });
+          valueToAddToEth = 0;
+          console.log('------------------------------------');
+          console.log(concat);
+          console.log(assetBalanceArray);
+          // TODO Front end
+          console.log(Object.keys(assetBalanceArray).reduce((previous, key) => previous + assetBalanceArray[key].balance, 0));
+          console.log('------------------------------------');
+        });
       } catch (error) {
         console.log(error);
       }

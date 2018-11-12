@@ -113,21 +113,24 @@ const allocationsController = (repository) => {
         case 'w': return bigNumberService().sum(totalAssetObject.balance, transaction.totalValueETH);
         case 'BUY':
           if (transaction.tokenName === 'ETH') {
-            const transactionBalance = bigNumberService().sum(transaction.priceTotalETH, valueToAddToEth);
-            return bigNumberService().difference(totalAssetObject.balance, transactionBalance);
+            const transactionBalance = bigNumberService().sum(valueToAddToEth, transaction.priceTotalETH);
+            return bigNumberService().sum(transactionBalance, totalAssetObject.balance);
           }
           removeFromEth(transaction.priceTotalETH);
           return bigNumberService().sum(totalAssetObject.balance, transaction.priceTotalETH);
         case 'SELL':
           if (transaction.tokenName === 'ETH') {
-            const transactionBalance = bigNumberService().sum(transaction.priceTotalETH, valueToAddToEth);
-            return bigNumberService().sum(totalAssetObject.balance, transactionBalance);
+            const transactionBalance = bigNumberService().sum(valueToAddToEth, transaction.priceTotalETH);
+            return bigNumberService().difference(totalAssetObject.balance, transactionBalance);
           }
           addToEth(transaction.priceTotalETH);
           return bigNumberService().difference(totalAssetObject.balance, transaction.priceTotalETH);
         default: return 0;
       }
     } else {
+      if (totalAssetObject.tokenName === 'ETH') {
+        return bigNumberService().sum(totalAssetObject.balance, valueToAddToEth);
+      }
       return totalAssetObject.balance;
     }
   };
@@ -141,8 +144,8 @@ const allocationsController = (repository) => {
         const trades = await getTrades(portfolio.id, lastAllocation.timestamp);
         const transactions = await getTransactions(portfolio.id, lastAllocation.timestamp);
         const concat = trades.concat(transactions).sort(((a, b) =>
-          (new Date((b.timestamp !== undefined) ? b.timestamp.toString() : b.txTimestamp.toString()).getTime() -
-            new Date((a.timestamp !== undefined) ? a.timestamp.toString() : a.txTimestamp.toString()).getTime()
+          (new Date((a.timestamp !== undefined) ? a.timestamp.toString() : a.txTimestamp.toString()).getTime() -
+            new Date((b.timestamp !== undefined) ? b.timestamp.toString() : b.txTimestamp.toString()).getTime()
           )
         ));
 
@@ -153,6 +156,10 @@ const allocationsController = (repository) => {
             balance: asset.totalETH,
           });
         });
+        console.log('------------------------------------');
+        console.log('Starting:');
+        console.log(currentAssetBalanceArray);
+        console.log('------------------------------------');
 
         concat.forEach((transaction) => {
           const assetBalanceArray = [];
@@ -174,10 +181,11 @@ const allocationsController = (repository) => {
           });
           valueToAddToEth = 0;
           console.log('------------------------------------');
-          console.log(concat);
+          console.log(`Transaction type: ${transaction.type}`);
+          console.log(`Transaction type: ${transaction.timestamp} ${transaction.txTimestamp}`);
           console.log(assetBalanceArray);
-          // TODO Front end
-          console.log(Object.keys(assetBalanceArray).reduce((previous, key) => previous + assetBalanceArray[key].balance, 0));
+          // // TODO Front end
+          console.log(`Total ETH: ${Object.keys(assetBalanceArray).reduce((previous, key) => previous + assetBalanceArray[key].balance, 0)}`);
           console.log('------------------------------------');
         });
       } catch (error) {

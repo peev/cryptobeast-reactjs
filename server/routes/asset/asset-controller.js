@@ -83,13 +83,13 @@ const assetController = (repository) => {
 
   const updateAction = async (req, res, id, assetObject, isSyncing) => {
     const newAssetData = Object.assign({}, assetObject, { id });
-    await repository.update({ modelName, updatedRecord: newAssetData })
+    return repository.update({ modelName, updatedRecord: newAssetData })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
 
   const createAction = async (req, res, assetObject, isSyncing) => {
-    await repository.create({ modelName, newObject: assetObject })
+    return repository.create({ modelName, newObject: assetObject })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
@@ -211,9 +211,7 @@ const assetController = (repository) => {
           const addPortfolioId = Object.assign({}, asset, { portfolioId: portfolio.id });
           const bodyWrapper = Object.assign({ body: addPortfolioId });
           await syncAsset(bodyWrapper, res, lastPriceUSD);
-        });
-
-        await updateAssetsWeight(req, res, portfolio.id);
+        }).then(async () => updateAssetsWeight(req, res, portfolio.id));
       } catch (error) {
         console.log(error);
       }

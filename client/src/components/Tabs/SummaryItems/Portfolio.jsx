@@ -4,6 +4,7 @@ import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
 import PerformanceChart from '../../HighCharts/PerformanceChart';
+import TotalAssetsValue from '../../HighCharts/TotalAssetsValue';
 
 const styles = () => ({
   container: {
@@ -33,7 +34,7 @@ const Portfolio = inject('Analytics', 'PortfolioStore', 'Allocations')(observer(
   return (
     <Grid container className={classes.container}>
       <Grid item xs={12} sm={12} md={12} className={classes.gridItem}>
-        {Allocations.allocations.length > 0 ? <PerformanceChart /> : ''}
+        {Allocations.allocations.length > 0 ? <TotalAssetsValue chartHeight={320} /> : ''}
       </Grid>
     </Grid>
   );

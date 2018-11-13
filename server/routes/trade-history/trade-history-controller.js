@@ -170,7 +170,6 @@ const tradeController = (repository) => {
     });
     return Promise.all(portfolioArray).then(() => {
       console.log('================== END TRADES ==================');
-      return res.status(200).send('Sync finished');
     });
   };
 

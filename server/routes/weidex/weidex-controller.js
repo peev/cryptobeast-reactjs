@@ -38,9 +38,9 @@ const weidexController = (repository) => {
       .then(() => console.log('================== START TRANSACTIONS =================='));
     await transactionController.sync(req, res, addresses)
       .then(() => console.log('================== START TRADES =================='));
-    await tradeHistoryController.sync(req, res, addresses);
-    //   .then(() => console.log('================== START ALLOCATIONS =================='));
-    // await allocationsController.sync(req, res, addresses);
+    await tradeHistoryController.sync(req, res, addresses)
+      .then(() => console.log('================== START ALLOCATIONS =================='));
+    await allocationsController.sync(req, res, addresses);
   };
 
   const getUser = (req, res) => {

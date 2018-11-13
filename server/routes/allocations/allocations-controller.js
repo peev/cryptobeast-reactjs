@@ -79,6 +79,23 @@ const allocationsController = (repository) => {
       });
   };
 
+  const createAllocationObject = (portfolioId, allocation, balanceArray) => {
+    let allocationObject;
+    try {
+      allocationObject = {
+        portfolioID: portfolioId,
+        triggerType: allocation.type,
+        timestamp: (allocation.timestamp !== undefined) ? allocation.timestamp : allocation.txTimestamp,
+        txHash: allocation.txHash,
+        tokenName: allocation.tokenName,
+        balance: balanceArray,
+      };
+    } catch (error) {
+      console.log(error);
+    }
+    return allocationObject;
+  };
+
   const createAction = async (req, res, allocationObject, isSyncing) =>
     repository.create({ modelName, newObject: allocationObject })
       .then(response => (isSyncing ? response : res.status(200).send({
@@ -141,9 +158,14 @@ const allocationsController = (repository) => {
     }
   };
 
-  const sortByTimestamp = array => array.sort(((a, b) =>
-    (new Date((b.timestamp !== undefined) ? a.timestamp.toString() : b.txTimestamp.toString()).getTime() -
+  const sortByTimestampReverse = array => array.sort(((a, b) =>
+    (new Date((b.timestamp !== undefined) ? b.timestamp.toString() : b.txTimestamp.toString()).getTime() -
     new Date((a.timestamp !== undefined) ? a.timestamp.toString() : a.txTimestamp.toString()).getTime())
+  ));
+
+  const sortByTimestamp = array => array.sort(((a, b) =>
+    (new Date((a.timestamp !== undefined) ? a.timestamp.toString() : a.txTimestamp.toString()).getTime() -
+    new Date((b.timestamp !== undefined) ? b.timestamp.toString() : b.txTimestamp.toString()).getTime())
   ));
 
   const fillCurrentAssetBalanceArray = (currentAssetBalanceArray, assets) => {
@@ -156,6 +178,16 @@ const allocationsController = (repository) => {
     return currentAssetBalanceArray;
   };
 
+  const syncAllocations = async (req, res, resultArray) => {
+    try {
+      await Promise.all(resultArray.map(async (allocation) => {
+        await createAction(req, res, allocation, true);
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const sync = async (req, res, addresses) => {
     const allocationsArray = addresses.map(async (address) => {
       try {
@@ -166,7 +198,7 @@ const allocationsController = (repository) => {
         const trades = await getTrades(portfolio.id, lastAllocationTimestamp);
         const transactions = await getTransactions(portfolio.id, lastAllocationTimestamp);
         const transactionsAndTrades = trades.concat(transactions);
-        const transactionsAndTradesSorted = sortByTimestamp(transactionsAndTrades);
+        const transactionsAndTradesSorted = sortByTimestampReverse(transactionsAndTrades);
         let currentAssetBalanceArray = [];
         currentAssetBalanceArray = fillCurrentAssetBalanceArray(currentAssetBalanceArray, assets);
 
@@ -176,7 +208,8 @@ const allocationsController = (repository) => {
         console.log(`Total ETH: ${Object.keys(currentAssetBalanceArray).reduce((previous, key) => previous + currentAssetBalanceArray[key].balance, 0)}`);
         console.log('------------------------------------');
 
-        transactionsAndTradesSorted.forEach(async (transaction) => {
+        const resultArray = [];
+        await transactionsAndTradesSorted.forEach(async (transaction) => {
           const currentAssetBalanceArrayNoEth = currentAssetBalanceArray.filter(item => item.tokenName !== 'ETH');
           const currentAssetBalanceArrayOnlyEth = currentAssetBalanceArray.filter(item => item.tokenName === 'ETH');
           const assetBalanceArray = [];
@@ -201,22 +234,18 @@ const allocationsController = (repository) => {
           console.log(`Total ETH: ${Object.keys(assetBalanceArray).reduce((previous, key) => previous + assetBalanceArray[key].balance, 0)}`);
           console.log('------------------------------------');
 
-          const allocation = {
-            portfolioID: portfolio.id,
-            triggerType: transaction.type,
-            timestamp: (transaction.timestamp !== undefined) ? transaction.timestamp : transaction.txTimestamp,
-            txHash: transaction.txHash,
-            tokenName: transaction.tokenName,
-            balance: assetBalanceArray,
-          };
-          // await createAction(req, res, allocation, true);
+          const allocation = createAllocationObject(portfolio.id, transaction, assetBalanceArray);
+          resultArray.push(allocation);
         });
+
+        await syncAllocations(req, res, sortByTimestamp(resultArray));
       } catch (error) {
         console.log(error);
       }
     });
     await Promise.all(allocationsArray).then(() => {
       console.log('================== END ALLOCATIONS =========================================');
+      return res.status(200).send('Sync finished');
     });
   };
 

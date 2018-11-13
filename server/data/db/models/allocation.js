@@ -5,31 +5,28 @@ module.exports = (sequelize, DataTypes) => sequelize.define('allocation', {
   },
   triggerType: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
     validate: {
-      len: [1, 50],
+      len: [1, 4],
     },
   },
   timestamp: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
-  tokenID: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
+  txHash: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   tokenName: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
     validate: {
       len: [1, 4],
     },
   },
   balance: {
-    type: DataTypes.DOUBLE,
-    allowNull: true,
+    type: DataTypes.JSON,
+    allowNull: false,
   },
-}, {
-  freezeTableName: true,
-  tableName: 'allocations',
 });

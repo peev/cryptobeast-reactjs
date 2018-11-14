@@ -303,9 +303,9 @@ class PortfolioStore {
   }
 
   get summaryAssetsBreakdown() {
-    return this.currentPortfolioAssets.map(el => ({
-      y: el.balance,
-      name: `${el.tokenName}`,
+    return this.currentPortfolioAssets.map((el: object) => ({
+      y: Number(BigNumberService.toFixedParam(el.weight, 2)),
+      name: `${el.tokenName} ${Number(BigNumberService.toFixedParam(el.weight, 2))}`,
     }));
   }
 

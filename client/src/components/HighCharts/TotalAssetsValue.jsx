@@ -14,39 +14,31 @@ const TotalAssetsValue = inject('Allocations')(observer(({ ...props }: Props) =>
   const config = {
     chart: {
       zoomType: 'x',
+      height: 320,
     },
     title: {
       text: 'Total assets value',
     },
-    subtitle: {
-      text: document.ontouchstart === undefined ?
-        'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in',
+    credits: {
+      enabled: false,
     },
     xAxis: {
       type: 'datetime',
+      data: Allocations.allocationsBreakdownDates,
     },
     yAxis: {
       title: {
         text: 'Exchange rate',
       },
+      labels: {
+        overflow: 'allow',
+      },
     },
     legend: {
-      enabled: false,
+      enabled: true,
     },
     plotOptions: {
       area: {
-        fillColor: {
-          linearGradient: {
-            x1: 0,
-            y1: 0,
-            x2: 0,
-            y2: 1,
-          },
-          stops: [
-            [0, Highcharts.getOptions().colors[0]],
-            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')],
-          ],
-        },
         marker: {
           radius: 2,
         },
@@ -61,9 +53,42 @@ const TotalAssetsValue = inject('Allocations')(observer(({ ...props }: Props) =>
     },
 
     series: [{
+      id: 'eth',
+      type: 'area',
+      name: 'ETH value',
+      color: Highcharts.getOptions().colors[0],
+      fillColor: {
+        linearGradient: {
+          x1: 0,
+          y1: 0,
+          x2: 0,
+          y2: 1,
+        },
+        stops: [
+          [0, Highcharts.getOptions().colors[0]],
+          [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')],
+        ],
+      },
+      data: Allocations.allocationsBreakdownETH,
+    },
+    {
+      id: 'usd',
       type: 'area',
       name: 'USD value',
-      data: Allocations.allocationsBreakdown,
+      color: Highcharts.getOptions().colors[2],
+      fillColor: {
+        linearGradient: {
+          x1: 0,
+          y1: 0,
+          x2: 0,
+          y2: 1,
+        },
+        stops: [
+          [0, Highcharts.getOptions().colors[2]],
+          [1, Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0).get('rgba')],
+        ],
+      },
+      data: Allocations.allocationsBreakdownUSD,
     }],
   };
 

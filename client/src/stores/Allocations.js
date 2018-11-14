@@ -1,3 +1,4 @@
+// @flow
 import { observable, action, computed, onBecomeObserved } from 'mobx';
 import PortfolioStore from './PortfolioStore';
 import requester from '../services/requester';
@@ -15,26 +16,38 @@ class Allocations {
   @action.bound
   getAllocations() {
     requester.Allocations.getAllocations(PortfolioStore.selectedPortfolioId)
-      .then(action((result) => {
+      .then(action((result: object) => {
         this.allocations = result.data;
       }));
   }
 
   @computed
-  get allocationsBreakdown() {
+  get allocationsBreakdownETH() {
     if (PortfolioStore.selectedPortfolio && this.allocations.length > 0) {
-      console.log('------------------------------------');
-      console.log(this.allocations
-        .map(el => [{
-          datetime: Number(new Date(el.timestamp).getTime()),
-          balance: Object.keys(this.allocations).reduce((previous, key) => previous + this.allocations[key].balance, 0),
-        }]));
-      console.log('------------------------------------');
       return this.allocations
-        .map(el => [{
-          datetime: Number(new Date(el.timestamp).getTime()),
-          balance: Object.keys(this.allocations).reduce((previous, key) => previous + this.allocations[key].balance, 0),
-        }]);
+        .map((el: object) =>
+          ([
+            Number(new Date(el.timestamp).getTime()),
+            Object.keys(el.balance).reduce((previous: number, key: number) =>
+              BigNumberService.toNumber(BigNumberService.gweiToEth(BigNumberService.sum(previous, el.balance[key].balance))), 0),
+          ]));
+    }
+    return [];
+  }
+
+  get allocationsBreakdownUSD() {
+    if (PortfolioStore.selectedPortfolio && this.allocations.length > 0) {
+      return this.allocations
+        .map((el: object) =>
+          ([
+            Number(new Date(el.timestamp).getTime()),
+            Object.keys(el.balance).reduce((previous: number, key: number) =>
+              Number(BigNumberService
+                .toFixedParam(BigNumberService
+                  .gweiToEth(BigNumberService
+                    .product(BigNumberService
+                      .sum(previous, el.balance[key].balance), 200)), 2))),
+          ]));
     }
     return [];
   }

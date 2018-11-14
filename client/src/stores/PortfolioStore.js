@@ -552,7 +552,7 @@ class PortfolioStore {
       });
       requester.Portfolio.getPortfolioAssetsByPortfolioId(this.selectedPortfolio.id)
         .then(action((result: object) => {
-          this.currentPortfolioAssets = result.data;
+          this.currentPortfolioAssets = result.data.filter((asset: object) => asset.balance > 0);
           LoadingStore.setShowLoading(false);
         }))
         .catch(action((err: object) => {

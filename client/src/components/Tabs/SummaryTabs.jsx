@@ -31,6 +31,9 @@ const styles = () => ({
     minHeight: '314px',
     '&>div': {
       height: '100%',
+      '& :first-child': {
+        overflow: 'hidden !important',
+      },
     },
     '&::-webkit-scrollbar': {
       display: 'none',

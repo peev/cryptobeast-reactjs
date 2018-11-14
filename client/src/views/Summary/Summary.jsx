@@ -128,7 +128,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             <PortfolioSummaryTable
               tableHead={[
                 { id: 'ticker', numeric: false, disablePadding: false, label: 'Ticker' },
-                { id: 'holdings', numeric: false, disablePadding: false, label: 'Holdings' },
+                { id: 'balance', numeric: false, disablePadding: false, label: 'Balance' },
                 { id: 'priceETH', numeric: false, disablePadding: false, label: 'Price (ETH)' },
                 { id: 'priceUSD', numeric: false, disablePadding: false, label: 'Price (USD)' },
                 { id: 'totalUSD', numeric: false, disablePadding: false, label: 'Total Value (USD)' },

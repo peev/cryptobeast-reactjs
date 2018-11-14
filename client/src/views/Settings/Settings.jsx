@@ -12,16 +12,17 @@ import ApiIntegrations from './../../components/CustomTables/ApiIntegrations';
 import AddApiAccount from './../../components/Modal/ApiAccountModals/AddApiAccount';
 import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
 import storage from '../../services/storage';
+import PortfolioStore from '../../stores/PortfolioStore';
 
 type Props = {
   MarketStore: {
     getSyncedSummaries: Function,
     getBaseCurrencies: Function,
   },
-  WeidexStore: Object,
+  PortfolioStore: Object,
 };
 
-const Settings = inject('MarketStore', 'WeidexStore')(observer(({ ...props }: Props) => {
+const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }: Props) => {
   const getMarketSummaries = () => {
     props.MarketStore.getSyncedSummaries();
     props.MarketStore.getBaseCurrencies();
@@ -30,7 +31,7 @@ const Settings = inject('MarketStore', 'WeidexStore')(observer(({ ...props }: Pr
 
   const syncData = () => {
     storage.getPortfolioAddresses()
-      .then((data: Array<string>) => props.WeidexStore.sync(data));
+      .then((data: Array<string>) => props.PortfolioStore.sync(data));
   };
 
   return (

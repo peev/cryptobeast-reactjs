@@ -93,6 +93,10 @@ const Market = {
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
+const Allocations = {
+  getAllocations: id => requests.get(`/allocations/fetchInfo/${id}`),
+};
+
 const Weidex = {
   sync: requestParams => requests.post('/weidex/sync', requestParams),
   validateAddresses: requestParams => requests.post('/weidex/validateAddresses', requestParams),
@@ -107,4 +111,5 @@ export default {
   Investor,
   Market,
   Weidex,
+  Allocations,
 };

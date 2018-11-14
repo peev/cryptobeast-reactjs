@@ -117,7 +117,7 @@ function createAssetObjectFromArray(assetAsArray: Array, allCurrencies: Array) {
   const { decimals } = allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName);
   return {
     ticker: assetAsArray.tokenName,
-    holdings: BigNumberService.toNumber(BigNumberService.tokenToEth(assetAsArray.balance, decimals)),
+    balance: BigNumberService.toNumber(BigNumberService.tokenToEth(assetAsArray.balance, decimals)),
     priceETH: BigNumberService.toNumber(assetAsArray.lastPriceETH),
     priceUSD: BigNumberService.toNumber(assetAsArray.lastPriceUSD),
     totalUSD: BigNumberService.toNumber(BigNumberService.tokenToEth(assetAsArray.totalUSD, decimals)),
@@ -146,7 +146,7 @@ const TableHeader = ({
   return (
     <TableHead className={classes.tableHead}>
       <TableRow>
-        {tableHead.map((headerItem: Object, index: number) => (
+        {tableHead.map((headerItem: Object) => (
           <TableCell
             className={`${classes.tableCell} ${classes.tableHeadCell}`}
             key={headerItem.id}

@@ -200,6 +200,18 @@ const assetController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const syncAssets = async (req, res, assets, lastPriceUSD, portfolioIdParam) => {
+    try {
+      await Promise.all(assets.map(async (asset) => {
+        const addPortfolioId = Object.assign({}, asset, { portfolioId: portfolioIdParam });
+        const bodyWrapper = Object.assign({ body: addPortfolioId });
+        return syncAsset(bodyWrapper, res, lastPriceUSD);
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const sync = async (req, res, addresses) => {
     const addressesArray = addresses.map(async (address) => {
       try {
@@ -207,11 +219,8 @@ const assetController = (repository) => {
         const portfolio = await getPortfolioObjectByAddress(address);
         const assets = await WeidexService.getBalanceByUserHttp(portfolio.userAddress);
 
-        await assets.map(async (asset) => {
-          const addPortfolioId = Object.assign({}, asset, { portfolioId: portfolio.id });
-          const bodyWrapper = Object.assign({ body: addPortfolioId });
-          await syncAsset(bodyWrapper, res, lastPriceUSD);
-        }).then(async () => updateAssetsWeight(req, res, portfolio.id));
+        await syncAssets(req, res, assets, lastPriceUSD, portfolio.id);
+        await updateAssetsWeight(req, res, portfolio.id);
       } catch (error) {
         console.log(error);
       }

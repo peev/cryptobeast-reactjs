@@ -85,7 +85,7 @@ class ProfitLoss extends React.Component<Props, State> {
     value: '',
     selectPeriod: '',
     globalSelectPeriod: '',
-    selectedCurrency: 'BTC'
+    selectedCurrency: 'ETH',
   };
 
   constructor(props) {
@@ -184,7 +184,7 @@ class ProfitLoss extends React.Component<Props, State> {
 
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <ProfitLossChart currency={selectedCurrency} data={AssetStore.assetProfitLoss} days={AssetStore.assetHistoryBrakedownDates} />
+            <ProfitLossChart currency={selectedCurrency} chartData={AssetStore.assetProfitLoss} days={AssetStore.assetHistoryBrakedownDates} />
           </Paper>
         </Grid>
 

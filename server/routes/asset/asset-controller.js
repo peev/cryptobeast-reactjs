@@ -202,9 +202,9 @@ const assetController = (repository) => {
 
   const getPeriodValue = (period) => {
     switch (period) {
-      case 'w': return 7;
-      case 'm': return 31;
-      case 'y': return 365;
+      case 'w': return 8;
+      case 'm': return 32;
+      case 'y': return 366;
       default: return 0;
     }
   };

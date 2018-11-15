@@ -18,8 +18,7 @@ const attachTo = (app, data) => {
     .get('/orderHistory/token/:tokenId', (req, res) => weidexController.getUserOrderHistoryByToken(req, res))
     .get('/orderHistory/user/:userId', (req, res) => weidexController.getUserOrderHistoryByUser(req, res))
     .get('/orderHistory/user/:userId/token/:tokenId', (req, res) => weidexController.getUserOrderHistoryByUserAndToken(req, res))
-    .post('/validateAddresses', weidexController.validateAddresses)
-    .get('/token/:id/price/:timestamp', weidexController.getTokenValueByTimestamp);
+    .post('/validateAddresses', weidexController.validateAddresses);
 
   app.use('/weidex', router);
 };

@@ -32,7 +32,8 @@ const Asset = {
   update: requestParams => requests.put('/asset/update', requestParams),
   delete: id => requests.delete(`/asset/delete/${id}`, id),
   allocate: data => requests.post('/asset/allocate', data),
-  sync: data => requests.get(`/asset/sync/`)
+  getAssetHistory: (tokenId, period) => requests.get(`/asset/history/${tokenId}/${period}`),
+  sync: data => requests.get('/asset/sync/'),
 };
 
 const User = {

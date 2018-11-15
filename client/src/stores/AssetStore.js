@@ -1,10 +1,13 @@
 // @flow
+/* eslint no-console: 0 */
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
 import NotificationStore from './NotificationStore';
+import LoadingStore from './LoadingStore';
+import BigNumberService from '../services/BigNumber';
 
 
 class AssetStore {
@@ -22,6 +25,7 @@ class AssetStore {
   @observable assetAllocationFromAmount;
   @observable assetAllocationToAmount;
   @observable assetAllocationFee;
+  @observable assetHistory;
 
   constructor() {
     this.selectedExchangeBasicInput = '';
@@ -36,6 +40,52 @@ class AssetStore {
     this.assetAllocationFromAmount = '';
     this.assetAllocationToAmount = '';
     this.assetAllocationFee = '';
+    this.assetHistory = [];
+  }
+
+  @action
+  getAssetHistoryByTokenIdAndPeriod(tokenId: number, period: string) {
+    action(() => {
+      LoadingStore.setShowLoading(true);
+    });
+    requester.Asset.getAssetHistory(tokenId, period)
+      .then(action((result: object) => {
+        this.assetHistory = result.data;
+        LoadingStore.setShowLoading(false);
+      }))
+      .catch(action((err: object) => {
+        LoadingStore.setShowLoading(true);
+        console.log(err);
+      }));
+  }
+
+  @computed
+  get assetHistoryBrakedownDates() {
+    if (this.assetHistory.length && this.assetHistory.length > 0) {
+      return this.assetHistory.map((el: object) => el.date);
+    }
+    return [];
+  }
+
+  @computed
+  get assetProfitLoss() {
+    if (this.assetHistory.length && this.assetHistory.length > 0) {
+      return this.assetHistory.map((el: object, index: number) => {
+        if (index === 0) {
+          return 0;
+        } else {
+          console.log('------------------------------------');
+          console.log(el.value);
+          console.log(index);
+          console.log('------------------------------------');
+          return Number(BigNumberService
+            .toFixedParam(BigNumberService
+              .quotient(BigNumberService
+                .difference(el.value, this.assetHistory[index - 1].value), this.assetHistory[index - 1].value)));
+        }
+      });
+    }
+    return [];
   }
 
   @computed

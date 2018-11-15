@@ -63,16 +63,24 @@ const styles = () => ({
   },
   noMargin: {
     marginTop: 0
+  },
+  textLeft: {
+    textAlign: 'left'
   }
 });
 
 type Props = {
+  AssetStore: Object,
   classes: Object,
 };
 
-@inject('MarketStore')
+@inject('MarketStore', 'AssetStore')
 @observer
 class ProfitLoss extends React.Component<Props, State> {
+
+  componentDidMount() {
+    this.props.AssetStore.getAssetHistoryByTokenIdAndPeriod(6, 'w');
+  }
   state = {
     value: '',
     selectPeriod: '',
@@ -137,7 +145,7 @@ class ProfitLoss extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes, MarketStore } = this.props;
+    const { classes, MarketStore, AssetStore } = this.props;
     const { selectPeriod, globalSelectPeriod, selectedCurrency } = this.state;
     let profitLoss = MarketStore.profitLoss;
 
@@ -154,7 +162,7 @@ class ProfitLoss extends React.Component<Props, State> {
     return (
       <Grid container className={classes.overflowNone}>
         <Grid container>
-          <Grid item xs={3} className={[classes.flex, classes.flexCenter].join(' ')}>
+          <Grid item xs={2} className={[classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
             <MotionSelect defaultValueIndex={0} selectedValue={this.handleGlobalSelectPeriod} values={['1d', '1w', '1m']}  />
           </Grid>
         </Grid>
@@ -166,17 +174,17 @@ class ProfitLoss extends React.Component<Props, State> {
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
-          <Grid item xs={3} className={[classes.flex, classes.flexCenter].join(' ')}>
+          <Grid item xs={2} className={[classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
             <MotionSelect defaultValueIndex={1} selectedValue={this.handleSelectPeriod} values={['1w', '1m', '1y']} />
           </Grid>
-          <Grid item xs={3} className={[classes.paddingLeft, classes.flex, classes.flexCenter].join(' ')}>
+          <Grid item xs={2} className={[classes.paddingLeft, classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
             <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectCurrency} values={profitLossCurrencies} title={'Select currency'} />
           </Grid>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <ProfitLossChart currency={selectedCurrency} data={profitLoss} days={localSelectPeriod} />
+            <ProfitLossChart currency={selectedCurrency} data={AssetStore.assetProfitLoss} days={AssetStore.assetHistoryBrakedownDates} />
           </Paper>
         </Grid>
 

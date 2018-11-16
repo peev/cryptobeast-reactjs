@@ -15,10 +15,21 @@ class Currencies {
 
   @action.bound
   getCurrencies() {
-    requester.Currencies.getCurrencies()
+    requester.Market.getAllCurrencies()
       .then(action((result) => {
+        console.log('------------------------------------');
+        console.log(result.data);
+        console.log('------------------------------------');
         this.currencies = result.data;
       }));
+  }
+
+  @computed
+  get currenciesTokenNameAndSymbol() {
+    if (this.currencies.length && this.currencies.length > 0) {
+      return this.currencies.map(el => el.tokenName);
+    }
+    return [];
   }
 
   // Array of ids of the currencies we want to fetch their history

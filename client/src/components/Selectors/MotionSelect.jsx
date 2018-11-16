@@ -17,7 +17,7 @@ const styles = (theme: Object) => ({
 type Props = {
   classes: Object,
   muiname: 'SelectPeriod',
-  defaultValueIndex: Number
+  defaultValueIndex: number,
 };
 
 type State = {
@@ -37,34 +37,38 @@ class MotionSelect extends React.Component<Props, State> {
   };
 
   handleClose = (event) => {
-    if(!event.target.dataset.value) {
+    if (!event.target.dataset.value) {
       return;
     }
     this.props.selectedValue(event.target.dataset.value);
     this.setState({
       init: false,
-      open: false, 
-      value: event.target.dataset.value 
+      open: false,
+      value: event.target.dataset.value,
     });
   };
 
   render() {
-    const { classes, values, title, defaultValueIndex } = this.props
-    const { value, open, init } = this.state
+    // eslint-disable-next-line react/prop-types
+    const { classes, values, title, defaultValueIndex } = this.props;
+    const { value, open, init } = this.state;
 
     let data = ['1d', '1m', '1y'];
     let selectTitle = 'Select Period';
-    
-    if(values && values.length) {
+    let defaultVal = value;
+
+    if (values && values.length) {
       data = values;
     }
-    if(title && values.length) {
+
+    if (title && values.length) {
       selectTitle = title;
     }
-    let defaultVal = value;
-    if((defaultValueIndex !== undefined) && init) {
+
+    if ((defaultValueIndex !== undefined) && init) {
       defaultVal = data[defaultValueIndex];
     }
+
     return (
       <div autoComplete="off">
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
@@ -79,7 +83,7 @@ class MotionSelect extends React.Component<Props, State> {
             onClose={this.handleClose}
             inputProps={{ name: 'SelectPeriod', id: 'SelectPeriod' }}
           >
-          {data.map((val) => (
+          {data.map((val: string) => (
             <MenuItem key={uuid()} value={val}>
               <em>{val}</em>
             </MenuItem>

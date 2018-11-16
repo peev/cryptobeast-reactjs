@@ -8,6 +8,7 @@ import MarketStore from './MarketStore';
 import NotificationStore from './NotificationStore';
 import LoadingStore from './LoadingStore';
 import BigNumberService from '../services/BigNumber';
+import CurrencyStore from './CurrencyStore';
 
 
 class AssetStore {
@@ -44,7 +45,12 @@ class AssetStore {
   }
 
   @action
-  getAssetHistoryByTokenIdAndPeriod(tokenId: number, period: string) {
+  getAssetHistoryByTokenIdAndPeriod(tokenName: string, period: string) {
+    console.log('------------------------------------');
+    console.log('here');
+    console.log(tokenName);
+    console.log(period);
+    console.log('------------------------------------');
   //   this.assetHistory = [
   //     {
   //         "date": 1542239999999,
@@ -79,6 +85,10 @@ class AssetStore {
   //       "value": "0.00010000"
   //   }
   // ].reverse();
+    let tokenId = 1;
+    if (CurrencyStore.currencies.length && CurrencyStore.currencies.length > 0) {
+      tokenId = Number(CurrencyStore.currencies.filter((currency: object) => currency.tokenName === tokenName)[0].tokenId);
+    }
     action(() => {
       LoadingStore.setShowLoading(true);
     });

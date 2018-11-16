@@ -24,7 +24,7 @@ const ApiAccount = {
   update: requestParams => requests.put('/account/update', requestParams),
   delete: id => requests.delete(`/account/delete/${id}`, id),
   getBalance: data => requests.post('/account/getBalance', data),
-  sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
 const Asset = {
@@ -42,7 +42,7 @@ const User = {
   patchUserMetadata: (id, data) => requests.patch(`/user/patch/${id}`, data),
   deleteUserMetadata: (id, data) => requests.patch(`/user/delete/${id}`, data),
   syncUserApiData: id => requests.put(`/user/syncApiData/${id}`),
-  sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
 const Transaction = {
@@ -50,7 +50,7 @@ const Transaction = {
   updateTrade: requestParams => requests.put('/account/updateTrade', requestParams),
   deleteTrade: id => requests.delete(`/account/deleteTrade/${id}`, id),
   getAllTrades: () => requests.get('/account/allTrades'),
-  sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
 const Portfolio = {
@@ -74,7 +74,7 @@ const Investor = {
   addDeposit: requestParams => requests.put('/investor/deposit', requestParams),
   withdrawal: requestParams => requests.put('/investor/withdrawal', requestParams),
   update: (id, requestParams) => requests.put(`/investor/update/${id}`, requestParams),
-  sync: data => requests.get(`/weidex/sync/${data.id}`)
+  sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
 const Market = {

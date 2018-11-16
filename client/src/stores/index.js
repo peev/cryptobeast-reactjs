@@ -8,7 +8,7 @@ import WeidexStore from './WeidexStore';
 import NotificationStore from './NotificationStore';
 import Analytics from './Analytics';
 import Allocations from './Allocations';
-import Currencies from './CurrencyStore';
+import CurrencyStore from './CurrencyStore';
 import FiatCurrencies from './FiatCurrenciesStore';
 import LoadingStore from './LoadingStore';
 
@@ -25,7 +25,7 @@ const stores = {
   NotificationStore,
   Analytics,
   Allocations,
-  Currencies,
+  CurrencyStore,
   FiatCurrencies,
   TradeHistoryStore,
   WeidexStore,

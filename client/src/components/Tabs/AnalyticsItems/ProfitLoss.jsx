@@ -161,6 +161,7 @@ class ProfitLoss extends React.Component<Props, State> {
     const localGlobalSelectPeriod = globalSelectPeriod || 30;
 
     const profitLossCurrencies = (CurrencyStore.currencies.length > 0) ? CurrencyStore.currenciesTokenNameAndSymbol : [];
+    const defaultIndex = this.props.CurrencyStore.currenciesTokenNameAndSymbol.indexOf('ETH');
 
     return (
       <Grid container className={classes.overflowNone}>
@@ -181,7 +182,7 @@ class ProfitLoss extends React.Component<Props, State> {
             <MotionSelect defaultValueIndex={1} selectedValue={this.handleSelectPeriod} values={['1w', '1m', '1y']} />
           </Grid>
           <Grid item xs={2} className={[classes.paddingLeft, classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
-            <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectCurrency} values={profitLossCurrencies} title="Select currency" />
+            <MotionSelect defaultValueIndex={defaultIndex} selectedValue={this.handleSelectCurrency} values={profitLossCurrencies} title="Select currency" />
           </Grid>
         </Grid>
 

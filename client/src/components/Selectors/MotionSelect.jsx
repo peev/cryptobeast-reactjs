@@ -18,6 +18,7 @@ type Props = {
   classes: Object,
   muiname: 'SelectPeriod',
   defaultValueIndex: number,
+  selectedValue: string,
 };
 
 type State = {

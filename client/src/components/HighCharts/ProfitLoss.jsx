@@ -5,8 +5,6 @@ import ReactHighcharts from 'react-highcharts';
 class ProfitLossChart extends React.Component<Props, State> {
   render() {
     const { currency, chartData, days } = this.props;
-    console.log(days);
-    console.log(chartData);
     const config = {
       chart: {
         type: 'column',

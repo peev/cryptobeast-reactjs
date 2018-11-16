@@ -1,40 +1,47 @@
+// @flow
 import React from 'react';
 import ReactHighcharts from 'react-highcharts';
+import { observer } from 'mobx-react';
 
-// eslint-disable-next-line react/prefer-stateless-function
-class ProfitLossChart extends React.Component<Props, State> {
-  render() {
-    const { currency, chartData, days } = this.props;
-    const config = {
-      chart: {
-        type: 'column',
+type Props = {
+  currency: string,
+  chartData: Object,
+  days: Object,
+};
+
+const ProfitLossChart = (observer(({ currency, chartData, days }: Props) => {
+  const config = {
+    chart: {
+      type: 'column',
+    },
+    title: {
+      text: `${currency} DAILY PROFIT AND LOSS`,
+    },
+    xAxis: {
+      categories: days,
+      scrollbar: {
+        enabled: true,
       },
+    },
+    yAxis: {
       title: {
-        text: `${currency} DAILY PROFIT AND LOSS`,
+        text: 'Profit and Loss in %',
       },
-      xAxis: {
-        categories: days,
-      },
-      yAxis: {
-        title: {
-          text: 'Profit and Loss in %',
-        },
-      },
-      legend: {
-        enabled: false,
-      },
-      credits: {
-        enabled: false,
-      },
-      series: [{
-        name: currency,
-        data: chartData,
-      }],
-    };
-    return (
-      <ReactHighcharts config={config} />
-    );
-  }
-}
+    },
+    legend: {
+      enabled: false,
+    },
+    credits: {
+      enabled: false,
+    },
+    series: [{
+      name: currency,
+      data: chartData,
+    }],
+  };
+  return (
+    <ReactHighcharts config={config} />
+  );
+}));
 
 export default ProfitLossChart;

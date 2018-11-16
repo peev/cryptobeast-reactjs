@@ -46,18 +46,15 @@ class AssetStore {
 
   @action
   getAssetHistoryByTokenIdAndPeriod(tokenName: string, period: string) {
-    // eslint-disable-next-line prefer-destructuring
-    const tokenId = CurrencyStore.currencies.filter((currency: object) => currency.tokenName === tokenName)[0].tokenId;
-    action(() => {
-      LoadingStore.setShowLoading(true);
-    });
+    const { tokenId } = CurrencyStore.currencies.filter((currency: object) => currency.tokenName === tokenName)[0];
+    LoadingStore.setShowLoading(true);
     requester.Asset.getAssetHistory(tokenId, period)
       .then(action((result: object) => {
         this.assetHistory = result.data.reverse();
         LoadingStore.setShowLoading(false);
       }))
       .catch(action((err: object) => {
-        LoadingStore.setShowLoading(true);
+        LoadingStore.setShowLoading(false);
         console.log(err);
       }));
   }

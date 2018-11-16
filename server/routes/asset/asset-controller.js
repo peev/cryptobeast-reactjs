@@ -226,7 +226,7 @@ const assetController = (repository) => {
     try {
       return datesArr.map(async item => ({
         date: item,
-        value: await WeidexService.getTokenValueByTimestampHttp(Number(tokenId), item).then(data => data),
+        value: await WeidexService.getTokenValueByTimestampHttp(Number(tokenId), item).then(data => ((data.length > 0) ? data : 0)),
       }));
     } catch (error) {
       return console.log(error);

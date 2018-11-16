@@ -50,50 +50,17 @@ class AssetStore {
     console.log('here');
     console.log(tokenName);
     console.log(period);
+    const tokenId = CurrencyStore.currencies.filter((currency: object) => currency.tokenName === tokenName)[0].tokenId;
+    console.log(tokenId)
     console.log('------------------------------------');
-  //   this.assetHistory = [
-  //     {
-  //         "date": 1542239999999,
-  //         "value": "0.00010000"
-  //     },
-  //     {
-  //         "date": 1542153599999,
-  //         "value": "0.00014000"
-  //     },
-  //     {
-  //         "date": 1542067199999,
-  //         "value": "0.00015000"
-  //     },
-  //     {
-  //         "date": 1541980799999,
-  //         "value": "0.00009000"
-  //     },
-  //     {
-  //         "date": 1541894399999,
-  //         "value": "0.00010000"
-  //     },
-  //     {
-  //         "date": 1541807999999,
-  //         "value": "0.00009000"
-  //     },
-  //     {
-  //         "date": 1541721599999,
-  //         "value": "0.00010000"
-  //     },
-  //     {
-  //       "date": 1541721599999,
-  //       "value": "0.00010000"
-  //   }
-  // ].reverse();
-    let tokenId = 1;
-    if (CurrencyStore.currencies.length && CurrencyStore.currencies.length > 0) {
-      tokenId = Number(CurrencyStore.currencies.filter((currency: object) => currency.tokenName === tokenName)[0].tokenId);
-    }
     action(() => {
       LoadingStore.setShowLoading(true);
     });
     requester.Asset.getAssetHistory(tokenId, period)
       .then(action((result: object) => {
+        console.log('------------------------------------');
+        console.log(result.data);
+        console.log('------------------------------------');
         this.assetHistory = result.data.reverse();
         LoadingStore.setShowLoading(false);
       }))

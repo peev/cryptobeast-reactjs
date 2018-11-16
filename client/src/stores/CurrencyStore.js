@@ -13,13 +13,14 @@ class Currencies {
     onBecomeObserved(this, 'currenciesHistory', this.currenciesHistory);
   }
 
+  init() {
+    this.getCurrencies();
+  }
+
   @action.bound
   getCurrencies() {
     requester.Market.getAllCurrencies()
       .then(action((result) => {
-        console.log('------------------------------------');
-        console.log(result.data);
-        console.log('------------------------------------');
         this.currencies = result.data;
       }));
   }

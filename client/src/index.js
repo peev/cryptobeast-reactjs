@@ -21,7 +21,7 @@ import stores from './stores';
 //   stores.MarketStore.init();
 // });
 // stores.PortfolioStore.getPortfolios();
-// stores.MarketStore.init();
+stores.CurrencyStore.init();
 // stores.PortfolioStore.getPortfoliosByUserAddresses();
 // ====================================
 // For easier debugging MobX

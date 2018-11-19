@@ -222,14 +222,17 @@ const assetController = (repository) => {
     return arr;
   };
 
-  const resolveDates = async (datesArr, tokenId) => {
+  const resolveDates = async (req, res, datesArr, tokenId) => {
     try {
       return datesArr.map(async item => ({
         date: item,
-        value: await WeidexService.getTokenValueByTimestampHttp(Number(tokenId), item).then(data => ((data.length > 0) ? data : 0)),
+        value: await WeidexService.getTokenValueByTimestampHttp(Number(tokenId), item)
+          .then(data => ((data.length > 0) ? data : 0))
+          .catch(err => res.status(500).send(err)),
       }));
     } catch (error) {
-      return console.log(error);
+      console.log(error);
+      return res.status(400).send(error);
     }
   };
 
@@ -239,7 +242,7 @@ const assetController = (repository) => {
     const datesArr = getDatesArray(period);
 
     try {
-      const result = await resolveDates(datesArr, tokenId);
+      const result = await resolveDates(req, res, datesArr, tokenId);
       return Promise.all(result).then(data => res.status(200).send(data));
     } catch (error) {
       console.log(error);

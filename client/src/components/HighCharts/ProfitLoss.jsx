@@ -1,5 +1,5 @@
 // @flow
-import React, { useRef } from 'react';
+import React, { createRef, useRef } from 'react';
 import { observer } from 'mobx-react';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
@@ -11,7 +11,7 @@ type Props = {
 };
 
 const ProfitLossChart = (observer(({ currency, chartData, days }: Props) => {
-  const chart = useRef();
+  const chart = createRef();
   // TODO convert to react component
   const resetScroll = () => {
     if (chart !== undefined) {

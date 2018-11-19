@@ -10,7 +10,8 @@ const attachTo = (app, data) => {
     .get('/:id', controller.getAsset)
     .put('/update/:id', validator.verifyUpdateAsset, controller.updateAsset)
     .put('/updateAssetWeight/:id', controller.updateAssetWeight)
-    .delete('/delete/:id', controller.removeAsset);
+    .delete('/delete/:id', controller.removeAsset)
+    .get('/history/:tokenId/:period', controller.getAssetPriceHistory);
 
   app.use('/asset', router);
 };

@@ -6,15 +6,16 @@ import { inject, observer } from 'mobx-react';
 
 type Props = {
   Allocations: Object,
+  chartHeight: number,
 };
 
 const TotalAssetsValue = inject('Allocations')(observer(({ ...props }: Props) => {
-  const { Allocations } = props;
+  const { Allocations, chartHeight } = props;
 
   const config = {
     chart: {
       zoomType: 'x',
-      height: 320,
+      height: chartHeight || 'auto',
     },
     title: {
       text: 'Total assets value',

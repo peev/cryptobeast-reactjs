@@ -200,6 +200,53 @@ const assetController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const getPeriodValue = (period) => {
+    switch (period) {
+      case 'w': return 8;
+      case 'm': return 32;
+      case 'y': return 366;
+      default: return 0;
+    }
+  };
+
+  const getDatesArray = (period) => {
+    const interval = 1000 * 60 * 60 * 24;
+    const startOfDay = Math.floor(Date.now() / interval) * interval;
+    let endOfDay = (startOfDay + interval) - 1;
+    const arr = [];
+
+    for (let i = 0; i < getPeriodValue(period); i += 1) {
+      endOfDay -= interval;
+      arr.push(endOfDay);
+    }
+    return arr;
+  };
+
+  const resolveDates = async (datesArr, tokenId) => {
+    try {
+      return datesArr.map(async item => ({
+        date: item,
+        value: await WeidexService.getTokenValueByTimestampHttp(Number(tokenId), item).then(data => ((data.length > 0) ? data : 0)),
+      }));
+    } catch (error) {
+      return console.log(error);
+    }
+  };
+
+  const getAssetPriceHistory = async (req, res) => {
+    const { tokenId } = req.params;
+    const { period } = req.params;
+    const datesArr = getDatesArray(period);
+
+    try {
+      const result = await resolveDates(datesArr, tokenId);
+      return Promise.all(result).then(data => res.status(200).send(data));
+    } catch (error) {
+      console.log(error);
+      return res.status(400).send(error);
+    }
+  };
+
   const syncAssets = async (req, res, assets, lastPriceUSD, portfolioIdParam) => {
     try {
       await Promise.all(assets.map(async (asset) => {
@@ -236,6 +283,7 @@ const assetController = (repository) => {
     updateAsset,
     updateAssetWeight,
     removeAsset,
+    getAssetPriceHistory,
     sync,
   };
 };

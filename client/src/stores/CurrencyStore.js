@@ -13,12 +13,24 @@ class Currencies {
     onBecomeObserved(this, 'currenciesHistory', this.currenciesHistory);
   }
 
+  init() {
+    this.getCurrencies();
+  }
+
   @action.bound
   getCurrencies() {
-    requester.Currencies.getCurrencies()
+    requester.Market.getAllCurrencies()
       .then(action((result) => {
         this.currencies = result.data;
       }));
+  }
+
+  @computed
+  get currenciesTokenNameAndSymbol() {
+    if (this.currencies.length && this.currencies.length > 0) {
+      return this.currencies.map(el => el.tokenName);
+    }
+    return [];
   }
 
   // Array of ids of the currencies we want to fetch their history

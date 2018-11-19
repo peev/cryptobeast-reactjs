@@ -1,3 +1,5 @@
+/* eslint-disable class-methods-use-this */
+// @flow
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { withStyles, Grid } from '@material-ui/core';
@@ -9,7 +11,7 @@ import ProfitLossGlobalChart from '../../HighCharts/ProfitLossGlobalChart';
 
 const styles = () => ({
   overflowNone: {
-    'overflow-x': 'hidden'
+    'overflow-x': 'hidden',
   },
   marginTop: {
     marginTop: '40px',
@@ -19,7 +21,7 @@ const styles = () => ({
   },
   topItem: {
     height: 'auto',
-    paddingBottom: '20px'
+    paddingBottom: '20px',
   },
   leftTopItem: {
     'padding-right': '50px',
@@ -29,13 +31,13 @@ const styles = () => ({
   },
   maxWidth: {
     width: '100%',
-    'overflow-x': 'hidden'
+    'overflow-x': 'hidden',
   },
   smallTopPadding: {
-    marginTop: '20px'
+    marginTop: '20px',
   },
   bigTopPadding: {
-    marginTop: '40px'
+    marginTop: '40px',
   },
   header: {
     color: '#ca3f58',
@@ -47,47 +49,61 @@ const styles = () => ({
     'text-align': 'center',
   },
   flexCenter: {
-    'justify-content': 'center'
+    'justify-content': 'center',
   },
   flexBottom: {
-    'justify-content': 'flex-end'
+    'justify-content': 'flex-end',
   },
   padding: {
-    padding: '20px'
+    padding: '20px',
   },
   paddingLeft: {
-    paddingLeft: '20px'
+    paddingLeft: '20px',
   },
   paddingRight: {
-    paddingRight: '20px'
+    paddingRight: '20px',
   },
   noMargin: {
-    marginTop: 0
-  }
+    marginTop: 0,
+  },
+  textLeft: {
+    textAlign: 'left',
+  },
 });
 
 type Props = {
+  AssetStore: Object,
+  CurrencyStore: Object,
   classes: Object,
 };
 
-@inject('MarketStore')
+@inject('MarketStore', 'AssetStore', 'CurrencyStore')
 @observer
 class ProfitLoss extends React.Component<Props, State> {
+  componentDidMount() {
+    this.props.AssetStore.getAssetHistoryByTokenIdAndPeriod(this.state.selectedCurrency, this.state.selectPeriod);
+  }
+
+  componentWillUpdate(nextProps: object, nextState: object) {
+    if (nextState.selectedCurrency !== this.state.selectedCurrency || nextState.selectPeriod !== this.state.selectPeriod) {
+      this.props.AssetStore.getAssetHistoryByTokenIdAndPeriod(nextState.selectedCurrency, nextState.selectPeriod);
+    }
+  }
+
   state = {
-    value: '',
-    selectPeriod: '',
+    selectPeriod: 'm',
     globalSelectPeriod: '',
-    selectedCurrency: 'BTC'
+    selectedCurrency: 'ETH',
   };
 
-  constructor(props) {
+  constructor(props: Object) {
     super(props);
     this.handleSelectCurrency = this.handleSelectCurrency.bind(this);
     this.handleSelectPeriod = this.handleSelectPeriod.bind(this);
     this.handleGlobalSelectPeriod = this.handleGlobalSelectPeriod.bind(this);
   }
 
-  getPeriodInDays(val) {
+  getPeriodInDays(val: string) {
     let days = 0;
     switch (val) {
       case '1d':
@@ -100,7 +116,7 @@ class ProfitLoss extends React.Component<Props, State> {
         days = 30;
         break;
       case '1y':
-        days = 365
+        days = 365;
         break;
       default:
         days = 1;
@@ -109,21 +125,21 @@ class ProfitLoss extends React.Component<Props, State> {
     return days;
   }
 
-  handleSelectCurrency(data) {
+  handleSelectCurrency(data: string) {
     if (!data) {
       return;
     }
     this.setState({
-      selectedCurrency: data
+      selectedCurrency: data,
     });
   }
 
-  handleSelectPeriod(data) {
+  handleSelectPeriod(data: string) {
     if (!data) {
       return;
     }
     this.setState({
-      selectPeriod: this.getPeriodInDays(data)
+      selectPeriod: data.substr(1),
     });
   }
 
@@ -132,51 +148,47 @@ class ProfitLoss extends React.Component<Props, State> {
       return;
     }
     this.setState({
-      globalSelectPeriod: this.getPeriodInDays(data)
+      globalSelectPeriod: this.getPeriodInDays(data),
     });
   }
 
   render() {
-    const { classes, MarketStore } = this.props;
+    const { classes, MarketStore, AssetStore, CurrencyStore } = this.props;
     const { selectPeriod, globalSelectPeriod, selectedCurrency } = this.state;
-    let profitLoss = MarketStore.profitLoss;
+    const profitLoss = MarketStore.profitLoss;
 
-    let localSelectPeriod = selectPeriod || 30;
-    let localGlobalSelectPeriod = globalSelectPeriod || 30;
+    const localSelectPeriod = selectPeriod || 30;
+    const localGlobalSelectPeriod = globalSelectPeriod || 30;
 
-    let profitLossCurrencies = [];
-    for(let currency in profitLoss) {
-      if(profitLoss[currency].length) {
-        profitLossCurrencies.push(currency);
-      }
-    }
+    const profitLossCurrencies = (CurrencyStore.currencies.length > 0) ? CurrencyStore.currenciesTokenNameAndSymbol : [];
+    const defaultIndex = this.props.CurrencyStore.currenciesTokenNameAndSymbol.indexOf('ETH');
 
     return (
       <Grid container className={classes.overflowNone}>
         <Grid container>
-          <Grid item xs={3} className={[classes.flex, classes.flexCenter].join(' ')}>
-            <MotionSelect defaultValueIndex={0} selectedValue={this.handleGlobalSelectPeriod} values={['1d', '1w', '1m']}  />
+          <Grid item xs={2} className={[classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
+            <MotionSelect defaultValueIndex={0} selectedValue={this.handleGlobalSelectPeriod} values={['1d', '1w', '1m']} />
           </Grid>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <ProfitLossGlobalChart data={profitLoss} days={localGlobalSelectPeriod}/>
+            <ProfitLossGlobalChart data={profitLoss} days={localGlobalSelectPeriod} />
           </Paper>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
-          <Grid item xs={3} className={[classes.flex, classes.flexCenter].join(' ')}>
+          <Grid item xs={2} className={[classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
             <MotionSelect defaultValueIndex={1} selectedValue={this.handleSelectPeriod} values={['1w', '1m', '1y']} />
           </Grid>
-          <Grid item xs={3} className={[classes.paddingLeft, classes.flex, classes.flexCenter].join(' ')}>
-            <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectCurrency} values={profitLossCurrencies} title={'Select currency'} />
+          <Grid item xs={2} className={[classes.paddingLeft, classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
+            <MotionSelect defaultValueIndex={defaultIndex} selectedValue={this.handleSelectCurrency} values={profitLossCurrencies} title="Select currency" />
           </Grid>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <ProfitLossChart currency={selectedCurrency} data={profitLoss} days={localSelectPeriod} />
+            <ProfitLossChart currency={selectedCurrency} chartData={AssetStore.assetProfitLoss} days={AssetStore.assetHistoryBrakedownDates} />
           </Paper>
         </Grid>
 
@@ -195,6 +207,6 @@ class ProfitLoss extends React.Component<Props, State> {
       </Grid>
     );
   }
-};
+}
 
 export default withStyles(styles)(ProfitLoss);

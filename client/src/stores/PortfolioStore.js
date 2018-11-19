@@ -18,6 +18,7 @@ import history from '../services/History';
 import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
 import LoadingStore from './LoadingStore';
+import CurrencyStore from './CurrencyStore';
 
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 

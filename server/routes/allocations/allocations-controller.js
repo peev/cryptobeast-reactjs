@@ -70,7 +70,14 @@ const allocationsController = (repository) => {
 
   const getAllocations = (req, res) => {
     const { portfolioId } = req.params;
-    repository.find({ modelName, portfolioId })
+    repository.find({
+      modelName,
+      options: {
+        where: {
+          portfolioID: portfolioId,
+        },
+      },
+    })
       .then((response) => {
         res.status(200).send(response);
       })

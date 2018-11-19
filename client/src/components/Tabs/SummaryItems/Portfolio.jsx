@@ -32,7 +32,7 @@ const Portfolio = inject('Analytics', 'PortfolioStore', 'Allocations')(observer(
   return (
     <Grid container className={classes.container}>
       <Grid item xs={12} sm={12} md={12} className={classes.gridItem}>
-        {Allocations.allocations.length > 0 ? <TotalAssetsValue /> : ''}
+        {Allocations.allocations.length > 0 ? <TotalAssetsValue chartHeight={320} /> : ''}
       </Grid>
     </Grid>
   );

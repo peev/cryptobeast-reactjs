@@ -143,6 +143,16 @@ const weidexController = (repository) => {
       });
   };
 
+  const getTokenValueByTimestamp = (req, res) => {
+    WeidexService.getTokenValueByTimestampHttp(req.params.id, req.params.timestamp)
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch((error) => {
+        res.json(error);
+      });
+  };
+
   return {
     sync,
     getUser,
@@ -156,6 +166,7 @@ const weidexController = (repository) => {
     getUserOrderHistoryByUser,
     getUserOrderHistoryByUserAndToken,
     validateAddresses,
+    getTokenValueByTimestamp,
   };
 };
 

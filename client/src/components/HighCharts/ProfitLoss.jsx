@@ -1,52 +1,47 @@
+// @flow
 import React from 'react';
-import Highcharts from 'highcharts';
-import {
-  HighchartsChart,
-  withHighcharts,
-  YAxis,
-  XAxis,
-  Legend,
-  // Tooltip,
-  Chart,
-  ColumnSeries,
-  Title,
-} from 'react-jsx-highcharts';
+import ReactHighcharts from 'react-highcharts';
+import { observer } from 'mobx-react';
 
-class ProfitLossChart extends React.Component<Props, State> {
-  render() {
-    const { currency, data, days } = this.props;
-    if(!data.ready || !currency.length) {
-      return null;
-    }
-    let currencyData = data[currency].map((val) => {
-      return parseFloat(val['Daily Profit and Loss']);
-    });
-    let dates = data[currency].map((val) => {
-      return val.Date;
-    });
-    currencyData.length = days;
-    dates = dates.reverse();
-    currencyData = currencyData.reverse();
-    return (
-      <HighchartsChart>
-        <Chart />
+type Props = {
+  currency: string,
+  chartData: Object,
+  days: Object,
+};
 
-        <Title>PROFIT AND LOSS</Title>
+const ProfitLossChart = (observer(({ currency, chartData, days }: Props) => {
+  const config = {
+    chart: {
+      type: 'column',
+    },
+    title: {
+      text: `${currency} DAILY PROFIT AND LOSS`,
+    },
+    xAxis: {
+      categories: days,
+      scrollbar: {
+        enabled: true,
+      },
+    },
+    yAxis: {
+      title: {
+        text: 'Profit and Loss in %',
+      },
+    },
+    legend: {
+      enabled: false,
+    },
+    credits: {
+      enabled: false,
+    },
+    series: [{
+      name: currency,
+      data: chartData,
+    }],
+  };
+  return (
+    <ReactHighcharts config={config} />
+  );
+}));
 
-        <Legend />
-
-
-        <XAxis
-          categories={dates}
-        />
-
-        <YAxis id="number">
-          <YAxis.Title>Profit and Loss in %</YAxis.Title>
-          <ColumnSeries name={currency || 'BTC'} data={currencyData} />
-        </YAxis>
-      </HighchartsChart>
-    );
-  }
-}
-
-export default withHighcharts(ProfitLossChart, Highcharts);
+export default ProfitLossChart;

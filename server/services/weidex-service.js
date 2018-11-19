@@ -165,6 +165,17 @@ const WeidexService = (repository) => {
       });
   });
 
+  const getTokenValueByTimestampHttp = (id, timestamp) => new Promise((resolve, reject) => {
+    http.get(`${staging}/token/${id}/price/${timestamp}`)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
+  });
+
   return {
     getUser,
     getUserHttp,
@@ -185,6 +196,7 @@ const WeidexService = (repository) => {
     getAllTokens,
     getAllTokensHttp,
     getTokenPriceByTimestamp,
+    getTokenValueByTimestampHttp,
   };
 };
 

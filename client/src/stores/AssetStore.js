@@ -1,10 +1,14 @@
 // @flow
+/* eslint no-console: 0 */
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
 import NotificationStore from './NotificationStore';
+import LoadingStore from './LoadingStore';
+import BigNumberService from '../services/BigNumber';
+import CurrencyStore from './CurrencyStore';
 
 
 class AssetStore {
@@ -22,6 +26,7 @@ class AssetStore {
   @observable assetAllocationFromAmount;
   @observable assetAllocationToAmount;
   @observable assetAllocationFee;
+  @observable assetHistory;
 
   constructor() {
     this.selectedExchangeBasicInput = '';
@@ -36,6 +41,59 @@ class AssetStore {
     this.assetAllocationFromAmount = '';
     this.assetAllocationToAmount = '';
     this.assetAllocationFee = '';
+    this.assetHistory = [];
+  }
+
+  @action
+  getAssetHistoryByTokenIdAndPeriod(tokenName: string, period: string) {
+    const { tokenId } = CurrencyStore.currencies.filter((currency: object) => currency.tokenName === tokenName)[0];
+    LoadingStore.setShowLoading(true);
+    requester.Asset.getAssetHistory(tokenId, period)
+      .then(action((result: object) => {
+        this.assetHistory = result.data.reverse();
+        LoadingStore.setShowLoading(false);
+      }))
+      .catch(action((err: object) => {
+        LoadingStore.setShowLoading(false);
+        console.log(err);
+      }));
+  }
+
+  @computed
+  get assetHistoryBrakedownDates() {
+    if (this.assetHistory.length && this.assetHistory.length > 0) {
+      const result = this.assetHistory.map((el: object) => {
+        const date = new Date(el.date);
+        let month = date.getUTCMonth();
+        if (month.length === 1) {
+          month = `0${month}`;
+        }
+        return `${date.getDate()}-${month}-${date.getFullYear()}`;
+      });
+      result.shift();
+      return result;
+    }
+    return [];
+  }
+
+  @computed
+  get assetProfitLoss() {
+    if (this.assetHistory.length && this.assetHistory.length > 0) {
+      const result = this.assetHistory.map((el: object, index: number) => {
+        if (index === 0) {
+          return 0;
+        } else {
+          return Number(BigNumberService
+            .toFixedParam(BigNumberService
+              .product(BigNumberService
+                .quotient(BigNumberService
+                  .difference(el.value, this.assetHistory[index - 1].value), this.assetHistory[index - 1].value), 100), 2));
+        }
+      });
+      result.shift();
+      return result;
+    }
+    return [];
   }
 
   @computed

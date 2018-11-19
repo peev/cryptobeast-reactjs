@@ -1,5 +1,5 @@
 // @flow
-import React, { createRef, useRef } from 'react';
+import React, { createRef } from 'react';
 import { observer } from 'mobx-react';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';

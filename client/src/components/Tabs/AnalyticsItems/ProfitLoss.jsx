@@ -74,10 +74,11 @@ const styles = () => ({
 type Props = {
   AssetStore: Object,
   CurrencyStore: Object,
+  Allocations: Object,
   classes: Object,
 };
 
-@inject('MarketStore', 'AssetStore', 'CurrencyStore')
+@inject('MarketStore', 'AssetStore', 'CurrencyStore', 'Allocations')
 @observer
 class ProfitLoss extends React.Component<Props, State> {
   componentDidMount() {
@@ -153,7 +154,7 @@ class ProfitLoss extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes, MarketStore, AssetStore, CurrencyStore } = this.props;
+    const { classes, MarketStore, AssetStore, CurrencyStore, Allocations } = this.props;
     const { selectPeriod, globalSelectPeriod, selectedCurrency } = this.state;
     const profitLoss = MarketStore.profitLoss;
 
@@ -173,7 +174,7 @@ class ProfitLoss extends React.Component<Props, State> {
 
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <ProfitLossGlobalChart data={profitLoss} days={localGlobalSelectPeriod} />
+            <ProfitLossGlobalChart data={profitLoss} days={Allocations.portfolioValue} />
           </Paper>
         </Grid>
 

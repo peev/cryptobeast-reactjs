@@ -13,11 +13,9 @@ type Props = {
 const ProfitLossChart = (observer(({ currency, chartData, days }: Props) => {
   const chart = createRef();
   // TODO convert to react component
-  const resetScroll = () => {
-    if (chart !== undefined) {
-      chart.xAxis[0].setExtremes(0, 0);
-    }
-  };
+  if (chart !== undefined) {
+    //chart.xAxis[0].setExtremes(0, 0);
+  }
   const options = {
     chart: {
       type: 'column',

@@ -38,16 +38,6 @@ const portfolioController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const getCurrency = async tokenNameParam => repository.findOne({
-    modelName: 'Currency',
-    options: {
-      where: {
-        tokenName: tokenNameParam,
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
   const createPortfolioObject = (address, id, investment) => {
     const portfolio = {
       userAddress: address,
@@ -208,7 +198,10 @@ const portfolioController = (repository) => {
     return dates;
   };
 
-  const sumBalance = balance => balance.reduce((acc, item) => BigNumberService.sum(acc, item.balance), 0);
+  const sumBalance = (balance) => {
+    console.log(balance);
+    return balance.reduce((acc, item) => BigNumberService.sum(acc, item.balance), 0);
+  }
 
   const getLastBalance = (start, end, allocations) => {
     const filtered = allocations.filter(allocation =>

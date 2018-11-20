@@ -34,6 +34,7 @@ class PortfolioStore {
   @observable currentPortfolioApiTradeHistory;
   @observable currentPortfolioPrices;
   @observable newPortfolioName;
+  @observable portfolioValueHistory;
 
   constructor() {
     this.portfolios = [];
@@ -47,6 +48,7 @@ class PortfolioStore {
     this.currentPortfolioApiTradeHistory = [];
     this.currentPortfolioPrices = [];
     this.newPortfolioName = '';
+    this.portfolioValueHistory = [];
 
     // only start data fetching if those properties are actually used!
     onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
@@ -54,6 +56,38 @@ class PortfolioStore {
     onBecomeObserved(this, 'currentPortfolioTransactions', this.getCurrentPortfolioTransactions);
     onBecomeObserved(this, 'currentPortfolioTrades', this.getCurrentPortfolioTrades);
     onBecomeObserved(this, 'currentPortfolioPrices', this.getCurrentPortfolioPrices);
+    onBecomeObserved(this, 'portfolioValueHistory', this.getPortfolioValueHistory);
+  }
+
+  @action.bound
+  getPortfolioValueHistory() {
+    requester.Portfolio.getPortfolioValueHistory(this.selectedPortfolioId)
+      .then(action((result: object) => {
+        this.portfolioValueHistory = result.data;
+      }));
+  }
+
+  @computed
+  get portfolioValueHistoryBreakdownDates() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return this.portfolioValueHistory
+        .map((el: object) => el.timestamp);
+    }
+    return [];
+  }
+
+  @computed
+  get portfolioValueHistoryBreakdownPercents() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return this.portfolioValueHistory
+        .map((el: object, i: number) => ((this.portfolioValueHistory[i - 1] !== undefined) ?
+          Number(BigNumberService
+            .toFixedParam(BigNumberService
+              .product(BigNumberService
+                .quotient(BigNumberService
+                  .difference(this.portfolioValueHistory[i], this.portfolioValueHistory[i - 1]), this.portfolioValueHistory[i - 1]), 100), 2)) : 100));
+    }
+    return [];
   }
 
   @action

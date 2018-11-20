@@ -68,6 +68,16 @@ const allocationsController = (repository) => {
   })
     .catch(err => console.log(err));
 
+  const sortByTimestampReverse = array => array.sort(((a, b) =>
+    (new Date((b.timestamp !== undefined) ? b.timestamp.toString() : b.txTimestamp.toString()).getTime() -
+    new Date((a.timestamp !== undefined) ? a.timestamp.toString() : a.txTimestamp.toString()).getTime())
+  ));
+
+  const sortByTimestamp = array => array.sort(((a, b) =>
+    (new Date((a.timestamp !== undefined) ? a.timestamp.toString() : a.txTimestamp.toString()).getTime() -
+    new Date((b.timestamp !== undefined) ? b.timestamp.toString() : b.txTimestamp.toString()).getTime())
+  ));
+
   const getAllocations = (req, res) => {
     const { portfolioId } = req.params;
     repository.find({
@@ -79,7 +89,7 @@ const allocationsController = (repository) => {
       },
     })
       .then((response) => {
-        res.status(200).send(response);
+        res.status(200).send(sortByTimestamp(response));
       })
       .catch((error) => {
         res.json(error);
@@ -165,16 +175,6 @@ const allocationsController = (repository) => {
     }
   };
 
-  const sortByTimestampReverse = array => array.sort(((a, b) =>
-    (new Date((b.timestamp !== undefined) ? b.timestamp.toString() : b.txTimestamp.toString()).getTime() -
-    new Date((a.timestamp !== undefined) ? a.timestamp.toString() : a.txTimestamp.toString()).getTime())
-  ));
-
-  const sortByTimestamp = array => array.sort(((a, b) =>
-    (new Date((a.timestamp !== undefined) ? a.timestamp.toString() : a.txTimestamp.toString()).getTime() -
-    new Date((b.timestamp !== undefined) ? b.timestamp.toString() : b.txTimestamp.toString()).getTime())
-  ));
-
   const fillCurrentAssetBalanceArray = (currentAssetBalanceArray, assets) => {
     assets.forEach((asset) => {
       currentAssetBalanceArray.push({
@@ -248,12 +248,14 @@ const allocationsController = (repository) => {
         await syncAllocations(req, res, sortByTimestamp(resultArray));
       } catch (error) {
         console.log(error);
+        return res.status(500).send(error);
       }
     });
     await Promise.all(allocationsArray).then(() => {
       console.log('================== END ALLOCATIONS =========================================');
       return res.status(200).send('Sync finished');
-    });
+    })
+      .catch(err => res.status(500).send(err));
   };
 
   return {

@@ -1,70 +1,54 @@
+// @flow
 import React from 'react';
-import Highcharts from 'highcharts';
-import {
-  HighchartsChart,
-  withHighcharts,
-  YAxis,
-  XAxis,
-  Legend,
-  // Tooltip,
-  Chart,
-  ColumnSeries,
-  Title,
-} from 'react-jsx-highcharts';
+import { observer } from 'mobx-react';
+import Highcharts from 'highcharts/highstock';
+import HighchartsReact from 'highcharts-react-official';
 
 type Props = {
-  data: Array,
+  chartData: Object,
+  days: Object,
 };
 
-class ProfitLossGlobalChart extends React.Component<Props> {
-  render() {
-    const { data, days } = this.props;
-    if(!data.ready) {
-      return null;
-    }
-    let dataSeries = [];
-    let currenciesData = [];
-    for(let currency in data) {
-      let average = 0;
-      let passed = true;
-      for(let counter = 0; counter < days; counter++) {
-        if(counter === data[currency].length) {
-          break;
-        }
-        if(!data[currency][counter]) {
-          passed = false;
-          break;
-        }
-        average += parseFloat(data[currency][counter]['Daily Profit and Loss']);
-      }
-      if(passed) {
-        average /= days;
-        dataSeries.push(average);
-        currenciesData.push(currency);
-      }
-    }
+const ProfitLossGlobalChart = (observer(({ chartData, days }: Props) => {
+  const options = {
+    chart: {
+      type: 'column',
+    },
+    title: {
+      text: 'PORTFOLIO DAILY PROFIT AND LOSS',
+    },
+    xAxis: {
+      categories: days,
+      type: 'category',
+      min: 0,
+      scrollbar: {
+        enabled: true,
+      },
+      tickLength: 0,
+    },
+    yAxis: {
+      title: {
+        text: 'Profit and Loss in %',
+      },
+    },
+    legend: {
+      enabled: false,
+    },
+    credits: {
+      enabled: false,
+    },
+    series: [{
+      data: chartData,
+      color: Highcharts.getOptions().colors[2],
+    }],
+  };
 
-    return (
-      <HighchartsChart>
-        <Chart />
+  return (
+    <HighchartsReact
+      highcharts={Highcharts}
+      options={options}
+    />
+  );
+}));
 
-        <Title>PROFIT AND LOSS OF EACH ASSET</Title>
-
-        <Legend 
-          enabled={false}
-        />
-
-        <XAxis
-          categories={currenciesData}
-        />
-
-        <YAxis id="number">
-          <YAxis.Title>Profit and Loss in %</YAxis.Title>
-          <ColumnSeries name="asd" data={dataSeries} />
-        </YAxis>
-      </HighchartsChart>
-    );
-  }
-}
-
-export default withHighcharts(ProfitLossGlobalChart, Highcharts);
+export default ProfitLossGlobalChart;

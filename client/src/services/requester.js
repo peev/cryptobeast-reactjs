@@ -66,6 +66,7 @@ const Portfolio = {
   getPriceHistoryForPeriod: requestParams => requests.post('/portfolio/periodPriceHistory', requestParams),
   update: (requestParams, id) => requests.put(`/portfolio/update/${id}`, requestParams), // id + newName
   delete: id => requests.delete(`/portfolio/delete/${id}`),
+  getPortfolioValueHistory: id => requests.get(`/portfolio/history/${id}`),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 

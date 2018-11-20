@@ -74,10 +74,12 @@ const styles = () => ({
 type Props = {
   AssetStore: Object,
   CurrencyStore: Object,
+  Allocations: Object,
+  PortfolioStore: Object,
   classes: Object,
 };
 
-@inject('MarketStore', 'AssetStore', 'CurrencyStore')
+@inject('MarketStore', 'AssetStore', 'CurrencyStore', 'Allocations', 'PortfolioStore')
 @observer
 class ProfitLoss extends React.Component<Props, State> {
   componentDidMount() {
@@ -92,7 +94,6 @@ class ProfitLoss extends React.Component<Props, State> {
 
   state = {
     selectPeriod: 'm',
-    globalSelectPeriod: '',
     selectedCurrency: 'ETH',
   };
 
@@ -100,29 +101,6 @@ class ProfitLoss extends React.Component<Props, State> {
     super(props);
     this.handleSelectCurrency = this.handleSelectCurrency.bind(this);
     this.handleSelectPeriod = this.handleSelectPeriod.bind(this);
-    this.handleGlobalSelectPeriod = this.handleGlobalSelectPeriod.bind(this);
-  }
-
-  getPeriodInDays(val: string) {
-    let days = 0;
-    switch (val) {
-      case '1d':
-        days = 1;
-        break;
-      case '1w':
-        days = 7;
-        break;
-      case '1m':
-        days = 30;
-        break;
-      case '1y':
-        days = 365;
-        break;
-      default:
-        days = 1;
-        break;
-    }
-    return days;
   }
 
   handleSelectCurrency(data: string) {
@@ -143,37 +121,22 @@ class ProfitLoss extends React.Component<Props, State> {
     });
   }
 
-  handleGlobalSelectPeriod(data) {
-    if (!data) {
-      return;
-    }
-    this.setState({
-      globalSelectPeriod: this.getPeriodInDays(data),
-    });
-  }
-
   render() {
-    const { classes, MarketStore, AssetStore, CurrencyStore } = this.props;
-    const { selectPeriod, globalSelectPeriod, selectedCurrency } = this.state;
-    const profitLoss = MarketStore.profitLoss;
-
-    const localSelectPeriod = selectPeriod || 30;
-    const localGlobalSelectPeriod = globalSelectPeriod || 30;
+    const { classes, AssetStore, CurrencyStore, PortfolioStore } = this.props;
+    const { selectedCurrency } = this.state;
 
     const profitLossCurrencies = (CurrencyStore.currencies.length > 0) ? CurrencyStore.currenciesTokenNameAndSymbol : [];
     const defaultIndex = this.props.CurrencyStore.currenciesTokenNameAndSymbol.indexOf('ETH');
 
     return (
       <Grid container className={classes.overflowNone}>
-        <Grid container>
-          <Grid item xs={2} className={[classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
-            <MotionSelect defaultValueIndex={0} selectedValue={this.handleGlobalSelectPeriod} values={['1d', '1w', '1m']} />
-          </Grid>
-        </Grid>
 
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
-            <ProfitLossGlobalChart data={profitLoss} days={localGlobalSelectPeriod} />
+            <ProfitLossGlobalChart
+              chartData={PortfolioStore.portfolioValueHistoryBreakdownPercents}
+              days={PortfolioStore.portfolioValueHistoryBreakdownDates}
+            />
           </Paper>
         </Grid>
 

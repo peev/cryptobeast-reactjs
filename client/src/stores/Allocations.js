@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 // @flow
 import { observable, action, computed, onBecomeObserved } from 'mobx';
 import PortfolioStore from './PortfolioStore';
@@ -35,6 +36,7 @@ class Allocations {
     return [];
   }
 
+  @computed
   get allocationsBreakdownUSD() {
     if (PortfolioStore.selectedPortfolio && this.allocations.length > 0) {
       return this.allocations

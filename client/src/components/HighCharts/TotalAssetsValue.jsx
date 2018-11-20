@@ -25,7 +25,6 @@ const TotalAssetsValue = inject('Allocations')(observer(({ ...props }: Props) =>
     },
     xAxis: {
       type: 'datetime',
-      data: Allocations.allocationsBreakdownDates,
     },
     yAxis: {
       title: {

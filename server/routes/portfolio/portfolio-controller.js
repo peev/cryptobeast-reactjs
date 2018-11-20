@@ -34,6 +34,7 @@ const portfolioController = (repository) => {
       where: {
         portfolioID: portfolioIdParam,
       },
+      order: [['timestamp', 'ASC']],
     },
   })
     .catch(err => console.log(err));

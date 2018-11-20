@@ -71,7 +71,14 @@ class PortfolioStore {
   get portfolioValueHistoryBreakdownDates() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
       return this.portfolioValueHistory
-        .map((el: object) => el.timestamp);
+        .map((el: object) => {
+          const date = new Date(el.timestamp);
+          let month = date.getUTCMonth();
+          if (month.length === 1) {
+            month = `0${month}`;
+          }
+          return `${date.getDate()}-${month}-${date.getFullYear()}`;
+        });
     }
     return [];
   }
@@ -80,12 +87,13 @@ class PortfolioStore {
   get portfolioValueHistoryBreakdownPercents() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
       return this.portfolioValueHistory
-        .map((el: object, i: number) => ((this.portfolioValueHistory[i - 1] !== undefined) ?
-          Number(BigNumberService
-            .toFixedParam(BigNumberService
-              .product(BigNumberService
-                .quotient(BigNumberService
-                  .difference(this.portfolioValueHistory[i], this.portfolioValueHistory[i - 1]), this.portfolioValueHistory[i - 1]), 100), 2)) : 100));
+        .map((el: object, i: number) =>
+          ((this.portfolioValueHistory[i - 1] !== undefined) ?
+            Number(BigNumberService
+              .toFixedParam(BigNumberService
+                .product(BigNumberService
+                  .quotient(BigNumberService
+                    .difference(this.portfolioValueHistory[i].balance, this.portfolioValueHistory[i - 1].balance), this.portfolioValueHistory[i - 1].balance), 100), 2)) : 100));
     }
     return [];
   }

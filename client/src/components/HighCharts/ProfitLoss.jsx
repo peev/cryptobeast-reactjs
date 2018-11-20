@@ -1,5 +1,5 @@
 // @flow
-import React, { createRef } from 'react';
+import React from 'react';
 import { observer } from 'mobx-react';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
@@ -11,11 +11,7 @@ type Props = {
 };
 
 const ProfitLossChart = (observer(({ currency, chartData, days }: Props) => {
-  const chart = createRef();
-  // TODO convert to react component
-  if (chart !== undefined) {
-    //chart.xAxis[0].setExtremes(0, 0);
-  }
+  console.log(chartData);
   const options = {
     chart: {
       type: 'column',
@@ -46,13 +42,13 @@ const ProfitLossChart = (observer(({ currency, chartData, days }: Props) => {
     series: [{
       name: currency,
       data: chartData,
+      color: Highcharts.getOptions().colors[2],
     }],
   };
   return (
     <HighchartsReact
       highcharts={Highcharts}
       options={options}
-      ref={chart}
     />
   );
 }));

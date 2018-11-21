@@ -7,7 +7,7 @@ const currencyController = (repository) => {
   const bigNumberService = require('../../services/big-number-service');
 
   const calculateCurrencyChange = (open, close) =>
-    Number(bigNumberService().quotient(bigNumberService().difference(close, open), open));
+    Number(bigNumberService().product(bigNumberService().quotient(bigNumberService().difference(close, open), open)), 100);
 
   const fetchCurrencyObject = tokenNameParam => repository.findOne({
     modelName,

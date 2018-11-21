@@ -37,7 +37,18 @@ const transactionController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const createTransactionObject = (req, timestamp, ethValue, ethTotalValue) => {
+  const isFirstDepositCheck = () =>
+    repository.findOne({
+      modelName,
+      options: {
+        where: {
+          isFirstDeposit: true,
+        },
+      },
+    })
+      .catch(err => console.log(err));
+
+  const createTransactionObject = (req, timestamp, ethValue, ethTotalValue, isFirstDepositParam) => {
     let newTransactionObject;
     try {
       newTransactionObject = {
@@ -53,6 +64,13 @@ const transactionController = (repository) => {
         tokenPriceUSD: 0,
         totalValueUSD: 0,
         ETHUSD: 0,
+        isFirstDeposit: isFirstDepositParam,
+        portfolioValueBeforeTx: null,
+        currentSharePriceUSD: null,
+        sharesCreated: null,
+        sharesLiquidated: null,
+        numSharesBefore: null,
+        numSharesAfter: null,
       };
     } catch (error) {
       console.log(error);
@@ -98,10 +116,13 @@ const transactionController = (repository) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
       const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
       const currency = await getCurrencyByTokenName(transactionData.tokenName);
-      const ethValue = (transactionData.tokenName === 'ETH') ? 1 : await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      const ethValue = (transactionData.tokenName === 'ETH') ? 1 :
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
       const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
-      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue, ethTotalValue);
+      const isFirstDeposit = (transactionData.type === 'd') ? await isFirstDepositCheck() === null : null;
+      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue, ethTotalValue, isFirstDeposit);
       const transaction = await getTransactionObject(transactionData.txHash);
+
       if (transaction === null || transaction === undefined) {
         await createAction(req, res, transactionObject, true);
       } else {

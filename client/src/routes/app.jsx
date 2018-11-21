@@ -1,5 +1,5 @@
 import SummaryPage from './../views/Summary/Summary';
-import AssetMovements from './../views/AssetMovements/AssetMovements';
+// import AssetMovements from './../views/AssetMovements/AssetMovements';
 import Simulator from './../views/Simulator/Simulator';
 import TransactionHistory from './../views/TransactionHistory/TransactionHistory';
 import Ledgers from './../views/Ledgers/Ledgers';
@@ -14,7 +14,7 @@ import SimulatorIcon from './../components/CustomIcons/Sidebar/SimulatorIcon';
 import AnalyticsIcon from './../components/CustomIcons/Sidebar/AnalyticsIcon';
 import TransactionHistoryIcon from './../components/CustomIcons/Sidebar/TransactionHistoryIcon';
 import LedgersIcon from './../components/CustomIcons/Sidebar/LedgersIcon';
-import AssetMovementsIcon from './../components/CustomIcons/Sidebar/AssetMovementsIcon';
+// import AssetMovementsIcon from './../components/CustomIcons/Sidebar/AssetMovementsIcon';
 
 const appRoutes = [
   {
@@ -24,13 +24,13 @@ const appRoutes = [
     icon: SummaryIcon,
     component: SummaryPage,
   },
-  {
-    path: '/assetMovements',
-    sidebarName: 'Asset Movements',
-    navbarName: 'Asset Movements',
-    icon: AssetMovementsIcon,
-    component: AssetMovements,
-  },
+  // {
+  //   path: '/assetMovements',
+  //   sidebarName: 'Asset Movements',
+  //   navbarName: 'Asset Movements',
+  //   icon: AssetMovementsIcon,
+  //   component: AssetMovements,
+  // },
   {
     path: '/Investors',
     sidebarName: 'Investors',

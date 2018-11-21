@@ -82,7 +82,7 @@ const styles = () => ({
     margin: '0',
     display: 'inline-block',
     verticalAlign: 'text-bottom',
-    paddingLeft: '25px',
+    paddingLeft: '0',
   },
 });
 
@@ -105,11 +105,13 @@ function getSorting(order: string, orderBy: string) {
 }
 
 function getChange24H(allCurrencies: Array, assetAsArray: Array) {
-  return Number(allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName).change24H).toFixed(2) || 0;
+  const change = allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName).change24H;
+  return (change !== null) ? Number(change.toFixed(2)) : 'n/a';
 }
 
 function getChange7D(allCurrencies: Array, assetAsArray: Array) {
-  return Number(allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName).change7D).toFixed(2) || 0;
+  const change = allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName).change7D;
+  return (change !== null) ? Number(change.toFixed(2)) : 'n/a';
 }
 
 function createAssetObjectFromArray(assetAsArray: Array, allCurrencies: Array) {
@@ -250,7 +252,6 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
                   </TableCell>
                 );
               }
-
               return (
                 <TableCell className={classes.tableCell} key={uuid()} >
                   {/* sets the arrow based on the passed value */}

@@ -58,9 +58,8 @@ const currencyController = (repository) => {
         tokenName: req.name,
         tokenNameLong: req.fullName,
         decimals: req.decimals,
-        // TODO remove hardcodded ETH last price = 1
         // eslint-disable-next-line no-nested-ternary
-        lastPriceETH: priceResponse.lastPrice !== null && priceResponse.lastPrice !== undefined ? priceResponse.lastPrice : req.name === 'ETH' ? 1 : 0,
+        lastPriceETH: (priceResponse.lastPrice !== null && priceResponse.lastPrice !== undefined) ? priceResponse.lastPrice : req.name === 'ETH' ? 1 : 0,
         volume24H: volume24HStats || 0,
         high24H: high24HStats || 0,
         low24H: low24HStats || 0,

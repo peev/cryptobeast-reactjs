@@ -37,7 +37,7 @@ const transactionController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const createTransactionObject = (req, timestamp, ethValue) => {
+  const createTransactionObject = (req, timestamp, ethValue, ethTotalValue) => {
     let newTransactionObject;
     try {
       newTransactionObject = {
@@ -48,8 +48,8 @@ const transactionController = (repository) => {
         type: req.type,
         portfolioId: req.portfolioId,
         txTimestamp: Number(timestamp) * 1000,
-        tokenPriceETH: 0,
-        totalValueETH: ethValue || 0,
+        tokenPriceETH: ethValue || 0,
+        totalValueETH: ethTotalValue || 0,
         tokenPriceUSD: 0,
         totalValueUSD: 0,
         ETHUSD: 0,
@@ -79,9 +79,9 @@ const transactionController = (repository) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
       const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
       const currency = await getCurrencyByTokenName(transactionData.tokenName);
-      // const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
-      const ethValue = await bigNumberService().toNumber(etherScanTransaction.value);
-      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
+      const ethValue = (transactionData.tokenName === 'ETH') ? 1 : await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
+      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue, ethTotalValue);
       const transaction = await getTransactionObject(transactionData.txHash);
       if (transaction === null || transaction === undefined) {
         return createAction(req, res, transactionObject, false);
@@ -98,9 +98,9 @@ const transactionController = (repository) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
       const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
       const currency = await getCurrencyByTokenName(transactionData.tokenName);
-      // const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
-      const ethValue = await bigNumberService().toNumber(etherScanTransaction.value);
-      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
+      const ethValue = (transactionData.tokenName === 'ETH') ? 1 : await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
+      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue, ethTotalValue);
       const transaction = await getTransactionObject(transactionData.txHash);
       if (transaction === null || transaction === undefined) {
         await createAction(req, res, transactionObject, true);
@@ -130,10 +130,9 @@ const transactionController = (repository) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
       const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
       const currency = await getCurrencyByTokenName(transactionData.tokenName);
-      // TODO Change from ropsten to microservice
-      // const ethValue = await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
-      const ethValue = await bigNumberService().toNumber(etherScanTransaction.value);
-      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue);
+      const ethValue = (transactionData.tokenName === 'ETH') ? 1 : await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
+      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue, ethTotalValue);
 
       await updateAction(req, res, Number(id), transactionObject, false);
     } catch (error) {

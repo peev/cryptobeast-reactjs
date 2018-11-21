@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 const { responseHandler } = require('../utilities/response-handler');
 
 const modelName = 'Currency';
@@ -7,7 +8,7 @@ const currencyController = (repository) => {
   const bigNumberService = require('../../services/big-number-service');
 
   const calculateCurrencyChange = (open, close) =>
-    Number(bigNumberService().product(bigNumberService().quotient(bigNumberService().difference(close, open), open)), 100);
+    Number(bigNumberService().product(bigNumberService().quotient(bigNumberService().difference(close, open), open), 100));
 
   const fetchCurrencyObject = tokenNameParam => repository.findOne({
     modelName,
@@ -26,45 +27,43 @@ const currencyController = (repository) => {
       const yesterday = today - (24 * 3600);
       const lastWeek = today - (24 * 7 * 3600);
       let currencyDayStatsJson = null;
-      let currencyWeekStatsJson = null;
       let volume24HStats = 0;
       let high24HStats = 0;
       let low24HStats = 0;
-      let change24HStats = 0;
-      let change7DStats = 0;
 
       const priceResponse = await WeidexService.getTokenTicker(req.id);
       const currencyDayStats = await WeidexService.getCurrencyStats(req.id, yesterday, today);
-      const currencyWeekStats = await WeidexService.getCurrencyStats(req.id, lastWeek, today);
 
       currencyDayStatsJson = !Array.isArray(currencyDayStats) ? JSON.parse(currencyDayStats) : currencyDayStats;
-      currencyWeekStatsJson = !Array.isArray(currencyWeekStats) ? JSON.parse(currencyWeekStats) : currencyWeekStats;
 
       if (currencyDayStatsJson.length > 0) {
         volume24HStats = currencyDayStatsJson.volume;
         high24HStats = currencyDayStatsJson.high24H;
         low24HStats = currencyDayStatsJson.low24H;
-        change24HStats = calculateCurrencyChange(currencyDayStatsJson[0].close, currencyDayStatsJson[0].open);
       }
 
-      if (currencyWeekStatsJson.length > 0) {
-        change7DStats = currencyWeekStatsJson.length === 1 ?
-          calculateCurrencyChange(currencyWeekStatsJson[0].close, currencyWeekStatsJson[0].open) :
-          calculateCurrencyChange(currencyWeekStatsJson[currencyWeekStatsJson.length - 1].close, currencyWeekStatsJson[0].open);
-      }
+      const todayValue = await WeidexService.getTokenValueByTimestampHttp(req.id, today);
+      const yesterdayValue = await WeidexService.getTokenValueByTimestampHttp(req.id, yesterday);
+      const lastWeekValue = await WeidexService.getTokenValueByTimestampHttp(req.id, lastWeek);
+
+      const change24HStats = (req.name === 'ETH') ? 0 :
+        (yesterdayValue.length && yesterdayValue.length > 0 && todayValue.length && todayValue.length > 0) ?
+          calculateCurrencyChange(yesterdayValue, todayValue) : null;
+      const change7DStats = (req.name === 'ETH') ? 0 :
+        (lastWeekValue.length && lastWeekValue.length > 0 && todayValue.length && todayValue.length > 0) ?
+          calculateCurrencyChange(lastWeekValue, todayValue) : null;
 
       newCurrencyObject = {
         tokenId: req.id,
         tokenName: req.name,
         tokenNameLong: req.fullName,
         decimals: req.decimals,
-        // eslint-disable-next-line no-nested-ternary
         lastPriceETH: (priceResponse.lastPrice !== null && priceResponse.lastPrice !== undefined) ? priceResponse.lastPrice : req.name === 'ETH' ? 1 : 0,
         volume24H: volume24HStats || 0,
         high24H: high24HStats || 0,
         low24H: low24HStats || 0,
-        change24H: change24HStats || 0,
-        change7D: change7DStats || 0,
+        change24H: change24HStats,
+        change7D: change7DStats,
         bid: priceResponse.bid || 0,
         ask: priceResponse.ask || 0,
       };

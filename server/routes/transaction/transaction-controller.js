@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 const { responseHandler } = require('../utilities/response-handler');
 const { etherScanServices } = require('../../integrations/etherScan-services');
 
@@ -42,41 +43,46 @@ const transactionController = (repository) => {
       modelName,
       options: {
         where: {
+          type: 'd',
           isFirstDeposit: true,
         },
       },
     })
       .catch(err => console.log(err));
 
-  const createTransactionObject = (req, timestamp, ethValue, ethTotalValue, isFirstDepositParam) => {
-    let newTransactionObject;
-    try {
-      newTransactionObject = {
-        amount: req.amount,
-        txHash: req.txHash,
-        status: req.status,
-        tokenName: req.tokenName,
-        type: req.type,
-        portfolioId: req.portfolioId,
-        txTimestamp: Number(timestamp) * 1000,
-        tokenPriceETH: ethValue || 0,
-        totalValueETH: ethTotalValue || 0,
-        tokenPriceUSD: 0,
-        totalValueUSD: 0,
-        ETHUSD: 0,
-        isFirstDeposit: isFirstDepositParam,
-        portfolioValueBeforeTx: null,
-        currentSharePriceUSD: null,
-        sharesCreated: null,
-        sharesLiquidated: null,
-        numSharesBefore: null,
-        numSharesAfter: null,
-      };
-    } catch (error) {
-      console.log(error);
-    }
-    return newTransactionObject;
-  };
+  const createTransactionObject =
+    (
+      req, timestamp, ethValue, ethTotalValue, isFirstDepositParam, portfolioValueBeforeTxParam, currentSharePriceUSDParam,
+      sharesCreatedParam, sharesLiquidatedParam, numSharesBeforeParam, numSharesAfterParam,
+    ) => {
+      let newTransactionObject;
+      try {
+        newTransactionObject = {
+          amount: req.amount,
+          txHash: req.txHash,
+          status: req.status,
+          tokenName: req.tokenName,
+          type: req.type,
+          portfolioId: req.portfolioId,
+          txTimestamp: Number(timestamp) * 1000,
+          tokenPriceETH: ethValue || 0,
+          totalValueETH: ethTotalValue || 0,
+          tokenPriceUSD: 0,
+          totalValueUSD: 0,
+          ETHUSD: 0,
+          isFirstDeposit: isFirstDepositParam,
+          portfolioValueBeforeTx: portfolioValueBeforeTxParam,
+          currentSharePriceUSD: currentSharePriceUSDParam,
+          sharesCreated: sharesCreatedParam,
+          sharesLiquidated: sharesLiquidatedParam,
+          numSharesBefore: numSharesBeforeParam,
+          numSharesAfter: numSharesAfterParam,
+        };
+      } catch (error) {
+        console.log(error);
+      }
+      return newTransactionObject;
+    };
 
   const updateAction = async (req, res, id, transactionObject, isSyncing) => {
     const newTransactionData = Object.assign({}, transactionObject, { id });
@@ -113,14 +119,36 @@ const transactionController = (repository) => {
   const syncTransaction = async (req, res) => {
     const transactionData = req.body;
     try {
+      // TODO
+      const totalValueUsd = 0;
+
       const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
       const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
       const currency = await getCurrencyByTokenName(transactionData.tokenName);
       const ethValue = (transactionData.tokenName === 'ETH') ? 1 :
         await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
       const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
+    
       const isFirstDeposit = (transactionData.type === 'd') ? await isFirstDepositCheck() === null : null;
-      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue, ethTotalValue, isFirstDeposit);
+      // TODO
+      const portfolioValueBeforeTx = (isFirstDeposit) ? 0 : null;
+      // TODO
+      const currentSharePriceUSD = (isFirstDeposit) ? 1 : null;
+      // TODO
+      const sharesCreated = (transactionData.type === 'd') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
+      // TODO
+      const sharesLiquidated = (transactionData.type === 'w') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
+      // TODO
+      const numSharesBefore = (isFirstDeposit) ? 0 : null;
+      // TODO
+      const numSharesAfter = bigNumberService().sum(numSharesBefore, sharesCreated);
+
+      const transactionObject =
+        createTransactionObject(
+          transactionData, etherScanTransactionBlock.timestamp, ethValue, ethTotalValue,
+          isFirstDeposit, portfolioValueBeforeTx, currentSharePriceUSD, currentSharePriceUSD, sharesCreated, sharesLiquidated,
+          numSharesBefore, numSharesAfter,
+        );
       const transaction = await getTransactionObject(transactionData.txHash);
 
       if (transaction === null || transaction === undefined) {
@@ -167,6 +195,11 @@ const transactionController = (repository) => {
       .then(result => responseHandler(res, result))
       .catch(error => res.json(error));
   };
+
+  const sortByTimestamp = array => array.sort(((a, b) =>
+    (new Date((a.timestamp !== undefined) ? a.timestamp.toString() : a.txTimestamp.toString()).getTime() -
+    new Date((b.timestamp !== undefined) ? b.timestamp.toString() : b.txTimestamp.toString()).getTime())
+  ));
 
   const getDeposits = async (req, res, portfolioID, userID) => {
     try {

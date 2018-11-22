@@ -40,7 +40,9 @@ const weidexController = (repository) => {
       .then(() => console.log('================== START TRADES =================='));
     await tradeHistoryController.sync(req, res, addresses)
       .then(() => console.log('================== START ALLOCATIONS =================='));
-    await allocationsController.sync(req, res, addresses);
+    await allocationsController.sync(req, res, addresses)
+      .then(() => console.log('================== START UPDATE TRANSACTIONS =================='));
+    await transactionController.updateTransactions(req, res, addresses);
   };
 
   const getUser = (req, res) => {

@@ -62,33 +62,22 @@ const transactionController = (repository) => {
     })
       .catch(err => console.log(err));
 
-  const createTransactionObject = (
-    amountParam, txHashParam, statusParam, tokenNameParam, typeParam, portfolioIdParam,
-    timestamp, ethValue, ethTotalValue, isFirstDepositParam, portfolioValueBeforeTxParam, currentSharePriceUSDParam,
-    sharesCreatedParam, sharesLiquidatedParam, numSharesBeforeParam, numSharesAfterParam,
-  ) => {
+  const createTransactionObject = (amount, txHash, status, tokenName, type, portfolioId, timestamp, ethValue, ethTotalValue) => {
     let newTransactionObject;
     try {
       newTransactionObject = {
-        amount: amountParam,
-        txHash: txHashParam,
-        status: statusParam,
-        tokenName: tokenNameParam,
-        type: typeParam,
-        portfolioId: portfolioIdParam,
+        amount,
+        txHash,
+        status,
+        tokenName,
+        type,
+        portfolioId,
         txTimestamp: Number(timestamp) * 1000,
         tokenPriceETH: ethValue || 0,
         totalValueETH: ethTotalValue || 0,
         tokenPriceUSD: 0,
         totalValueUSD: 0,
         ETHUSD: 0,
-        isFirstDeposit: isFirstDepositParam,
-        portfolioValueBeforeTx: portfolioValueBeforeTxParam,
-        currentSharePriceUSD: currentSharePriceUSDParam,
-        sharesCreated: sharesCreatedParam,
-        sharesLiquidated: sharesLiquidatedParam,
-        numSharesBefore: numSharesBeforeParam,
-        numSharesAfter: numSharesAfterParam,
       };
     } catch (error) {
       console.log(error);
@@ -118,12 +107,13 @@ const transactionController = (repository) => {
       const ethValue = (tr.tokenName === 'ETH') ? 1 :
         await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
       const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
-
       const transactionObject = createTransactionObject(
-        tr.amount, tr.txHash, tr.status, tr.tokenName, tr.type, tr.portfolioId, etherScanTrBlock.timestamp, ethValue, ethTotalValue,
-        null, null, null, null, null, null, null,
+        tr.amount, tr.txHash, tr.status, tr.tokenName, tr.type, tr.portfolioId, etherScanTrBlock.timestamp,
+        ethValue, ethTotalValue,
       );
+
       const transaction = await getTransactionObject(tr.txHash);
+
       if (transaction === null || transaction === undefined) {
         await createAction(req, res, transactionObject, true);
       } else {
@@ -143,30 +133,6 @@ const transactionController = (repository) => {
       .catch((error) => {
         res.json(error);
       });
-  };
-
-  const updateTransactionShareParams = async (req, res, tr) => {
-    const totalValueUsd = 0;
-    const isFirstDeposit = (tr.type === 'd') ? await isFirstDepositCheck() === null : null;
-    const portfolioValueBeforeTx = (isFirstDeposit) ? 0 : null;
-    const currentSharePriceUSD = (isFirstDeposit) ? 1 : null;
-    const sharesCreated = (tr.type === 'd') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
-    const sharesLiquidated = (tr.type === 'w') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
-    const numSharesBefore = (isFirstDeposit) ? 0 : null;
-    const numSharesAfter = bigNumberService().sum(numSharesBefore, sharesCreated);
-
-    const transactionObject = createTransactionObject(
-      tr.amount, tr.txHash, tr.status, tr.tokenName, tr.type, tr.portfolioId, tr.timestamp, tr.ethValue, tr.ethTotalValue,
-      isFirstDeposit, portfolioValueBeforeTx, currentSharePriceUSD, sharesCreated, sharesLiquidated, numSharesBefore, numSharesAfter,
-    );
-    await updateAction(req, res, Number(tr.id), transactionObject, true);
-  };
-
-  const updateTransactions = async (req, res, portfolioId) => {
-    const transactions = await getSortedTransactions(portfolioId);
-    transactions.map(async (transaction) => {
-      await updateTransactionShareParams(req, res, transaction);
-    });
   };
 
   const getDeposits = async (req, res, portfolioID, userID) => {
@@ -201,7 +167,6 @@ const transactionController = (repository) => {
         const portfolio = await getPortfolioObjectByAddress(address);
         await getDeposits(req, res, portfolio.id, portfolio.userID);
         await getWithDrawls(req, res, portfolio.id, portfolio.userID);
-        // await updateTransactions(req, res, portfolio.id);
       } catch (error) {
         console.log(error);
       }
@@ -211,9 +176,73 @@ const transactionController = (repository) => {
     });
   };
 
+  const updateTransactionShareParams = async (req, res, tr, isFirstDeposit) => {
+    try {
+      const totalValueUsd = 0;
+      const portfolioValueBeforeTx = (tr.type === 'd') ? (isFirstDeposit) ? 0 : null : null;
+      const currentSharePriceUSD = (tr.type === 'd') ? (isFirstDeposit) ? 1 : null : null;
+      const sharesCreated = (tr.type === 'd') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
+      const sharesLiquidated = (tr.type === 'w') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
+      const numSharesBefore = (isFirstDeposit) ? 0 : null;
+      const numSharesAfter = bigNumberService().sum(numSharesBefore, sharesCreated);
+
+      const transaction = Object.assign({}, tr, {
+        isFirstDeposit,
+        portfolioValueBeforeTx,
+        currentSharePriceUSD,
+        sharesCreated,
+        sharesLiquidated,
+        numSharesBefore,
+        numSharesAfter,
+      });
+
+      await updateAction(req, res, Number(tr.id), transaction, true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const isFirstDepositBool = async (transaction) => {
+    const deposit = await isFirstDepositCheck();
+    return (deposit === null) || ((deposit !== null) && (deposit.txHash === transaction.txHash));
+  };
+
+  const updateResolveAllTransactions = async (req, res, transactions) => {
+    let isFirstDeposit = null;
+    try {
+      await Promise.all(transactions.map(async (transaction, index) => {
+        if (index === 0) {
+          isFirstDeposit = await isFirstDepositBool(transaction);
+        } else {
+          isFirstDeposit = (transaction.type === 'd') ? false : null;
+        }
+        await updateTransactionShareParams(req, res, transaction, isFirstDeposit);
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateTransactions = async (req, res, addresses) => {
+    const portfolioArray = addresses.map(async (address) => {
+      try {
+        const portfolio = await getPortfolioObjectByAddress(address);
+        const transactions = await getSortedTransactions(portfolio.id);
+        await updateResolveAllTransactions(req, res, transactions);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+    return Promise.all(portfolioArray).then(() => {
+      console.log('================== END UPDATE TRANSACTIONS ==================');
+      return res.status(200).send('Sync finished');
+    });
+  };
+
   return {
     getTransaction,
     sync,
+    updateTransactions,
   };
 };
 

@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-const { responseHandler } = require('../utilities/response-handler');
 const { etherScanServices } = require('../../integrations/etherScan-services');
 
 const modelName = 'Transaction';
@@ -7,6 +6,8 @@ const modelName = 'Transaction';
 const transactionController = (repository) => {
   const weidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service');
+  const Sequelize = require('sequelize');
+  const op = Sequelize.Op;
 
   const getTransactionObject = async transactionHash => repository.findOne({
     modelName,
@@ -61,6 +62,22 @@ const transactionController = (repository) => {
       },
     })
       .catch(err => console.log(err));
+
+  const getAllocationBeforeTimestamp = (portfolioId, timestamp) =>
+    repository.findOne({
+      modelName: 'Allocation',
+      options: {
+        where: {
+          portfolioID: portfolioId,
+          timestamp: {
+            [op.lte]: timestamp,
+          },
+        },
+        order: [['timestamp', 'ASC']],
+      },
+    })
+      .catch(err => console.log(err));
+
 
   const createTransactionObject = (amount, txHash, status, tokenName, type, portfolioId, timestamp, ethValue, ethTotalValue) => {
     let newTransactionObject;
@@ -176,10 +193,18 @@ const transactionController = (repository) => {
     });
   };
 
+  const calculatePortfolioValueBeforeTx = async (portfolioId, timestamp) => {
+    const allocation = await getAllocationBeforeTimestamp(portfolioId, timestamp);
+    return Object.keys(allocation.balance).reduce((previous, key) =>
+      bigNumberService().sum(previous, allocation.balance[key].balance), 0);
+  };
+
   const updateTransactionShareParams = async (req, res, tr, isFirstDeposit) => {
     try {
       const totalValueUsd = 0;
-      const portfolioValueBeforeTx = (tr.type === 'd') ? (isFirstDeposit) ? 0 : null : null;
+      const portfolioValueBeforeTx = (tr.type === 'd') ? (isFirstDeposit) ? 0
+        : await calculatePortfolioValueBeforeTx(tr.portfolioId, tr.txTimestamp) :
+        await calculatePortfolioValueBeforeTx(tr.portfolioId, tr.txTimestamp);
       const currentSharePriceUSD = (tr.type === 'd') ? (isFirstDeposit) ? 1 : null : null;
       const sharesCreated = (tr.type === 'd') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
       const sharesLiquidated = (tr.type === 'w') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;

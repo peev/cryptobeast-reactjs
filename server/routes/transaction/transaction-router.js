@@ -6,10 +6,7 @@ const attachTo = (app, repository, jobs) => {
   const validator = require('./transaction-validator')();
 
   router
-    .post('/create', validator.verifyCreateTransaction, controller.createTransaction)
-    .get('/:id', controller.getTransaction)
-    .put('/update/:id', validator.verifyUpdateTransaction, controller.updateTransaction)
-    .delete('/delete/:id', controller.removeTransaction);
+    .get('/:id', controller.getTransaction);
 
   app.use('/transaction', router);
 };

@@ -59,7 +59,7 @@ const investorValidator = () => {
         errors.phone = 'Investor must have valid Telephone number!';
       }
 
-      if (!payload || !payload.hasOwnProperty('fee') || typeof payload.fullName !== 'number') {
+      if (!payload || !payload.hasOwnProperty('fee') || typeof payload.fee !== 'number') {
         isFormValid = false;
         errors.phone = 'Investor must have fee parameter!';
       }

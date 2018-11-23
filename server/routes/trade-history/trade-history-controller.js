@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 const { responseHandler } = require('../utilities/response-handler');
 const { etherScanServices } = require('../../integrations/etherScan-services');
 
@@ -39,12 +40,15 @@ const tradeController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const createTradeObject = (req, priceUsd, transactonFee) => {
+  const setStatus = (userAddress, trade) =>
+    ((trade.makerAddress === userAddress) ? trade.type : (trade.type === 'SELL') ? 'BUY' : 'SELL');
+
+  const createTradeObject = (req, priceUsd, transactonFee, address) => {
     let newTradeObject;
     try {
       newTradeObject = {
         tokenName: req.token.name,
-        type: req.type,
+        type: setStatus(address, req),
         amount: req.amount || 0,
         priceETH: req.price || 0,
         priceUSD: 0,
@@ -73,27 +77,7 @@ const tradeController = (repository) => {
     ((transaction !== null) ?
       bigNumberService().quotient(bigNumberService().product(transaction.gas, transaction.gasPrice), 1000000000000000000) : 0);
 
-  const createTrade = async (req, res) => {
-    const trade = req.body;
-
-    try {
-      const tradeExist = await getTradeByTransactionHash(trade.txHash);
-      if (tradeExist !== null) {
-        const lastPriceUSD = await etherScanServices().getETHUSDPrice();
-        const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
-        const transactionFee = calculateTransactionFee(transaction);
-        const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee);
-
-        await createAction(req, res, tradeObject, false);
-      } else {
-        res.status(200).send(trade);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const syncTrade = async (req, res, lastPriceUSD) => {
+  const syncTrade = async (req, res, lastPriceUSD, address) => {
     const trade = req.body;
 
     try {
@@ -101,7 +85,7 @@ const tradeController = (repository) => {
       if (tradeExist === null) {
         const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
         const transactionFee = calculateTransactionFee(transaction);
-        const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee);
+        const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee, address);
 
         await createAction(req, res, tradeObject, true);
       }
@@ -136,19 +120,12 @@ const tradeController = (repository) => {
       });
   };
 
-  const removeTrade = (req, res) => {
-    const { id } = req.params;
-    repository.remove({ modelName, id })
-      .then(result => responseHandler(res, result))
-      .catch(error => res.json(error));
-  };
-
-  const getTrades = async (req, res, trades, portfolioID, lastPriceUSD) => {
+  const getTrades = async (req, res, trades, portfolioID, lastPriceUSD, address) => {
     try {
       await Promise.all(trades.map(async (trade) => {
         const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolioID });
         const bodyWrapper = Object.assign({ body: addPortfolioId });
-        await syncTrade(bodyWrapper, res, lastPriceUSD);
+        await syncTrade(bodyWrapper, res, lastPriceUSD, address);
       }));
     } catch (error) {
       console.log(error);
@@ -162,7 +139,7 @@ const tradeController = (repository) => {
         const portfolio = await getPortfolioObjectByAddress(address);
         const trades = await WeidexService.getUserOrderHistoryByUserHttp(portfolio.userID);
         if (trades) {
-          await getTrades(req, res, trades, portfolio.id, lastPriceUSD);
+          await getTrades(req, res, trades, portfolio.id, lastPriceUSD, address);
         }
       } catch (error) {
         console.log(error);
@@ -174,9 +151,7 @@ const tradeController = (repository) => {
   };
 
   return {
-    createTrade,
     getTrade,
-    removeTrade,
     sync,
     getAllTradesByPortfolioId,
   };

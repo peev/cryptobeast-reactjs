@@ -209,38 +209,41 @@ const allocationsController = (repository) => {
         let currentAssetBalanceArray = [];
         currentAssetBalanceArray = fillCurrentAssetBalanceArray(currentAssetBalanceArray, assets);
 
-        console.log('------------------------------------');
-        console.log('Starting:');
-        console.log(currentAssetBalanceArray);
-        console.log(`Total ETH: ${Object.keys(currentAssetBalanceArray).reduce((previous, key) => previous + currentAssetBalanceArray[key].balance, 0)}`);
-        console.log('------------------------------------');
+        // console.log('------------------------------------');
+        // console.log('Starting:');
+        // console.log(currentAssetBalanceArray);
+        // console.log(`Total ETH: ${Object.keys(currentAssetBalanceArray).reduce((previous, key) => previous + currentAssetBalanceArray[key].balance, 0)}`);
+        // console.log('------------------------------------');
 
         const resultArray = [];
-        await transactionsAndTradesSorted.forEach(async (transaction) => {
+        await transactionsAndTradesSorted.map(async (transaction, index) => {
           const currentAssetBalanceArrayNoEth = currentAssetBalanceArray.filter(item => item.tokenName !== 'ETH');
           const currentAssetBalanceArrayOnlyEth = currentAssetBalanceArray.filter(item => item.tokenName === 'ETH');
-          const assetBalanceArray = [];
-          currentAssetBalanceArrayNoEth.forEach((item) => {
-            assetBalanceArray.push({
-              tokenName: item.tokenName,
-              balance: calculateCurrentAssetTotalETH(transaction, item),
+          let assetBalanceArray = [];
+          if (index === 0) {
+            assetBalanceArray = currentAssetBalanceArray;
+          } else {
+            currentAssetBalanceArrayNoEth.forEach((item) => {
+              assetBalanceArray.push({
+                tokenName: item.tokenName,
+                balance: calculateCurrentAssetTotalETH(transactionsAndTradesSorted[index - 1], item),
+              });
             });
-          });
-          currentAssetBalanceArrayOnlyEth.forEach((item) => {
-            assetBalanceArray.push({
-              tokenName: item.tokenName,
-              balance: calculateCurrentAssetTotalETH(transaction, item),
+            currentAssetBalanceArrayOnlyEth.forEach((item) => {
+              assetBalanceArray.push({
+                tokenName: item.tokenName,
+                balance: calculateCurrentAssetTotalETH(transactionsAndTradesSorted[index - 1], item),
+              });
             });
-          });
+          }
           valueToAddToEth = 0;
           currentAssetBalanceArray = assetBalanceArray;
-          console.log('------------------------------------');
-          console.log(`Transaction type: ${transaction.type}`);
-          console.log(`Transaction type: ${transaction.timestamp} ${transaction.txTimestamp}`);
-          console.log(assetBalanceArray);
-          console.log(`Total ETH: ${Object.keys(assetBalanceArray).reduce((previous, key) => previous + assetBalanceArray[key].balance, 0)}`);
-          console.log('------------------------------------');
-
+          // console.log('------------------------------------');
+          // console.log(`Transaction type: ${transaction.type}`);
+          // console.log(`Transaction type: ${transaction.timestamp} ${transaction.txTimestamp}`);
+          // console.log(assetBalanceArray);
+          // console.log(`Total ETH: ${Object.keys(assetBalanceArray).reduce((previous, key) => previous + assetBalanceArray[key].balance, 0)}`);
+          // console.log('------------------------------------');
           const allocation = createAllocationObject(portfolio.id, transaction, assetBalanceArray);
           resultArray.push(allocation);
         });

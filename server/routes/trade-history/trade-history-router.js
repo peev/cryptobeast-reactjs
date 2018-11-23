@@ -3,13 +3,10 @@ const { Router } = require('express');
 const attachTo = (app, data) => {
   const router = new Router();
   const controller = require('./trade-history-controller')(data);
-  const validator = require('./trade-history-validator')();
 
   router
-    .post('/create', validator.verifyCreateTradeHistory, controller.createTrade)
     .get('/all/:portfolioId', controller.getAllTradesByPortfolioId)
-    .get('/:id', controller.getTrade)
-    .delete('/delete/:id', controller.removeTrade);
+    .get('/:id', controller.getTrade);
 
   app.use('/trade', router);
 };

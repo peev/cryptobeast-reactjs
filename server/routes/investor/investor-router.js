@@ -7,8 +7,8 @@ const attachTo = (app, data) => {
 
   router
     .post('/add', validator.createInvestor, controller.createInvestor)
-    .put('/update/:id', validator.updateInvestor, controller.updateInvestor)
-    .delete('/delete', validator.deleteInvestor, controller.removeInvestor);
+    .put('/update/:id/', validator.updateInvestor, controller.updateInvestor)
+    .put('/delete/:id/', validator.deleteInvestor, controller.removeInvestor);
 
   app.use('/investor', router);
 };

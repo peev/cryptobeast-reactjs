@@ -21,6 +21,11 @@ const investorValidator = () => {
       errors.phone = 'Investor must have valid Telephone number!';
     }
 
+    if (!payload || !payload.hasOwnProperty('userAddress') || !validator.isLength(payload.userAddress, { min: 1, max: 50 })) {
+      isFormValid = false;
+      errors.phone = 'Investor must have valid user address number!';
+    }
+
     if (!isFormValid) {
       return res.status(400).json({
         isSuccessful: false,
@@ -53,6 +58,16 @@ const investorValidator = () => {
         isFormValid = false;
         errors.phone = 'Investor must have valid Telephone number!';
       }
+
+      if (!payload || !payload.hasOwnProperty('fee') || typeof payload.fullName !== 'number') {
+        isFormValid = false;
+        errors.phone = 'Investor must have fee parameter!';
+      }
+
+      if (!payload || !payload.hasOwnProperty('userAddress') || !validator.isLength(payload.userAddress, { min: 1, max: 50 })) {
+        isFormValid = false;
+        errors.phone = 'Investor must have valid user address number!';
+      }
     }
 
     if (!isFormValid) {
@@ -72,9 +87,9 @@ const investorValidator = () => {
 
     if (Object.keys(payload).length === 0) {
       isFormValid = false;
-    } else if (!payload || !payload.hasOwnProperty('active') || typeof payload.active !== 'boolean') {
+    } else if (!payload || !payload.hasOwnProperty('userAddress') || !validator.isLength(payload.userAddress, { min: 1, max: 50 })) {
       isFormValid = false;
-      errors.isFounder = 'Provide valid investor status!';
+      errors.phone = 'Provide valid user address!';
     }
 
     if (!isFormValid) {

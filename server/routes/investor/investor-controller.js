@@ -1,139 +1,87 @@
-const { responseHandler } = require('../utilities/response-handler');
-
 const modelName = 'Investor';
 
 const investorController = (repository) => {
-  // TODO: delete upsertAsset + the check in the asset-controller -> do the check in the MarketStore
-  // Update or insert new asset
-  const upsertAsset = (depositData) => {
-    const assetController = require('../asset/asset-controller')(repository);
-    const assetData = {
-      currency: depositData.currency,
-      balance: depositData.balance,
-      origin: 'Manually Added',
-      portfolioId: depositData.portfolioId,
-    };
-    assetController.createAsset({
-      body: assetData,
-    });
-  };
+  const getPortfolioObjectByAddress = async address => repository.findOne({
+    modelName: 'Portfolio',
+    options: {
+      where: {
+        userAddress: address,
+      },
+    },
+  })
+    .catch(err => console.log(err));
 
-  const updatePortfolioShares = (transaction) => {
-    const findPortfolio = repository.findOne({
-      modelName: 'Portfolio',
-      options: { where: { id: transaction.portfolioId } },
-    });
-
-    Promise.all([findPortfolio])
-      .then(([foundPortfolio]) => {
-        const shares = foundPortfolio.shares + transaction.shares;
-        repository.update({
-          modelName: 'Portfolio',
-          updatedRecord: {
-            id: foundPortfolio.id,
-            shares,
-          },
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const updateInvestorShares = (transaction) => {
-    const findInvestor = repository.findOne({
-      modelName: 'Investor',
-      options: { where: { id: transaction.investorId } },
-    });
-
-    Promise.all([findInvestor])
-      .then(([foundInvestor]) => {
-        const purchasedShares = foundInvestor.purchasedShares + transaction.shares;
-
-        repository.update({
-          modelName: 'Investor',
-          updatedRecord: {
-            id: foundInvestor.id,
-            purchasedShares,
-          },
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const createInvestor = (req, res) => {
+  const createInvestor = async (req, res) => {
     const investor = req.body;
 
-    repository.create({ modelName, newObject: investor })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch(error => res.json(error));
+    const portfolio = await getPortfolioObjectByAddress(investor.userAddress);
+
+    if (portfolio !== null && portfolio !== undefined) {
+      const investorData = {
+        name: investor.name,
+        email: investor.email,
+        phone: investor.phone,
+        portfolioId: portfolio.id,
+      };
+
+      await repository.create({ modelName, newObject: investorData })
+        .then((response) => {
+          res.status(200).send(response);
+        })
+        .catch(error => res.status(500).send(error));
+    } else {
+      res.status(400).send('Invalid portfolio address!');
+    }
   };
 
   const updateInvestor = async (req, res) => {
     const { id } = req.params;
-    const investorData = Object.assign({}, req.body, { id });
-    try {
-      const updatedInvestorRecord = await repository.update({ modelName, updatedRecord: investorData });
-      await repository.updateMany({
-        modelName: 'Transaction',
-        updatedRecord: { investorName: investorData.fullName },
-        options: { where: { investorId: id } },
-      });
-      res.status(200).send(updatedInvestorRecord);
-    } catch (er) {
-      console.log(er); // eslint-disable-line
-      res.status(500).json(er);
+    const investor = req.body;
+
+    const portfolio = await getPortfolioObjectByAddress(investor.userAddress);
+
+    if (portfolio !== null && portfolio !== undefined) {
+      const investorData = {
+        id,
+        name: investor.name,
+        email: investor.email,
+        phone: investor.phone,
+        fee: investor.fee || 0,
+        portfolioId: portfolio.id,
+      };
+
+      await repository.update({ modelName, updatedRecord: investorData })
+        .then((response) => {
+          res.status(200).send(response);
+        })
+        .catch(error => res.status(500).send(error));
+    } else {
+      res.status(400).send('Invalid portfolio address!');
     }
   };
 
-  const depositInvestor = (req, res) => {
-    const depositData = req.body;
-    const { transaction } = req.body;
-    upsertAsset(depositData);
-    updateInvestorShares(transaction);
-    updatePortfolioShares(transaction);
+  const removeInvestor = async (req, res) => {
+    const { id } = req.params;
+    const investor = req.body;
 
-    repository.create({ modelName: 'Transaction', newObject: transaction })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch(error => res.json(error));
-  };
+    const portfolio = await getPortfolioObjectByAddress(investor.userAddress);
 
-  const withdrawalInvestor = (req, res) => {
-    const { transaction } = req.body;
-    transaction.shares *= (-1);
-    transaction.amountInUSD *= (-1);
-    updateInvestorShares(transaction);
-    updatePortfolioShares(transaction);
+    if (portfolio !== null && portfolio !== undefined) {
+      const investorData = Object.assign({}, req.body, { id, active: false });
 
-    const withdrawalData = req.body;
-    withdrawalData.balance *= (-1);
-    upsertAsset(withdrawalData);
-
-    repository.create({ modelName: 'Transaction', newObject: transaction })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch(error => res.json(error));
-  };
-
-  const removeInvestor = (req, res) => {
-    const { id } = req.body;
-    repository.remove({ modelName, id })
-      .then(result => responseHandler(res, result))
-      .catch(error => res.json(error));
+      await repository.update({ modelName, updatedRecord: investorData })
+        .then((response) => {
+          res.status(200).send(response);
+        })
+        .catch(error => res.status(500).send(error));
+    } else {
+      res.status(400).send('Invalid portfolio address!');
+    }
   };
 
   return {
     createInvestor,
     updateInvestor,
-    depositInvestor,
-    withdrawalInvestor,
     removeInvestor,
   };
 };

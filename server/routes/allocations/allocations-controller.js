@@ -253,7 +253,6 @@ const allocationsController = (repository) => {
     });
     await Promise.all(allocationsArray).then(() => {
       console.log('================== END ALLOCATIONS =========================================');
-      return res.status(200).send('Sync finished');
     })
       .catch(err => res.status(500).send(err));
   };

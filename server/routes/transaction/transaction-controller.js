@@ -1,4 +1,4 @@
-const { responseHandler } = require('../utilities/response-handler');
+/* eslint-disable no-nested-ternary */
 const { etherScanServices } = require('../../integrations/etherScan-services');
 
 const modelName = 'Transaction';
@@ -6,6 +6,8 @@ const modelName = 'Transaction';
 const transactionController = (repository) => {
   const weidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service');
+  const Sequelize = require('sequelize');
+  const op = Sequelize.Op;
 
   const getTransactionObject = async transactionHash => repository.findOne({
     modelName,
@@ -16,6 +18,18 @@ const transactionController = (repository) => {
     },
   })
     .catch(err => console.log(err));
+
+  const getSortedTransactions = portfolioIdParam =>
+    repository.find({
+      modelName,
+      options: {
+        where: {
+          portfolioId: portfolioIdParam,
+        },
+        order: [['txTimestamp', 'ASC']],
+      },
+    })
+      .catch(err => console.log(err));
 
   const getPortfolioObjectByAddress = async address => repository.findOne({
     modelName: 'Portfolio',
@@ -37,16 +51,44 @@ const transactionController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const createTransactionObject = (req, timestamp, ethValue, ethTotalValue) => {
+  const isFirstDepositCheck = () =>
+    repository.findOne({
+      modelName,
+      options: {
+        where: {
+          type: 'd',
+          isFirstDeposit: true,
+        },
+      },
+    })
+      .catch(err => console.log(err));
+
+  const getAllocationBeforeTimestamp = (portfolioId, timestamp) =>
+    repository.findOne({
+      modelName: 'Allocation',
+      options: {
+        where: {
+          portfolioID: portfolioId,
+          timestamp: {
+            [op.lte]: timestamp,
+          },
+        },
+        order: [['timestamp', 'ASC']],
+      },
+    })
+      .catch(err => console.log(err));
+
+
+  const createTransactionObject = (amount, txHash, status, tokenName, type, portfolioId, timestamp, ethValue, ethTotalValue) => {
     let newTransactionObject;
     try {
       newTransactionObject = {
-        amount: req.amount,
-        txHash: req.txHash,
-        status: req.status,
-        tokenName: req.tokenName,
-        type: req.type,
-        portfolioId: req.portfolioId,
+        amount,
+        txHash,
+        status,
+        tokenName,
+        type,
+        portfolioId,
         txTimestamp: Number(timestamp) * 1000,
         tokenPriceETH: ethValue || 0,
         totalValueETH: ethTotalValue || 0,
@@ -73,35 +115,22 @@ const transactionController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const createTransaction = async (req, res) => {
-    try {
-      const transactionData = req.body;
-      const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
-      const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-      const currency = await getCurrencyByTokenName(transactionData.tokenName);
-      const ethValue = (transactionData.tokenName === 'ETH') ? 1 : await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
-      const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
-      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue, ethTotalValue);
-      const transaction = await getTransactionObject(transactionData.txHash);
-      if (transaction === null || transaction === undefined) {
-        return createAction(req, res, transactionObject, false);
-      }
-      return updateAction(req, res, Number(transaction.id), transactionObject, false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const syncTransaction = async (req, res) => {
-    const transactionData = req.body;
+    const tr = req.body;
     try {
-      const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
-      const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-      const currency = await getCurrencyByTokenName(transactionData.tokenName);
-      const ethValue = (transactionData.tokenName === 'ETH') ? 1 : await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
+      const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
+      const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
+      const currency = await getCurrencyByTokenName(tr.tokenName);
+      const ethValue = (tr.tokenName === 'ETH') ? 1 :
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
       const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
-      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue, ethTotalValue);
-      const transaction = await getTransactionObject(transactionData.txHash);
+      const transactionObject = createTransactionObject(
+        tr.amount, tr.txHash, tr.status, tr.tokenName, tr.type, tr.portfolioId, etherScanTrBlock.timestamp,
+        ethValue, ethTotalValue,
+      );
+
+      const transaction = await getTransactionObject(tr.txHash);
+
       if (transaction === null || transaction === undefined) {
         await createAction(req, res, transactionObject, true);
       } else {
@@ -121,30 +150,6 @@ const transactionController = (repository) => {
       .catch((error) => {
         res.json(error);
       });
-  };
-
-  const updateTransaction = async (req, res) => {
-    const { id } = req.params;
-    const transactionData = req.body;
-    try {
-      const etherScanTransaction = await etherScanServices().getTransactionByHash(transactionData.txHash);
-      const etherScanTransactionBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-      const currency = await getCurrencyByTokenName(transactionData.tokenName);
-      const ethValue = (transactionData.tokenName === 'ETH') ? 1 : await weidexService.getTokenPriceByTimestamp(currency.tokenId, Number(etherScanTransactionBlock.timestamp));
-      const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
-      const transactionObject = createTransactionObject(transactionData, etherScanTransactionBlock.timestamp, ethValue, ethTotalValue);
-
-      await updateAction(req, res, Number(id), transactionObject, false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const removeTransaction = (req, res) => {
-    const { id } = req.params;
-    repository.remove({ modelName, id })
-      .then(result => responseHandler(res, result))
-      .catch(error => res.json(error));
   };
 
   const getDeposits = async (req, res, portfolioID, userID) => {
@@ -188,12 +193,81 @@ const transactionController = (repository) => {
     });
   };
 
+  const calculatePortfolioValueBeforeTx = async (portfolioId, timestamp) => {
+    const allocation = await getAllocationBeforeTimestamp(portfolioId, timestamp);
+    return Object.keys(allocation.balance).reduce((previous, key) =>
+      bigNumberService().sum(previous, allocation.balance[key].balance), 0);
+  };
+
+  const updateTransactionShareParams = async (req, res, tr, isFirstDeposit) => {
+    try {
+      const totalValueUsd = 0;
+      const portfolioValueBeforeTx = (tr.type === 'd') ? (isFirstDeposit) ? 0
+        : await calculatePortfolioValueBeforeTx(tr.portfolioId, tr.txTimestamp) :
+        await calculatePortfolioValueBeforeTx(tr.portfolioId, tr.txTimestamp);
+      const currentSharePriceUSD = (tr.type === 'd') ? (isFirstDeposit) ? 1 : null : null;
+      const sharesCreated = (tr.type === 'd') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
+      const sharesLiquidated = (tr.type === 'w') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
+      const numSharesBefore = (isFirstDeposit) ? 0 : null;
+      const numSharesAfter = bigNumberService().sum(numSharesBefore, sharesCreated);
+
+      const transaction = Object.assign({}, tr, {
+        isFirstDeposit,
+        portfolioValueBeforeTx,
+        currentSharePriceUSD,
+        sharesCreated,
+        sharesLiquidated,
+        numSharesBefore,
+        numSharesAfter,
+      });
+
+      await updateAction(req, res, Number(tr.id), transaction, true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const isFirstDepositBool = async (transaction) => {
+    const deposit = await isFirstDepositCheck();
+    return (deposit === null) || ((deposit !== null) && (deposit.txHash === transaction.txHash));
+  };
+
+  const updateResolveAllTransactions = async (req, res, transactions) => {
+    let isFirstDeposit = null;
+    try {
+      await Promise.all(transactions.map(async (transaction, index) => {
+        if (index === 0) {
+          isFirstDeposit = await isFirstDepositBool(transaction);
+        } else {
+          isFirstDeposit = (transaction.type === 'd') ? false : null;
+        }
+        await updateTransactionShareParams(req, res, transaction, isFirstDeposit);
+      }));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateTransactions = async (req, res, addresses) => {
+    const portfolioArray = addresses.map(async (address) => {
+      try {
+        const portfolio = await getPortfolioObjectByAddress(address);
+        const transactions = await getSortedTransactions(portfolio.id);
+        await updateResolveAllTransactions(req, res, transactions);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+    return Promise.all(portfolioArray).then(() => {
+      console.log('================== END UPDATE TRANSACTIONS ==================');
+      return res.status(200).send('Sync finished');
+    });
+  };
+
   return {
-    createTransaction,
     getTransaction,
-    updateTransaction,
-    removeTransaction,
     sync,
+    updateTransactions,
   };
 };
 

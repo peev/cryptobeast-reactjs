@@ -55,4 +55,32 @@ module.exports = (sequelize, DataTypes) => sequelize.define('transaction', {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
+  isFirstDeposit: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+  },
+  portfolioValueBeforeTx: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  currentSharePriceUSD: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  sharesCreated: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  sharesLiquidated: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  numSharesBefore: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
+  numSharesAfter: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
+  },
 });

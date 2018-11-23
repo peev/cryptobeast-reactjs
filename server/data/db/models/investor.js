@@ -1,34 +1,33 @@
 module.exports = (sequelize, DataTypes) => sequelize.define('investor', {
-  fullName: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 50],
+      len: [1, 250],
     },
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
+    validate: {
+      len: [1, 250],
+      isEmail: true,
+    },
+  },
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: false,
     validate: {
       len: [1, 50],
     },
   },
-  telephone: {
-    type: DataTypes.STRING,
+  fee: {
+    type: DataTypes.DOUBLE,
+    allowNull: true,
   },
-  dateOfEntry: {
-    type: DataTypes.DATE,
-  },
-  isFounder: {
+  active: {
     type: DataTypes.BOOLEAN,
-  },
-  managementFee: {
-    type: DataTypes.DOUBLE,
-  },
-  purchasedShares: {
-    type: DataTypes.DOUBLE,
-    validate: {
-      min: 0,
-    },
+    defaultValue: true,
   },
 });

@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 const { etherScanServices } = require('../../integrations/etherScan-services');
 
 const modelName = 'Transaction';
@@ -105,7 +104,7 @@ const transactionController = (repository) => {
   const updateAction = async (req, res, id, transactionObject, isSyncing) => {
     const newTransactionData = Object.assign({}, transactionObject, { id });
     await repository.update({ modelName, updatedRecord: newTransactionData })
-      .then(response => (isSyncing ? null : res.status(200).send(response)))
+      .then(response => (isSyncing ? response : res.status(200).send(response)))
       .catch(error => res.json(error));
   };
 
@@ -193,12 +192,15 @@ const transactionController = (repository) => {
     });
   };
 
-  const getNumSharesBefore = async (portfolioId, timestamp) => {
-    const allocation = await getAllocationBeforeTimestamp(portfolioId, timestamp);
-    return allocation;
-  };
-
   // =========================================================================================
+
+  const calculateIsFirstDeposit = async (transaction, index) => {
+    if (index === 0) {
+      const deposit = await isFirstDepositCheck();
+      return (deposit === null) || ((deposit !== null) && (deposit.txHash === transaction.txHash));
+    }
+    return (transaction.type === 'd') ? false : null;
+  };
 
   const calculateAllocationBalance = async (portfolioId, timestamp) => {
     const allocation = await getAllocationBeforeTimestamp(portfolioId, timestamp);
@@ -213,12 +215,14 @@ const transactionController = (repository) => {
     return calculateAllocationBalance(portfolioId, tr.txTimestamp);
   };
 
-  const updatePortfolioValueBeforeTx = async (req, res, portfolioId) => {
-    const transactions = await getSortedTransactions(portfolioId);
-    await Promise.all(transactions.map(async (transaction) => {
-      const portfolioValueBeforeTx = await calculatePortfolioValueBeforeTx(portfolioId, transaction);
-      const newTransactionData = Object.assign({}, transaction, { portfolioValueBeforeTx });
-      await updateAction(req, res, transaction.id, newTransactionData, true);
+  const updateIsFirstDepositAndPortfolioValueBeforeTx = async (req, res, portfolioId, transactions) => {
+    // 1st update: isFirstDepost, portfolioValueBeforeTx
+    await Promise.all(transactions.map(async (tr, index) => {
+      const isFirstDeposit = await calculateIsFirstDeposit(tr, index);
+      const portfolioValueBeforeTx = await calculatePortfolioValueBeforeTx(portfolioId, tr);
+      const numSharesAfter = calculateNumSharesAfter(tr.type, tr.isFirstDeposit, 0, null, null);
+      const newTransactionData = Object.assign({}, tr, { isFirstDeposit, portfolioValueBeforeTx, numSharesAfter });
+      await updateAction(req, res, tr.id, newTransactionData, true);
     }));
   };
 
@@ -226,97 +230,64 @@ const transactionController = (repository) => {
 
   // =========================================================================================
 
-  const calculateIsFirstDeposit = async (transaction, index) => {
-    if (index === 0) {
-      const deposit = await isFirstDepositCheck();
-      return (deposit === null) || ((deposit !== null) && (deposit.txHash === transaction.txHash));
+  const calculateNumSharesBefore = (index, transactions) =>
+    ((index === 0) ? 0 : transactions[index - 1].numSharesAfter);
+
+  const calculateCurrentSharePriceUSD = (isFirstDeposit, portfolioValueBeforeTx, numSharesBefore) =>
+    ((isFirstDeposit) ? 1 : bigNumberService().quotient(portfolioValueBeforeTx, numSharesBefore));
+
+  const calculateSharesCreated = (transactionType, totalValueUsd, currentSharePriceUSD) =>
+    ((transactionType === 'd') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null);
+
+  const calculateSharesLiquidated = (transactionType, totalValueUsd, currentSharePriceUSD) =>
+    ((transactionType === 'w') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null);
+
+  const calculateNumSharesAfter = (transactionType, isFirstDeposit, numSharesBefore, sharesCreated, sharesLiquidated) => {
+    if (transactionType === 'd') {
+      return (isFirstDeposit) ? sharesCreated : bigNumberService().sum(numSharesBefore, sharesCreated);
     }
-    return (transaction.type === 'd') ? false : null;
+    return bigNumberService().difference(numSharesBefore, sharesLiquidated);
   };
 
-  const updateIsFirstDeposit = async (req, res, portfolioId) => {
-    const transactions = await getSortedTransactions(portfolioId);
-    await Promise.all(transactions.map(async (transaction, index) => {
-      const isFirstDeposit = await calculateIsFirstDeposit(transaction, index);
-      const newTransactionData = Object.assign({}, transaction, { isFirstDeposit });
-      await updateAction(req, res, transaction.id, newTransactionData, true);
-    }));
-  };
+  const updateTransactionsShareParams = async (req, res, portfolioId, transactions) => {
+    // 2nd update: numSharesBefore, currentSharePriceUSD, sharesCreated, sharesLiquidated, numSharesAfter
+    // TODO replace with real one
+    const totalValueUsd = 0;
+    const updatedTransactions = await Promise.all(transactions.map(async (tr, index) => {
+      const isFirstDeposit = await calculateIsFirstDeposit(tr, index);
+      const portfolioValueBeforeTx = await calculatePortfolioValueBeforeTx(portfolioId, tr);
+      const numSharesBefore = calculateNumSharesBefore(index, transactions);
+      const currentSharePriceUSD = calculateCurrentSharePriceUSD(tr.isFirstDeposit, tr.portfolioValueBeforeTx, numSharesBefore);
+      const sharesCreated = calculateSharesCreated(tr.type, totalValueUsd, currentSharePriceUSD);
+      const sharesLiquidated = calculateSharesLiquidated(tr.type, totalValueUsd, currentSharePriceUSD);
+      const numSharesAfter = calculateNumSharesAfter(tr.type, tr.isFirstDeposit, numSharesBefore, sharesCreated, sharesLiquidated);
 
-  // =========================================================================================
-
-  // =========================================================================================
-
-  const updateNumSharesBeofre = async (req, res, portfolioId) => {
-    const transactions = await getSortedTransactions(portfolioId);
-    await Promise.all(transactions.map(async (transaction, index) => {
-      const numSharesBefore = (index === 0) ? 0 : transactions[index - 1].numSharesAfter;
-      const newTransactionData = Object.assign({}, transaction, { numSharesBefore });
-      await updateAction(req, res, transaction.id, newTransactionData, true);
-    }));
-  };
-
-  // =========================================================================================
-
-  const updateTransactionShareParams = async (req, res, tr, isFirstDeposit) => {
-    try {
-      const totalValueUsd = 0;
-      const portfolioValueBeforeTx = (tr.type === 'd') ? (isFirstDeposit) ? 0
-        : await calculatePortfolioValueBeforeTx(tr.portfolioId, tr.txTimestamp) :
-        await calculatePortfolioValueBeforeTx(tr.portfolioId, tr.txTimestamp);
-      const numSharesBefore = (isFirstDeposit) ? 0 : null;
-      const currentSharePriceUSD = (tr.type === 'd') ? (isFirstDeposit) ? 1 :
-        bigNumberService().quotient(portfolioValueBeforeTx, numSharesBefore) : null;
-      const sharesCreated = (tr.type === 'd') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
-      const sharesLiquidated = (tr.type === 'w') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
-      const numSharesAfter = isFirstDeposit ? sharesCreated : bigNumberService().sum(numSharesBefore, sharesCreated);
-
-      const transaction = Object.assign({}, tr, {
+      return Object.assign({}, tr, {
+        id: tr.id,
         isFirstDeposit,
         portfolioValueBeforeTx,
+        numSharesBefore,
         currentSharePriceUSD,
         sharesCreated,
         sharesLiquidated,
-        numSharesBefore,
         numSharesAfter,
       });
+    }));
 
-      await updateAction(req, res, Number(tr.id), transaction, true);
-    } catch (error) {
-      console.log(error);
-    }
+    await updatedTransactions.map(async (transaction) => {
+      return updateAction(req, res, Number(transaction.id), transaction, true);
+    });
   };
 
-  const isFirstDepositBool = async (transaction) => {
-    const deposit = await isFirstDepositCheck();
-    return (deposit === null) || ((deposit !== null) && (deposit.txHash === transaction.txHash));
-  };
-
-  const updateResolveAllTransactions = async (req, res, transactions) => {
-    let isFirstDeposit = null;
-    try {
-      await Promise.all(transactions.map(async (transaction, index) => {
-        if (index === 0) {
-          isFirstDeposit = await isFirstDepositBool(transaction);
-        } else {
-          isFirstDeposit = (transaction.type === 'd') ? false : null;
-        }
-        await updateTransactionShareParams(req, res, transaction, isFirstDeposit);
-      }));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // =========================================================================================
 
   const updateTransactions = async (req, res, addresses) => {
     const portfolioArray = addresses.map(async (address) => {
       try {
         const portfolio = await getPortfolioObjectByAddress(address);
         const transactions = await getSortedTransactions(portfolio.id);
-        await updateIsFirstDeposit(req, res, portfolio.id);
-        await updatePortfolioValueBeforeTx(req, res, portfolio.id);
-        await updateNumSharesBeofre(req, res, portfolio.id);
-        // await updateResolveAllTransactions(req, res, transactions);
+        // await updateIsFirstDepositAndPortfolioValueBeforeTx(req, res, portfolio.id, transactions);
+        await updateTransactionsShareParams(req, res, portfolio.id, transactions);
       } catch (error) {
         console.log(error);
       }

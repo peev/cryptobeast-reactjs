@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { withStyles, Grid } from '@material-ui/core';
@@ -10,8 +11,11 @@ import VolatilityTable from '../../CustomTables/VolatilityTable';
 import VolatilitySpider from '../../HighCharts/VolatilitySpider';
 
 const styles = () => ({
+  root: {
+    flexGrow: 1,
+  },
   overflowNone: {
-    'overflow-x': 'hidden'
+    'overflow-x': 'hidden',
   },
   marginTop: {
     marginTop: '40px',
@@ -21,7 +25,7 @@ const styles = () => ({
   },
   topItem: {
     height: 'auto',
-    paddingBottom: '20px'
+    paddingBottom: '20px',
   },
   leftTopItem: {
     'padding-right': '50px',
@@ -31,13 +35,13 @@ const styles = () => ({
   },
   maxWidth: {
     width: '100%',
-    'overflow-x': 'hidden'
+    'overflow-x': 'hidden',
   },
   smallTopPadding: {
-    marginTop: '20px'
+    marginTop: '20px',
   },
   bigTopPadding: {
-    marginTop: '40px'
+    marginTop: '40px',
   },
   header: {
     color: '#ca3f58',
@@ -49,17 +53,17 @@ const styles = () => ({
     'text-align': 'center',
   },
   flexCenter: {
-    'justify-content': 'center'
+    'justify-content': 'center',
   },
   flexBottom: {
-    'justify-content': 'flex-end'
+    'justify-content': 'flex-end',
   },
   padding: {
-    padding: '20px'
+    padding: '20px',
   },
   noMargin: {
-    marginTop: 0
-  }
+    marginTop: 0,
+  },
 });
 
 type Props = {
@@ -67,18 +71,29 @@ type Props = {
 };
 
 class Volatility extends React.Component<Props, State> {
-
-  constructor(props) {
+  constructor(props: Object) {
     super(props);
     this.handleSelectPeriod = this.handleSelectPeriod.bind(this);
+    this.handleSelectedCurrency = this.handleSelectedCurrency.bind(this);
   }
 
-  handleSelectPeriod(data) {
+  handleSelectPeriod(data: string) {
     if (!data) {
       return;
     }
     this.setState({
-      selectPeriod: data
+      // eslint-disable-next-line react/no-unused-state
+      selectPeriod: data,
+    });
+  }
+
+  handleSelectedCurrency(data: string) {
+    if (!data) {
+      return;
+    }
+    this.setState({
+      // eslint-disable-next-line react/no-unused-state
+      selectedCurrency: data,
     });
   }
 
@@ -86,16 +101,21 @@ class Volatility extends React.Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <Grid container className={classes.overflowNone}>
-        <Grid container>
-          <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
-            <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['1d', '1w', '1m']} />
-          </Grid>
-
-          <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
-            <SelectBenchmark />
+      <Grid container className={classes.root}>
+        <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
+          <Grid container spacing={24}>
+            <Grid item xs={4}>
+              <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['30 days', '60 days']} />
+            </Grid>
+            <Grid item xs={4}>
+              <SelectBenchmark />
+            </Grid>
+            <Grid item xs={4}>
+              <MotionSelect defaultValueIndex={0} className={classes.padding} selectedValue={this.handleSelectedCurrency} values={['ETH', 'USD']} />
+            </Grid>
           </Grid>
         </Grid>
+        <Grid item xs={5} className={[classes.topItem, classes.topHeight].join(' ')} />
 
         <Grid container className={classes.smallTopPadding}>
           <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
@@ -131,7 +151,7 @@ class Volatility extends React.Component<Props, State> {
             <VolatilityColumnChart />
           </Paper>
         </Grid>
-      </Grid>
+      </Grid >
     );
   }
 };

@@ -245,6 +245,19 @@ const transactionController = (repository) => {
 
   // =========================================================================================
 
+  // =========================================================================================
+
+  const updateNumSharesBeofre = async (req, res, portfolioId) => {
+    const transactions = await getSortedTransactions(portfolioId);
+    await Promise.all(transactions.map(async (transaction, index) => {
+      const numSharesBefore = (index === 0) ? 0 : transactions[index - 1].numSharesAfter;
+      const newTransactionData = Object.assign({}, transaction, { numSharesBefore });
+      await updateAction(req, res, transaction.id, newTransactionData, true);
+    }));
+  };
+
+  // =========================================================================================
+
   const updateTransactionShareParams = async (req, res, tr, isFirstDeposit) => {
     try {
       const totalValueUsd = 0;
@@ -252,12 +265,11 @@ const transactionController = (repository) => {
         : await calculatePortfolioValueBeforeTx(tr.portfolioId, tr.txTimestamp) :
         await calculatePortfolioValueBeforeTx(tr.portfolioId, tr.txTimestamp);
       const numSharesBefore = (isFirstDeposit) ? 0 : null;
-      const currentSharePriceUSD = (tr.type === 'd') ? (isFirstDeposit) ? 1 : 
-        bigNumberService().quotient(portfolioValueBeforeTx, currentSharePriceUSD) : null;
+      const currentSharePriceUSD = (tr.type === 'd') ? (isFirstDeposit) ? 1 :
+        bigNumberService().quotient(portfolioValueBeforeTx, numSharesBefore) : null;
       const sharesCreated = (tr.type === 'd') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
       const sharesLiquidated = (tr.type === 'w') ? bigNumberService().quotient(totalValueUsd, currentSharePriceUSD) : null;
-      const numSharesAfter = bigNumberService().sum(numSharesBefore, sharesCreated);
-  
+      const numSharesAfter = isFirstDeposit ? sharesCreated : bigNumberService().sum(numSharesBefore, sharesCreated);
 
       const transaction = Object.assign({}, tr, {
         isFirstDeposit,
@@ -303,6 +315,7 @@ const transactionController = (repository) => {
         const transactions = await getSortedTransactions(portfolio.id);
         await updateIsFirstDeposit(req, res, portfolio.id);
         await updatePortfolioValueBeforeTx(req, res, portfolio.id);
+        await updateNumSharesBeofre(req, res, portfolio.id);
         // await updateResolveAllTransactions(req, res, transactions);
       } catch (error) {
         console.log(error);

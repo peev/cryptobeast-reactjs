@@ -2,14 +2,13 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { withStyles, Grid } from '@material-ui/core';
+import { inject, observer } from 'mobx-react';
 
-import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 import MotionSelect from '../../Selectors/MotionSelect';
 import VolatilityColumnChart from '../../HighCharts/VolatilityDevSkew';
 import VolatilityAndRisk from '../../HighCharts/VolatilityAndRisk';
 import VolatilityTable from '../../CustomTables/VolatilityTable';
 import VolatilitySpider from '../../HighCharts/VolatilitySpider';
-import PortfolioStore from '../../../stores/PortfolioStore';
 
 const styles = () => ({
   root: {
@@ -69,8 +68,11 @@ const styles = () => ({
 
 type Props = {
   classes: Object,
+  PortfolioStore: Object,
 };
 
+@inject('PortfolioStore')
+@observer
 class Volatility extends React.Component<Props, State> {
   constructor(props: Object) {
     super(props);
@@ -110,14 +112,13 @@ class Volatility extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes } = this.props;
-    // const data = PortfolioStore.deviationBreakdown;
+    const { classes, PortfolioStore } = this.props;
     return (
       <Grid container className={classes.root}>
         <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
           <Grid container spacing={24}>
             <Grid item xs={4}>
-              <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['30 days', '60 days']} />
+              <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['30 days']} />
             </Grid>
             <Grid item xs={4}>
               <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['BTC price', 'ETH price']} />
@@ -149,7 +150,7 @@ class Volatility extends React.Component<Props, State> {
             <h5 className={classes.noMargin}>PORTFOLIO VOLATILITY AND RISK</h5>
 
             <Grid container>
-              <Grid item xs={3}><p>STANDARD DEVIATION: <b>2.63</b></p></Grid>
+              <Grid item xs={3}><p>STANDARD DEVIATION: <b>{PortfolioStore.standardDeviation}%</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO ALPHA: <b>2.14%</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO BETA: <b>0.65%</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO VARIANCE: <b>0.65</b></p></Grid>

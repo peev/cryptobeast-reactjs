@@ -8,7 +8,7 @@ import {
   computed,
   onBecomeObserved,
 } from 'mobx';
-import mathjs from 'mathjs';
+import math from 'mathjs';
 import requester from '../services/requester';
 import FiatCurrenciesStore from './FiatCurrenciesStore';
 import MarketStore from './MarketStore';
@@ -100,13 +100,13 @@ class PortfolioStore {
   }
 
   @computed
-  get deviationBreakdown() {
+  get standardDeviation() {
+    console.log('wee');
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
-      return this.portfolioValueHistory
-        .map((el: object, i: number) => {
-          console.log(el);
-          return el;
-        });
+      const portfolioValueHistoryArr = this.portfolioValueHistory.length > 30 ?
+        this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - 30, 1)) : this.portfolioValueHistory;
+      const values = portfolioValueHistoryArr.map((el: object) => el.balance);
+      return math.std(values);
     }
     return [];
   }

@@ -82,7 +82,7 @@ const styles = () => ({
     margin: '0',
     display: 'inline-block',
     verticalAlign: 'text-bottom',
-    paddingLeft: '0',
+    paddingLeft: '24px',
   },
 });
 
@@ -136,12 +136,12 @@ const TableHeader = ({
   classes,
   tableHead,
 }: {
-  onRequestSort: Function,
-  order: string,
-  orderBy: string,
-  classes: Object,
-  tableHead: Array<Object>,
-}) => {
+    onRequestSort: Function,
+    order: string,
+    orderBy: string,
+    classes: Object,
+    tableHead: Array<Object>,
+  }) => {
   const createSortHandler = (property: string) => (event: Object) => {
     onRequestSort(event, property);
   };
@@ -244,25 +244,31 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
                 </TableCell>
               );
             }
-            if ((i === 6 || i === 7) && parseFloat(COL) !== 0 && COL !== undefined) {
+            if ((i === 6 || i === 7) && COL !== undefined) {
               if (COL === 'n/a') {
                 return (
                   <TableCell className={classes.tableCell} key={uuid()} >
                     <p className={classes.changeNoIcon}>{COL}</p>
                   </TableCell>
                 );
+              } else {
+                if (parseFloat(COL) === 0) {
+                  return (
+                    <TableCell className={classes.tableCell} key={uuid()} >
+                      <p className={classes.change}>{COL}%</p>
+                    </TableCell>
+                  );
+                }
+                return (
+                  <TableCell className={classes.tableCell} key={uuid()} >
+                    {parseFloat(COL) > 0 ?
+                      <UpArrowIcon className={classes.upArrow} /> :
+                      <DownArrowIcon className={classes.downArrow} />}
+                    <p className={classes.change}>{COL}%</p>
+                  </TableCell>
+                );
               }
-              return (
-                <TableCell className={classes.tableCell} key={uuid()} >
-                  {/* sets the arrow based on the passed value */}
-                  {parseFloat(COL) > 0 ?
-                    <UpArrowIcon className={classes.upArrow} /> :
-                    <DownArrowIcon className={classes.downArrow} />}
-                  <p className={classes.change}>{COL}%</p>
-                </TableCell>
-              );
             }
-
             return (
               <TableCell className={classes.tableCell} key={uuid()}>
                 {COL}

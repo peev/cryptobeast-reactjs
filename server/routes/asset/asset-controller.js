@@ -153,28 +153,6 @@ const assetController = (repository) => {
     await updateAction(req, res, Number(id), assetObject, false);
   };
 
-  const updateAssetWeight = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-      const assetData = await repository.findById({ modelName, id });
-      const portfolio = await getPortfolioObject(assetData.portfolioId);
-
-      if (portfolio.assets !== 0) {
-        const assetValue = await portfolioService.calculateTokenValueETH(assetData.tokenName, assetData.balance);
-        await portfolioService.calcPortfolioTotalValueETH(portfolio).then((portfolioValue) => {
-          const result = bigNumberService().quotient(bigNumberService().product(assetValue, 100), portfolioValue);
-          const newAssetData = Object.assign({}, assetData, { id: assetData.id, weight: result });
-          repository.update({ modelName, updatedRecord: newAssetData })
-            .then((response) => { res.status(200).send(response); })
-            .catch(error => res.json(error));
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const updateAssetsWeight = async (req, res, idParam) => {
     try {
       const portfolio = await getPortfolioObjectIncludeAll(idParam);
@@ -284,7 +262,6 @@ const assetController = (repository) => {
     createAsset,
     getAsset,
     updateAsset,
-    updateAssetWeight,
     removeAsset,
     getAssetPriceHistory,
     sync,

@@ -9,6 +9,7 @@ import VolatilityColumnChart from '../../HighCharts/VolatilityDevSkew';
 import VolatilityAndRisk from '../../HighCharts/VolatilityAndRisk';
 import VolatilityTable from '../../CustomTables/VolatilityTable';
 import VolatilitySpider from '../../HighCharts/VolatilitySpider';
+import PortfolioStore from '../../../stores/PortfolioStore';
 
 const styles = () => ({
   root: {
@@ -75,6 +76,7 @@ class Volatility extends React.Component<Props, State> {
     super(props);
     this.handleSelectPeriod = this.handleSelectPeriod.bind(this);
     this.handleSelectedCurrency = this.handleSelectedCurrency.bind(this);
+    this.handleSelectedBenchmark = this.handleSelectedBenchmark.bind(this);
   }
 
   handleSelectPeriod(data: string) {
@@ -97,9 +99,19 @@ class Volatility extends React.Component<Props, State> {
     });
   }
 
+  handleSelectedBenchmark(data: string) {
+    if (!data) {
+      return;
+    }
+    this.setState({
+      // eslint-disable-next-line react/no-unused-state
+      selectedBenchmark: data,
+    });
+  }
+
   render() {
     const { classes } = this.props;
-
+    // const data = PortfolioStore.deviationBreakdown;
     return (
       <Grid container className={classes.root}>
         <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
@@ -108,7 +120,8 @@ class Volatility extends React.Component<Props, State> {
               <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['30 days', '60 days']} />
             </Grid>
             <Grid item xs={4}>
-              <SelectBenchmark />
+              <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['BTC price', 'ETH price']} />
+              {/* <SelectBenchmark /> */}
             </Grid>
             <Grid item xs={4}>
               <MotionSelect defaultValueIndex={0} className={classes.padding} selectedValue={this.handleSelectedCurrency} values={['ETH', 'USD']} />

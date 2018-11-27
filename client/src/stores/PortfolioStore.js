@@ -8,6 +8,7 @@ import {
   computed,
   onBecomeObserved,
 } from 'mobx';
+import mathjs from 'mathjs';
 import requester from '../services/requester';
 import FiatCurrenciesStore from './FiatCurrenciesStore';
 import MarketStore from './MarketStore';
@@ -94,6 +95,18 @@ class PortfolioStore {
                 .product(BigNumberService
                   .quotient(BigNumberService
                     .difference(this.portfolioValueHistory[i].balance, this.portfolioValueHistory[i - 1].balance), this.portfolioValueHistory[i - 1].balance), 100), 2)) : 100));
+    }
+    return [];
+  }
+
+  @computed
+  get deviationBreakdown() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return this.portfolioValueHistory
+        .map((el: object, i: number) => {
+          console.log(el);
+          return el;
+        });
     }
     return [];
   }

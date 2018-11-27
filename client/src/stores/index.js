@@ -12,9 +12,6 @@ import CurrencyStore from './CurrencyStore';
 import FiatCurrencies from './FiatCurrenciesStore';
 import LoadingStore from './LoadingStore';
 
-import TradeHistoryStore from '../features/TransactionHistory/TradeHistory/TradeHistoryStore';
-
-
 const stores = {
   PortfolioStore,
   AssetStore,
@@ -27,7 +24,6 @@ const stores = {
   Allocations,
   CurrencyStore,
   FiatCurrencies,
-  TradeHistoryStore,
   WeidexStore,
   LoadingStore,
 };

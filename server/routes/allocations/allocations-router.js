@@ -6,6 +6,7 @@ const attachTo = (app, repository, jobs) => {
 
   router
     .get('/fetchInfo/:portfolioId', controller.getAllocations)
+    .post('/newSync', controller.newSync)
     .post('/insert', controller.insertAllocation);
 
   app.use('/allocations', router);

@@ -154,6 +154,25 @@ const allocationsController = (repository) => {
     return bigNumberService().sum(totalAssetObject.balance, transaction.priceTotalETH);
   };
 
+  const handleBuyTradeNew = (transaction, totalAssetObject) => {
+    if (transaction.tokenName === 'ETH') {
+      const transactionBalance = bigNumberService().difference(valueToAddToEth, transaction.priceTotalETH);
+      return bigNumberService().sum(transactionBalance, totalAssetObject.balance);
+    }
+    removeFromEth(transaction.priceTotalETH);
+    return bigNumberService().sum(totalAssetObject.balance, transaction.priceTotalETH);
+  };
+
+  const handleSellTradeNew = (transaction, totalAssetObject) => {
+    if (transaction.tokenName === 'ETH') {
+      const transactionBalance = bigNumberService().sum(valueToAddToEth, transaction.priceTotalETH);
+      return bigNumberService().difference(totalAssetObject.balance, transactionBalance);
+    }
+    addToEth(transaction.priceTotalETH);
+    return bigNumberService().difference(totalAssetObject.balance, transaction.priceTotalETH);
+  };
+
+
   const handleSameBalance = (totalAssetObject) => {
     if (totalAssetObject.tokenName === 'ETH') {
       return bigNumberService().sum(totalAssetObject.balance, valueToAddToEth);
@@ -175,6 +194,34 @@ const allocationsController = (repository) => {
     }
   };
 
+  const calculateCurrentAssetTotalETHNew = (transaction, totalAssetObject) => {
+    if (totalAssetObject.tokenName === transaction.tokenName) {
+      switch (transaction.type) {
+        case 'd': return bigNumberService().sum(totalAssetObject.balance, transaction.totalValueETH);
+        case 'w': return bigNumberService().difference(totalAssetObject.balance, transaction.totalValueETH);
+        case 'BUY': return handleBuyTradeNew(transaction, totalAssetObject);
+        case 'SELL': return handleSellTradeNew(transaction, totalAssetObject);
+        default: return 0;
+      }
+    } else {
+      return handleSameBalance(totalAssetObject);
+    }
+  };
+
+  const calculateCurrentAssetAmount = (transaction, totalAssetObject) => {
+    if (totalAssetObject.tokenName === transaction.tokenName) {
+      switch (transaction.type) {
+        case 'd': return bigNumberService().sum(totalAssetObject.amount, transaction.amount);
+        case 'w': return bigNumberService().difference(totalAssetObject.amount, transaction.amount);
+        case 'BUY': return bigNumberService().sum(totalAssetObject.amount, transaction.amount);
+        case 'SELL': return bigNumberService().difference(totalAssetObject.amount, transaction.amount);
+        default: return 0;
+      }
+    } else {
+      return handleSameBalance(totalAssetObject);
+    }
+  };
+
   const fillCurrentAssetBalanceArray = (currentAssetBalanceArray, assets) => {
     assets.forEach((asset) => {
       currentAssetBalanceArray.push({
@@ -185,6 +232,18 @@ const allocationsController = (repository) => {
     return currentAssetBalanceArray;
   };
 
+  const fillCurrentAssetBalanceArrayNew = (currentAssetBalanceArray, assets) => {
+    assets.forEach((asset) => {
+      currentAssetBalanceArray.push({
+        tokenName: asset.tokenName,
+        balance: 0,
+        amount: 0,
+      });
+    });
+    return currentAssetBalanceArray;
+  };
+
+
   const syncAllocations = async (req, res, resultArray) => {
     try {
       await Promise.all(resultArray.map(async (allocation) => {
@@ -193,6 +252,53 @@ const allocationsController = (repository) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const newSync = async (req, res) => {
+    const address = req.body;
+    console.log('------------------------------------');
+    console.log(address);
+    console.log('------------------------------------');
+    const portfolio = await getPortfolioObject(address);
+    const lastAllocation = await getLastAllocation(portfolio.id);
+    const lastAllocationTimestamp = (lastAllocation !== null && lastAllocation !== undefined) ? lastAllocation.timestamp : 0;
+    const assets = await getPortfolioAssets(portfolio.id);
+    const trades = await getTrades(portfolio.id, 0);
+    const transactions = await getTransactions(portfolio.id, 0);
+    const transactionsAndTrades = await trades.concat(transactions);
+    const transactionsAndTradesSorted = await sortByTimestamp(transactionsAndTrades);
+    let currentAssetBalanceArray = [];
+    currentAssetBalanceArray = fillCurrentAssetBalanceArrayNew(currentAssetBalanceArray, assets);
+
+    const resultArray = [];
+    transactionsAndTradesSorted.map((transaction, index) => {
+      const currentAssetBalanceArrayNoEth = currentAssetBalanceArray.filter(item => item.tokenName !== 'ETH');
+      const currentAssetBalanceArrayOnlyEth = currentAssetBalanceArray.filter(item => item.tokenName === 'ETH');
+      let assetBalanceArray = [];
+      if (index === transactionsAndTradesSorted.length - 1) {
+        assetBalanceArray = currentAssetBalanceArray;
+      } else {
+        currentAssetBalanceArrayNoEth.forEach((item) => {
+          assetBalanceArray.push({
+            tokenName: item.tokenName,
+            balance: calculateCurrentAssetTotalETHNew(transactionsAndTradesSorted[index], item),
+            amount: calculateCurrentAssetAmount(transactionsAndTradesSorted[index], item),
+          });
+        });
+        currentAssetBalanceArrayOnlyEth.forEach((item) => {
+          assetBalanceArray.push({
+            tokenName: item.tokenName,
+            balance: calculateCurrentAssetTotalETHNew(transactionsAndTradesSorted[index], item),
+            amount: calculateCurrentAssetAmount(transactionsAndTradesSorted[index], item),
+          });
+        });
+      }
+      valueToAddToEth = 0;
+      currentAssetBalanceArray = assetBalanceArray;
+      const allocation = createAllocationObject(portfolio.id, transaction, assetBalanceArray);
+      resultArray.push(allocation);
+    });
+    res.status(200).send(resultArray);
   };
 
   const sync = async (req, res, addresses) => {
@@ -264,6 +370,7 @@ const allocationsController = (repository) => {
     insertAllocation,
     getAllocations,
     sync,
+    newSync,
   };
 };
 

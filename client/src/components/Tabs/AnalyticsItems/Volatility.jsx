@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state */
 // @flow
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
@@ -71,42 +72,55 @@ type Props = {
   PortfolioStore: Object,
 };
 
+type State = {
+  selectPeriod: number,
+  selectedBenchmark: string,
+  selectedCurrency: string,
+};
+
 @inject('PortfolioStore')
 @observer
 class Volatility extends React.Component<Props, State> {
   constructor(props: Object) {
     super(props);
-    this.handleSelectPeriod = this.handleSelectPeriod.bind(this);
-    this.handleSelectedCurrency = this.handleSelectedCurrency.bind(this);
-    this.handleSelectedBenchmark = this.handleSelectedBenchmark.bind(this);
+    this.state = {
+      selectPeriod: 30,
+    };
   }
 
-  handleSelectPeriod(data: string) {
+  componentDidMount() {
+    this.props.PortfolioStore.setStandardDeviationPeriod(this.state.selectPeriod);
+  }
+
+  componentWillUpdate(nextProps: object, nextState: object) {
+    if (nextState.selectPeriod !== this.state.selectPeriod) {
+      this.props.PortfolioStore.setStandardDeviationPeriod(nextState.selectPeriod);
+    }
+  }
+
+  handleSelectPeriod = (data: string) => {
     if (!data) {
       return;
     }
     this.setState({
-      // eslint-disable-next-line react/no-unused-state
-      selectPeriod: data,
+      selectPeriod: Number(data.split(' ')[0]),
     });
   }
 
-  handleSelectedCurrency(data: string) {
+  handleSelectedCurrency = (data: string) => {
     if (!data) {
       return;
     }
     this.setState({
-      // eslint-disable-next-line react/no-unused-state
       selectedCurrency: data,
     });
   }
 
-  handleSelectedBenchmark(data: string) {
+  handleSelectedBenchmark = (data: string) => {
     if (!data) {
       return;
     }
     this.setState({
-      // eslint-disable-next-line react/no-unused-state
       selectedBenchmark: data,
     });
   }
@@ -118,7 +132,7 @@ class Volatility extends React.Component<Props, State> {
         <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
           <Grid container spacing={24}>
             <Grid item xs={4}>
-              <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['30 days']} />
+              <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['30 days', '60 days']} />
             </Grid>
             <Grid item xs={4}>
               <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['BTC price', 'ETH price']} />

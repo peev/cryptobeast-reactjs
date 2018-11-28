@@ -36,6 +36,7 @@ class PortfolioStore {
   @observable currentPortfolioPrices;
   @observable newPortfolioName;
   @observable portfolioValueHistory;
+  @observable standardDeviationPeriod;
 
   constructor() {
     this.portfolios = [];
@@ -50,6 +51,7 @@ class PortfolioStore {
     this.currentPortfolioPrices = [];
     this.newPortfolioName = '';
     this.portfolioValueHistory = [];
+    this.standardDeviationPeriod = null;
 
     // only start data fetching if those properties are actually used!
     onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
@@ -101,14 +103,19 @@ class PortfolioStore {
 
   @computed
   get standardDeviation() {
-    console.log('wee');
-    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0 && this.standardDeviationPeriod) {
       const portfolioValueHistoryArr = this.portfolioValueHistory.length > 30 ?
-        this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - 30, 1)) : this.portfolioValueHistory;
-      const values = portfolioValueHistoryArr.map((el: object) => el.balance);
-      return math.std(values);
+        this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - this.standardDeviationPeriod, 1)) :
+        this.portfolioValueHistory;
+      this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.balance);
+      return math.std(this.standardDeviationData);
     }
-    return [];
+    return null;
+  }
+
+  @action.bound
+  setStandardDeviationPeriod(period: number) {
+    this.standardDeviationPeriod = period;
   }
 
   @action

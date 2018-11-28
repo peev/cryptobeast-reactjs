@@ -169,7 +169,7 @@ const allocationsController = (repository) => {
       return bigNumberService().difference(totalAssetObject.balance, transactionBalance);
     }
     addToEth(transaction.priceTotalETH);
-    return bigNumberService().difference(totalAssetObject.balance, transaction.priceTotalETH);
+    return bigNumberService().difference(transaction.priceTotalETH, totalAssetObject.balance);
   };
 
   const handleSameBalance = (totalAssetObject) => {
@@ -280,25 +280,21 @@ const allocationsController = (repository) => {
     transactionsAndTradesSorted.map((transaction, index) => {
       const currentAssetBalanceArrayNoEth = currentAssetBalanceArray.filter(item => item.tokenName !== 'ETH');
       const currentAssetBalanceArrayOnlyEth = currentAssetBalanceArray.filter(item => item.tokenName === 'ETH');
-      let assetBalanceArray = [];
-      if (index === transactionsAndTradesSorted.length - 1) {
-        assetBalanceArray = currentAssetBalanceArray;
-      } else {
-        currentAssetBalanceArrayNoEth.forEach((item) => {
-          assetBalanceArray.push({
-            tokenName: item.tokenName,
-            balance: calculateCurrentAssetTotalETHNew(transactionsAndTradesSorted[index], item),
-            amount: calculateCurrentAssetAmount(transactionsAndTradesSorted[index], item),
-          });
+      const assetBalanceArray = [];
+      currentAssetBalanceArrayNoEth.forEach((item) => {
+        assetBalanceArray.push({
+          tokenName: item.tokenName,
+          balance: calculateCurrentAssetTotalETHNew(transactionsAndTradesSorted[index], item),
+          amount: calculateCurrentAssetAmount(transactionsAndTradesSorted[index], item),
         });
-        currentAssetBalanceArrayOnlyEth.forEach((item) => {
-          assetBalanceArray.push({
-            tokenName: item.tokenName,
-            balance: calculateCurrentAssetTotalETHNew(transactionsAndTradesSorted[index], item),
-            amount: calculateCurrentAssetAmount(transactionsAndTradesSorted[index], item),
-          });
+      });
+      currentAssetBalanceArrayOnlyEth.forEach((item) => {
+        assetBalanceArray.push({
+          tokenName: item.tokenName,
+          balance: calculateCurrentAssetTotalETHNew(transactionsAndTradesSorted[index], item),
+          amount: calculateCurrentAssetAmount(transactionsAndTradesSorted[index], item),
         });
-      }
+      });
       valueToAddToEth = 0;
       currentAssetBalanceArray = assetBalanceArray;
       const allocation = createAllocationObject(portfolio.id, transaction, assetBalanceArray);

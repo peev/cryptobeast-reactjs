@@ -172,12 +172,18 @@ const allocationsController = (repository) => {
     return bigNumberService().difference(totalAssetObject.balance, transaction.priceTotalETH);
   };
 
-
   const handleSameBalance = (totalAssetObject) => {
     if (totalAssetObject.tokenName === 'ETH') {
       return bigNumberService().sum(totalAssetObject.balance, valueToAddToEth);
     }
     return totalAssetObject.balance;
+  };
+
+  const handleSameAmount = (totalAssetObject) => {
+    if (totalAssetObject.tokenName === 'ETH') {
+      return bigNumberService().sum(totalAssetObject.amount, valueToAddToEth);
+    }
+    return totalAssetObject.amount;
   };
 
   const calculateCurrentAssetTotalETH = (transaction, totalAssetObject) => {
@@ -218,7 +224,7 @@ const allocationsController = (repository) => {
         default: return 0;
       }
     } else {
-      return handleSameBalance(totalAssetObject);
+      return handleSameAmount(totalAssetObject);
     }
   };
 

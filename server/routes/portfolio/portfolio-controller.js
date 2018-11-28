@@ -39,6 +39,16 @@ const portfolioController = (repository) => {
   })
     .catch(err => console.log(err));
 
+  const getCurrencyByTokenName = async tokenName => repository.findOne({
+    modelName: 'Currency',
+    options: {
+      where: {
+        tokenName,
+      },
+    },
+  })
+    .catch(err => console.log(err));
+
   const createPortfolioObject = (address, id, investment) => {
     const portfolio = {
       userAddress: address,
@@ -199,15 +209,25 @@ const portfolioController = (repository) => {
     return dates;
   };
 
-  const sumBalance = (balance) => {
-    console.log(balance);
-    return balance.reduce((acc, item) => BigNumberService.sum(acc, item.balance), 0);
-  }
+  const sumBalance = async (req, res, balance, timestamp) => {
+    const values = balance.map(async (token) => {
+      try {
+        const tokenId = await WeidexService.getTokenValueByTimestampHttp(token.tokenName).tokenId;
+        return BigNumberService.product(token.amount, WeidexService.getTokenValueByTimestampHttp(tokenId, timestamp));
+      } catch (error) {
+        return res.status(400).send(error);
+      }
+    });
+    await Promise.all(values).then((data) => {
+      console.log(data);
+      return values.reduce((acc, item) => BigNumberService.sum(acc, item.balance), 0);
+    });
+  };
 
-  const getLastBalance = (start, end, allocations) => {
+  const getLastBalance = async (req, res, start, end, allocations) => {
     const filtered = allocations.filter(allocation =>
       new Date(allocation.timestamp.toString()).getTime() >= start && new Date(allocation.timestamp.toString()).getTime() <= end);
-    return (filtered[filtered.length - 1] !== undefined) ? sumBalance(filtered[filtered.length - 1].balance) : undefined;
+    return (filtered[filtered.length - 1] !== undefined) ? sumBalance(req, res, filtered[filtered.length - 1].balance, end) : undefined;
   };
 
   const getPortfolioValueHistory = async (req, res) => {
@@ -219,9 +239,9 @@ const portfolioController = (repository) => {
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
       const days = calculateDays(getEndOfDay(begin), getEndOfDay(yesterday));
       const result = [];
-      days.map((day, index) => {
+      days.map(async (day, index) => {
         const start = getStartOfDay(day);
-        const item = getLastBalance(start, day, allocations);
+        const item = await getLastBalance(req, res, start, day, allocations);
         return (item !== undefined) ? result.push({ timestamp: day, balance: item }) : result.push({ timestamp: day, balance: result[index - 1].balance });
       });
       res.status(200).send(result);

@@ -223,6 +223,7 @@ const allocationsController = (repository) => {
         currentAssetBalanceArray = fillCurrentAssetBalanceArray(currentAssetBalanceArray, assets);
         const resultArray = [];
 
+        // TODO add balances last allocation
         transactionsAndTradesSorted.map((transaction, index) => {
           const currentAssetBalanceArrayNoEth = currentAssetBalanceArray.filter(item => item.tokenName !== 'ETH');
           const currentAssetBalanceArrayOnlyEth = currentAssetBalanceArray.filter(item => item.tokenName === 'ETH');

@@ -17,6 +17,9 @@ const ProfitLossGlobalChart = (observer(({ chartData, days }: Props) => {
     title: {
       text: 'PORTFOLIO DAILY PROFIT AND LOSS',
     },
+    tooltip: {
+      valueSuffix: '%',
+    },
     xAxis: {
       categories: days,
       type: 'category',
@@ -38,6 +41,7 @@ const ProfitLossGlobalChart = (observer(({ chartData, days }: Props) => {
       enabled: false,
     },
     series: [{
+      name: 'In percent',
       data: chartData,
       color: Highcharts.getOptions().colors[2],
     }],

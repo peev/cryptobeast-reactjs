@@ -186,14 +186,28 @@ const allocationsController = (repository) => {
     }
   };
 
-  const fillCurrentAssetBalanceArray = (currentAssetBalanceArray, assets) => {
-    assets.forEach((asset) => {
-      currentAssetBalanceArray.push({
-        tokenName: asset.tokenName,
-        balance: 0,
-        amount: 0,
+  const fillCurrentAssetBalanceArray = (currentAssetBalanceArray, assets, lastAllocation) => {
+    if (lastAllocation !== null && lastAllocation !== undefined) {
+      assets.forEach((asset) => {
+        lastAllocation.balance.forEach((balanceItem) => {
+          if (asset.tokenName === balanceItem.tokenName) {
+            currentAssetBalanceArray.push({
+              tokenName: balanceItem.tokenName,
+              balance: balanceItem.balance,
+              amount: balanceItem.amount,
+            });
+          }
+        });
       });
-    });
+    } else {
+      assets.forEach((asset) => {
+        currentAssetBalanceArray.push({
+          tokenName: asset.tokenName,
+          balance: 0,
+          amount: 0,
+        });
+      });
+    }
     return currentAssetBalanceArray;
   };
 
@@ -220,10 +234,9 @@ const allocationsController = (repository) => {
         const transactionsAndTrades = await trades.concat(transactions);
         const transactionsAndTradesSorted = await sortByTimestamp(transactionsAndTrades);
         let currentAssetBalanceArray = [];
-        currentAssetBalanceArray = fillCurrentAssetBalanceArray(currentAssetBalanceArray, assets);
+        currentAssetBalanceArray = fillCurrentAssetBalanceArray(currentAssetBalanceArray, assets, lastAllocation);
         const resultArray = [];
 
-        // TODO add balances last allocation
         transactionsAndTradesSorted.map((transaction, index) => {
           const currentAssetBalanceArrayNoEth = currentAssetBalanceArray.filter(item => item.tokenName !== 'ETH');
           const currentAssetBalanceArrayOnlyEth = currentAssetBalanceArray.filter(item => item.tokenName === 'ETH');

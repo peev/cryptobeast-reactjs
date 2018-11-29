@@ -310,27 +310,28 @@ const portfolioController = (repository) => {
       const tokenPricesByDate = await getTokensPriceByDate(days);
       const balances = await getBalancesByDate(days, allocations);
       const filledPreviousBalances = fillPreviousBalances(balances);
+      const finalArr = [];
       const result = days.map((timestamp, index) => {
-        const finalArr = [];
         const balance = filledPreviousBalances[index].balance;
         const amount = tokenPricesByDate[index];
+        let val = 0;
         balance.map((token) => {
-          const valueArr = [];
           amount.map((item) => {
             if (token.tokenName === item.tokenName) {
               const value = BigNumberService.product(token.amount, item.value);
-              valueArr.push(value);
+              val = BigNumberService.sum(val, value);
             }
           });
-          const final = { timestamp, value: valueArr.reduce((acc, qq) => BigNumberService.sum(acc, qq), 0) };
-          finalArr.push(final);
         });
+        const final = { timestamp, value: val };
+        finalArr.push(final);
         return finalArr;
       });
       console.log('------------------------------------');
       console.log(tokenPricesByDate);
       console.log(filledPreviousBalances);
       console.log(result);
+      console.log(finalArr);
       console.log('------------------------------------');
       await Promise.all(days).then((data) => {
         console.log('------------------------------------');

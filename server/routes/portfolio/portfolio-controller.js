@@ -240,22 +240,6 @@ const portfolioController = (repository) => {
       .catch(err => console.log(err));
   };
 
-  // const sumBalance = async (req, res, balance, timestamp, currencies) => {
-  //   const values = balance.map(async (token) => {
-  //     // eslint-disable-next-line no-shadow
-  //     const currency = currencies.filter(currency => currency.tokenName === token.tokenName);
-  //     const tid = currency.tokenId;
-  //     const tokenValue = await WeidexService.getTokenValueByTimestampHttp(tid, timestamp);
-  //     console.log('------------------------------------');
-  //     console.log(tokenValue);
-  //     console.log('------------------------------------');
-  //     return (token.tokenName === 'ETH') ? token.balance : BigNumberService.product(token.amount, tokenValue);
-  //   });
-  //   await Promise.all(values).then((data) => {
-  //     return data.reduce((acc, item) => BigNumberService.sum(acc, item.balance), 0);
-  //   });
-  // };
-
   /**
    * Get balance of last allocation for a day period
    * @param {*} start
@@ -268,8 +252,6 @@ const portfolioController = (repository) => {
       new Date(allocation.timestamp.toString()).getTime() <= end);
     return (lastBalanceForDay.length > 0) ? lastBalanceForDay[lastBalanceForDay.length - 1].balance : undefined;
   };
-
-  const sumBalance = balance => balance.reduce((acc, item) => BigNumberService.sum(acc, item.balance), 0);
 
   const getBalancesByDate = async (timestamps, allocations) => {
     const result = timestamps.map(async (timestamp) => {
@@ -299,6 +281,34 @@ const portfolioController = (repository) => {
     return result;
   };
 
+  /**
+   * Gets timestamps, token prices and token balance for each day,
+   * multiply balance by price and sums.
+   * @param {*} timestamps
+   * @param {*} tokenPrices
+   * @param {*} balances
+   */
+  const calculatePortfolioValueHistory = (timestamps, tokenPrices, balances) => {
+    const result = [];
+    timestamps.map((timestamp, index) => {
+      const balancesArr = balances[index].balance;
+      const tokenPricesArr = tokenPrices[index];
+      let totalValue = 0;
+      balancesArr.map(balance =>
+        tokenPricesArr.map((token) => {
+          if (balance.tokenName === token.tokenName) {
+            const currentValue = BigNumberService.product(balance.amount, token.value);
+            totalValue = BigNumberService.sum(totalValue, currentValue);
+            return totalValue;
+          }
+          return null;
+        }));
+      const final = { timestamp, value: totalValue };
+      return result.push(final);
+    });
+    return result;
+  };
+
   const getPortfolioValueHistory = async (req, res) => {
     const { id } = req.params;
     try {
@@ -306,39 +316,12 @@ const portfolioController = (repository) => {
       const today = new Date().getTime();
       const yesterday = today - (24 * 60 * 60 * 1000);
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
-      const days = calculateDays(getEndOfDay(begin), getEndOfDay(yesterday));
-      const tokenPricesByDate = await getTokensPriceByDate(days);
-      const balances = await getBalancesByDate(days, allocations);
+      const timestamps = calculateDays(getEndOfDay(begin), getEndOfDay(yesterday));
+      const tokenPricesByDate = await getTokensPriceByDate(timestamps);
+      const balances = await getBalancesByDate(timestamps, allocations);
       const filledPreviousBalances = fillPreviousBalances(balances);
-      const finalArr = [];
-      const result = days.map((timestamp, index) => {
-        const balance = filledPreviousBalances[index].balance;
-        const amount = tokenPricesByDate[index];
-        let val = 0;
-        balance.map((token) => {
-          amount.map((item) => {
-            if (token.tokenName === item.tokenName) {
-              const value = BigNumberService.product(token.amount, item.value);
-              val = BigNumberService.sum(val, value);
-            }
-          });
-        });
-        const final = { timestamp, value: val };
-        finalArr.push(final);
-        return finalArr;
-      });
-      console.log('------------------------------------');
-      console.log(tokenPricesByDate);
-      console.log(filledPreviousBalances);
-      console.log(result);
-      console.log(finalArr);
-      console.log('------------------------------------');
-      await Promise.all(days).then((data) => {
-        console.log('------------------------------------');
-        console.log(data);
-        console.log('------------------------------------');
-        return data.reduce((acc, item) => BigNumberService.sum(acc, item.balance), 0);
-      });
+      const portfolioValueHistory = calculatePortfolioValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances);
+      res.status(200).send(portfolioValueHistory);
     } catch (error) {
       console.log(error);
       res.status(400).send(error);

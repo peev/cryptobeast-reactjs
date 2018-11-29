@@ -17,7 +17,7 @@ class ProfitLossChart extends React.Component<Props, State> {
   componentDidUpdate() {
     const chart = this.refs.chart;
     if (chart !== undefined) {
-      chart.chart.xAxis[0].setExtremes(0, (this.props.chartData.length > 32) ? 30 : this.props.chartData.length);
+      chart.chart.xAxis[0].setExtremes(0, (this.props.chartData.length > 32) ? 30 : this.props.chartData.length - 1);
     }
   }
 

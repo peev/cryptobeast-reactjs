@@ -13,7 +13,8 @@ const attachTo = (app, repository, jobs) => {
     .put('/update/:id', validator.verifyUpdatePortfolio, controller.updatePortfolio)
     .put('/updatePortfolioTotalInvastments/:address', controller.updatePortfolioTotalInvestment)
     .delete('/delete/:id', controller.removePortfolio)
-    .get('/history/:id', controller.getPortfolioValueHistory);
+    .get('/history/:id', controller.getPortfolioValueHistory)
+    .get('/assets-history/:id', controller.getPortfolioAssetsValueHistory);
 
   app.use('/portfolio', router);
 };

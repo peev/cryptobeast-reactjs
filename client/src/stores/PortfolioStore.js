@@ -71,6 +71,32 @@ class PortfolioStore {
   }
 
   @computed
+  get totalAssetsValue() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return this.portfolioValueHistory
+        .map((item: object) =>
+          ([
+            Number(new Date(item.timestamp).getTime()),
+            Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(item.value), 4)),
+          ]));
+    }
+    return [];
+  }
+
+  @computed
+  get totalAssetsValueUSD() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return this.portfolioValueHistory
+        .map((item: object) =>
+          ([
+            Number(new Date(item.timestamp).getTime()),
+            Number(BigNumberService.toFixedParam(BigNumberService.product(BigNumberService.gweiToEth(item.value), 115), 2)),
+          ]));
+    }
+    return [];
+  }
+
+  @computed
   get portfolioValueHistoryBreakdownDates() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
       return this.portfolioValueHistory

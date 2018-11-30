@@ -62,11 +62,11 @@ class Performance extends React.Component<Props, State> {
 
     return (
       <Grid container>
-        <Grid container className={classes.header}>
+        {/* <Grid container className={classes.header}>
           <Grid item xs={2} sm={2} md={2} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
             <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['1d', '1w', '1m']} />
           </Grid>
-        </Grid>
+        </Grid> */}
 
         <Grid container>
           <Grid item xs={8} sm={8} md={8} className={classes.marginRight}>

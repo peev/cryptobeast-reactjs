@@ -132,7 +132,7 @@ class Volatility extends React.Component<Props, State> {
         <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
           <Grid container spacing={24}>
             <Grid item xs={4}>
-              <MotionSelect defaultValueIndex={0} title="Select period" selectedValue={this.handleSelectPeriod} values={['30 days', '60 days']} />
+              <MotionSelect defaultValueIndex={0} title="Select period" selectedValue={this.handleSelectPeriod} values={['30 days']} />
             </Grid>
             <Grid item xs={4}>
               <MotionSelect defaultValueIndex={0} title="Select benchmark" selectedValue={this.handleSelectedBenchmark} values={['BTC price', 'ETH price']} />
@@ -164,7 +164,7 @@ class Volatility extends React.Component<Props, State> {
             <h5 className={classes.noMargin}>PORTFOLIO VOLATILITY AND RISK</h5>
 
             <Grid container>
-              <Grid item xs={3}><p>STANDARD DEVIATION: <b>{PortfolioStore.standardDeviation}%</b></p></Grid>
+              <Grid item xs={3}><p>STANDARD DEVIATION: <b>{PortfolioStore.standardDeviation}</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO ALPHA: <b>2.14%</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO BETA: <b>0.65%</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO VARIANCE: <b>0.65</b></p></Grid>

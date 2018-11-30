@@ -112,7 +112,9 @@ class PortfolioStore {
         this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - this.standardDeviationPeriod, 1)) :
         this.portfolioValueHistory;
       this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.value);
-      return math.std(this.standardDeviationData);
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .gweiToEth(math.std(this.standardDeviationData)), 2));
     }
     return null;
   }

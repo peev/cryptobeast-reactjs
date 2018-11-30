@@ -9,7 +9,6 @@ const attachTo = (app, data) => {
     .post('/create', validator.verifyCreateAsset, controller.createAsset)
     .get('/:id', controller.getAsset)
     .put('/update/:id', validator.verifyUpdateAsset, controller.updateAsset)
-    .put('/updateAssetWeight/:id', controller.updateAssetWeight)
     .delete('/delete/:id', controller.removeAsset)
     .get('/history/:tokenId/:period', controller.getAssetPriceHistory);
 

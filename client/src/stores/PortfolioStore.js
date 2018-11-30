@@ -8,6 +8,7 @@ import {
   computed,
   onBecomeObserved,
 } from 'mobx';
+import math from 'mathjs';
 import requester from '../services/requester';
 import FiatCurrenciesStore from './FiatCurrenciesStore';
 import MarketStore from './MarketStore';
@@ -35,6 +36,7 @@ class PortfolioStore {
   @observable currentPortfolioPrices;
   @observable newPortfolioName;
   @observable portfolioValueHistory;
+  @observable standardDeviationPeriod;
 
   constructor() {
     this.portfolios = [];
@@ -49,6 +51,7 @@ class PortfolioStore {
     this.currentPortfolioPrices = [];
     this.newPortfolioName = '';
     this.portfolioValueHistory = [];
+    this.standardDeviationPeriod = null;
 
     // only start data fetching if those properties are actually used!
     onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
@@ -73,7 +76,7 @@ class PortfolioStore {
       return this.portfolioValueHistory
         .map((el: object) => {
           const date = new Date(el.timestamp);
-          let month = date.getUTCMonth();
+          let month = date.getUTCMonth() + 1;
           if (month.length === 1) {
             month = `0${month}`;
           }
@@ -87,15 +90,36 @@ class PortfolioStore {
   get portfolioValueHistoryBreakdownPercents() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
       return this.portfolioValueHistory
-        .map((el: object, i: number) =>
-          ((this.portfolioValueHistory[i - 1] !== undefined) ?
-            Number(BigNumberService
+        .map((el: object, i: number) => {
+          if (i !== 0) {
+            return Number(BigNumberService
               .toFixedParam(BigNumberService
                 .product(BigNumberService
                   .quotient(BigNumberService
-                    .difference(this.portfolioValueHistory[i].balance, this.portfolioValueHistory[i - 1].balance), this.portfolioValueHistory[i - 1].balance), 100), 2)) : 100));
+                    .difference(this.portfolioValueHistory[i].value, this.portfolioValueHistory[i - 1].value), this.portfolioValueHistory[i - 1].value), 100), 2));
+          } else {
+            return 100;
+          }
+        });
     }
     return [];
+  }
+
+  @computed
+  get standardDeviation() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0 && this.standardDeviationPeriod) {
+      const portfolioValueHistoryArr = this.portfolioValueHistory.length > 30 ?
+        this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - this.standardDeviationPeriod, 1)) :
+        this.portfolioValueHistory;
+      this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.value);
+      return math.std(this.standardDeviationData);
+    }
+    return null;
+  }
+
+  @action.bound
+  setStandardDeviationPeriod(period: number) {
+    this.standardDeviationPeriod = period;
   }
 
   @action
@@ -348,7 +372,7 @@ class PortfolioStore {
   get summaryAssetsBreakdown() {
     return this.currentPortfolioAssets.map((el: object) => ({
       y: Number(BigNumberService.toFixedParam(el.weight, 2)),
-      name: `${el.tokenName} ${Number(BigNumberService.toFixedParam(el.weight, 2))}`,
+      name: `${el.tokenName} ${Number(BigNumberService.toFixedParam(el.weight, 2))}%`,
     }));
   }
 

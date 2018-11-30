@@ -2,15 +2,8 @@
 import React from 'react';
 import { withStyles, Grid, Paper, Typography } from '@material-ui/core';
 import Highcharts from 'highcharts';
-import {
-  withHighcharts,
-  HighchartsChart,
-  Legend,
-  PieSeries,
-  Tooltip,
-} from 'react-jsx-highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import { inject, observer } from 'mobx-react';
-
 
 const styles = () => ({
   text: {
@@ -37,9 +30,6 @@ const styles = () => ({
   paper: {
     marginLeft: '20px',
   },
-  legend: {
-    transfrom: 'translateX(600)',
-  },
 });
 
 type Props = {
@@ -54,6 +44,47 @@ class AssetBreakdown extends React.Component<Props> {
 
   render() {
     const { classes, PortfolioStore } = this.props;
+    const options = {
+      chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie',
+        height: 320,
+      },
+      title: {
+        text: null,
+      },
+      tooltip: {
+        valueSuffix: '%',
+      },
+      plotOptions: {
+        pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+          size: 230,
+          center: [205, 115],
+          dataLabels: {
+            enabled: true,
+          },
+          showInLegend: true,
+        },
+      },
+      credits: {
+        enabled: false,
+      },
+      legend: {
+        align: 'right',
+        verticalAlign: 'middle',
+        layout: 'vertical',
+      },
+      series: [{
+        name: 'Asset Breakdown:',
+        colorByPoint: true,
+        data: PortfolioStore.summaryAssetsBreakdown,
+      }],
+    };
+
 
     return (
       <Paper className={classes.paper}>
@@ -69,23 +100,12 @@ class AssetBreakdown extends React.Component<Props> {
           </Grid>
 
           <Grid item xs={12} sm={12} md={12} id="main">
-            <HighchartsChart className={classes.container}>
-              <Legend layout="vertical" align="right" verticalAlign="middle" className={classes.legend} />
-
-              <Tooltip />
-
-              <PieSeries
-                type="Pie"
-                id="total-consumption"
-                name="Asset Breakdown"
-                data={PortfolioStore.summaryAssetsBreakdown}
-                center={[205, 115]}
-                size={230}
-                tooltip={{ valueSuffix: '%' }}
-                showInLegend
-                dataLabels={{ enabled: true }}
-              />
-            </HighchartsChart>
+          <div className={classes.container}>
+            <HighchartsReact
+              highcharts={Highcharts}
+              options={options}
+            />
+          </div>
           </Grid>
         </Grid>
       </Paper>
@@ -93,4 +113,4 @@ class AssetBreakdown extends React.Component<Props> {
   }
 }
 
-export default withStyles(styles)(withHighcharts(AssetBreakdown, Highcharts));
+export default withStyles(styles)(AssetBreakdown);

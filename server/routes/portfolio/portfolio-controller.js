@@ -39,6 +39,21 @@ const portfolioController = (repository) => {
   })
     .catch(err => console.log(err));
 
+  const getCurrencyByTokenName = async tokenName => repository.findOne({
+    modelName: 'Currency',
+    options: {
+      where: {
+        tokenName,
+      },
+    },
+  })
+    .catch(err => console.log(err));
+
+  const getCurrencies = async () => repository.find({
+    modelName: 'Currency',
+  })
+    .catch(err => console.log(err));
+
   const createPortfolioObject = (address, id, investment) => {
     const portfolio = {
       userAddress: address,
@@ -199,15 +214,99 @@ const portfolioController = (repository) => {
     return dates;
   };
 
-  const sumBalance = (balance) => {
-    console.log(balance);
-    return balance.reduce((acc, item) => BigNumberService.sum(acc, item.balance), 0);
-  }
+  const getTokenPriceByDate = async (timestamp) => {
+    const currencies = await getCurrencies();
+    const result = currencies.map(async (currency) => {
+      const tokenValue = (currency.tokenName === 'ETH') ? 1 :
+        await WeidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp);
+      return {
+        timestamp,
+        tokenName: currency.tokenName,
+        value: tokenValue,
+      };
+    });
+    return Promise.all(result)
+      .then(data => data)
+      .catch(err => console.log(err));
+  };
 
-  const getLastBalance = (start, end, allocations) => {
-    const filtered = allocations.filter(allocation =>
-      new Date(allocation.timestamp.toString()).getTime() >= start && new Date(allocation.timestamp.toString()).getTime() <= end);
-    return (filtered[filtered.length - 1] !== undefined) ? sumBalance(filtered[filtered.length - 1].balance) : undefined;
+  const getTokensPriceByDate = async (timestamps) => {
+    const result = timestamps.map(async (timestamp) => {
+      const tokenPrice = await getTokenPriceByDate(timestamp);
+      return tokenPrice;
+    });
+    return Promise.all(result)
+      .then(data => data)
+      .catch(err => console.log(err));
+  };
+
+  /**
+   * Get balance of last allocation for a day period
+   * @param {*} start
+   * @param {*} end
+   * @param {*} allocations
+   */
+  const getLastBalanceForDay = async (start, end, allocations) => {
+    const lastBalanceForDay = allocations.filter(allocation =>
+      new Date(allocation.timestamp.toString()).getTime() >= start &&
+      new Date(allocation.timestamp.toString()).getTime() <= end);
+    return (lastBalanceForDay.length > 0) ? lastBalanceForDay[lastBalanceForDay.length - 1].balance : undefined;
+  };
+
+  const getBalancesByDate = async (timestamps, allocations) => {
+    const result = timestamps.map(async (timestamp) => {
+      const startTimestamp = getStartOfDay(timestamp);
+      const item = await getLastBalanceForDay(startTimestamp, timestamp, allocations);
+      return { timestamp, balance: item };
+    });
+    return Promise.all(result)
+      .then(data => data)
+      .catch(err => console.log(err));
+  };
+
+  /**
+   * Fill array balances with previous date balance values if
+   * there is no transactions for that day period
+   * @param {*} balances
+   */
+  const fillPreviousBalances = (balances) => {
+    const result = [];
+    balances.map((item, index) => {
+      if (item.balance === undefined) {
+        const previousItem = result[index - 1];
+        return result.push({ timestamp: item.timestamp, balance: previousItem.balance });
+      }
+      return result.push(item);
+    });
+    return result;
+  };
+
+  /**
+   * Gets timestamps, token prices and token balance for each day,
+   * multiply balance by price and sums.
+   * @param {*} timestamps
+   * @param {*} tokenPrices
+   * @param {*} balances
+   */
+  const calculatePortfolioValueHistory = (timestamps, tokenPrices, balances) => {
+    const result = [];
+    timestamps.map((timestamp, index) => {
+      const balancesArr = balances[index].balance;
+      const tokenPricesArr = tokenPrices[index];
+      let totalValue = 0;
+      balancesArr.map(balance =>
+        tokenPricesArr.map((token) => {
+          if (balance.tokenName === token.tokenName) {
+            const currentValue = BigNumberService.product(balance.amount, token.value);
+            totalValue = BigNumberService.sum(totalValue, currentValue);
+            return totalValue;
+          }
+          return null;
+        }));
+      const final = { timestamp, value: totalValue };
+      return result.push(final);
+    });
+    return result;
   };
 
   const getPortfolioValueHistory = async (req, res) => {
@@ -217,14 +316,12 @@ const portfolioController = (repository) => {
       const today = new Date().getTime();
       const yesterday = today - (24 * 60 * 60 * 1000);
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
-      const days = calculateDays(getEndOfDay(begin), getEndOfDay(yesterday));
-      const result = [];
-      days.map((day, index) => {
-        const start = getStartOfDay(day);
-        const item = getLastBalance(start, day, allocations);
-        return (item !== undefined) ? result.push({ timestamp: day, balance: item }) : result.push({ timestamp: day, balance: result[index - 1].balance });
-      });
-      res.status(200).send(result);
+      const timestamps = calculateDays(getEndOfDay(begin), getEndOfDay(yesterday));
+      const tokenPricesByDate = await getTokensPriceByDate(timestamps);
+      const balances = await getBalancesByDate(timestamps, allocations);
+      const filledPreviousBalances = fillPreviousBalances(balances);
+      const portfolioValueHistory = calculatePortfolioValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances);
+      res.status(200).send(portfolioValueHistory);
     } catch (error) {
       console.log(error);
       res.status(400).send(error);

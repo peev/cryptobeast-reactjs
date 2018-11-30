@@ -1,8 +1,10 @@
+/* eslint-disable react/no-unused-state */
+// @flow
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { withStyles, Grid } from '@material-ui/core';
+import { inject, observer } from 'mobx-react';
 
-import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 import MotionSelect from '../../Selectors/MotionSelect';
 import VolatilityColumnChart from '../../HighCharts/VolatilityDevSkew';
 import VolatilityAndRisk from '../../HighCharts/VolatilityAndRisk';
@@ -10,8 +12,11 @@ import VolatilityTable from '../../CustomTables/VolatilityTable';
 import VolatilitySpider from '../../HighCharts/VolatilitySpider';
 
 const styles = () => ({
+  root: {
+    flexGrow: 1,
+  },
   overflowNone: {
-    'overflow-x': 'hidden'
+    'overflow-x': 'hidden',
   },
   marginTop: {
     marginTop: '40px',
@@ -21,7 +26,7 @@ const styles = () => ({
   },
   topItem: {
     height: 'auto',
-    paddingBottom: '20px'
+    paddingBottom: '20px',
   },
   leftTopItem: {
     'padding-right': '50px',
@@ -31,13 +36,13 @@ const styles = () => ({
   },
   maxWidth: {
     width: '100%',
-    'overflow-x': 'hidden'
+    'overflow-x': 'hidden',
   },
   smallTopPadding: {
-    marginTop: '20px'
+    marginTop: '20px',
   },
   bigTopPadding: {
-    marginTop: '40px'
+    marginTop: '40px',
   },
   header: {
     color: '#ca3f58',
@@ -49,53 +54,96 @@ const styles = () => ({
     'text-align': 'center',
   },
   flexCenter: {
-    'justify-content': 'center'
+    'justify-content': 'center',
   },
   flexBottom: {
-    'justify-content': 'flex-end'
+    'justify-content': 'flex-end',
   },
   padding: {
-    padding: '20px'
+    padding: '20px',
   },
   noMargin: {
-    marginTop: 0
-  }
+    marginTop: 0,
+  },
 });
 
 type Props = {
   classes: Object,
+  PortfolioStore: Object,
 };
 
-class Volatility extends React.Component<Props, State> {
+type State = {
+  selectPeriod: number,
+  selectedBenchmark: string,
+  selectedCurrency: string,
+};
 
-  constructor(props) {
+@inject('PortfolioStore')
+@observer
+class Volatility extends React.Component<Props, State> {
+  constructor(props: Object) {
     super(props);
-    this.handleSelectPeriod = this.handleSelectPeriod.bind(this);
+    this.state = {
+      selectPeriod: 30,
+    };
   }
 
-  handleSelectPeriod(data) {
+  componentDidMount() {
+    this.props.PortfolioStore.setStandardDeviationPeriod(this.state.selectPeriod);
+  }
+
+  componentWillUpdate(nextProps: object, nextState: object) {
+    if (nextState.selectPeriod !== this.state.selectPeriod) {
+      this.props.PortfolioStore.setStandardDeviationPeriod(nextState.selectPeriod);
+    }
+  }
+
+  handleSelectPeriod = (data: string) => {
     if (!data) {
       return;
     }
     this.setState({
-      selectPeriod: data
+      selectPeriod: Number(data.split(' ')[0]),
+    });
+  }
+
+  handleSelectedCurrency = (data: string) => {
+    if (!data) {
+      return;
+    }
+    this.setState({
+      selectedCurrency: data,
+    });
+  }
+
+  handleSelectedBenchmark = (data: string) => {
+    if (!data) {
+      return;
+    }
+    this.setState({
+      selectedBenchmark: data,
     });
   }
 
   render() {
-    const { classes } = this.props;
-
+    const { classes, PortfolioStore } = this.props;
     return (
-      <Grid container className={classes.overflowNone}>
-        <Grid container>
-          <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
-            <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['1d', '1w', '1m']} />
-          </Grid>
-
-          <Grid item xs={3} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
-            <SelectBenchmark />
+      <Grid container className={classes.root}>
+        <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
+          <Grid container spacing={24}>
+            <Grid item xs={4}>
+              <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['30 days', '60 days']} />
+            </Grid>
+            <Grid item xs={4}>
+              <MotionSelect defaultValueIndex={0} selectedValue={this.handleSelectPeriod} values={['BTC price', 'ETH price']} />
+              {/* <SelectBenchmark /> */}
+            </Grid>
+            <Grid item xs={4}>
+              <MotionSelect defaultValueIndex={0} className={classes.padding} selectedValue={this.handleSelectedCurrency} values={['ETH', 'USD']} />
+            </Grid>
           </Grid>
         </Grid>
+        <Grid item xs={5} className={[classes.topItem, classes.topHeight].join(' ')} />
 
         <Grid container className={classes.smallTopPadding}>
           <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
@@ -116,7 +164,7 @@ class Volatility extends React.Component<Props, State> {
             <h5 className={classes.noMargin}>PORTFOLIO VOLATILITY AND RISK</h5>
 
             <Grid container>
-              <Grid item xs={3}><p>STANDARD DEVIATION: <b>2.63</b></p></Grid>
+              <Grid item xs={3}><p>STANDARD DEVIATION: <b>{PortfolioStore.standardDeviation}%</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO ALPHA: <b>2.14%</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO BETA: <b>0.65%</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO VARIANCE: <b>0.65</b></p></Grid>
@@ -131,7 +179,7 @@ class Volatility extends React.Component<Props, State> {
             <VolatilityColumnChart />
           </Paper>
         </Grid>
-      </Grid>
+      </Grid >
     );
   }
 };

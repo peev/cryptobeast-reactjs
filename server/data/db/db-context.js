@@ -23,41 +23,13 @@ const init = databaseConfig => new Promise((resolve) => {
       const db = {};
 
       // TODO: Add new models here
-      db.Portfolio = sequelize.import(path.join(__dirname, '/models/portfolio.js'));
-      // db.Account = sequelize.import(path.join(__dirname, '/models/account.js'));
       db.Allocation = sequelize.import(path.join(__dirname, '/models/allocation.js'));
       db.Asset = sequelize.import(path.join(__dirname, '/models/asset.js'));
       db.Investor = sequelize.import(path.join(__dirname, '/models/investor.js'));
-      db.MarketSummary = sequelize.import(path.join(__dirname, '/models/marketSummary.js'));
-      db.MarketSummaryHistory = sequelize.import(path.join(__dirname, '/models/marketSummaryHistory.js'));
-      db.MarketPriceHistory = sequelize.import(path.join(__dirname, '/models/marketPriceHistory.js'));
-      db.Ticker = sequelize.import(path.join(__dirname, '/models/ticker.js'));
-      db.TickerHistory = sequelize.import(path.join(__dirname, '/models/tickerHistory.js'));
-      db.Currency = sequelize.import(path.join(__dirname, '/models/currency.js'));
-      db.Transaction = sequelize.import(path.join(__dirname, '/models/transaction.js'));
-      db.Trade = sequelize.import(path.join(__dirname, '/models/trade.js'));
-      db.ApiTradeHistory = sequelize.import(path.join(__dirname, '/models/apiTradeHistory.js'));
-      db.SharePrice = sequelize.import(path.join(__dirname, '/models/sharePrice.js'));
-      db.PortfolioPrice = sequelize.import(path.join(__dirname, '/models/portfolioPrice.js'));
-
-      db.Portfolio = sequelize.import(path.join(__dirname, '/models/portfolio.js'));
-      db.Asset = sequelize.import(path.join(__dirname, '/models/asset.js'));
-      db.Transaction = sequelize.import(path.join(__dirname, '/models/transaction.js'));
       db.TradeHistory = sequelize.import(path.join(__dirname, '/models/tradeHistory.js'));
       db.Currency = sequelize.import(path.join(__dirname, '/models/currency.js'));
-      db.FiatFx = sequelize.import(path.join(__dirname, '/models/fiatFx.js'));
-      // db.User = sequelize.import(path.join(__dirname, '/models/user.js'));
-      // db.Setting = sequelize.import(path.join(__dirname, '/models/setting.js'));
-      // TODO: Configure model connections here (one-to-one/one-to-many etc.)
-
-      // db.User.hasMany(db.Portfolio);
-      // db.Portfolio.belongsTo(db.User);
-
-      // db.User.hasMany(db.Setting);
-      // db.Setting.belongsTo(db.User);
-
-      // db.Portfolio.hasMany(db.Account);
-      // db.Account.belongsTo(db.Portfolio);
+      db.Transaction = sequelize.import(path.join(__dirname, '/models/transaction.js'));
+      db.Portfolio = sequelize.import(path.join(__dirname, '/models/portfolio.js'));
 
       db.Portfolio.hasMany(db.TradeHistory);
       db.TradeHistory.belongsTo(db.Portfolio);
@@ -68,28 +40,13 @@ const init = databaseConfig => new Promise((resolve) => {
       db.Portfolio.hasMany(db.Asset);
       db.Asset.belongsTo(db.Portfolio);
 
-      db.Portfolio.hasMany(db.Asset);
-      db.Asset.belongsTo(db.Portfolio);
-
       db.Portfolio.hasMany(db.Investor);
 
       db.Portfolio.hasMany(db.Transaction);
       db.Transaction.belongsTo(db.Portfolio);
 
-      db.Portfolio.hasMany(db.Trade);
-      db.Trade.belongsTo(db.Portfolio);
-
-      db.Portfolio.hasMany(db.ApiTradeHistory);
-      db.ApiTradeHistory.belongsTo(db.Portfolio);
-
       db.Investor.hasMany(db.Transaction);
       db.Transaction.belongsTo(db.Investor);
-
-      db.Portfolio.hasMany(db.SharePrice);
-      db.SharePrice.belongsTo(db.Portfolio);
-
-      db.Portfolio.hasMany(db.PortfolioPrice);
-      db.PortfolioPrice.belongsTo(db.Portfolio);
 
       db.Sequelize = Sequelize;
       db.sequelize = sequelize;

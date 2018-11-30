@@ -5,8 +5,7 @@ const attachTo = (app, repository, jobs) => {
   const controller = require('./allocations-controller')(repository, jobs);
 
   router
-    .get('/fetchInfo/:portfolioId', controller.getAllocations)
-    .post('/insert', controller.insertAllocation);
+    .get('/fetchInfo/:portfolioId', controller.getAllocations);
 
   app.use('/allocations', router);
 };

@@ -71,6 +71,32 @@ class PortfolioStore {
   }
 
   @computed
+  get totalAssetsValue() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return this.portfolioValueHistory
+        .map((item: object) =>
+          ([
+            Number(new Date(item.timestamp).getTime()),
+            Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(item.value), 4)),
+          ]));
+    }
+    return [];
+  }
+
+  @computed
+  get totalAssetsValueUSD() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return this.portfolioValueHistory
+        .map((item: object) =>
+          ([
+            Number(new Date(item.timestamp).getTime()),
+            Number(BigNumberService.toFixedParam(BigNumberService.product(BigNumberService.gweiToEth(item.value), 115), 2)),
+          ]));
+    }
+    return [];
+  }
+
+  @computed
   get portfolioValueHistoryBreakdownDates() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
       return this.portfolioValueHistory
@@ -112,7 +138,9 @@ class PortfolioStore {
         this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - this.standardDeviationPeriod, 1)) :
         this.portfolioValueHistory;
       this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.value);
-      return math.std(this.standardDeviationData);
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .gweiToEth(math.std(this.standardDeviationData)), 2));
     }
     return null;
   }

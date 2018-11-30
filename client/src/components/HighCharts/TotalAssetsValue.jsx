@@ -5,12 +5,12 @@ import ReactHighcharts from 'react-highcharts';
 import { inject, observer } from 'mobx-react';
 
 type Props = {
-  Allocations: Object,
+  PortfolioStore: Object,
   chartHeight: number,
 };
 
-const TotalAssetsValue = inject('Allocations')(observer(({ ...props }: Props) => {
-  const { Allocations, chartHeight } = props;
+const TotalAssetsValue = inject('PortfolioStore')(observer(({ ...props }: Props) => {
+  const { chartHeight, PortfolioStore } = props;
 
   const config = {
     chart: {
@@ -69,7 +69,7 @@ const TotalAssetsValue = inject('Allocations')(observer(({ ...props }: Props) =>
           [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')],
         ],
       },
-      data: Allocations.allocationsBreakdownETH,
+      data: PortfolioStore.totalAssetsValue,
     },
     {
       id: 'usd',
@@ -88,7 +88,7 @@ const TotalAssetsValue = inject('Allocations')(observer(({ ...props }: Props) =>
           [1, Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0).get('rgba')],
         ],
       },
-      data: Allocations.allocationsBreakdownUSD,
+      data: PortfolioStore.totalAssetsValueUSD,
     }],
   };
 

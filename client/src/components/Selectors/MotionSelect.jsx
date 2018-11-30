@@ -16,43 +16,47 @@ const styles = (theme: Object) => ({
 
 type Props = {
   classes: Object,
-  muiname: 'SelectPeriod',
+  // muiname: 'SelectPeriod',
   defaultValueIndex: number,
   selectedValue: string,
 };
 
 type State = {
-  open: boolean,
+  // open: boolean,
   value: ?string,
 };
 
 class MotionSelect extends React.Component<Props, State> {
   state = {
-    open: false,
+    // open: false,
     init: true,
     value: '1d',
   };
 
-  handleOpen = () => {
-    this.setState({ open: true });
-  };
+  // handleOpen = () => {
+  //   this.setState({ open: true });
+  // };
 
-  handleClose = (event) => {
-    if (!event.target.dataset.value) {
+  handleChange = (event: SyntheticEvent) => {
+    if (!event.target.value) {
       return;
     }
-    this.props.selectedValue(event.target.dataset.value);
+    this.props.selectedValue(event.target.value);
     this.setState({
       init: false,
-      open: false,
-      value: event.target.dataset.value,
+      // open: false,
+      value: event.target.value,
     });
-  };
+  }
+
+  // handleClose = (event) => {
+  //    this.setState({ open: false });
+  // };
 
   render() {
     // eslint-disable-next-line react/prop-types
     const { classes, values, title, defaultValueIndex } = this.props;
-    const { value, open, init } = this.state;
+    const { value, init } = this.state;
 
     let data = ['1d', '1m', '1y'];
     let selectTitle = 'Select Period';
@@ -79,9 +83,10 @@ class MotionSelect extends React.Component<Props, State> {
 
           <Select
             value={defaultVal}
-            open={open}
-            onOpen={this.handleOpen}
-            onClose={this.handleClose}
+            // open={open}
+            onChange={this.handleChange}
+            // onOpen={this.handleOpen}
+            // onClose={this.handleClose}
             inputProps={{ name: 'SelectPeriod', id: 'SelectPeriod' }}
           >
           {data.map((val: string) => (

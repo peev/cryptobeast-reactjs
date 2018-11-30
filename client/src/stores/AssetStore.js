@@ -1,6 +1,6 @@
 // @flow
 /* eslint no-console: 0 */
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, onBecomeObserved } from 'mobx';
 import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
@@ -27,6 +27,7 @@ class AssetStore {
   @observable assetAllocationToAmount;
   @observable assetAllocationFee;
   @observable assetHistory;
+  @observable assetsValueHistory;
 
   constructor() {
     this.selectedExchangeBasicInput = '';
@@ -42,6 +43,44 @@ class AssetStore {
     this.assetAllocationToAmount = '';
     this.assetAllocationFee = '';
     this.assetHistory = [];
+    this.assetsValueHistory = [];
+
+    onBecomeObserved(this, 'assetsValueHistory', this.getAssetsValueHistory);
+  }
+
+  @action.bound
+  getAssetsValueHistory() {
+    requester.Portfolio.getPortfolioAssetsValueHistory(PortfolioStore.selectedPortfolioId)
+      .then(action((result: object) => {
+        this.assetsValueHistory = result.data;
+      }));
+  }
+
+  @computed
+  get protfolioAssetsTokenNames() {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+      return this.assetsValueHistory[this.assetsValueHistory.length - 1].asssets.map((asset: Object) => asset.tokenName);
+    }
+    return [];
+  }
+
+  @computed
+  get assetsDeviation() {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+      console.log('------------------------------------');
+      console.log(this.assetsValueHistory);
+      console.log('------------------------------------');
+      // const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].asssets.map((asset: Object) => asset.tokenName);
+      // const totals = this.assetsValueHistory.map((item: Object) =>
+      //   item.assets.map((asset: Object) =>
+      //     assets.map((assetName: string) =>
+      //       (asset.tokenName === assetName ? item.total : null))));
+      // console.log('------------------------------------');
+      // console.log(totals);
+      // console.log('------------------------------------');
+      return [];
+    }
+    return [];
   }
 
   @action

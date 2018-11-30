@@ -67,6 +67,7 @@ const Portfolio = {
   update: (requestParams, id) => requests.put(`/portfolio/update/${id}`, requestParams), // id + newName
   delete: id => requests.delete(`/portfolio/delete/${id}`),
   getPortfolioValueHistory: id => requests.get(`/portfolio/history/${id}`),
+  getPortfolioAssetsValueHistory: id => requests.get(`/portfolio/assets-history/${id}`),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 

@@ -67,52 +67,18 @@ class AssetStore {
   @computed
   get assetsDeviation() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
-      console.log('------------------------------------');
-      console.log(JSON.stringify(this.assetsValueHistory));
-      console.log('------------------------------------');
-      const arr = [];
-      let assetArr = [];
+      const result = [];
+      let assetTotals = [];
       const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName);
-      const totals = assets.map((assetName) => {
-        assetArr = [];
-        this.assetsValueHistory.map((item) => {
-          return item.assets.map((asset) => {
-            if (asset.tokenName === assetName) {
-              return assetArr.push(asset.total);
-            }
-          });
-        });
-        return arr.push(assetArr);
+      assets.map((assetName: string) => {
+        assetTotals = [];
+        this.assetsValueHistory.map((item: object) =>
+          item.assets.map((asset: object) =>
+            ((asset.tokenName === assetName) ? assetTotals.push(asset.total) : null)));
+        const reducedArr = assetTotals.reduce((accumulator: number, value: number) => BigNumberService.sum(accumulator, value));
+        return result.push(reducedArr);
       });
-      console.log('------------------------------------');
-      console.log(arr);
-      console.log('------------------------------------');
-
-      // const totals = this.assetsValueHistory.map((item) => {
-      //   return item.assets.map((asset) => {
-      //     return assets.map((assetName) => {
-      //       console.log('------------------------------------');
-      //       console.log(asset.tokenName);
-      //       console.log(assetName);
-      //       console.log('------------------------------------');
-      //       assetArr = [];
-      //       if (asset.tokenName === assetName) {
-      //         console.log(assetArr);
-      //         console.log(asset.total);
-      //         return arr.push(asset.total);
-      //       }
-      //     });
-      //     // return arr.push(assetArr);
-      //   });
-      // });
-      // // const totals = this.assetsValueHistory.map((item: Object) =>
-      // //   item.assets.map((asset: Object) =>
-      // //     assets.map((assetName: string) =>
-      // //       (asset.tokenName === assetName ? asset.total : null))));
-      // console.log('------------------------------------');
-      // console.log(arr);
-      // console.log('------------------------------------');
-      return arr;
+      return result;
     }
     return [];
   }

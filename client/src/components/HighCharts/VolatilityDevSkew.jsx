@@ -21,7 +21,7 @@ const VolatilityColumnChart = inject('AssetStore')(observer(({ ...props }: Props
     },
     series: [{
       name: 'STD.DEVIATION',
-      data: [5, 3, 4, 7, 2],
+      data: AssetStore.assetsDeviation,
     }, {
       name: 'SKEWNESS',
       data: [2, 2, 3, 2, 1],

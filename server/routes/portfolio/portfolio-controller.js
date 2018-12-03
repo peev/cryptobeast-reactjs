@@ -354,7 +354,7 @@ const portfolioController = (repository) => {
           }
           return null;
         }));
-      const final = { timestamp, asssets: assets };
+      const final = { timestamp, assets: assets };
       return result.push(final);
     });
     return result;

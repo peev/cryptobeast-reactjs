@@ -59,7 +59,7 @@ class AssetStore {
   @computed
   get protfolioAssetsTokenNames() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
-      return this.assetsValueHistory[this.assetsValueHistory.length - 1].asssets.map((asset: Object) => asset.tokenName);
+      return this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName);
     }
     return [];
   }
@@ -68,17 +68,51 @@ class AssetStore {
   get assetsDeviation() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
       console.log('------------------------------------');
-      console.log(this.assetsValueHistory);
+      console.log(JSON.stringify(this.assetsValueHistory));
       console.log('------------------------------------');
-      // const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].asssets.map((asset: Object) => asset.tokenName);
-      // const totals = this.assetsValueHistory.map((item: Object) =>
-      //   item.assets.map((asset: Object) =>
-      //     assets.map((assetName: string) =>
-      //       (asset.tokenName === assetName ? item.total : null))));
+      const arr = [];
+      let assetArr = [];
+      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName);
+      const totals = assets.map((assetName) => {
+        assetArr = [];
+        this.assetsValueHistory.map((item) => {
+          return item.assets.map((asset) => {
+            if (asset.tokenName === assetName) {
+              return assetArr.push(asset.total);
+            }
+          });
+        });
+        return arr.push(assetArr);
+      });
+      console.log('------------------------------------');
+      console.log(arr);
+      console.log('------------------------------------');
+
+      // const totals = this.assetsValueHistory.map((item) => {
+      //   return item.assets.map((asset) => {
+      //     return assets.map((assetName) => {
+      //       console.log('------------------------------------');
+      //       console.log(asset.tokenName);
+      //       console.log(assetName);
+      //       console.log('------------------------------------');
+      //       assetArr = [];
+      //       if (asset.tokenName === assetName) {
+      //         console.log(assetArr);
+      //         console.log(asset.total);
+      //         return arr.push(asset.total);
+      //       }
+      //     });
+      //     // return arr.push(assetArr);
+      //   });
+      // });
+      // // const totals = this.assetsValueHistory.map((item: Object) =>
+      // //   item.assets.map((asset: Object) =>
+      // //     assets.map((assetName: string) =>
+      // //       (asset.tokenName === assetName ? asset.total : null))));
       // console.log('------------------------------------');
-      // console.log(totals);
+      // console.log(arr);
       // console.log('------------------------------------');
-      return [];
+      return arr;
     }
     return [];
   }

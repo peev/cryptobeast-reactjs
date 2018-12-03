@@ -5,7 +5,8 @@ import { inject, observer } from 'mobx-react';
 
 const VolatilityColumnChart = inject('AssetStore')(observer(({ ...props }: Props) => {
   const { AssetStore } = props;
-  console.log(AssetStore.assetsDeviation);
+  console.log(AssetStore.assetsStdDeviations);
+  console.log(AssetStore.assetsSkewness);
   const config = {
     chart: {
       type: 'column',
@@ -21,10 +22,10 @@ const VolatilityColumnChart = inject('AssetStore')(observer(({ ...props }: Props
     },
     series: [{
       name: 'STD.DEVIATION',
-      data: AssetStore.assetsDeviation,
+      data: AssetStore.assetsStdDeviations,
     }, {
       name: 'SKEWNESS',
-      data: [2, 2, 3, 2, 1],
+      data: AssetStore.assetsSkewness,
     }, {
       name: 'KURTOSIS',
       data: [3, 4, 4, 2, 5],

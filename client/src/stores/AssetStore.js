@@ -1,6 +1,7 @@
 // @flow
 /* eslint no-console: 0 */
 import { observable, action, computed, onBecomeObserved } from 'mobx';
+import math from 'mathjs';
 import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
@@ -59,7 +60,7 @@ class AssetStore {
   @computed
   get protfolioAssetsTokenNames() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
-      return this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName);
+      return this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
     }
     return [];
   }
@@ -69,14 +70,15 @@ class AssetStore {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
       const result = [];
       let assetTotals = [];
-      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName);
+      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
       assets.map((assetName: string) => {
         assetTotals = [];
         this.assetsValueHistory.map((item: object) =>
           item.assets.map((asset: object) =>
             ((asset.tokenName === assetName) ? assetTotals.push(asset.total) : null)));
-        const reducedArr = assetTotals.reduce((accumulator: number, value: number) => BigNumberService.sum(accumulator, value));
-        return result.push(reducedArr);
+        return result.push(Number(BigNumberService
+          .toFixedParam(BigNumberService
+            .gweiToEth(math.std(assetTotals)), 4)));
       });
       return result;
     }

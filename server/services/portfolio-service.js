@@ -17,37 +17,7 @@ const portfolioService = (repository) => {
     return bigNumberService().product(amount, currency.lastPriceETH);
   };
 
-  const getPortfolioInvestmentSum = async (portfolio, type) => {
-    const transactionsArray = portfolio.transactions.map(async (transaction) => {
-      if (transaction.type === type) {
-        // Calculates investment in eth
-        // return calculateTokenValueETH(transaction.tokenName, transaction.amount);
-        return transaction.totalValueETH;
-      }
-      return 0;
-    });
-    return Promise.all(transactionsArray).then(transactions =>
-      transactions.reduce((acc, a) => ((acc !== undefined) ? bigNumberService().sum(acc, a) : 0)));
-  };
-
-  const getPortfolioInvestmentSumUSD = async (portfolio, type) => {
-    const transactionsArray = portfolio.transactions.map(async (transaction) => {
-      if (transaction.type === type) {
-        const etherScanTransaction = await etherScanServices().getTransactionByHash(transaction.txHash);
-        const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-        const ethValue = await weidexFiatMsService.getEtherValueByTimestamp(etherScanTrBlock.timestamp);
-        console.log('------------------------------------');
-        console.log(bigNumberService.product(transaction.totalValueETH, ethValue));
-        console.log('------------------------------------');
-        return bigNumberService.product(transaction.totalValueETH, ethValue);
-      }
-      return 0;
-    });
-    return Promise.all(transactionsArray).then(transactions =>
-      transactions.reduce((acc, a) => ((acc !== undefined) ? bigNumberService().sum(acc, a) : 0)));
-  };
-
-  const getPortfolioInvestmentSumExternal = async (address, fetchDeposits) => {
+  const getPortfolioInvestmentSum = async (address, fetchDeposits) => {
     let items = [];
     const user = await weidexService().getUserHttp(address);
     if (fetchDeposits) {
@@ -56,37 +26,29 @@ const portfolioService = (repository) => {
       items = await weidexService().getUserWithdrawHttp(user.id);
     }
     const transactionsArray = await items.map(async (transaction) => {
-      // Calculates investment in eth
-      // calculateTokenValueETH(transaction.tokenName, transaction.amount));
       const etherScanTransaction = await etherScanServices().getTransactionByHash(transaction.txHash);
-      return (etherScanTransaction !== null && etherScanTransaction !== undefined) ? etherScanTransaction.value : 0;
+      const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
+      const ethToUsd = await weidexFiatMsService().getEtherValueByTimestamp(etherScanTrBlock.timestamp).then(data => data.priceUSD);
+      return (etherScanTransaction !== null && etherScanTransaction !== undefined) ?
+        {
+          eth: transaction.amount,
+          usd: bigNumberService().product(bigNumberService().gweiToEth(transaction.amount), ethToUsd),
+        } : 0;
     });
-    return Promise.all(transactionsArray).then(transactions =>
-      transactions.reduce((acc, a) => (bigNumberService().sum(acc, a)), 0));
+    return Promise.all(transactionsArray).then((transactions) => {
+      const eth = transactions.reduce((acc, obj) => ((bigNumberService().sum(acc, obj.eth))), 0);
+      const usd = transactions.reduce((acc, obj) => ((bigNumberService().sum(acc, obj.usd))), 0);
+      return { eth, usd };
+    });
   };
 
-  const calcPortfolioTotalInvestmentETH = async (portfolio) => {
-    const depositAmount = await getPortfolioInvestmentSum(portfolio, 'd');
-    const withdrawAmount = await getPortfolioInvestmentSum(portfolio, 'w');
-    return bigNumberService().difference(depositAmount, withdrawAmount);
-  };
-
-  const calcPortfolioTotalInvestmentEthExternal = async (portfolioAddress) => {
-    const depositAmount = await getPortfolioInvestmentSumExternal(portfolioAddress, true);
-    const withdrawAmount = await getPortfolioInvestmentSumExternal(portfolioAddress, false);
-    return bigNumberService().difference(depositAmount, withdrawAmount);
-  };
-
-  const calcPortfolioTotalInvestmentUSD = async (portfolio) => {
-    const depositAmount = await getPortfolioInvestmentSumUSD(portfolio, 'd');
-    const withdrawAmount = await getPortfolioInvestmentSumUSD(portfolio, 'w');
-    return bigNumberService().difference(depositAmount, withdrawAmount);
-  };
-
-  const calcPortfolioTotalInvestmentUSDExternal = async (portfolio) => {
-    const depositAmount = await getPortfolioInvestmentSumUSD(portfolio, 'd');
-    const withdrawAmount = await getPortfolioInvestmentSumUSD(portfolio, 'w');
-    return bigNumberService().difference(depositAmount, withdrawAmount);
+  const calcPortfolioTotalInvestment = async (portfolioAddress) => {
+    const depositAmount = await getPortfolioInvestmentSum(portfolioAddress, true);
+    const withdrawAmount = await getPortfolioInvestmentSum(portfolioAddress, false);
+    return Promise.resolve({
+      eth: bigNumberService().difference(depositAmount.eth, withdrawAmount.eth),
+      usd: bigNumberService().difference(depositAmount.usd, withdrawAmount.usd),
+    });
   };
 
   const calcPortfolioTotalValueETH = async (portfolio) => {
@@ -100,10 +62,7 @@ const portfolioService = (repository) => {
 
   return {
     calculateTokenValueETH,
-    calcPortfolioTotalInvestmentETH,
-    calcPortfolioTotalInvestmentEthExternal,
-    calcPortfolioTotalInvestmentUSD,
-    calcPortfolioTotalInvestmentUSDExternal,
+    calcPortfolioTotalInvestment,
     calcPortfolioTotalValueETH,
   };
 };

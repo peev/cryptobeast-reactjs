@@ -1,5 +1,3 @@
-const { responseHandler } = require('../utilities/response-handler');
-
 const modelName = 'Portfolio';
 
 const portfolioController = (repository) => {
@@ -13,17 +11,6 @@ const portfolioController = (repository) => {
       where: {
         userAddress: address,
       },
-    },
-  })
-    .catch(err => console.log(err));
-
-  const getPortfolioWholeObject = async address => repository.findOne({
-    modelName,
-    options: {
-      where: {
-        userAddress: address,
-      },
-      include: [{ all: true }],
     },
   })
     .catch(err => console.log(err));
@@ -72,16 +59,11 @@ const portfolioController = (repository) => {
 
     try {
       const porfolioFound = await getPortfolioObject(user.address);
+      const totalInvestment = await portfolioService.calcPortfolioTotalInvestment(user.address).then(data => data);
+      const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment.eth, totalInvestment.usd);
       if (porfolioFound === null || porfolioFound === undefined) {
-        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentEthExternal(user.address).then(data => data);
-        const totalInvestmentUSD = await portfolioService.calcPortfolioTotalInvestmentUSD(user.address).then(data => data);
-        const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment, totalInvestmentUSD);
         await createAction(req, res, newPortfolioObject, true);
       } else {
-        const portfolio = await getPortfolioWholeObject(user.address);
-        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(portfolio);
-        const totalInvestmentUSD = await portfolioService.calcPortfolioTotalInvestmentUSD(user.address).then(data => data);
-        const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment, totalInvestmentUSD);
         await updateAction(req, res, Number(porfolioFound.id), newPortfolioObject, true);
       }
     } catch (error) {

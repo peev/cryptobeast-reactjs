@@ -7,7 +7,7 @@ const WeidexFiatMsService = () => {
     requester.get(`${weidexFiatMsUrl}/fiat/currenciesByTimestamp?timestamp=${timestamp}`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
-        resolve(parsedResult.result);
+        resolve(parsedResult);
       })
       .catch(err => reject(err));
   });
@@ -16,7 +16,7 @@ const WeidexFiatMsService = () => {
     requester.get(`${weidexFiatMsUrl}/ether/etherPriceByTimestamp?timestamp=${timestamp}`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
-        resolve(parsedResult.result);
+        resolve(parsedResult);
       })
       .catch(err => reject(err));
   });

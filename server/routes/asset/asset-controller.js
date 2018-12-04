@@ -1,12 +1,10 @@
-const { responseHandler } = require('../utilities/response-handler');
-const { etherScanServices } = require('../../integrations/etherScan-services');
-
 const modelName = 'Asset';
 
 const assetController = (repository) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
   const WeidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service');
+  const weidexFiatMsService = require('../../services/weidex-fiat-ms-service');
 
   const getCurrency = async tokenNameParam => repository.findOne({
     modelName: 'Currency',
@@ -24,16 +22,6 @@ const assetController = (repository) => {
       where: {
         tokenName: tokenNameParam,
         portfolioId: portfolioIdParam,
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
-  const getPortfolioObject = async portfolioId => repository.findOne({
-    modelName: 'Portfolio',
-    options: {
-      where: {
-        id: portfolioId,
       },
     },
   })
@@ -72,7 +60,7 @@ const assetController = (repository) => {
         lastPriceETH: lastPriceETHParam !== null && lastPriceETHParam !== undefined ? lastPriceETHParam : req.tokenName === 'ETH' ? 1 : 0,
         lastPriceUSD: bigNumberService().product(lastPriceETHParam, priceUSD) || 0,
         totalETH: bigNumberService().product(req.fullAmount, lastPriceETHParam) || 0,
-        totalUSD: bigNumberService().product(bigNumberService().product(req.fullAmount, lastPriceETHParam), priceUSD) || 0,
+        totalUSD: bigNumberService().product(bigNumberService().product(bigNumberService().gweiToEth(req.fullAmount), lastPriceETHParam), priceUSD) || 0,
         weight: 0,
       };
     } catch (error) {
@@ -88,29 +76,14 @@ const assetController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const createAction = async (req, res, assetObject, isSyncing) => {
-    return repository.create({ modelName, newObject: assetObject })
+  const createAction = async (req, res, assetObject, isSyncing) =>
+    repository.create({ modelName, newObject: assetObject })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
-  };
 
-  const createAsset = async (req, res) => {
-    const assetData = req.body;
-
-    try {
-      const lastPriceUSD = await etherScanServices().getETHUSDPrice();
-      const currency = await getCurrency(assetData.tokenName);
-      const assetObject = await createAssetObject(assetData, currency.lastPriceETH, lastPriceUSD);
-      const assetFound = await getAssetObject(assetData.tokenName, assetData.portfolioId);
-
-      if (assetFound === null) {
-        await createAction(req, res, assetObject, false);
-      } else {
-        await updateAction(req, res, Number(assetFound.id), assetObject, false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const getEthToUsd = async () => {
+    const timestamp = new Date().getTime();
+    return weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp)).then(data => data.priceUSD);
   };
 
   const syncAsset = async (req, res, lastPriceUSD) => {
@@ -142,17 +115,6 @@ const assetController = (repository) => {
       });
   };
 
-  const updateAsset = async (req, res) => {
-    const { id } = req.params;
-    const assetData = req.body;
-
-    const currency = await getCurrency(assetData.tokenName);
-    const lastPriceUSD = await etherScanServices().getETHUSDPrice();
-    const assetObject = await createAssetObject(assetData, currency.lastPriceETH, lastPriceUSD);
-
-    await updateAction(req, res, Number(id), assetObject, false);
-  };
-
   const updateAssetsWeight = async (req, res, idParam) => {
     try {
       const portfolio = await getPortfolioObjectIncludeAll(idParam);
@@ -169,13 +131,6 @@ const assetController = (repository) => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const removeAsset = (req, res) => {
-    const { id } = req.params;
-    repository.remove({ modelName, id })
-      .then(result => responseHandler(res, result))
-      .catch(error => res.json(error));
   };
 
   const getPeriodValue = (period) => {
@@ -243,7 +198,7 @@ const assetController = (repository) => {
   const sync = async (req, res, addresses) => {
     const addressesArray = addresses.map(async (address) => {
       try {
-        const lastPriceUSD = await etherScanServices().getETHUSDPrice();
+        const lastPriceUSD = await getEthToUsd();
         const portfolio = await getPortfolioObjectByAddress(address);
         const assets = await WeidexService.getBalanceByUserHttp(portfolio.userAddress);
 
@@ -259,10 +214,7 @@ const assetController = (repository) => {
   };
 
   return {
-    createAsset,
     getAsset,
-    updateAsset,
-    removeAsset,
     getAssetPriceHistory,
     sync,
   };

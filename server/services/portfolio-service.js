@@ -28,7 +28,7 @@ const portfolioService = (repository) => {
     const transactionsArray = await items.map(async (transaction) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(transaction.txHash);
       const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-      const ethToUsd = await weidexFiatMsService().getEtherValueByTimestamp(etherScanTrBlock.timestamp).then(data => data.priceUSD);
+      const ethToUsd = await weidexFiatMsService().getEtherValueByTimestamp(Number(etherScanTrBlock.timestamp) * 1000).then(data => data.priceUSD);
       return (etherScanTransaction !== null && etherScanTransaction !== undefined) ?
         {
           eth: transaction.amount,

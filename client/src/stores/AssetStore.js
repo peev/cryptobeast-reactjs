@@ -2,6 +2,7 @@
 /* eslint no-console: 0 */
 import { observable, action, computed, onBecomeObserved } from 'mobx';
 import math from 'mathjs';
+import ubique from 'ubique';
 import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
@@ -29,7 +30,6 @@ class AssetStore {
   @observable assetAllocationFee;
   @observable assetHistory;
   @observable assetsValueHistory;
-  @observable assetsStdDeviations;
 
   constructor() {
     this.selectedExchangeBasicInput = '';
@@ -46,7 +46,6 @@ class AssetStore {
     this.assetAllocationFee = '';
     this.assetHistory = [];
     this.assetsValueHistory = [];
-    this.assetsStdDeviations = [];
 
     onBecomeObserved(this, 'assetsValueHistory', this.getAssetsValueHistory);
   }
@@ -56,7 +55,6 @@ class AssetStore {
     requester.Portfolio.getPortfolioAssetsValueHistory(PortfolioStore.selectedPortfolioId)
       .then(action((result: object) => {
         this.assetsValueHistory = result.data;
-        this.setAssetsDeviation();
       }));
   }
 
@@ -79,67 +77,27 @@ class AssetStore {
     return [];
   }
 
-  getAssetStdDeviation = (assetName: string) => {
-    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0 &&
-      this.assetsStdDeviations.length && this.assetsStdDeviations.length > 0) {
-      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
-      const index = assets.indexOf(assetName);
-      return this.assetsStdDeviations[index];
-    }
-    return 0;
-  }
-
-  getAssetMean = (assetName: string) => {
-    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0 &&
-      this.assetsStdDeviations.length && this.assetsStdDeviations.length > 0) {
-      const assetTotals = this.getAssetTotals(assetName);
-      return math.mean(assetTotals);
-    }
-    return 0;
-  }
-
   @computed
-  get assetsDeviation() {
-    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0 &&
-      this.assetsStdDeviations.length && this.assetsStdDeviations.length > 0) {
-      return this.assetsStdDeviations;
-    }
-    return [];
-  }
-
-  @action.bound
-  setAssetsDeviation() {
+  get assetsStdDeviation() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
       const result = [];
       const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
       assets.map((assetName: string) => {
         const assetTotals = this.getAssetTotals(assetName);
-        return result.push(math.std(assetTotals));
+        return result.push(Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(math.std(assetTotals)), 4)));
       });
-      this.assetsStdDeviations = result;
-      return this.assetsStdDeviations;
+      return result;
     }
     return [];
   }
 
   @computed
   get assetsSkewness() {
-    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0 &&
-      this.assetsStdDeviations.length && this.assetsStdDeviations.length > 0) {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
       const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
       return assets.map((assetName: string) => {
         const assetsTotal = this.getAssetTotals(assetName);
-        const mean = this.getAssetMean(assetName);
-        const median = math.median(this.getAssetTotals(assetName));
-        const stdDeviation = this.getAssetStdDeviation(assetName);
-        console.log('------------------------------------');
-        console.log(assetsTotal);
-        console.log(stdDeviation);
-        console.log(mean);
-        console.log(median);
-        console.log(BigNumberService.quotient(BigNumberService.product(3, BigNumberService.difference(mean, median)), stdDeviation));
-        console.log('------------------------------------');
-        return BigNumberService.quotient(BigNumberService.product(3, BigNumberService.difference(mean, median)), stdDeviation);
+        return Number(BigNumberService.toFixedParam(ubique.skewness(assetsTotal), 4));
       });
     }
     return [];
@@ -147,16 +105,11 @@ class AssetStore {
 
   @computed
   get assetsKurtosis() {
-    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0 &&
-      this.assetsStdDeviations.length && this.assetsStdDeviations.length > 0) {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
       const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
       return assets.map((assetName: string) => {
-        const mean = this.getAssetMean(assetName);
-        const stdDeviation = this.getAssetStdDeviation(assetName);
-        return BigNumberService.quotient(BigNumberService
-          .pow(mean, 3), BigNumberService
-          .product(2, BigNumberService
-            .pow(stdDeviation, 3)));
+        const assetsTotal = this.getAssetTotals(assetName);
+        return Number(BigNumberService.toFixedParam(ubique.kurtosis(assetsTotal), 4));
       });
     }
     return [];

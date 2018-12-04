@@ -39,27 +39,17 @@ const portfolioController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const getCurrencyByTokenName = async tokenName => repository.findOne({
-    modelName: 'Currency',
-    options: {
-      where: {
-        tokenName,
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
   const getCurrencies = async () => repository.find({
     modelName: 'Currency',
   })
     .catch(err => console.log(err));
 
-  const createPortfolioObject = (address, id, investment) => {
+  const createPortfolioObject = (address, id, totalInvestmentETH, totalInvestmentUSD) => {
     const portfolio = {
       userAddress: address,
       userID: id,
-      totalInvestmentETH: investment || 0,
-      totalInvestmentUSD: 0,
+      totalInvestmentETH: totalInvestmentETH || 0,
+      totalInvestmentUSD: totalInvestmentUSD || 0,
     };
     return portfolio;
   };
@@ -77,26 +67,6 @@ const portfolioController = (repository) => {
       .catch(error => res.json(error));
   };
 
-  const createPortfolio = async (req, res) => {
-    const user = req.body;
-
-    try {
-      const porfolioFound = await getPortfolioObject(user.address);
-      if (porfolioFound === null) {
-        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentEthExternal(user.address).then(data => data);
-        const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
-        await createAction(req, res, newPortfolioObject, false);
-      } else {
-        const portfolio = await getPortfolioWholeObject(user.address);
-        const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(portfolio);
-        const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
-        await updateAction(req, res, Number(porfolioFound.id), newPortfolioObject, false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const syncPortfolio = async (req, res) => {
     const user = req.body;
 
@@ -104,36 +74,18 @@ const portfolioController = (repository) => {
       const porfolioFound = await getPortfolioObject(user.address);
       if (porfolioFound === null || porfolioFound === undefined) {
         const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentEthExternal(user.address).then(data => data);
-        const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
+        const totalInvestmentUSD = await portfolioService.calcPortfolioTotalInvestmentUSD(user.address).then(data => data);
+        const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment, totalInvestmentUSD);
         await createAction(req, res, newPortfolioObject, true);
       } else {
         const portfolio = await getPortfolioWholeObject(user.address);
         const totalInvestment = await portfolioService.calcPortfolioTotalInvestmentETH(portfolio);
-        const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment);
+        const totalInvestmentUSD = await portfolioService.calcPortfolioTotalInvestmentUSD(user.address).then(data => data);
+        const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment, totalInvestmentUSD);
         await updateAction(req, res, Number(porfolioFound.id), newPortfolioObject, true);
       }
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const updatePortfolio = async (req, res) => {
-    const { id } = req.params;
-    const portfolioData = Object.assign({}, req.body, { id });
-    await updateAction(req, res, Number(id), portfolioData, false);
-  };
-
-  const updatePortfolioTotalInvestment = async (req, res, address) => {
-    const portfolioFound = await getPortfolioWholeObject(address);
-
-    if (portfolioFound.tensactions !== 0) {
-      await portfolioService.calcPortfolioTotalInvestmentETH(portfolioFound).then((data) => {
-        portfolioFound.totalInvestment = data;
-        const portfolioData = Object.assign({}, portfolioFound, { id: portfolioFound.id, totalInvestment: data });
-        repository.update({ modelName, updatedRecord: portfolioData })
-          .then((response) => { res.status(200).send(response); })
-          .catch(error => res.json(error));
-      });
     }
   };
 
@@ -181,13 +133,6 @@ const portfolioController = (repository) => {
     } catch (error) {
       return res.status(500).send(error);
     }
-  };
-
-  const removePortfolio = (req, res) => {
-    const { id } = req.params;
-    repository.remove({ modelName, id })
-      .then(result => responseHandler(res, result))
-      .catch(error => res.json(error));
   };
 
   const getEndOfDay = (timestamp) => {
@@ -354,7 +299,7 @@ const portfolioController = (repository) => {
           }
           return null;
         }));
-      const final = { timestamp, assets: assets };
+      const final = { timestamp, assets };
       return result.push(final);
     });
     return result;
@@ -395,11 +340,7 @@ const portfolioController = (repository) => {
   };
 
   return {
-    createPortfolio,
-    updatePortfolio,
-    updatePortfolioTotalInvestment,
     getPortfolio,
-    removePortfolio,
     sync,
     getPortfoliosByAddresses,
     getPortfolioAssetsByPortfolioId,

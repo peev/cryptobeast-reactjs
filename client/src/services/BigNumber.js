@@ -18,6 +18,8 @@ const BigNumberService = {
   product: (a, b) => new BigNumber(a).multipliedBy(new BigNumber(b)).toNumber(),
 
   quotient: (a, b) => new BigNumber(a).dividedBy(new BigNumber(b)).toNumber(),
+
+  pow: (a, b) => new BigNumber(a).pow(new BigNumber(b)).toNumber(),
 };
 
 export default BigNumberService;

@@ -1,42 +1,38 @@
-import React, { Component } from 'react';
-import Highcharts from 'highcharts';
-import {
-  HighchartsChart,
-  withHighcharts,
-  YAxis,
-  XAxis,
-  Legend,
-  // Tooltip,
-  Chart,
-  ColumnSeries,
-  Title,
-} from 'react-jsx-highcharts';
+// @flow
+import React from 'react';
+import ReactHighcharts from 'react-highcharts';
+import { inject, observer } from 'mobx-react';
 
-class VolatilityColumnChart extends Component {
-  state = {};
+const VolatilityColumnChart = inject('AssetStore')(observer(({ ...props }: Props) => {
+  const { AssetStore } = props;
+  const config = {
+    chart: {
+      type: 'column',
+    },
+    title: {
+      text: 'STD.DEVIATION, SKEWNESS, KURTOSIS',
+    },
+    xAxis: {
+      categories: AssetStore.protfolioAssetsTokenNames,
+    },
+    credits: {
+      enabled: false,
+    },
+    series: [{
+      name: 'STD.DEVIATION',
+      data: AssetStore.assetsStdDeviation,
+    }, {
+      name: 'SKEWNESS',
+      data: AssetStore.assetsSkewness,
+    }, {
+      name: 'KURTOSIS',
+      data: AssetStore.assetsKurtosis,
+    }],
+  };
 
-  render() {
-    return (
-      <HighchartsChart>
-        <Chart />
+  return (
+    <ReactHighcharts config={config} />
+  );
+}));
 
-        <Title>ST.DEV.SKEWNESS. KURTOSIS</Title>
-
-        <Legend />
-
-        <XAxis
-          id="x"
-          categories={['BTC', 'ETH', 'XRP', 'NEO', 'BNB', 'EOS']}
-        />
-
-        <YAxis id="number">
-          <ColumnSeries id="jane" name="" data={[6, 4.5, 8.2, 4, 8.2, 7]} />
-          <ColumnSeries id="john" name="" data={[0.3, 0.5, 0.4, 0.6, 0.5, 0.1]} />
-          <ColumnSeries id="joe" name="" data={[2.2, 3.8, 2.8, 3.5, 0, 7]} />
-        </YAxis>
-      </HighchartsChart>
-    );
-  }
-}
-
-export default withHighcharts(VolatilityColumnChart, Highcharts);
+export default VolatilityColumnChart;

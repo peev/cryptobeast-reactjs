@@ -1,6 +1,8 @@
 // @flow
 /* eslint no-console: 0 */
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, onBecomeObserved } from 'mobx';
+import math from 'mathjs';
+import ubique from 'ubique';
 import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
@@ -27,6 +29,7 @@ class AssetStore {
   @observable assetAllocationToAmount;
   @observable assetAllocationFee;
   @observable assetHistory;
+  @observable assetsValueHistory;
 
   constructor() {
     this.selectedExchangeBasicInput = '';
@@ -42,6 +45,74 @@ class AssetStore {
     this.assetAllocationToAmount = '';
     this.assetAllocationFee = '';
     this.assetHistory = [];
+    this.assetsValueHistory = [];
+
+    onBecomeObserved(this, 'assetsValueHistory', this.getAssetsValueHistory);
+  }
+
+  @action.bound
+  getAssetsValueHistory() {
+    requester.Portfolio.getPortfolioAssetsValueHistory(PortfolioStore.selectedPortfolioId)
+      .then(action((result: object) => {
+        this.assetsValueHistory = result.data;
+      }));
+  }
+
+  @computed
+  get protfolioAssetsTokenNames() {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+      return this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
+    }
+    return [];
+  }
+
+  getAssetTotals = (assetName: string) => {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+      const assetTotals = [];
+      this.assetsValueHistory.map((item: object) =>
+        item.assets.map((asset: object) =>
+          ((asset.tokenName === assetName) ? assetTotals.push(asset.total) : null)));
+      return assetTotals;
+    }
+    return [];
+  }
+
+  @computed
+  get assetsStdDeviation() {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+      const result = [];
+      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
+      assets.map((assetName: string) => {
+        const assetTotals = this.getAssetTotals(assetName);
+        return result.push(Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(math.std(assetTotals)), 4)));
+      });
+      return result;
+    }
+    return [];
+  }
+
+  @computed
+  get assetsSkewness() {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
+      return assets.map((assetName: string) => {
+        const assetsTotal = this.getAssetTotals(assetName);
+        return Number(BigNumberService.toFixedParam(ubique.skewness(assetsTotal), 4));
+      });
+    }
+    return [];
+  }
+
+  @computed
+  get assetsKurtosis() {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
+      return assets.map((assetName: string) => {
+        const assetsTotal = this.getAssetTotals(assetName);
+        return Number(BigNumberService.toFixedParam(ubique.kurtosis(assetsTotal), 4));
+      });
+    }
+    return [];
   }
 
   @action

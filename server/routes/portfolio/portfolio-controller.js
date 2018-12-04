@@ -328,6 +328,57 @@ const portfolioController = (repository) => {
     }
   };
 
+  /**
+   * Gets timestamps, token prices and token balance for each day,
+   * multiply balance by price.
+   * @param {*} timestamps
+   * @param {*} tokenPrices
+   * @param {*} balances
+   */
+  const calculatePortfolioAssetsValueHistory = (timestamps, tokenPrices, balances) => {
+    const result = [];
+    timestamps.map((timestamp, index) => {
+      const balancesArr = balances[index].balance;
+      const tokenPricesArr = tokenPrices[index];
+      const assets = [];
+      balancesArr.map(balance =>
+        tokenPricesArr.map((token) => {
+          if (balance.tokenName === token.tokenName) {
+            assets.push({
+              tokenName: balance.tokenName,
+              amount: balance.amount,
+              price: token.value,
+              total: BigNumberService.product(balance.amount, token.value),
+            });
+            return assets;
+          }
+          return null;
+        }));
+      const final = { timestamp, assets: assets };
+      return result.push(final);
+    });
+    return result;
+  };
+
+  const getPortfolioAssetsValueHistory = async (req, res) => {
+    const { id } = req.params;
+    try {
+      const allocations = await getAllocations(id);
+      const today = new Date().getTime();
+      const yesterday = today - (24 * 60 * 60 * 1000);
+      const begin = new Date((allocations[0].timestamp).toString()).getTime();
+      const timestamps = calculateDays(getEndOfDay(begin), getEndOfDay(yesterday));
+      const tokenPricesByDate = await getTokensPriceByDate(timestamps);
+      const balances = await getBalancesByDate(timestamps, allocations);
+      const filledPreviousBalances = fillPreviousBalances(balances);
+      const portfolioValueHistory = calculatePortfolioAssetsValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances);
+      res.status(200).send(portfolioValueHistory);
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error);
+    }
+  };
+
   const sync = async (req, res, addresses) => {
     const portfolioArray = addresses.map(async (address) => {
       try {
@@ -353,6 +404,7 @@ const portfolioController = (repository) => {
     getPortfoliosByAddresses,
     getPortfolioAssetsByPortfolioId,
     getPortfolioValueHistory,
+    getPortfolioAssetsValueHistory,
   };
 };
 

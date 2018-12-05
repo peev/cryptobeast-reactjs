@@ -6,6 +6,7 @@ const transactionController = (repository) => {
   const weidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service');
   const Sequelize = require('sequelize');
+  const weidexFiatMsService = require('../../services/weidex-fiat-ms-service');
   const op = Sequelize.Op;
 
   const getTransactionObject = async transactionHash => repository.findOne({
@@ -50,11 +51,12 @@ const transactionController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const isFirstDepositCheck = () =>
+  const isFirstDepositCheck = portfolioId =>
     repository.findOne({
       modelName,
       options: {
         where: {
+          portfolioId,
           type: 'd',
           isFirstDeposit: true,
         },
@@ -89,8 +91,18 @@ const transactionController = (repository) => {
     })
       .catch(err => console.log(err));
 
+  const getEthToUsd = async () => {
+    const timestamp = new Date().getTime();
+    return weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp)).then(data => data.priceUSD);
+  };
 
-  const createTransactionObject = (amount, txHash, status, tokenName, type, portfolioId, timestamp, ethValue, ethTotalValue) => {
+  const tokenToEthToUsd = (amount, tokenPriceEth, ethToUsd) =>
+    bigNumberService().product(bigNumberService().product(bigNumberService().gweiToEth(amount), tokenPriceEth), ethToUsd);
+
+  const createTransactionObject = (
+    amount, txHash, status, tokenName, type, portfolioId, timestamp, tokenPriceETH, totalValueETH,
+    tokenPriceUSD, totalValueUSD, ETHUSD,
+  ) => {
     let newTransactionObject;
     try {
       newTransactionObject = {
@@ -101,11 +113,11 @@ const transactionController = (repository) => {
         type,
         portfolioId,
         txTimestamp: Number(timestamp) * 1000,
-        tokenPriceETH: ethValue || 0,
-        totalValueETH: ethTotalValue || 0,
-        tokenPriceUSD: 0,
-        totalValueUSD: 0,
-        ETHUSD: 0,
+        tokenPriceETH: tokenPriceETH || 0,
+        totalValueETH: totalValueETH || 0,
+        tokenPriceUSD: tokenPriceUSD || 0,
+        totalValueUSD: totalValueUSD || 0,
+        ETHUSD: ETHUSD || 0,
       };
     } catch (error) {
       console.log(error);
@@ -134,12 +146,16 @@ const transactionController = (repository) => {
         const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
         const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
         const currency = await getCurrencyByTokenName(tr.tokenName);
-        const ethValue = (tr.tokenName === 'ETH') ? 1 :
+        const tokenPriceInEth = (tr.tokenName === 'ETH') ? 1 :
           await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
         const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
+        const ethUsd = await getEthToUsd();
+        const tokenPriceUSD = bigNumberService().product(tokenPriceInEth, ethUsd);
+        const totalValueUSD = tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);
+
         const transactionObject = createTransactionObject(
           tr.amount, tr.txHash, tr.status, tr.tokenName, tr.type, tr.portfolioId, etherScanTrBlock.timestamp,
-          ethValue, ethTotalValue,
+          tokenPriceInEth, ethTotalValue, tokenPriceUSD, totalValueUSD, ethUsd,
         );
         await createAction(req, res, transactionObject, true);
       } catch (error) {
@@ -202,9 +218,9 @@ const transactionController = (repository) => {
 
   // =========================================================================================
 
-  const calculateIsFirstDeposit = async (transaction, index) => {
+  const calculateIsFirstDeposit = async (transaction, index, portfolioId) => {
     if (index === 0) {
-      const deposit = await isFirstDepositCheck();
+      const deposit = await isFirstDepositCheck(portfolioId);
       return (deposit === null) || ((deposit !== null) && (deposit.txHash === transaction.txHash));
     }
     return (transaction.type === 'd') ? false : null;
@@ -249,9 +265,15 @@ const transactionController = (repository) => {
 
   const updateTransactionsShareParamsArray = async (req, res, portfolioId, transactions) =>
     Promise.all(transactions.map(async (tr, index) => {
-      // TODO Change with value from microservices
-      const totalValueUsd = 1;
-      const isFirstDeposit = await calculateIsFirstDeposit(tr, index);
+      const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
+      const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
+      const currency = await getCurrencyByTokenName(tr.tokenName);
+      const tokenPriceInEth = (tr.tokenName === 'ETH') ? 1 :
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
+      const ethUsd = await getEthToUsd();
+      const totalValueUsd = tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);
+
+      const isFirstDeposit = await calculateIsFirstDeposit(tr, index, portfolioId);
       const portfolioValueBeforeTx = await calculatePortfolioValueBeforeTx(portfolioId, tr, isFirstDeposit);
       const numSharesBefore = await calculateNumSharesBefore(index, transactions, portfolioId);
       const currentSharePriceUSD = await calculateCurrentSharePriceUSD(isFirstDeposit, portfolioValueBeforeTx, numSharesBefore);

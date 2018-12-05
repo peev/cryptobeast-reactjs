@@ -269,7 +269,7 @@ const transactionController = (repository) => {
   };
 
   const updateTransactionsShareParamsArray = async (req, res, portfolioId, transactions, allTransactions) =>
-    Promise.all(transactions.map(async (tr, index) => {
+    Promise.all(transactions.map(async (tr) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
       const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
       const currency = await getCurrencyByTokenName(tr.tokenName);

@@ -216,12 +216,9 @@ const transactionController = (repository) => {
 
   // =========================================================================================
 
-  const calculateIsFirstDeposit = async (transaction, index, portfolioId) => {
-    if (index === 0) {
-      const deposit = await isFirstDepositCheck(portfolioId);
-      return (deposit === null) || ((deposit !== null) && (deposit.txHash === transaction.txHash));
-    }
-    return (transaction.type === 'd') ? false : null;
+  const calculateIsFirstDeposit = async (transaction, portfolioId) => {
+    const deposit = await isFirstDepositCheck(portfolioId);
+    return (deposit === null) || ((deposit !== null) && (deposit.txHash === transaction.txHash));
   };
 
   const calculateAllocationBalance = async (portfolioId) => {
@@ -246,11 +243,12 @@ const transactionController = (repository) => {
     return Number(bigNumberService().product(bigNumberService().gweiToEth(await calculateAllocationBalance(portfolioId)), ethUsd));
   };
 
-  const calculateNumSharesBefore = async (index, transactions, portfolioId) => {
-    if (index === 0) {
+  const calculateNumSharesBefore = async (txHash, isFirstDeposit, allTransactions, portfolioId) => {
+    if (isFirstDeposit) {
       return 0;
     }
-    const transaction = await getTransactionByHash(portfolioId, transactions[index - 1].txHash);
+    const index = allTransactions.findIndex(tr => tr.txHash === txHash);
+    const transaction = await getTransactionByHash(portfolioId, allTransactions[index - 1].txHash);
     return transaction.numSharesAfter;
   };
 
@@ -270,7 +268,7 @@ const transactionController = (repository) => {
     return bigNumberService().difference(numSharesBefore, sharesLiquidated);
   };
 
-  const updateTransactionsShareParamsArray = async (req, res, portfolioId, transactions) =>
+  const updateTransactionsShareParamsArray = async (req, res, portfolioId, transactions, allTransactions) =>
     Promise.all(transactions.map(async (tr, index) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
       const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
@@ -282,9 +280,9 @@ const transactionController = (repository) => {
       const ethUsdNow = await getEthToUsd(timestamp);
       const totalValueUsd = tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);
 
-      const isFirstDeposit = await calculateIsFirstDeposit(tr, index, portfolioId);
+      const isFirstDeposit = await calculateIsFirstDeposit(tr, portfolioId);
       const portfolioValueBeforeTx = await calculatePortfolioValueBeforeTx(portfolioId, tr, isFirstDeposit, ethUsdNow);
-      const numSharesBefore = await calculateNumSharesBefore(index, transactions, portfolioId);
+      const numSharesBefore = await calculateNumSharesBefore(tr.txHash, isFirstDeposit, allTransactions, portfolioId);
       const currentSharePriceUSD = await calculateCurrentSharePriceUSD(isFirstDeposit, portfolioValueBeforeTx, numSharesBefore);
       const sharesCreated = await calculateSharesCreated(tr.type, totalValueUsd, currentSharePriceUSD);
       const sharesLiquidated = await calculateSharesLiquidated(tr.type, totalValueUsd, currentSharePriceUSD);
@@ -316,9 +314,9 @@ const transactionController = (repository) => {
         const transactions = await getSortedTransactions(portfolio.id);
         const filteredTransactions = transactions.filter(tr => tr.isFirstDeposit === null);
         if (filteredTransactions.length && filteredTransactions.length > 0) {
-          const firstDeposit = await updateTransactionsShareParamsArray(req, res, portfolio.id, [filteredTransactions[0]]);
+          const firstDeposit = await updateTransactionsShareParamsArray(req, res, portfolio.id, [filteredTransactions[0]], transactions);
           await updateTransactionsShareParams(req, res, firstDeposit);
-          const updatedTransactions = await updateTransactionsShareParamsArray(req, res, portfolio.id, filteredTransactions);
+          const updatedTransactions = await updateTransactionsShareParamsArray(req, res, portfolio.id, filteredTransactions, transactions);
           await updateTransactionsShareParams(req, res, updatedTransactions);
         }
       } catch (error) {

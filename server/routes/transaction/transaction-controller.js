@@ -146,7 +146,8 @@ const transactionController = (repository) => {
         const currency = await getCurrencyByTokenName(tr.tokenName);
         const tokenPriceInEth = (tr.tokenName === 'ETH') ? 1 :
           await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
-        const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
+        const ethTotalValue = (tr.type === 'd') ?
+          await bigNumberService().toNumber(etherScanTransaction.value) : bigNumberService().product(tr.amount, tokenPriceInEth);
         const ethUsd = await getEthToUsd(Number(etherScanTrBlock.timestamp) * 1000);
         const tokenPriceUSD = bigNumberService().product(tokenPriceInEth, ethUsd);
         const totalValueUSD = tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);

@@ -41,16 +41,6 @@ const transactionController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const getCurrencyByTokenName = async name => repository.findOne({
-    modelName: 'Currency',
-    options: {
-      where: {
-        tokenName: name,
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
   const isFirstDepositCheck = portfolioId =>
     repository.findOne({
       modelName,
@@ -91,10 +81,18 @@ const transactionController = (repository) => {
     })
       .catch(err => console.log(err));
 
-  const getEthToUsd = async () => {
-    const timestamp = new Date().getTime();
-    return weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp)).then(data => data.priceUSD);
-  };
+  const getCurrencyByTokenName = async tokenName => repository.findOne({
+    modelName: 'Currency',
+    options: {
+      where: {
+        tokenName,
+      },
+    },
+  })
+    .catch(err => console.log(err));
+
+  const getEthToUsd = async timestamp =>
+    weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp)).then(data => data.priceUSD);
 
   const tokenToEthToUsd = (amount, tokenPriceEth, ethToUsd) =>
     bigNumberService().product(bigNumberService().product(bigNumberService().gweiToEth(amount), tokenPriceEth), ethToUsd);
@@ -149,7 +147,7 @@ const transactionController = (repository) => {
         const tokenPriceInEth = (tr.tokenName === 'ETH') ? 1 :
           await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
         const ethTotalValue = await bigNumberService().toNumber(etherScanTransaction.value);
-        const ethUsd = await getEthToUsd();
+        const ethUsd = await getEthToUsd(Number(etherScanTrBlock.timestamp) * 1000);
         const tokenPriceUSD = bigNumberService().product(tokenPriceInEth, ethUsd);
         const totalValueUSD = tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);
 
@@ -226,17 +224,26 @@ const transactionController = (repository) => {
     return (transaction.type === 'd') ? false : null;
   };
 
-  const calculateAllocationBalance = async (portfolioId, timestamp) => {
+  const calculateAllocationBalance = async (portfolioId) => {
+    const timestamp = new Date().getTime();
     const allocation = await getAllocationBeforeTimestamp(portfolioId, timestamp);
-    return Object.keys(allocation.balance).reduce((previous, key) =>
-      bigNumberService().sum(previous, allocation.balance[key].balance), 0);
+    const tokensValue = allocation.balance.map(async (token) => {
+      const currency = await getCurrencyByTokenName(token.tokenName);
+      const tokenPriceInEth = (token.tokenName === 'ETH') ? 1 :
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp);
+      return bigNumberService().product(token.amount, tokenPriceInEth);
+    });
+
+    return Promise.all(tokensValue).then(values =>
+      values.reduce((acc, obj) => bigNumberService().sum(acc, obj)));
   };
 
-  const calculatePortfolioValueBeforeTx = async (portfolioId, tr, isFirstDeposit) => {
+  const calculatePortfolioValueBeforeTx = async (portfolioId, tr, isFirstDeposit, ethUsd) => {
     if (tr.type === 'd') {
-      return (isFirstDeposit) ? 0 : calculateAllocationBalance(portfolioId, tr.txTimestamp);
+      return (isFirstDeposit) ? 0 :
+        Number(bigNumberService().product(bigNumberService().gweiToEth(await calculateAllocationBalance(portfolioId)), ethUsd));
     }
-    return calculateAllocationBalance(portfolioId, tr.txTimestamp);
+    return Number(bigNumberService().product(bigNumberService().gweiToEth(await calculateAllocationBalance(portfolioId)), ethUsd));
   };
 
   const calculateNumSharesBefore = async (index, transactions, portfolioId) => {
@@ -270,11 +277,13 @@ const transactionController = (repository) => {
       const currency = await getCurrencyByTokenName(tr.tokenName);
       const tokenPriceInEth = (tr.tokenName === 'ETH') ? 1 :
         await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
-      const ethUsd = await getEthToUsd();
+      const timestamp = new Date().getTime();
+      const ethUsd = await getEthToUsd(Number(etherScanTrBlock.timestamp) * 1000);
+      const ethUsdNow = await getEthToUsd(timestamp);
       const totalValueUsd = tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);
 
       const isFirstDeposit = await calculateIsFirstDeposit(tr, index, portfolioId);
-      const portfolioValueBeforeTx = await calculatePortfolioValueBeforeTx(portfolioId, tr, isFirstDeposit);
+      const portfolioValueBeforeTx = await calculatePortfolioValueBeforeTx(portfolioId, tr, isFirstDeposit, ethUsdNow);
       const numSharesBefore = await calculateNumSharesBefore(index, transactions, portfolioId);
       const currentSharePriceUSD = await calculateCurrentSharePriceUSD(isFirstDeposit, portfolioValueBeforeTx, numSharesBefore);
       const sharesCreated = await calculateSharesCreated(tr.type, totalValueUsd, currentSharePriceUSD);
@@ -304,12 +313,14 @@ const transactionController = (repository) => {
     const portfolioArray = addresses.map(async (address) => {
       try {
         const portfolio = await getPortfolioObjectByAddress(address);
-        // TODO get transactions with greater timestamp than last one from db
         const transactions = await getSortedTransactions(portfolio.id);
-        const firstDeposit = await updateTransactionsShareParamsArray(req, res, portfolio.id, [transactions[0]]);
-        await updateTransactionsShareParams(req, res, firstDeposit);
-        const updatedTransactions = await updateTransactionsShareParamsArray(req, res, portfolio.id, transactions);
-        await updateTransactionsShareParams(req, res, updatedTransactions);
+        const filteredTransactions = transactions.filter(tr => tr.isFirstDeposit === null);
+        if (filteredTransactions.length && filteredTransactions.length > 0) {
+          const firstDeposit = await updateTransactionsShareParamsArray(req, res, portfolio.id, [filteredTransactions[0]]);
+          await updateTransactionsShareParams(req, res, firstDeposit);
+          const updatedTransactions = await updateTransactionsShareParamsArray(req, res, portfolio.id, filteredTransactions);
+          await updateTransactionsShareParams(req, res, updatedTransactions);
+        }
       } catch (error) {
         console.log(error);
       }

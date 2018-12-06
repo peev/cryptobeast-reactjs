@@ -101,30 +101,6 @@ const allocationsController = (repository) => {
     }
   };
 
-  const fillCurrentAssetBalanceArray = (currentAssetBalanceArray, assets, lastAllocation) => {
-    if (lastAllocation !== null && lastAllocation !== undefined) {
-      assets.forEach((asset) => {
-        lastAllocation.balance.forEach((balanceItem) => {
-          if (asset.tokenName === balanceItem.tokenName) {
-            currentAssetBalanceArray.push({
-              tokenName: balanceItem.tokenName,
-              amount: balanceItem.amount,
-            });
-          }
-        });
-      });
-    } else {
-      assets.forEach((asset) => {
-        currentAssetBalanceArray.push({
-          tokenName: asset.tokenName,
-          amount: 0,
-        });
-      });
-    }
-    return currentAssetBalanceArray;
-  };
-
-
   const syncAllocations = async (req, res, resultArray) => {
     try {
       await Promise.all(resultArray.map(async (allocation) => {
@@ -133,6 +109,57 @@ const allocationsController = (repository) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const fillCurrentAssetBalanceArray = (assets, lastAllocation) => {
+    const result = [];
+    if (lastAllocation !== null && lastAllocation !== undefined) {
+      assets.forEach((asset) => {
+        lastAllocation.balance.forEach((balanceItem) => {
+          if (asset.tokenName === balanceItem.tokenName) {
+            result.push({
+              tokenName: balanceItem.tokenName,
+              amount: balanceItem.amount,
+            });
+          }
+        });
+      });
+    } else {
+      assets.forEach((asset) => {
+        result.push({
+          tokenName: asset.tokenName,
+          amount: 0,
+        });
+      });
+    }
+    return result;
+  };
+
+    /**
+   * Creates balance amounts arr object. Add eth at the end in order to calculate properly.
+   * @param {*} transactionsAndTradesSorted
+   * @param {*} currentAssetBalanceArrayNoEth
+   * @param {*} currentAssetBalanceArrayOnlyEth
+   * @param {*} index
+   */
+  const defineAssetsBalanceArr = (
+    transactionsAndTradesSorted, currentAssetBalanceArrayNoEth,
+    currentAssetBalanceArrayOnlyEth, index,
+  ) => {
+    const result = [];
+    currentAssetBalanceArrayNoEth.forEach((item) => {
+      result.push({
+        tokenName: item.tokenName,
+        amount: calculateCurrentAssetAmount(transactionsAndTradesSorted[index], item),
+      });
+    });
+    currentAssetBalanceArrayOnlyEth.forEach((item) => {
+      result.push({
+        tokenName: item.tokenName,
+        amount: calculateCurrentAssetAmount(transactionsAndTradesSorted[index], item),
+      });
+    });
+    return result;
   };
 
   const sync = async (req, res, addresses) => {
@@ -146,26 +173,16 @@ const allocationsController = (repository) => {
         const transactions = await intReqService.getTransactionsByPortfolioIdGreaterThanTimestampDesc(portfolio.id, lastAllocationTimestamp);
         const transactionsAndTrades = await trades.concat(transactions);
         const transactionsAndTradesSorted = await sortByTimestamp(transactionsAndTrades);
-        let currentAssetBalanceArray = [];
-        currentAssetBalanceArray = fillCurrentAssetBalanceArray(currentAssetBalanceArray, assets, lastAllocation);
+        let currentAssetBalanceArray = fillCurrentAssetBalanceArray(assets, lastAllocation);
         const resultArray = [];
 
         transactionsAndTradesSorted.map((transaction, index) => {
           const currentAssetBalanceArrayNoEth = currentAssetBalanceArray.filter(item => item.tokenName !== 'ETH');
           const currentAssetBalanceArrayOnlyEth = currentAssetBalanceArray.filter(item => item.tokenName === 'ETH');
-          const assetBalanceArray = [];
-          currentAssetBalanceArrayNoEth.forEach((item) => {
-            assetBalanceArray.push({
-              tokenName: item.tokenName,
-              amount: calculateCurrentAssetAmount(transactionsAndTradesSorted[index], item),
-            });
-          });
-          currentAssetBalanceArrayOnlyEth.forEach((item) => {
-            assetBalanceArray.push({
-              tokenName: item.tokenName,
-              amount: calculateCurrentAssetAmount(transactionsAndTradesSorted[index], item),
-            });
-          });
+          const assetBalanceArray = defineAssetsBalanceArr(
+            transactionsAndTradesSorted, currentAssetBalanceArrayNoEth,
+            currentAssetBalanceArrayOnlyEth, index,
+          );
           valueToAddToEth = 0;
           currentAssetBalanceArray = assetBalanceArray;
           const allocation = createAllocationObject(portfolio.id, transaction, assetBalanceArray);

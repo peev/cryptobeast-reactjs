@@ -26,11 +26,15 @@ const commonMethodsService = (repository) => {
   const getEthToUsd = async timestamp =>
     weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp) * 1000).then(data => data.priceUSD);
 
+  const getEthToUsdMiliseconds = async timestamp =>
+    weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp)).then(data => data.priceUSD);
+
   return {
     getTimestampByTxHash,
     tokenToEthToUsd,
     getTokenPriceEthByTransaction,
     getEthToUsd,
+    getEthToUsdMiliseconds,
   };
 };
 

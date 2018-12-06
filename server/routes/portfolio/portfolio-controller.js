@@ -5,6 +5,7 @@ const portfolioController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service')();
   const intReqService = require('../../services/internal-requeter-service')(repository);
+  const commomService = require('../../services/common-methods-service')();
 
   const createPortfolioObject = (address, id, totalInvestmentETH, totalInvestmentUSD) => {
     const portfolio = {
@@ -230,6 +231,29 @@ const portfolioController = (repository) => {
     }
   };
 
+  const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp) => {
+    const result = tokenPricesArr.map(async (token) => {
+      if (balance.tokenName === token.tokenName) {
+        const ethToUsd = await commomService.getEthToUsdMiliseconds(timestamp);
+        return {
+          tokenName: balance.tokenName,
+          amount: balance.amount,
+          price: token.value,
+          total: bigNumberService.product(balance.amount, token.value),
+          totalUsd: await commomService.tokenToEthToUsd(bigNumberService.product(balance.amount, token.value), token.value, ethToUsd),
+        };
+      }
+      return null;
+    });
+    return Promise.all(result).then(data => data.filter(el => el !== null));
+  };
+
+  const resolveAssets = async (balancesArr, tokenPricesArr, timestamp) => {
+    const result = await balancesArr.map(async balance =>
+      defineTokenPricesArr(tokenPricesArr, balance, timestamp));
+    return Promise.all(result).then(data => ({ timestamp, assets: data }));
+  };
+
   /**
    * Gets timestamps, token prices and token balance for each day,
    * multiply balance by price.
@@ -237,29 +261,13 @@ const portfolioController = (repository) => {
    * @param {*} tokenPrices
    * @param {*} balances
    */
-  const calculatePortfolioAssetsValueHistory = (timestamps, tokenPrices, balances) => {
-    const result = [];
-    timestamps.map((timestamp, index) => {
+  const calculatePortfolioAssetsValueHistory = async (timestamps, tokenPrices, balances) => {
+    const result = timestamps.map(async (timestamp, index) => {
       const balancesArr = balances[index].balance;
       const tokenPricesArr = tokenPrices[index];
-      const assets = [];
-      balancesArr.map(balance =>
-        tokenPricesArr.map((token) => {
-          if (balance.tokenName === token.tokenName) {
-            assets.push({
-              tokenName: balance.tokenName,
-              amount: balance.amount,
-              price: token.value,
-              total: bigNumberService.product(balance.amount, token.value),
-            });
-            return assets;
-          }
-          return null;
-        }));
-      const final = { timestamp, assets };
-      return result.push(final);
+      return resolveAssets(balancesArr, tokenPricesArr, timestamp);
     });
-    return result;
+    return Promise.all(result).then(data => data);
   };
 
   const getPortfolioAssetsValueHistory = async (req, res) => {
@@ -267,13 +275,12 @@ const portfolioController = (repository) => {
     try {
       const allocations = await intReqService.getAllocationsByPortfolioIdAsc(id);
       const today = new Date().getTime();
-      const yesterday = today - (24 * 60 * 60 * 1000);
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
-      const timestamps = calculateDays(getEndOfDay(begin), getEndOfDay(yesterday));
+      const timestamps = calculateDays(getEndOfDay(begin), getEndOfDay(today));
       const tokenPricesByDate = await getTokensPriceByDate(timestamps);
       const balances = await getBalancesByDate(timestamps, allocations);
       const filledPreviousBalances = fillPreviousBalances(balances);
-      const portfolioValueHistory = calculatePortfolioAssetsValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances);
+      const portfolioValueHistory = await calculatePortfolioAssetsValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances);
       res.status(200).send(portfolioValueHistory);
     } catch (error) {
       console.log(error);

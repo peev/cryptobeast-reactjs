@@ -59,7 +59,7 @@ const transactionController = (repository) => {
       modelName: 'Allocation',
       options: {
         where: {
-          portfolioID: portfolioId,
+          portfolioId: portfolioId,
           timestamp: {
             [op.lte]: timestamp,
           },
@@ -174,11 +174,11 @@ const transactionController = (repository) => {
       });
   };
 
-  const getDeposits = async (req, res, portfolioID, userID) => {
+  const getDeposits = async (req, res, portfolioId, userID) => {
     try {
       const deposits = await weidexService.getUserDepositHttp(userID);
       await Promise.all(deposits.map(async (deposit) => {
-        const addPortfolioId = Object.assign({}, deposit, { portfolioId: portfolioID, type: 'd' });
+        const addPortfolioId = Object.assign({}, deposit, { portfolioId, type: 'd' });
         const bodyWrapper = Object.assign({ body: addPortfolioId });
         await syncTransaction(bodyWrapper, res);
       }));
@@ -187,11 +187,11 @@ const transactionController = (repository) => {
     }
   };
 
-  const getWithDrawls = async (req, res, portfolioID, userID) => {
+  const getWithDrawls = async (req, res, portfolioId, userID) => {
     try {
       const withdrawls = await weidexService.getUserWithdrawHttp(userID);
       await Promise.all(withdrawls.map(async (withdrawl) => {
-        const addPortfolioId = Object.assign({}, withdrawl, { portfolioId: portfolioID, type: 'w' });
+        const addPortfolioId = Object.assign({}, withdrawl, { portfolioId, type: 'w' });
         const bodyWrapper = Object.assign({ body: addPortfolioId });
         await syncTransaction(bodyWrapper, res);
       }));

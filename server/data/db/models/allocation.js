@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => sequelize.define('allocation', {
-  portfolioID: {
+  portfolioId: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },

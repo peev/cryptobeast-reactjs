@@ -128,10 +128,10 @@ const tradeController = (repository) => {
       });
   };
 
-  const getTrades = async (req, res, trades, portfolioID, lastPriceUSD, address) => {
+  const getTrades = async (req, res, trades, portfolioId, lastPriceUSD, address) => {
     try {
       await Promise.all(trades.map(async (trade) => {
-        const addPortfolioId = Object.assign({}, trade, { portfolioId: portfolioID });
+        const addPortfolioId = Object.assign({}, trade, { portfolioId });
         const bodyWrapper = Object.assign({ body: addPortfolioId });
         await syncTrade(bodyWrapper, res, lastPriceUSD, address);
       }));

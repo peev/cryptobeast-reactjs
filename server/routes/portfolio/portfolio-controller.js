@@ -19,7 +19,7 @@ const portfolioController = (repository) => {
     modelName: 'Allocation',
     options: {
       where: {
-        portfolioID: portfolioIdParam,
+        portfolioId: portfolioIdParam,
       },
       order: [['timestamp', 'ASC']],
     },

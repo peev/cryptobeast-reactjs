@@ -101,16 +101,6 @@ const allocationsController = (repository) => {
     }
   };
 
-  const syncAllocations = async (req, res, resultArray) => {
-    try {
-      await Promise.all(resultArray.map(async (allocation) => {
-        await createAction(req, res, allocation, true);
-      }));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const fillCurrentAssetBalanceArray = (assets, lastAllocation) => {
     const result = [];
     if (lastAllocation !== null && lastAllocation !== undefined) {
@@ -160,6 +150,16 @@ const allocationsController = (repository) => {
       });
     });
     return result;
+  };
+
+  const syncAllocations = async (req, res, resultArray) => {
+    try {
+      await Promise.all(resultArray.map(async (allocation) => {
+        await createAction(req, res, allocation, true);
+      }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const sync = async (req, res, addresses) => {

@@ -3,33 +3,8 @@ const modelName = 'Portfolio';
 const portfolioController = (repository) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
   const WeidexService = require('../../services/weidex-service')(repository);
-  const BigNumberService = require('../../services/big-number-service')(repository);
-
-  const getPortfolioObject = async address => repository.findOne({
-    modelName,
-    options: {
-      where: {
-        userAddress: address,
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
-  const getAllocations = async portfolioIdParam => repository.find({
-    modelName: 'Allocation',
-    options: {
-      where: {
-        portfolioId: portfolioIdParam,
-      },
-      order: [['timestamp', 'ASC']],
-    },
-  })
-    .catch(err => console.log(err));
-
-  const getCurrencies = async () => repository.find({
-    modelName: 'Currency',
-  })
-    .catch(err => console.log(err));
+  const bigNumberService = require('../../services/big-number-service')();
+  const intReqService = require('../../services/internal-requeter-service')(repository);
 
   const createPortfolioObject = (address, id, totalInvestmentETH, totalInvestmentUSD) => {
     const portfolio = {
@@ -58,7 +33,7 @@ const portfolioController = (repository) => {
     const user = req.body;
 
     try {
-      const porfolioFound = await getPortfolioObject(user.address);
+      const porfolioFound = await intReqService.getPortfolioByUserAddress(user.address);
       const totalInvestment = await portfolioService.calcPortfolioTotalInvestment(user.address).then(data => data);
       const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment.eth, totalInvestment.usd);
       if (porfolioFound === null || porfolioFound === undefined) {
@@ -142,7 +117,7 @@ const portfolioController = (repository) => {
   };
 
   const getTokenPriceByDate = async (timestamp) => {
-    const currencies = await getCurrencies();
+    const currencies = await intReqService.getCurrencies();
     const result = currencies.map(async (currency) => {
       const tokenValue = (currency.tokenName === 'ETH') ? 1 :
         await WeidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp);
@@ -224,8 +199,8 @@ const portfolioController = (repository) => {
       balancesArr.map(balance =>
         tokenPricesArr.map((token) => {
           if (balance.tokenName === token.tokenName) {
-            const currentValue = BigNumberService.product(balance.amount, token.value);
-            totalValue = BigNumberService.sum(totalValue, currentValue);
+            const currentValue = bigNumberService.product(balance.amount, token.value);
+            totalValue = bigNumberService.sum(totalValue, currentValue);
             return totalValue;
           }
           return null;
@@ -239,7 +214,7 @@ const portfolioController = (repository) => {
   const getPortfolioValueHistory = async (req, res) => {
     const { id } = req.params;
     try {
-      const allocations = await getAllocations(id);
+      const allocations = await intReqService.getAllocationsByPortfolioIdAsc(id);
       const today = new Date().getTime();
       const yesterday = today - (24 * 60 * 60 * 1000);
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
@@ -275,7 +250,7 @@ const portfolioController = (repository) => {
               tokenName: balance.tokenName,
               amount: balance.amount,
               price: token.value,
-              total: BigNumberService.product(balance.amount, token.value),
+              total: bigNumberService.product(balance.amount, token.value),
             });
             return assets;
           }
@@ -290,7 +265,7 @@ const portfolioController = (repository) => {
   const getPortfolioAssetsValueHistory = async (req, res) => {
     const { id } = req.params;
     try {
-      const allocations = await getAllocations(id);
+      const allocations = await intReqService.getAllocationsByPortfolioIdAsc(id);
       const today = new Date().getTime();
       const yesterday = today - (24 * 60 * 60 * 1000);
       const begin = new Date((allocations[0].timestamp).toString()).getTime();

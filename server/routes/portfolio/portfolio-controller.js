@@ -188,39 +188,20 @@ const portfolioController = (repository) => {
     const result = tokenPricesArr.map(async (token) => {
       if (balance.tokenName === token.tokenName) {
         const ethToUsd = await commomService.getEthToUsdMiliseconds(timestamp);
-        const eth = bigNumberService.product(balance.amount, token.value);
-        const usd = await commomService.getEthToUsd(balance.amount, token.value, ethToUsd);
+        const eth = balance.amount;
+        const usd = await bigNumberService.product(bigNumberService.gweiToEth(balance.amount), ethToUsd);
         return { eth, usd };
       }
       return null;
     });
-    return Promise.all(result).then((data) => {
-      const filteredData = data.filter(el => el !== null);
-      console.log('------------------------------------');
-      console.log(filteredData);
-      console.log('------------------------------------');
-      const eth = filteredData.reduce((acc, obj) => ((bigNumberService.sum(acc, obj.eth))), 0);
-      const usd = filteredData.reduce((acc, obj) => ((bigNumberService.sum(acc, obj.usd))), 0);
-      return { timestamp, eth, usd };
-    });
+    return Promise.all(result).then(data => data.filter(el => el !== null));
   };
 
   const resolveAssetsz = async (balancesArr, tokenPricesArr, timestamp) => {
-    const result = await balancesArr.map(async balance =>
-      defineTokenPricesArrz(tokenPricesArr, balance, timestamp));
-
-    return Promise.all(result).then((item) => {
-      console.log('------------------------------------');
-      console.log(item);
-      console.log('------------------------------------');
-      const eth = item.reduce((acc, obj) => ((bigNumberService.sum(acc, obj.eth))), 0);
-      console.log('------------------------------------');
-      console.log(eth);
-      console.log('------------------------------------');
-      const usd = item.reduce((acc, obj) => ((bigNumberService.sum(acc, obj.usd))), 0);
-      console.log('------------------------------------');
-      console.log(usd);
-      console.log('------------------------------------');
+    const result = await balancesArr.map(async balance => defineTokenPricesArrz(tokenPricesArr, balance, timestamp));
+    return Promise.all(result).then((data) => {
+      const eth = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].eth)), 0);
+      const usd = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].usd)), 0);
       return { timestamp, eth, usd };
     });
   };
@@ -239,24 +220,6 @@ const portfolioController = (repository) => {
       return resolveAssetsz(balancesArr, tokenPricesArr, timestamp);
     });
     return Promise.all(result).then(data => data);
-    // const result = [];
-    // timestamps.map((timestamp, index) => {
-    //   const balancesArr = balances[index].balance;
-    //   const tokenPricesArr = tokenPrices[index];
-    //   let totalValue = 0;
-    //   balancesArr.map(balance =>
-    //     tokenPricesArr.map((token) => {
-    //       if (balance.tokenName === token.tokenName) {
-    //         const currentValue = bigNumberService.product(balance.amount, token.value);
-    //         totalValue = bigNumberService.sum(totalValue, currentValue);
-    //         return totalValue;
-    //       }
-    //       return null;
-    //     }));
-    //   const final = { timestamp, value: totalValue };
-    //   return result.push(final);
-    // });
-    // return result;
   };
 
   const getPortfolioValueHistory = async (req, res) => {

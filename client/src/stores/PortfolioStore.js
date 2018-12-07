@@ -77,7 +77,7 @@ class PortfolioStore {
         .map((item: object) =>
           ([
             Number(new Date(item.timestamp).getTime()),
-            Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(item.value), 4)),
+            Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(item.eth), 4)),
           ]));
     }
     return [];
@@ -90,7 +90,7 @@ class PortfolioStore {
         .map((item: object) =>
           ([
             Number(new Date(item.timestamp).getTime()),
-            Number(BigNumberService.toFixedParam(BigNumberService.product(BigNumberService.gweiToEth(item.value), 115), 2)),
+            Number(BigNumberService.toFixedParam(item.usd), 2),
           ]));
     }
     return [];
@@ -137,7 +137,7 @@ class PortfolioStore {
       const portfolioValueHistoryArr = this.portfolioValueHistory.length > 30 ?
         this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - this.standardDeviationPeriod, 1)) :
         this.portfolioValueHistory;
-      this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.value);
+      this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.eth);
       return Number(BigNumberService
         .toFixedParam(BigNumberService
           .gweiToEth(math.std(this.standardDeviationData)), 2));

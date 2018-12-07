@@ -180,7 +180,10 @@ const assetController = (repository) => {
       }
       return null;
     });
-    return Promise.all(result).then(data => data.filter(el => el !== null));
+    return Promise.all(result).then((data) => {
+      const filtered = data.filter(el => el !== null);
+      return filtered[0];
+    });
   };
 
   const resolveAssets = async (balancesArr, tokenPricesArr, timestamp) => {

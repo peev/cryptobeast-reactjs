@@ -101,6 +101,79 @@ const internalRequesterService = (repository) => {
     },
   }).catch(err => console.log(err));
 
+  const getTransactionByTxHash = async txHash => repository.findOne({
+    modelName: 'Transaction',
+    options: {
+      where: {
+        txHash,
+      },
+    },
+  })
+    .catch(err => console.log(err));
+
+  const getPortfolioByUserAddressIncludeAll = async userAddress => repository.findOne({
+    modelName: 'Portfolio',
+    options: {
+      where: {
+        userAddress,
+      },
+      include: [{ all: true }],
+    },
+  }).catch(err => console.log(err));
+
+  const getTradeByTxHash = txHash => repository.findOne({
+    modelName: 'TradeHistory',
+    options: {
+      where: {
+        txHash,
+      },
+    },
+  }).catch(err => console.log(err));
+
+  const getTransactionsByPortfolioIdAsc = portfolioId => repository.find({
+    modelName: 'Transaction',
+    options: {
+      where: {
+        portfolioId,
+      },
+      order: [['txTimestamp', 'ASC']],
+    },
+  }).catch(err => console.log(err));
+
+  const getFirstDepositByPortfolioId = portfolioId => repository.findOne({
+    modelName: 'Transaction',
+    options: {
+      where: {
+        portfolioId,
+        type: 'd',
+        isFirstDeposit: true,
+      },
+    },
+  }).catch(err => console.log(err));
+
+  const getAllocationBeforeTimestampByPortfolioId = (portfolioId, timestamp) => repository.findOne({
+    modelName: 'Allocation',
+    options: {
+      where: {
+        portfolioId,
+        timestamp: {
+          [op.lte]: timestamp,
+        },
+      },
+      order: [['timestamp', 'ASC']],
+    },
+  }).catch(err => console.log(err));
+
+  const getTransactionByPortfolioIdAndTxHash = (portfolioId, txHash) => repository.findOne({
+    modelName: 'Transaction',
+    options: {
+      where: {
+        portfolioId,
+        txHash,
+      },
+    },
+  }).catch(err => console.log(err));
+
   return {
     getCurrencyByTokenName,
     getPortfolioByUserAddress,
@@ -112,6 +185,13 @@ const internalRequesterService = (repository) => {
     getCurrencies,
     getAssetByPortfolioIdAndTokenName,
     getPortfolioByIdIncludeAll,
+    getTransactionByTxHash,
+    getPortfolioByUserAddressIncludeAll,
+    getTradeByTxHash,
+    getTransactionsByPortfolioIdAsc,
+    getFirstDepositByPortfolioId,
+    getAllocationBeforeTimestampByPortfolioId,
+    getTransactionByPortfolioIdAndTxHash,
   };
 };
 

@@ -122,7 +122,7 @@ function createAssetObjectFromArray(assetAsArray: Array, allCurrencies: Array) {
     balance: BigNumberService.toNumber(BigNumberService.tokenToEth(assetAsArray.balance, decimals)),
     priceETH: BigNumberService.toNumber(assetAsArray.lastPriceETH),
     priceUSD: BigNumberService.toNumber(assetAsArray.lastPriceUSD),
-    totalUSD: BigNumberService.toNumber(BigNumberService.tokenToEth(assetAsArray.totalUSD, decimals)),
+    totalUSD: BigNumberService.toNumber(assetAsArray.totalUSD),
     assetWeight: BigNumberService.toNumber(assetAsArray.weight),
     '24Change': getChange24H(allCurrencies, assetAsArray),
     '7Change': getChange7D(allCurrencies, assetAsArray),

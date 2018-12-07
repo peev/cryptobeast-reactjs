@@ -39,10 +39,11 @@ const styles = () => ({
 type Props = {
   classes: Object,
   PortfolioStore: Object,
+  TransactionStore: Object,
 };
 
-const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
-  const { classes, PortfolioStore } = props;
+const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...props }: Props) => {
+  const { classes, PortfolioStore, TransactionStore } = props;
 
   const handleInfoMessage = () => {
     if (PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0) {
@@ -62,16 +63,15 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={TotalIcon}
             iconColor="gray"
             title="Total number of shares"
-            // description={PortfolioStore.summaryTotalNumberOfShares}
+            description={TransactionStore.numOfShares}
           />
 
           <SummaryCard
             icon={AscendantBarsIcon}
             iconColor="gray"
             title="Share price"
-            description={PortfolioStore.summaryTotalNumberOfShares !== 0
-              ? `$${Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100}` : ''}
-            hasInfo={PortfolioStore.summaryTotalNumberOfShares === 0}
+            description={TransactionStore.sharePrice}
+            hasInfo={TransactionStore.sharePrice === 0}
             infoMessage="Please add an investment to see your current share price"
           />
 

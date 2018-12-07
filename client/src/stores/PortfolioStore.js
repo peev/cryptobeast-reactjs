@@ -122,7 +122,7 @@ class PortfolioStore {
               .toFixedParam(BigNumberService
                 .product(BigNumberService
                   .quotient(BigNumberService
-                    .difference(this.portfolioValueHistory[i].value, this.portfolioValueHistory[i - 1].value), this.portfolioValueHistory[i - 1].value), 100), 2));
+                    .difference(this.portfolioValueHistory[i].eth, this.portfolioValueHistory[i - 1].eth), this.portfolioValueHistory[i - 1].eth), 100), 2));
           } else {
             return 100;
           }

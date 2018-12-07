@@ -77,12 +77,23 @@ const transactionController = (repository) => {
   const getTransaction = (req, res) => {
     const { id } = req.params;
     repository.findById({ modelName, id })
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        res.json(error);
-      });
+      .then(response => res.status(200).send(response))
+      .catch(error => res.json(error));
+  };
+
+  const getTransactions = (req, res) => {
+    const { portfolioId } = req.params;
+    repository.find({
+      modelName,
+      options: {
+        where: {
+          portfolioId,
+        },
+        order: [['txTimestamp', 'ASC']],
+      },
+    })
+      .then(response => res.status(200).send(response))
+      .catch(error => res.json(error));
   };
 
   const getDeposits = async (req, res, portfolioId, userID) => {
@@ -242,6 +253,7 @@ const transactionController = (repository) => {
 
   return {
     getTransaction,
+    getTransactions,
     sync,
     updateTransactions,
   };

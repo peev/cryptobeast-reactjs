@@ -6,7 +6,8 @@ const attachTo = (app, data) => {
 
   router
     .get('/:id', controller.getAsset)
-    .get('/history/:tokenId/:period', controller.getAssetPriceHistory);
+    .get('/history/:tokenId/:period', controller.getAssetPriceHistory)
+    .get('/assets-history/:id', controller.getAssetsValueHistory);
 
   app.use('/asset', router);
 };

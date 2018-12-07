@@ -26,15 +26,91 @@ const commonMethodsService = (repository) => {
   const getEthToUsd = async timestamp =>
     weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp) * 1000).then(data => data.priceUSD);
 
+  const getEthToUsdNow = async () => {
+    const timestamp = new Date().getTime();
+    return weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp)).then(data => data.priceUSD);
+  };
+
   const getEthToUsdMiliseconds = async timestamp =>
     weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp)).then(data => data.priceUSD);
+
+  const calculateDays = (begin, end) => {
+    const dates = [];
+    for (let i = begin; i <= end; i += (24 * 60 * 60 * 1000)) {
+      dates.push(i);
+    }
+    return dates;
+  };
+
+  const getEndOfDay = (timestamp) => {
+    const firstDate = new Date(timestamp);
+    firstDate.setHours(23);
+    firstDate.setMinutes(59);
+    firstDate.setSeconds(59);
+    return new Date(firstDate.toString()).getTime();
+  };
+
+  const getStartOfDay = (timestamp) => {
+    const firstDate = new Date(timestamp);
+    firstDate.setHours(0);
+    firstDate.setMinutes(0);
+    firstDate.setSeconds(0);
+    return new Date(firstDate.toString()).getTime();
+  };
+
+    /**
+   * Get balance of last allocation for a day period
+   * @param {*} start
+   * @param {*} end
+   * @param {*} allocations
+   */
+  const getLastBalanceForDay = async (start, end, allocations) => {
+    const lastBalanceForDay = allocations.filter(allocation =>
+      new Date(allocation.timestamp.toString()).getTime() >= start &&
+      new Date(allocation.timestamp.toString()).getTime() <= end);
+    return (lastBalanceForDay.length > 0) ? lastBalanceForDay[lastBalanceForDay.length - 1].balance : undefined;
+  };
+
+  const getBalancesByDate = async (timestamps, allocations) => {
+    const result = timestamps.map(async (timestamp) => {
+      const startTimestamp = getStartOfDay(timestamp);
+      const item = await getLastBalanceForDay(startTimestamp, timestamp, allocations);
+      return { timestamp, balance: item };
+    });
+    return Promise.all(result)
+      .then(data => data)
+      .catch(err => console.log(err));
+  };
+
+    /**
+   * Fill array balances with previous date balance values if
+   * there is no transactions for that day period
+   * @param {*} balances
+   */
+  const fillPreviousBalances = (balances) => {
+    const result = [];
+    balances.map((item, index) => {
+      if (item.balance === undefined) {
+        const previousItem = result[index - 1];
+        return result.push({ timestamp: item.timestamp, balance: previousItem.balance });
+      }
+      return result.push(item);
+    });
+    return result;
+  };
 
   return {
     getTimestampByTxHash,
     tokenToEthToUsd,
     getTokenPriceEthByTransaction,
     getEthToUsd,
+    getEthToUsdNow,
     getEthToUsdMiliseconds,
+    calculateDays,
+    getEndOfDay,
+    getStartOfDay,
+    getBalancesByDate,
+    fillPreviousBalances,
   };
 };
 

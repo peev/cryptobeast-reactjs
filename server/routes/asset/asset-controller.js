@@ -2,49 +2,11 @@ const modelName = 'Asset';
 
 const assetController = (repository) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
-  const WeidexService = require('../../services/weidex-service')(repository);
-  const bigNumberService = require('../../services/big-number-service');
-  const weidexFiatMsService = require('../../services/weidex-fiat-ms-service');
-
-  const getCurrency = async tokenNameParam => repository.findOne({
-    modelName: 'Currency',
-    options: {
-      where: {
-        tokenName: tokenNameParam,
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
-  const getAssetObject = async (tokenNameParam, portfolioIdParam) => repository.findOne({
-    modelName,
-    options: {
-      where: {
-        tokenName: tokenNameParam,
-        portfolioId: portfolioIdParam,
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
-  const getPortfolioObjectByAddress = async address => repository.findOne({
-    modelName: 'Portfolio',
-    options: {
-      where: {
-        userAddress: address,
-      },
-    },
-  })
-    .catch(err => console.log(err));
-
-  const getPortfolioObjectIncludeAll = async idParam => repository.findOne({
-    modelName: 'Portfolio',
-    options: {
-      where: { id: idParam },
-      include: [{ all: true }],
-    },
-  })
-    .catch(err => console.log(err));
+  const weidexService = require('../../services/weidex-service')(repository);
+  const bigNumberService = require('../../services/big-number-service')();
+  const weidexFiatMsService = require('../../services/weidex-fiat-ms-service')();
+  const intReqService = require('../../services/internal-requeter-service')(repository);
+  const commomService = require('../../services/common-methods-service')();
 
   const createAssetObject = async (req, lastPriceETHParam, priceUSD) => {
     let newAssetObject;
@@ -60,7 +22,7 @@ const assetController = (repository) => {
         lastPriceETH: lastPriceETHParam !== null && lastPriceETHParam !== undefined ? lastPriceETHParam : req.tokenName === 'ETH' ? 1 : 0,
         lastPriceUSD: bigNumberService().product(lastPriceETHParam, priceUSD) || 0,
         totalETH: bigNumberService().product(req.fullAmount, lastPriceETHParam) || 0,
-        totalUSD: bigNumberService().product(bigNumberService().product(bigNumberService().gweiToEth(req.fullAmount), lastPriceETHParam), priceUSD) || 0,
+        totalUSD: commomService.tokenToEthToUsd(req.fullAmount, lastPriceETHParam, priceUSD) || 0,
         weight: 0,
       };
     } catch (error) {
@@ -81,18 +43,13 @@ const assetController = (repository) => {
       .then(response => (isSyncing ? null : res.status(200).send(response)))
       .catch(error => res.json(error));
 
-  const getEthToUsd = async () => {
-    const timestamp = new Date().getTime();
-    return weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp)).then(data => data.priceUSD);
-  };
-
   const syncAsset = async (req, res, lastPriceUSD) => {
     const assetData = req.body;
 
     try {
-      const currency = await getCurrency(assetData.tokenName);
+      const currency = await intReqService.getCurrencyByTokenName(assetData.tokenName);
       const assetObject = await createAssetObject(assetData, currency.lastPriceETH, lastPriceUSD);
-      const assetFound = await getAssetObject(assetData.tokenName, assetData.portfolioId);
+      const assetFound = await intReqService.getAssetByPortfolioIdAndTokenName(assetData.portfolioId, assetData.tokenName);
 
       if (assetFound === null || assetFound === undefined) {
         await createAction(req, res, assetObject, true);
@@ -117,7 +74,7 @@ const assetController = (repository) => {
 
   const updateAssetsWeight = async (req, res, idParam) => {
     try {
-      const portfolio = await getPortfolioObjectIncludeAll(idParam);
+      const portfolio = await intReqService.getPortfolioByIdIncludeAll(idParam);
       const portfolioTotalValue = await portfolioService.calcPortfolioTotalValueETH(portfolio);
 
       await Promise.all(portfolio.assets.map(async (asset) => {
@@ -159,7 +116,7 @@ const assetController = (repository) => {
     try {
       return datesArr.map(async item => ({
         date: item,
-        value: await WeidexService.getTokenValueByTimestampHttp(Number(tokenId), item)
+        value: await weidexService.getTokenValueByTimestampHttp(Number(tokenId), item)
           .then(data => ((data.length > 0) ? data : 0))
           .catch(err => res.status(500).send(err)),
       }));
@@ -183,6 +140,89 @@ const assetController = (repository) => {
     }
   };
 
+  const getTokenPriceByDate = async (timestamp) => {
+    const currencies = await intReqService.getCurrencies();
+    const result = currencies.map(async (currency) => {
+      const tokenValue = (currency.tokenName === 'ETH') ? 1 :
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp);
+      return {
+        timestamp,
+        tokenName: currency.tokenName,
+        value: tokenValue,
+      };
+    });
+    return Promise.all(result)
+      .then(data => data)
+      .catch(err => console.log(err));
+  };
+
+  const getTokensPriceByDate = async (timestamps) => {
+    const result = timestamps.map(async (timestamp) => {
+      const tokenPrice = await getTokenPriceByDate(timestamp);
+      return tokenPrice;
+    });
+    return Promise.all(result)
+      .then(data => data)
+      .catch(err => console.log(err));
+  };
+
+  const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp) => {
+    const result = tokenPricesArr.map(async (token) => {
+      if (balance.tokenName === token.tokenName) {
+        const ethToUsd = await commomService.getEthToUsdMiliseconds(timestamp);
+        return {
+          tokenName: balance.tokenName,
+          amount: balance.amount,
+          price: token.value,
+          total: bigNumberService.product(balance.amount, token.value),
+          totalUsd: await commomService.tokenToEthToUsd(bigNumberService.product(balance.amount, token.value), token.value, ethToUsd),
+        };
+      }
+      return null;
+    });
+    return Promise.all(result).then(data => data.filter(el => el !== null));
+  };
+
+  const resolveAssets = async (balancesArr, tokenPricesArr, timestamp) => {
+    const result = await balancesArr.map(async balance =>
+      defineTokenPricesArr(tokenPricesArr, balance, timestamp));
+    return Promise.all(result).then(data => ({ timestamp, assets: data }));
+  };
+
+  /**
+   * Gets timestamps, token prices and token balance for each day,
+   * multiply balance by price.
+   * @param {*} timestamps
+   * @param {*} tokenPrices
+   * @param {*} balances
+   */
+  const calculatePortfolioAssetsValueHistory = async (timestamps, tokenPrices, balances) => {
+    const result = timestamps.map(async (timestamp, index) => {
+      const balancesArr = balances[index].balance;
+      const tokenPricesArr = tokenPrices[index];
+      return resolveAssets(balancesArr, tokenPricesArr, timestamp);
+    });
+    return Promise.all(result).then(data => data);
+  };
+
+  const getAssetsValueHistory = async (req, res) => {
+    const { id } = req.params;
+    try {
+      const allocations = await intReqService.getAllocationsByPortfolioIdAsc(id);
+      const today = new Date().getTime();
+      const begin = new Date((allocations[0].timestamp).toString()).getTime();
+      const timestamps = commomService.calculateDays(commomService.getEndOfDay(begin), commomService.getEndOfDay(today));
+      const tokenPricesByDate = await getTokensPriceByDate(timestamps);
+      const balances = await commomService.getBalancesByDate(timestamps, allocations);
+      const filledPreviousBalances = commomService.fillPreviousBalances(balances);
+      const portfolioValueHistory = await calculatePortfolioAssetsValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances);
+      res.status(200).send(portfolioValueHistory);
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error);
+    }
+  };
+
   const syncAssets = async (req, res, assets, lastPriceUSD, portfolioIdParam) => {
     try {
       await Promise.all(assets.map(async (asset) => {
@@ -198,9 +238,9 @@ const assetController = (repository) => {
   const sync = async (req, res, addresses) => {
     const addressesArray = addresses.map(async (address) => {
       try {
-        const lastPriceUSD = await getEthToUsd();
-        const portfolio = await getPortfolioObjectByAddress(address);
-        const assets = await WeidexService.getBalanceByUserHttp(portfolio.userAddress);
+        const lastPriceUSD = await commomService.getEthToUsdNow();
+        const portfolio = await intReqService.getPortfolioByUserAddress(address);
+        const assets = await weidexService.getBalanceByUserHttp(portfolio.userAddress);
 
         await syncAssets(req, res, assets, lastPriceUSD, portfolio.id);
         await updateAssetsWeight(req, res, portfolio.id);
@@ -217,6 +257,7 @@ const assetController = (repository) => {
     getAsset,
     getAssetPriceHistory,
     sync,
+    getAssetsValueHistory,
   };
 };
 

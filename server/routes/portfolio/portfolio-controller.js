@@ -93,30 +93,6 @@ const portfolioController = (repository) => {
     }
   };
 
-  const getEndOfDay = (timestamp) => {
-    const firstDate = new Date(timestamp);
-    firstDate.setHours(23);
-    firstDate.setMinutes(59);
-    firstDate.setSeconds(59);
-    return new Date(firstDate.toString()).getTime();
-  };
-
-  const getStartOfDay = (timestamp) => {
-    const firstDate = new Date(timestamp);
-    firstDate.setHours(0);
-    firstDate.setMinutes(0);
-    firstDate.setSeconds(0);
-    return new Date(firstDate.toString()).getTime();
-  };
-
-  const calculateDays = (begin, end) => {
-    const dates = [];
-    for (let i = begin; i <= end; i += (24 * 60 * 60 * 1000)) {
-      dates.push(i);
-    }
-    return dates;
-  };
-
   const getTokenPriceByDate = async (timestamp) => {
     const currencies = await intReqService.getCurrencies();
     const result = currencies.map(async (currency) => {
@@ -143,65 +119,23 @@ const portfolioController = (repository) => {
       .catch(err => console.log(err));
   };
 
-  /**
-   * Get balance of last allocation for a day period
-   * @param {*} start
-   * @param {*} end
-   * @param {*} allocations
-   */
-  const getLastBalanceForDay = async (start, end, allocations) => {
-    const lastBalanceForDay = allocations.filter(allocation =>
-      new Date(allocation.timestamp.toString()).getTime() >= start &&
-      new Date(allocation.timestamp.toString()).getTime() <= end);
-    return (lastBalanceForDay.length > 0) ? lastBalanceForDay[lastBalanceForDay.length - 1].balance : undefined;
-  };
-
-  const getBalancesByDate = async (timestamps, allocations) => {
-    const result = timestamps.map(async (timestamp) => {
-      const startTimestamp = getStartOfDay(timestamp);
-      const item = await getLastBalanceForDay(startTimestamp, timestamp, allocations);
-      return { timestamp, balance: item };
-    });
-    return Promise.all(result)
-      .then(data => data)
-      .catch(err => console.log(err));
-  };
-
-  /**
-   * Fill array balances with previous date balance values if
-   * there is no transactions for that day period
-   * @param {*} balances
-   */
-  const fillPreviousBalances = (balances) => {
-    const result = [];
-    balances.map((item, index) => {
-      if (item.balance === undefined) {
-        const previousItem = result[index - 1];
-        return result.push({ timestamp: item.timestamp, balance: previousItem.balance });
-      }
-      return result.push(item);
-    });
-    return result;
-  };
-
-  const defineTokenPricesArrz = async (tokenPricesArr, balance, timestamp) => {
+  const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp) => {
     const result = tokenPricesArr.map(async (token) => {
       if (balance.tokenName === token.tokenName) {
         const ethToUsd = await commomService.getEthToUsdMiliseconds(timestamp);
         const eth = balance.amount;
-        const usd = await bigNumberService.product(bigNumberService.gweiToEth(balance.amount), ethToUsd);
-        return { eth, usd };
+        return { eth, ethToUsd };
       }
       return null;
     });
     return Promise.all(result).then(data => data.filter(el => el !== null));
   };
 
-  const resolveAssetsz = async (balancesArr, tokenPricesArr, timestamp) => {
-    const result = await balancesArr.map(async balance => defineTokenPricesArrz(tokenPricesArr, balance, timestamp));
+  const resolveAssets = async (balancesArr, tokenPricesArr, timestamp) => {
+    const result = await balancesArr.map(async balance => defineTokenPricesArr(tokenPricesArr, balance, timestamp));
     return Promise.all(result).then((data) => {
       const eth = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].eth)), 0);
-      const usd = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].usd)), 0);
+      const usd = bigNumberService.product(bigNumberService.gweiToEth(eth), data[0][0].ethToUsd);
       return { timestamp, eth, usd };
     });
   };
@@ -217,7 +151,7 @@ const portfolioController = (repository) => {
     const result = timestamps.map(async (timestamp, index) => {
       const balancesArr = balances[index].balance;
       const tokenPricesArr = tokenPrices[index];
-      return resolveAssetsz(balancesArr, tokenPricesArr, timestamp);
+      return resolveAssets(balancesArr, tokenPricesArr, timestamp);
     });
     return Promise.all(result).then(data => data);
   };
@@ -228,68 +162,11 @@ const portfolioController = (repository) => {
       const allocations = await intReqService.getAllocationsByPortfolioIdAsc(id);
       const today = new Date().getTime();
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
-      const timestamps = calculateDays(getEndOfDay(begin), getEndOfDay(today));
+      const timestamps = commomService.calculateDays(commomService.getEndOfDay(begin), commomService.getEndOfDay(today));
       const tokenPricesByDate = await getTokensPriceByDate(timestamps);
-      const balances = await getBalancesByDate(timestamps, allocations);
-      const filledPreviousBalances = fillPreviousBalances(balances);
+      const balances = await commomService.getBalancesByDate(timestamps, allocations);
+      const filledPreviousBalances = commomService.fillPreviousBalances(balances);
       const portfolioValueHistory = await calculatePortfolioValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances);
-      res.status(200).send(portfolioValueHistory);
-    } catch (error) {
-      console.log(error);
-      res.status(400).send(error);
-    }
-  };
-
-  const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp) => {
-    const result = tokenPricesArr.map(async (token) => {
-      if (balance.tokenName === token.tokenName) {
-        const ethToUsd = await commomService.getEthToUsdMiliseconds(timestamp);
-        return {
-          tokenName: balance.tokenName,
-          amount: balance.amount,
-          price: token.value,
-          total: bigNumberService.product(balance.amount, token.value),
-          totalUsd: await commomService.tokenToEthToUsd(bigNumberService.product(balance.amount, token.value), token.value, ethToUsd),
-        };
-      }
-      return null;
-    });
-    return Promise.all(result).then(data => data.filter(el => el !== null));
-  };
-
-  const resolveAssets = async (balancesArr, tokenPricesArr, timestamp) => {
-    const result = await balancesArr.map(async balance =>
-      defineTokenPricesArr(tokenPricesArr, balance, timestamp));
-    return Promise.all(result).then(data => ({ timestamp, assets: data }));
-  };
-
-  /**
-   * Gets timestamps, token prices and token balance for each day,
-   * multiply balance by price.
-   * @param {*} timestamps
-   * @param {*} tokenPrices
-   * @param {*} balances
-   */
-  const calculatePortfolioAssetsValueHistory = async (timestamps, tokenPrices, balances) => {
-    const result = timestamps.map(async (timestamp, index) => {
-      const balancesArr = balances[index].balance;
-      const tokenPricesArr = tokenPrices[index];
-      return resolveAssets(balancesArr, tokenPricesArr, timestamp);
-    });
-    return Promise.all(result).then(data => data);
-  };
-
-  const getPortfolioAssetsValueHistory = async (req, res) => {
-    const { id } = req.params;
-    try {
-      const allocations = await intReqService.getAllocationsByPortfolioIdAsc(id);
-      const today = new Date().getTime();
-      const begin = new Date((allocations[0].timestamp).toString()).getTime();
-      const timestamps = calculateDays(getEndOfDay(begin), getEndOfDay(today));
-      const tokenPricesByDate = await getTokensPriceByDate(timestamps);
-      const balances = await getBalancesByDate(timestamps, allocations);
-      const filledPreviousBalances = fillPreviousBalances(balances);
-      const portfolioValueHistory = await calculatePortfolioAssetsValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances);
       res.status(200).send(portfolioValueHistory);
     } catch (error) {
       console.log(error);
@@ -318,7 +195,6 @@ const portfolioController = (repository) => {
     getPortfoliosByAddresses,
     getPortfolioAssetsByPortfolioId,
     getPortfolioValueHistory,
-    getPortfolioAssetsValueHistory,
   };
 };
 

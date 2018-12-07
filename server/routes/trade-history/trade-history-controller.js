@@ -7,7 +7,7 @@ const tradeController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service');
   const weidexFiatMsService = require('../../services/weidex-fiat-ms-service');
-  const commomService = require('../../services/common-methods-service');
+  const commomService = require('../../services/common-methods-service')();
 
   const getPortfolioObjectByAddress = async address => repository.findOne({
     modelName: 'Portfolio',
@@ -78,9 +78,6 @@ const tradeController = (repository) => {
     ((transaction !== null) ?
       bigNumberService().quotient(bigNumberService().product(transaction.gas, transaction.gasPrice), 1000000000000000000) : 0);
 
-  const getEthToUsd = async timestamp =>
-    weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp)).then(data => data.priceUSD);
-
   const syncTrade = async (req, res, lastPriceUSD, address) => {
     const trade = req.body;
 
@@ -89,10 +86,10 @@ const tradeController = (repository) => {
       if (tradeExist === null) {
         const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
         const transactionFee = calculateTransactionFee(transaction);
-        const timestamp = await commomService().getTimestampByTxHash(trade.txHash);
-        const ethUsd = await commomService().getEthToUsd(timestamp);
+        const timestamp = await commomService.getTimestampByTxHash(trade.txHash);
+        const ethUsd = await commomService.getEthToUsdMiliseconds(timestamp);
         const priceUSD = bigNumberService().product(trade.price, ethUsd);
-        const priceTotalUSD = await commomService().tokenToEthToUsd(trade.amount, trade.price, ethUsd);
+        const priceTotalUSD = await commomService.tokenToEthToUsd(trade.amount, trade.price, ethUsd);
 
         const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee, address, priceUSD, priceTotalUSD);
         await createAction(req, res, tradeObject, true);
@@ -143,8 +140,7 @@ const tradeController = (repository) => {
   const sync = async (req, res, addresses) => {
     const portfolioArray = addresses.map(async (address) => {
       try {
-        const timestamp = new Date().getTime();
-        const lastPriceUSD = await getEthToUsd(timestamp);
+        const lastPriceUSD = await commomService.getEthToUsdNow();
         const portfolio = await getPortfolioObjectByAddress(address);
         const trades = await WeidexService.getUserOrderHistoryByUserHttp(portfolio.userID);
         if (trades) {

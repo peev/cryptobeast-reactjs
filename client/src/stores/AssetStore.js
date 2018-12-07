@@ -52,7 +52,7 @@ class AssetStore {
 
   @action.bound
   getAssetsValueHistory() {
-    requester.Portfolio.getPortfolioAssetsValueHistory(PortfolioStore.selectedPortfolioId)
+    requester.Asset.getAssetsValueHistory(PortfolioStore.selectedPortfolioId)
       .then(action((result: object) => {
         this.assetsValueHistory = result.data;
       }));

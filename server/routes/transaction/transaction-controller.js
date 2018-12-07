@@ -5,6 +5,7 @@ const modelName = 'Transaction';
 const transactionController = (repository) => {
   const weidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service');
+  const commomService = require('../../services/common-methods-service')();
   const Sequelize = require('sequelize');
   const weidexFiatMsService = require('../../services/weidex-fiat-ms-service');
   const op = Sequelize.Op;

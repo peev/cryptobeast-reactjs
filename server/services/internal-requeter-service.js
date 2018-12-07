@@ -83,6 +83,24 @@ const internalRequesterService = (repository) => {
     modelName: 'Currency',
   }).catch(err => console.log(err));
 
+  const getAssetByPortfolioIdAndTokenName = async (portfolioId, tokenName) => repository.findOne({
+    modelName: 'Asset',
+    options: {
+      where: {
+        tokenName,
+        portfolioId,
+      },
+    },
+  }).catch(err => console.log(err));
+
+  const getPortfolioByIdIncludeAll = async id => repository.findOne({
+    modelName: 'Portfolio',
+    options: {
+      where: { id },
+      include: [{ all: true }],
+    },
+  }).catch(err => console.log(err));
+
   return {
     getCurrencyByTokenName,
     getPortfolioByUserAddress,
@@ -92,6 +110,8 @@ const internalRequesterService = (repository) => {
     getTransactionsByPortfolioIdGreaterThanTimestampDesc,
     getAllocationsByPortfolioIdAsc,
     getCurrencies,
+    getAssetByPortfolioIdAndTokenName,
+    getPortfolioByIdIncludeAll,
   };
 };
 

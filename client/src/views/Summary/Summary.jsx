@@ -63,14 +63,18 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             icon={TotalIcon}
             iconColor="gray"
             title="Total number of shares"
-            description={TransactionStore.numOfShares}
+            description={TransactionStore.numOfShares !== 0
+              ? `${TransactionStore.numOfShares}` : ''}
+            hasInfo={TransactionStore.numOfShares === 0}
+            infoMessage="Please add an investment to see your number of shares"
           />
 
           <SummaryCard
             icon={AscendantBarsIcon}
             iconColor="gray"
             title="Share price"
-            description={TransactionStore.sharePrice}
+            description={TransactionStore.sharePrice !== 0
+              ? `$${TransactionStore.sharePrice}` : ''}
             hasInfo={TransactionStore.sharePrice === 0}
             infoMessage="Please add an investment to see your current share price"
           />
@@ -79,10 +83,8 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            // description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
             description={PortfolioStore.currentPortfolioCostInUSD !== 0
-              ? `$${BigNumberService.toFixedParam(PortfolioStore.currentPortfolioCostInUSD, 2)}`
-              : ''}
+              ? `$${PortfolioStore.currentPortfolioCostInUSD}` : ''}
             hasInfo={PortfolioStore.currentPortfolioCostInUSD === 0}
             infoMessage="Please add assets to your portfolio"
           />
@@ -92,8 +94,7 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             iconColor="gray"
             title="Total investment"
             description={PortfolioStore.summaryTotalInvestmentInUSD !== 0
-              ? `$${PortfolioStore.summaryTotalInvestmentInUSD}`
-              : ''}
+              ? `$${PortfolioStore.summaryTotalInvestmentInUSD}` : ''}
             hasInfo={PortfolioStore.summaryTotalInvestmentInUSD === 0}
             infoMessage="Please add new investor or edit your personal investment amount"
           />

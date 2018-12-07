@@ -39,10 +39,11 @@ const styles = () => ({
 type Props = {
   classes: Object,
   PortfolioStore: Object,
+  TransactionStore: Object,
 };
 
-const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
-  const { classes, PortfolioStore } = props;
+const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...props }: Props) => {
+  const { classes, PortfolioStore, TransactionStore } = props;
 
   const handleInfoMessage = () => {
     if (PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0) {
@@ -62,16 +63,19 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={TotalIcon}
             iconColor="gray"
             title="Total number of shares"
-            // description={PortfolioStore.summaryTotalNumberOfShares}
+            description={TransactionStore.numOfShares !== 0
+              ? `${TransactionStore.numOfShares}` : ''}
+            hasInfo={TransactionStore.numOfShares === 0}
+            infoMessage="Please add an investment to see your number of shares"
           />
 
           <SummaryCard
             icon={AscendantBarsIcon}
             iconColor="gray"
             title="Share price"
-            description={PortfolioStore.summaryTotalNumberOfShares !== 0
-              ? `$${Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100}` : ''}
-            hasInfo={PortfolioStore.summaryTotalNumberOfShares === 0}
+            description={TransactionStore.sharePrice !== 0
+              ? `$${TransactionStore.sharePrice}` : ''}
+            hasInfo={TransactionStore.sharePrice === 0}
             infoMessage="Please add an investment to see your current share price"
           />
 
@@ -79,10 +83,8 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             icon={DollarIcon}
             iconColor="gray"
             title="USD equivalent"
-            // description={`$${PortfolioStore.currentPortfolioCostInUSD.toFixed(2) || ''}`}
             description={PortfolioStore.currentPortfolioCostInUSD !== 0
-              ? `$${BigNumberService.toFixedParam(PortfolioStore.currentPortfolioCostInUSD, 2)}`
-              : ''}
+              ? `$${PortfolioStore.currentPortfolioCostInUSD}` : ''}
             hasInfo={PortfolioStore.currentPortfolioCostInUSD === 0}
             infoMessage="Please add assets to your portfolio"
           />
@@ -92,8 +94,7 @@ const Summary = inject('PortfolioStore')(observer(({ ...props }: Props) => {
             iconColor="gray"
             title="Total investment"
             description={PortfolioStore.summaryTotalInvestmentInUSD !== 0
-              ? `$${PortfolioStore.summaryTotalInvestmentInUSD}`
-              : ''}
+              ? `$${PortfolioStore.summaryTotalInvestmentInUSD}` : ''}
             hasInfo={PortfolioStore.summaryTotalInvestmentInUSD === 0}
             infoMessage="Please add new investor or edit your personal investment amount"
           />

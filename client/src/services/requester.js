@@ -32,6 +32,7 @@ const Asset = {
   update: requestParams => requests.put('/asset/update', requestParams),
   delete: id => requests.delete(`/asset/delete/${id}`, id),
   allocate: data => requests.post('/asset/allocate', data),
+  getAssetsValueHistory: id => requests.get(`/asset/assets-history/${id}`),
   getAssetHistory: (tokenId, period) => requests.get(`/asset/history/${tokenId}/${period}`),
   sync: data => requests.get('/asset/sync/'),
 };
@@ -50,6 +51,7 @@ const Transaction = {
   updateTrade: requestParams => requests.put('/account/updateTrade', requestParams),
   deleteTrade: id => requests.delete(`/account/deleteTrade/${id}`, id),
   getAllTrades: () => requests.get('/account/allTrades'),
+  getAllTransactions: portfolioId => requests.get(`/transaction/all/${portfolioId}`),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
@@ -67,7 +69,6 @@ const Portfolio = {
   update: (requestParams, id) => requests.put(`/portfolio/update/${id}`, requestParams), // id + newName
   delete: id => requests.delete(`/portfolio/delete/${id}`),
   getPortfolioValueHistory: id => requests.get(`/portfolio/history/${id}`),
-  getPortfolioAssetsValueHistory: id => requests.get(`/portfolio/assets-history/${id}`),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 

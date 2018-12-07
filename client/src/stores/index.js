@@ -11,6 +11,7 @@ import Allocations from './Allocations';
 import CurrencyStore from './CurrencyStore';
 import FiatCurrencies from './FiatCurrenciesStore';
 import LoadingStore from './LoadingStore';
+import TransactionStore from './TransactionStore';
 
 const stores = {
   PortfolioStore,
@@ -26,6 +27,7 @@ const stores = {
   FiatCurrencies,
   WeidexStore,
   LoadingStore,
+  TransactionStore,
 };
 
 export default stores;

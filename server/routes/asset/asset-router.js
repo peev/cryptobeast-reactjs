@@ -3,14 +3,11 @@ const { Router } = require('express');
 const attachTo = (app, data) => {
   const router = new Router();
   const controller = require('./asset-controller')(data);
-  const validator = require('./asset-validator')();
 
   router
-    .post('/create', validator.verifyCreateAsset, controller.createAsset)
     .get('/:id', controller.getAsset)
-    .put('/update/:id', validator.verifyUpdateAsset, controller.updateAsset)
-    .delete('/delete/:id', controller.removeAsset)
-    .get('/history/:tokenId/:period', controller.getAssetPriceHistory);
+    .get('/history/:tokenId/:period', controller.getAssetPriceHistory)
+    .get('/assets-history/:id', controller.getAssetsValueHistory);
 
   app.use('/asset', router);
 };

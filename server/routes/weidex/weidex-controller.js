@@ -2,7 +2,6 @@
 const weidexController = (repository) => {
   const WeidexService = require('../../services/weidex-service')(repository);
   const assetController = require('../asset/asset-controller')(repository);
-  const fiatFxController = require('../fiat-fx/fiat-fx-controller')(repository);
   const currencyController = require('../currency/currency-controller')(repository);
   const portfolioController = require('../portfolio/portfolio-controller')(repository);
   const transactionController = require('../transaction/transaction-controller')(repository);
@@ -28,7 +27,6 @@ const weidexController = (repository) => {
   const sync = async (req, res) => {
     // POST /weidex/sync ["0x5AE0d1Ffb5e06d32f3dA53aCA952439766Ab029F","0xac5e37db1c85bfc3e6474755ed77cff76d81eb67"]
     const addresses = req.body.map(address => address.toLowerCase());
-    await fiatFxController.sync(req, res);
     console.log('================== START CURRENCY ==================');
     await currencyController.sync(req, res)
       .then(() => console.log('================== START PORTFOLIO =================='));

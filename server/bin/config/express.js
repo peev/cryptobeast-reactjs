@@ -10,8 +10,8 @@ const cors = require('cors');
 
 
 const init = async (repository) => {
-  const portfolioService = require('../../services/portfolio-service')(repository);
-  const marketService = require('../../services/market-service')(repository);
+  // const portfolioService = require('../../services/portfolio-service')(repository);
+  // const marketService = require('../../services/market-service')(repository);
 
   const app = express();
 
@@ -88,7 +88,6 @@ const init = async (repository) => {
   require('./../../routes/investor/investor-router').attachTo(app, repository);
   require('./../../routes/asset/asset-router').attachTo(app, repository, jobs);
   require('./../../routes/weidex/weidex-router').attachTo(app, repository, jobs);
-  require('./../../routes/fiat-fx/fiat-fx-router').attachTo(app, repository, jobs);
   require('./../../routes/currency/currency-router').attachTo(app, repository, jobs);
   require('./../../routes/allocations/allocations-router').attachTo(app, repository);
   require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);

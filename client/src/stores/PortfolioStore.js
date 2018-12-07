@@ -20,6 +20,7 @@ import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
 import LoadingStore from './LoadingStore';
 import CurrencyStore from './CurrencyStore';
+import TransactionStore from './TransactionStore';
 
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
@@ -77,7 +78,7 @@ class PortfolioStore {
         .map((item: object) =>
           ([
             Number(new Date(item.timestamp).getTime()),
-            Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(item.value), 4)),
+            Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(item.eth), 4)),
           ]));
     }
     return [];
@@ -90,7 +91,7 @@ class PortfolioStore {
         .map((item: object) =>
           ([
             Number(new Date(item.timestamp).getTime()),
-            Number(BigNumberService.toFixedParam(BigNumberService.product(BigNumberService.gweiToEth(item.value), 115), 2)),
+            Number(BigNumberService.toFixedParam(item.usd), 2),
           ]));
     }
     return [];
@@ -122,7 +123,7 @@ class PortfolioStore {
               .toFixedParam(BigNumberService
                 .product(BigNumberService
                   .quotient(BigNumberService
-                    .difference(this.portfolioValueHistory[i].value, this.portfolioValueHistory[i - 1].value), this.portfolioValueHistory[i - 1].value), 100), 2));
+                    .difference(this.portfolioValueHistory[i].eth, this.portfolioValueHistory[i - 1].eth), this.portfolioValueHistory[i - 1].eth), 100), 2));
           } else {
             return 100;
           }
@@ -137,7 +138,7 @@ class PortfolioStore {
       const portfolioValueHistoryArr = this.portfolioValueHistory.length > 30 ?
         this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - this.standardDeviationPeriod, 1)) :
         this.portfolioValueHistory;
-      this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.value);
+      this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.eth);
       return Number(BigNumberService
         .toFixedParam(BigNumberService
           .gweiToEth(math.std(this.standardDeviationData)), 2));
@@ -150,6 +151,35 @@ class PortfolioStore {
     this.standardDeviationPeriod = period;
   }
 
+  @computed
+  get currentPortfolioCostInUSD() {
+    if (this.currentPortfolioAssets.length && this.currentPortfolioAssets.length > 0) {
+      return BigNumberService.toFixedParam((this.currentPortfolioAssets
+        .reduce((acc: number, obj: number) => BigNumberService.sum(acc, obj.totalUSD), 0)), 2);
+    }
+    return 0;
+  }
+
+  @computed
+  get summaryTotalInvestmentInUSD() {
+    if (this.selectedPortfolio) {
+      return this.selectedPortfolio.totalInvestmentUSD;
+    }
+    return 0;
+  }
+
+  @computed
+  get summaryTotalProfitLoss() {
+    if (this.selectedPortfolio && TransactionStore.transactions.length > 0 && this.summaryTotalInvestmentInUSD !== 0) {
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .product(BigNumberService
+            .quotient(BigNumberService
+              .difference(this.currentPortfolioCostInUSD, this.summaryTotalInvestmentInUSD), this.summaryTotalInvestmentInUSD), 100), 2));
+    }
+    return 0;
+  }
+
   @action
   setFetchingPortfolios(value: boolean) {
     this.fethingPortfolios = value;
@@ -160,30 +190,6 @@ class PortfolioStore {
   @computed
   get summaryTotalNumberOfShares() {
     return 0;
-    // if (this.selectedPortfolio !== null && this.selectedPortfolio.shares !== null) {
-    //   return this.selectedPortfolio.shares;
-    // }
-
-    // return 0;
-  }
-
-  @computed
-  get summaryTotalInvestmentInUSD() {
-    if (this.selectedPortfolio) {
-      return this.selectedPortfolio.totalInvestmentUSD;
-    }
-    return 0;
-    // TODO FOR DELETE
-    // if (this.selectedPortfolio && this.currentPortfolioTransactions.length > 0) {
-    //   let totalAmount = 0;
-    //   this.currentPortfolioTransactions.forEach((el) => {
-    //     totalAmount += el.amountInUSD;
-    //   });
-
-    //   return totalAmount.toFixed(2);
-    // }
-
-    // return 0;
   }
 
   @computed
@@ -205,16 +211,6 @@ class PortfolioStore {
         LoadingStore.setShowContent(true);
       });
   };
-
-  @computed
-  get summaryTotalProfitLoss() {
-    if (this.selectedPortfolio && this.currentPortfolioTransactions.length > 0 && this.summaryTotalInvestmentInUSD !== 0) {
-      const result = ((this.currentPortfolioCostInUSD - this.summaryTotalInvestmentInUSD) / this.summaryTotalInvestmentInUSD) * 100;
-      return result.toFixed(2);
-    }
-
-    return 0;
-  }
 
   // TODO: I am 90% sure this is deprecated
   @action
@@ -402,51 +398,6 @@ class PortfolioStore {
       y: Number(BigNumberService.toFixedParam(el.weight, 2)),
       name: `${el.tokenName} ${Number(BigNumberService.toFixedParam(el.weight, 2))}%`,
     }));
-  }
-
-  @computed
-  get currentPortfolioCostInUSD() {
-    // NOTE: Portfolio cost is calculated here,
-    // because the value from database is incorrect
-    if (this.selectedPortfolio && this.currentPortfolioAssets.length && MarketStore.allCurrencies.length) {
-      const totals = this.currentPortfolioAssets.map((asset: object) => {
-        const { decimals } = MarketStore.allCurrencies.find((currency: object) => currency.tokenName === asset.tokenName);
-        return BigNumberService.tokenToEth(asset.totalUSD, decimals);
-      });
-      return totals.reduce((accumulator: number, value: number) => BigNumberService.sum(accumulator, value));
-    }
-    return 0;
-
-    // TODO FOR DELETE
-    // if (this.selectedPortfolio && MarketStore.baseCurrencies.length > 0) {
-    //   const valueOfUSD = MarketStore.baseCurrencies[3].last; // NOTE: this is USD
-    //   return this.currentPortfolioAssets.reduce((accumulator, asset) => {
-    //     let assetUSDValue;
-    //     switch (asset.currency) {
-    //       case 'JPY':
-    //       case 'EUR':
-    //       case 'USD': {
-    //         const wantedCurrency = MarketStore.baseCurrencies.filter(x => x.pair === asset.currency)[0];
-    //         assetUSDValue = (asset.balance / wantedCurrency.last) * valueOfUSD;
-    //         break;
-    //       }
-    //       case 'BTC': {
-    //         assetUSDValue = asset.balance * valueOfUSD;
-    //         break;
-    //       }
-    //       default: {
-    //         const assetBTCEquiv = MarketStore.marketSummaries[`BTC-${asset.currency}`]
-    //           ? (MarketStore.marketSummaries[`BTC-${asset.currency}`].Last * asset.balance)
-    //           : 0;
-    //         assetUSDValue = assetBTCEquiv * valueOfUSD;
-    //         break;
-    //       }
-    //     }
-    //     return accumulator + assetUSDValue;
-    //   }, 0);
-    // }
-
-    // return 0;
   }
 
   @computed

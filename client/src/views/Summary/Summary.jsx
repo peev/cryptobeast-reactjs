@@ -73,9 +73,9 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             icon={AscendantBarsIcon}
             iconColor="gray"
             title="Share price"
-            description={TransactionStore.sharePrice !== 0
-              ? `$${TransactionStore.sharePrice}` : ''}
-            hasInfo={TransactionStore.sharePrice === 0}
+            description={PortfolioStore.currentPortfolioSharePrice !== 0
+              ? `$${PortfolioStore.currentPortfolioSharePrice}` : ''}
+            hasInfo={PortfolioStore.currentPortfolioSharePrice === 0}
             infoMessage="Please add an investment to see your current share price"
           />
 

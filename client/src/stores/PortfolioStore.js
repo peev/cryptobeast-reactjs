@@ -152,6 +152,16 @@ class PortfolioStore {
   }
 
   @computed
+  get currentPortfolioSharePrice() {
+    if (this.selectedPortfolio && TransactionStore.transactions.length > 0) {
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .quotient(this.currentPortfolioCostInUSD, TransactionStore.numOfShares), 2));
+    }
+    return 0;
+  }
+
+  @computed
   get currentPortfolioCostInUSD() {
     if (this.currentPortfolioAssets.length && this.currentPortfolioAssets.length > 0) {
       return BigNumberService.toFixedParam((this.currentPortfolioAssets
@@ -398,14 +408,6 @@ class PortfolioStore {
       y: Number(BigNumberService.toFixedParam(el.weight, 2)),
       name: `${el.tokenName} ${Number(BigNumberService.toFixedParam(el.weight, 2))}%`,
     }));
-  }
-
-  @computed
-  get currentPortfolioSharePrice() {
-    if (this.selectedPortfolio && this.selectedPortfolio.shares > 0) {
-      return (this.currentPortfolioCostInUSD || 1) / (this.selectedPortfolio.shares);
-    }
-    return 0;
   }
 
   @computed

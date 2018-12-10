@@ -124,7 +124,7 @@ const portfolioController = (repository) => {
       if (balance.tokenName === token.tokenName) {
         const ethToUsd = await commomService.getEthToUsd(timestamp);
         const eth = bigNumberService.product(balance.amount, token.value);
-        const usd = commomService.ethToUsd(balance.amount, token.value, ethToUsd);
+        const usd = commomService.ethToUsd(eth, ethToUsd);
         return { eth, ethToUsd, usd };
       }
       return null;
@@ -137,7 +137,7 @@ const portfolioController = (repository) => {
     return Promise.all(result).then((data) => {
       const eth = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].eth)), 0);
       const usd = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].usd)), 0);
-      return { timestamp, eth, usd };
+      return { timestamp: timestamp * 1000, eth, usd };
     });
   };
 

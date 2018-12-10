@@ -15,7 +15,7 @@ const commonMethodsService = (repository) => {
   const tokenToEthToUsd = (amount, tokenPriceEth, ethToUsd) =>
     bigNumberService().product(bigNumberService().product(bigNumberService().gweiToEth(amount), tokenPriceEth), ethToUsd);
 
-  const ethToUsd = (amount, tokenPriceEth, ethToUsdParam) =>
+  const ethToUsd = (amount, ethToUsdParam) =>
     bigNumberService().product(bigNumberService().gweiToEth(amount), ethToUsdParam);
 
   const getTokenPriceEthByTransaction = async (tr) => {

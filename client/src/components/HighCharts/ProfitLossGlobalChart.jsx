@@ -5,11 +5,12 @@ import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 
 type Props = {
-  chartData: Object,
+  portfolioHistoryEth: Object,
+  portfolioHistoryUsd: Object,
   days: Object,
 };
 
-const ProfitLossGlobalChart = (observer(({ chartData, days }: Props) => {
+const ProfitLossGlobalChart = (observer(({ portfolioHistoryEth, portfolioHistoryUsd, days }: Props) => {
   const options = {
     chart: {
       type: 'column',
@@ -41,8 +42,12 @@ const ProfitLossGlobalChart = (observer(({ chartData, days }: Props) => {
       enabled: false,
     },
     series: [{
-      name: 'In percent',
-      data: chartData,
+      name: 'In ETH',
+      data: portfolioHistoryEth,
+      color: Highcharts.getOptions().colors[0],
+    }, {
+      name: 'In USD',
+      data: portfolioHistoryUsd,
       color: Highcharts.getOptions().colors[2],
     }],
   };

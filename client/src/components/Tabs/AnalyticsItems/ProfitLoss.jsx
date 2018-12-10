@@ -134,7 +134,8 @@ class ProfitLoss extends React.Component<Props, State> {
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
             <ProfitLossGlobalChart
-              chartData={PortfolioStore.portfolioValueHistoryBreakdownPercents}
+              portfolioHistoryEth={PortfolioStore.portfolioValueHistoryBreakdownPercents}
+              portfolioHistoryUsd={PortfolioStore.portfolioValueHistoryUsdBreakdownPercents}
               days={PortfolioStore.portfolioValueHistoryBreakdownDates}
             />
           </Paper>

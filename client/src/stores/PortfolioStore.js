@@ -91,7 +91,7 @@ class PortfolioStore {
         .map((item: object) =>
           ([
             Number(new Date(item.timestamp).getTime()),
-            Number(BigNumberService.toFixedParam(item.usd), 2),
+            Number(BigNumberService.toFixedParam(item.usd, 2)),
           ]));
     }
     return [];
@@ -133,6 +133,25 @@ class PortfolioStore {
   }
 
   @computed
+  get portfolioValueHistoryUsdBreakdownPercents() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return this.portfolioValueHistory
+        .map((el: object, i: number) => {
+          if (i !== 0) {
+            return Number(BigNumberService
+              .toFixedParam(BigNumberService
+                .product(BigNumberService
+                  .quotient(BigNumberService
+                    .difference(this.portfolioValueHistory[i].usd, this.portfolioValueHistory[i - 1].usd), this.portfolioValueHistory[i - 1].usd), 100), 2));
+          } else {
+            return 100;
+          }
+        });
+    }
+    return [];
+  }
+
+  @computed
   get standardDeviation() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0 && this.standardDeviationPeriod) {
       const portfolioValueHistoryArr = this.portfolioValueHistory.length > 30 ?
@@ -149,6 +168,16 @@ class PortfolioStore {
   @action.bound
   setStandardDeviationPeriod(period: number) {
     this.standardDeviationPeriod = period;
+  }
+
+  @computed
+  get currentPortfolioSharePrice() {
+    if (this.selectedPortfolio && TransactionStore.transactions.length > 0) {
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .quotient(this.currentPortfolioCostInUSD, TransactionStore.numOfShares), 2));
+    }
+    return 0;
   }
 
   @computed
@@ -398,14 +427,6 @@ class PortfolioStore {
       y: Number(BigNumberService.toFixedParam(el.weight, 2)),
       name: `${el.tokenName} ${Number(BigNumberService.toFixedParam(el.weight, 2))}%`,
     }));
-  }
-
-  @computed
-  get currentPortfolioSharePrice() {
-    if (this.selectedPortfolio && this.selectedPortfolio.shares > 0) {
-      return (this.currentPortfolioCostInUSD || 1) / (this.selectedPortfolio.shares);
-    }
-    return 0;
   }
 
   @computed

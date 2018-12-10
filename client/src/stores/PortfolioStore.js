@@ -91,7 +91,7 @@ class PortfolioStore {
         .map((item: object) =>
           ([
             Number(new Date(item.timestamp).getTime()),
-            Number(BigNumberService.toFixedParam(item.usd), 2),
+            Number(BigNumberService.toFixedParam(item.usd, 2)),
           ]));
     }
     return [];

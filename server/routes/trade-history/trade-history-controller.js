@@ -12,6 +12,8 @@ const tradeController = (repository) => {
   const setStatus = (userAddress, trade) =>
     ((trade.makerAddress === userAddress) ? trade.type : (trade.type === 'SELL') ? 'BUY' : 'SELL');
 
+  const isMaker = (userAddress, trade) => (trade.makerAddress === userAddress);
+
   const createTradeObject = (req, priceUsd, transactonFee, address, priceUSD, priceTotalUSD) => {
     let newTradeObject;
     try {
@@ -28,6 +30,7 @@ const tradeController = (repository) => {
         status: req.status,
         txFee: transactonFee,
         pair: `${req.token.name.toUpperCase()}-ETH`,
+        isMaker: isMaker(address, req.makerAddress),
         portfolioId: req.portfolioId,
       };
     } catch (error) {

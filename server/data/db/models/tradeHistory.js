@@ -47,4 +47,8 @@ module.exports = (sequelize, DataTypes) => sequelize.define('tradeHistory', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  isMaker: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+  },
 });

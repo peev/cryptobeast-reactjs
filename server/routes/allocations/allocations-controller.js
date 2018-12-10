@@ -68,7 +68,7 @@ const allocationsController = (repository) => {
       return bigNumberService().sum(transactionBalance, totalAssetObject.amount);
     }
     removeFromEth(transaction.priceTotalETH);
-    return bigNumberService().sum(totalAssetObject.amount, transaction.priceTotalETH);
+    return transaction.amount;
   };
 
   const handleSellTradeAmount = (transaction, totalAssetObject) => {
@@ -77,7 +77,7 @@ const allocationsController = (repository) => {
       return bigNumberService().difference(totalAssetObject.amount, transactionBalance);
     }
     addToEth(transaction.priceTotalETH);
-    return bigNumberService().difference(transaction.priceTotalETH, totalAssetObject.amount);
+    return transaction.amount;
   };
 
   const handleSameAmount = (totalAssetObject) => {

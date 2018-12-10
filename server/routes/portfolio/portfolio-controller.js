@@ -122,9 +122,10 @@ const portfolioController = (repository) => {
   const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp) => {
     const result = tokenPricesArr.map(async (token) => {
       if (balance.tokenName === token.tokenName) {
-        const ethToUsd = await commomService.getEthToUsdMiliseconds(timestamp);
-        const eth = balance.amount;
-        return { eth, ethToUsd };
+        const ethToUsd = await commomService.getEthToUsd(timestamp);
+        const eth = bigNumberService.product(balance.amount, token.value);
+        const usd = commomService.ethToUsd(balance.amount, token.value, ethToUsd);
+        return { eth, ethToUsd, usd };
       }
       return null;
     });
@@ -135,7 +136,7 @@ const portfolioController = (repository) => {
     const result = await balancesArr.map(async balance => defineTokenPricesArr(tokenPricesArr, balance, timestamp));
     return Promise.all(result).then((data) => {
       const eth = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].eth)), 0);
-      const usd = bigNumberService.product(bigNumberService.gweiToEth(eth), data[0][0].ethToUsd);
+      const usd = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].usd)), 0);
       return { timestamp, eth, usd };
     });
   };
@@ -156,15 +157,24 @@ const portfolioController = (repository) => {
     return Promise.all(result).then(data => data);
   };
 
+  const calculateDays = (begin, end) => {
+    const dates = [];
+    for (let i = begin; i <= end; i += (24 * 60 * 60 * 1000)) {
+      dates.push(i / 1000);
+    }
+    return dates;
+  };
+
   const getPortfolioValueHistory = async (req, res) => {
     const { id } = req.params;
     try {
       const allocations = await intReqService.getAllocationsByPortfolioIdAsc(id);
       const today = new Date().getTime();
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
-      const timestamps = commomService.calculateDays(commomService.getEndOfDay(begin), commomService.getEndOfDay(today));
+      const timestampsMiliseconds = commomService.calculateDays(commomService.getEndOfDay(begin), commomService.getEndOfDay(today));
+      const timestamps = calculateDays(commomService.getEndOfDay(begin), commomService.getEndOfDay(today));
       const tokenPricesByDate = await getTokensPriceByDate(timestamps);
-      const balances = await commomService.getBalancesByDate(timestamps, allocations);
+      const balances = await commomService.getBalancesByDate(timestampsMiliseconds, allocations);
       const filledPreviousBalances = commomService.fillPreviousBalances(balances);
       const portfolioValueHistory = await calculatePortfolioValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances);
       res.status(200).send(portfolioValueHistory);

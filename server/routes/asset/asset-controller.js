@@ -4,7 +4,6 @@ const assetController = (repository) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
   const weidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service')();
-  const weidexFiatMsService = require('../../services/weidex-fiat-ms-service')();
   const intReqService = require('../../services/internal-requeter-service')(repository);
   const commomService = require('../../services/common-methods-service')();
 
@@ -16,12 +15,12 @@ const assetController = (repository) => {
         userID: req.userAddress,
         balance: req.fullAmount,
         available: req.availableAmount,
-        inOrder: bigNumberService().difference(req.fullAmount, req.availableAmount),
+        inOrder: bigNumberService.difference(req.fullAmount, req.availableAmount),
         portfolioId: req.portfolioId,
         // eslint-disable-next-line no-nested-ternary
         lastPriceETH: lastPriceETHParam !== null && lastPriceETHParam !== undefined ? lastPriceETHParam : req.tokenName === 'ETH' ? 1 : 0,
-        lastPriceUSD: bigNumberService().product(lastPriceETHParam, priceUSD) || 0,
-        totalETH: bigNumberService().product(req.fullAmount, lastPriceETHParam) || 0,
+        lastPriceUSD: bigNumberService.product(lastPriceETHParam, priceUSD) || 0,
+        totalETH: bigNumberService.product(req.fullAmount, lastPriceETHParam) || 0,
         totalUSD: commomService.tokenToEthToUsd(req.fullAmount, lastPriceETHParam, priceUSD) || 0,
         weight: 0,
       };
@@ -80,7 +79,7 @@ const assetController = (repository) => {
       await Promise.all(portfolio.assets.map(async (asset) => {
         const assetValue = await portfolioService.calculateTokenValueETH(asset.tokenName, asset.balance);
         const result = (portfolioTotalValue !== 0) ?
-          bigNumberService().quotient(bigNumberService().product(assetValue, 100), portfolioTotalValue) : 0;
+          bigNumberService.quotient(bigNumberService.product(assetValue, 100), portfolioTotalValue) : 0;
         const newAssetData = Object.assign(asset, { weight: result });
 
         await updateAction(req, res, Number(asset.id), newAssetData.dataValues, true);
@@ -175,7 +174,7 @@ const assetController = (repository) => {
           amount: balance.amount,
           price: token.value,
           total: bigNumberService.product(balance.amount, token.value),
-          totalUsd: await commomService.tokenToEthToUsd(bigNumberService.product(balance.amount, token.value), token.value, ethToUsd),
+          totalUsd: await commomService.tokenToEthToUsd(balance.amount, token.value, ethToUsd),
         };
       }
       return null;

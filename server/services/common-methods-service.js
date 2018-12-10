@@ -15,6 +15,9 @@ const commonMethodsService = (repository) => {
   const tokenToEthToUsd = (amount, tokenPriceEth, ethToUsd) =>
     bigNumberService().product(bigNumberService().product(bigNumberService().gweiToEth(amount), tokenPriceEth), ethToUsd);
 
+  const ethToUsd = (amount, tokenPriceEth, ethToUsdParam) =>
+    bigNumberService().product(bigNumberService().gweiToEth(amount), ethToUsdParam);
+
   const getTokenPriceEthByTransaction = async (tr) => {
     const timestamp = await getTimestampByTxHash(tr.txHash);
     const tokenName = (tr.type === 'SELL' || tr.type === 'BUY') ? tr.token.name : tr.tokenName;
@@ -111,6 +114,7 @@ const commonMethodsService = (repository) => {
     getStartOfDay,
     getBalancesByDate,
     fillPreviousBalances,
+    ethToUsd,
   };
 };
 

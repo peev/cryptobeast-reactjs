@@ -32,6 +32,10 @@ class MarketStore {
     requester.Market.getAllCurrencies()
       .then(() => this.getAllCurrencies())
       .catch((err: object) => console.log(err));
+
+    requester.Market.getTickersFromCoinMarketCap()
+      .then(this.convertMarketPriceHistory)
+      .catch((err: object) => console.log(err));
     // // Setups the database. This request gives the back-end what
     // // currencies to get from internet, writes them to database.
     // // After that, fetches information from  database.

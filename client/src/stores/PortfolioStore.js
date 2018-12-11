@@ -402,21 +402,20 @@ class PortfolioStore {
     return [];
   }
   // #endregion
-
+  // used !!!
   @computed
   get currentMarketSummaryPercentageChange() {
-    if (this.selectedPortfolio &&
-      MarketStore.baseCurrencies.length > 0) {
+    if (this.selectedPortfolio) {
       const marketSummary = MarketStore.marketPriceHistory;
 
       return Object.keys(marketSummary)
-        .map((el) => {
+        .map((el: Object) => {
           const name = marketSummary[el].currency;
           const change24h = marketSummary[el].percentChangeFor24h;
           const change7d = marketSummary[el].percentChangeFor7d;
           return [name, change24h, change7d];
         })
-        .sort((a, b) => b[1] - a[1]);
+        .sort((a: number, b: number) => b[1] - a[1]);
     }
 
     return [];

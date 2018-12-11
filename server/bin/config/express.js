@@ -93,6 +93,7 @@ const init = async (repository) => {
   require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);
   require('./../../routes/transaction/transaction-router').attachTo(app, repository, jobs);
   require('./../../routes/trade-history/trade-history-router').attachTo(app, repository, jobs);
+  require('./../../routes/market/market-router').attachTo(app, repository);
   require('./../../routes/weidex/weidex-router').attachTo(app, repository, jobs);
   require('./../../routes/utilities/health-check-router').attachTo(app, repository);
 

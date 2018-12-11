@@ -94,6 +94,7 @@ const Market = {
   getProfitAndLossHistory: requestParams => requests.get('/market/profitAndLossHistory', requestParams),
   getLiquidityHistory: requestParams => requests.get('/market/liquidityHistory', requestParams),
   getCorrelationMatrixHistory: requestParams => requests.get('/market/correlationMatrixHistory', requestParams),
+  getTickersFromCoinMarketCap: () => requests.get('/market/tickersFromCoinMarketCap'),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 

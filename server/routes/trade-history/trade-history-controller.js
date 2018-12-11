@@ -12,7 +12,7 @@ const tradeController = (repository) => {
   const setStatus = (userAddress, trade) =>
     ((trade.makerAddress === userAddress) ? trade.type : (trade.type === 'SELL') ? 'BUY' : 'SELL');
 
-  const isMaker = (userAddress, trade) => (trade.makerAddress === userAddress);
+  const isMaker = (userAddress, makerAddress) => (userAddress === makerAddress);
 
   const createTradeObject = (req, priceUsd, transactonFee, address, priceUSD, priceTotalUSD) => {
     let newTradeObject;

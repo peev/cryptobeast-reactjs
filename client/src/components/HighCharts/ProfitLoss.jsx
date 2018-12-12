@@ -30,6 +30,9 @@ class ProfitLossChart extends React.Component<Props, State> {
       title: {
         text: `${currency} DAILY PROFIT AND LOSS`,
       },
+      tooltip: {
+        valueSuffix: '%',
+      },
       xAxis: {
         categories: days,
         type: 'category',

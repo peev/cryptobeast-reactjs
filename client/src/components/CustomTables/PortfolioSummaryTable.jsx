@@ -18,7 +18,6 @@ import UpArrowIcon from '../CustomIcons/Summary/UpArrowIcon';
 import DownArrowIcon from '../CustomIcons/Summary/DownArrowIcon';
 import BigNumberService from '../../services/BigNumber';
 
-
 const styles = () => ({
   paper: {
     // margin: '40px 30px 0',
@@ -90,7 +89,7 @@ type Props = {
   classes: Object,
   tableHead: Array<string>,
   PortfolioStore: Object,
-  MarketStore: Object,
+  CurrencyStore: Object,
 };
 
 type State = {
@@ -182,7 +181,7 @@ const TableHeader = ({
     </TableHead>
   );
 };
-@inject('PortfolioStore', 'MarketStore')
+@inject('PortfolioStore', 'CurrencyStore')
 @observer
 class PortfolioSummaryTable extends React.Component<Props, State> {
   state = {
@@ -202,7 +201,7 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, tableHead, PortfolioStore, MarketStore } = this.props;
+    const { classes, tableHead, PortfolioStore, CurrencyStore } = this.props;
     const { order, orderBy } = this.state;
 
     const header = (
@@ -216,7 +215,7 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
     );
 
     const tableBodyContent = PortfolioStore.currentPortfolioAssets
-      .map((assetsArray: Array) => createAssetObjectFromArray(assetsArray, MarketStore.allCurrencies))
+      .map((assetsArray: Array) => createAssetObjectFromArray(assetsArray, CurrencyStore.currencies))
       .sort(getSorting(order, orderBy))
       .map((ROW: Object) => (
         <TableRow key={uuid()}>

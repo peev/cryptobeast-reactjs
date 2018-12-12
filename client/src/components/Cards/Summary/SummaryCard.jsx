@@ -9,7 +9,7 @@ import {
   IconButton,
   Popover,
 } from '@material-ui/core';
-import { Info } from '@material-ui/icons';
+import Info from '@material-ui/icons/Info';
 
 
 import statsCardStyle from './../../../variables/styles/statsCardStyle';

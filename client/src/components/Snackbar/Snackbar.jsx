@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import { withStyles, Snackbar as Snack, IconButton } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+import Close from '@material-ui/icons/Close';
 import cx from 'classnames';
 
 import snackbarContentStyle from './../../variables/styles/snackbarContentStyle';

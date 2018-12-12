@@ -4,7 +4,7 @@ import { TextField } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
-import { Edit } from '@material-ui/icons';
+import Edit from '@material-ui/icons/Edit';
 import { inject, observer } from 'mobx-react';
 import Button from '../CustomButtons/Button';
 import IconButton from '../CustomButtons/IconButton';

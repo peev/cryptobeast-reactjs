@@ -2,7 +2,9 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
-import { Warning, Done, Info } from '@material-ui/icons';
+import Warning from '@material-ui/icons/Warning';
+import Done from '@material-ui/icons/Done';
+import Info from '@material-ui/icons/Info';
 import { Snackbar } from './../../components';
 
 

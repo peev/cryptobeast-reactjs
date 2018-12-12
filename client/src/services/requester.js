@@ -86,7 +86,6 @@ const Market = {
   getBaseCurrencies: () => requests.get('/market/baseCurrencies'),
   getAllTickers: () => requests.get('/market/allTickers'),
   syncCurrencies: () => requests.get('/market/syncCurrencies'),
-  getAllCurrencies: () => requests.get('/currency/all'),
   getBaseTickers: searchedCurrencies => requests.post('/market/syncBaseTickers', searchedCurrencies),
   syncMarketPriceHistory: convertCurrency => requests.post('/market/syncMarketPriceHistory', convertCurrency),
   getMarketPriceHistory: () => requests.get('/market/getMarketPriceHistory'),
@@ -96,6 +95,10 @@ const Market = {
   getCorrelationMatrixHistory: requestParams => requests.get('/market/correlationMatrixHistory', requestParams),
   getTickersFromCoinMarketCap: () => requests.get('/market/tickersFromCoinMarketCap'),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
+};
+
+const Currency = {
+  getAllCurrencies: () => requests.get('/currency/all'),
 };
 
 const Allocations = {
@@ -110,6 +113,7 @@ const Weidex = {
 export default {
   ApiAccount,
   Asset,
+  Currency,
   User,
   Transaction,
   Portfolio,

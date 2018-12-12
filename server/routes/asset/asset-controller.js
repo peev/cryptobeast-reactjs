@@ -113,12 +113,15 @@ const assetController = (repository) => {
 
   const resolveDates = async (req, res, datesArr, tokenId) => {
     try {
-      return datesArr.map(async item => ({
-        date: item,
-        value: await weidexService.getTokenValueByTimestampHttp(Number(tokenId), item)
-          .then(data => ((data.length > 0) ? data : 0))
-          .catch(err => res.status(500).send(err)),
-      }));
+      return datesArr.map(async (item) => {
+        const date = (item - (item % 1000)) / 1000;
+        return {
+          date,
+          value: await weidexService.getTokenValueByTimestampHttp(Number(tokenId), date)
+            .then(data => ((data.length > 0) ? data : 0))
+            .catch(err => res.status(500).send(err)),
+        };
+      });
     } catch (error) {
       console.log(error);
       return res.status(400).send(error);

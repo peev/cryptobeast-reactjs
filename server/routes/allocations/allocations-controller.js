@@ -1,6 +1,6 @@
 const allocationsController = (repository) => {
   const modelName = 'Allocation';
-  const bigNumberService = require('../../services/big-number-service');
+  const bigNumberService = require('../../services/big-number-service')();
   const intReqService = require('../../services/internal-requeter-service')(repository);
   let valueToAddToEth = 0;
 
@@ -55,34 +55,42 @@ const allocationsController = (repository) => {
       })));
 
   const addToEth = (amount) => {
-    valueToAddToEth = bigNumberService().sum(valueToAddToEth, amount);
+    valueToAddToEth = bigNumberService.sum(valueToAddToEth, amount);
   };
 
   const removeFromEth = (amount) => {
-    valueToAddToEth = bigNumberService().difference(valueToAddToEth, amount);
+    valueToAddToEth = bigNumberService.difference(valueToAddToEth, amount);
   };
 
   const handleBuyTradeAmount = (transaction, totalAssetObject) => {
-    if (transaction.tokenName === 'ETH') {
-      const transactionBalance = bigNumberService().difference(valueToAddToEth, transaction.priceTotalETH);
-      return bigNumberService().sum(transactionBalance, totalAssetObject.amount);
+    if (transaction.isMaker) {
+      const fee = bigNumberService.quotient(transaction.priceTotalETH, 1000);
+      const totalPlusFee = bigNumberService.sum(transaction.priceTotalETH, fee);
+      removeFromEth(totalPlusFee);
+      return bigNumberService.sum(totalAssetObject.amount, transaction.amount);
     }
+    const fee = bigNumberService.quotient(transaction.amount, 1000);
+    const totalMinusFee = bigNumberService.difference(transaction.amount, fee);
     removeFromEth(transaction.priceTotalETH);
-    return transaction.amount;
+    return bigNumberService.sum(totalAssetObject.amount, totalMinusFee);
   };
 
   const handleSellTradeAmount = (transaction, totalAssetObject) => {
-    if (transaction.tokenName === 'ETH') {
-      const transactionBalance = bigNumberService().sum(valueToAddToEth, transaction.priceTotalETH);
-      return bigNumberService().difference(totalAssetObject.amount, transactionBalance);
+    if (transaction.isMaker) {
+      const fee = bigNumberService.quotient(transaction.priceTotalETH, 1000);
+      const totalMinusFee = bigNumberService.difference(transaction.priceTotalETH, fee);
+      addToEth(totalMinusFee);
+      return bigNumberService.difference(totalAssetObject.amount, transaction.amount);
     }
+    const fee = bigNumberService.quotient(transaction.amount, 1000);
+    const totalPlusFee = bigNumberService.sum(transaction.amount, fee);
     addToEth(transaction.priceTotalETH);
-    return transaction.amount;
+    return bigNumberService.difference(totalAssetObject.amount, totalPlusFee);
   };
 
   const handleSameAmount = (totalAssetObject) => {
     if (totalAssetObject.tokenName === 'ETH') {
-      return bigNumberService().sum(totalAssetObject.amount, valueToAddToEth);
+      return bigNumberService.sum(totalAssetObject.amount, valueToAddToEth);
     }
     return totalAssetObject.amount;
   };
@@ -90,8 +98,8 @@ const allocationsController = (repository) => {
   const calculateCurrentAssetAmount = (transaction, totalAssetObject) => {
     if (totalAssetObject.tokenName === transaction.tokenName) {
       switch (transaction.type) {
-        case 'd': return bigNumberService().sum(totalAssetObject.amount, transaction.amount);
-        case 'w': return bigNumberService().difference(totalAssetObject.amount, transaction.amount);
+        case 'd': return bigNumberService.sum(totalAssetObject.amount, transaction.amount);
+        case 'w': return bigNumberService.difference(totalAssetObject.amount, transaction.amount);
         case 'BUY': return handleBuyTradeAmount(transaction, totalAssetObject);
         case 'SELL': return handleSellTradeAmount(transaction, totalAssetObject);
         default: return 0;

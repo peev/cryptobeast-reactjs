@@ -65,8 +65,8 @@ const allocationsController = (repository) => {
   const handleBuyTradeAmount = (transaction, totalAssetObject) => {
     if (transaction.isMaker) {
       const fee = bigNumberService.quotient(transaction.priceTotalETH, 1000);
-      const totalMinusFee = bigNumberService.difference(transaction.priceTotalETH, fee);
-      removeFromEth(totalMinusFee);
+      const totalPlusFee = bigNumberService.sum(transaction.priceTotalETH, fee);
+      removeFromEth(totalPlusFee);
       return bigNumberService.sum(totalAssetObject.amount, transaction.amount);
     }
     const fee = bigNumberService.quotient(transaction.amount, 1000);
@@ -83,9 +83,9 @@ const allocationsController = (repository) => {
       return bigNumberService.difference(totalAssetObject.amount, transaction.amount);
     }
     const fee = bigNumberService.quotient(transaction.amount, 1000);
-    const totalMinusFee = bigNumberService.difference(transaction.amount, fee);
+    const totalPlusFee = bigNumberService.sum(transaction.amount, fee);
     addToEth(transaction.priceTotalETH);
-    return bigNumberService.difference(totalAssetObject.amount, totalMinusFee);
+    return bigNumberService.difference(totalAssetObject.amount, totalPlusFee);
   };
 
   const handleSameAmount = (totalAssetObject) => {

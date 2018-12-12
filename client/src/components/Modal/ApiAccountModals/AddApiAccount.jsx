@@ -3,7 +3,7 @@ import React, { SyntheticEvent } from 'react';
 import { withStyles } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
-import { Add } from '@material-ui/icons';
+import Add from '@material-ui/icons/Add';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import { inject, observer } from 'mobx-react';
 import Button from '../../CustomButtons/Button';

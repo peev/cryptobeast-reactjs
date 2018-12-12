@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { Edit } from '@material-ui/icons';
+import Edit from '@material-ui/icons/Edit';
 import { withStyles, Grid, Input } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';

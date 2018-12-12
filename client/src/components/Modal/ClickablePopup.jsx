@@ -2,7 +2,7 @@
 // @flow
 import React from 'react';
 import { withStyles, Grid, IconButton } from '@material-ui/core';
-import { Info } from '@material-ui/icons';
+import Info from '@material-ui/icons/Info';
 import Paper from '@material-ui/core/Paper';
 import history from '../../services/History';
 

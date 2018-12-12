@@ -8,7 +8,7 @@ import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { toJS } from 'mobx';
 import Select from 'react-select';
 
-import { Edit } from '@material-ui/icons';
+import Edit from '@material-ui/icons/Edit';
 import Modal from '@material-ui/core/Modal';
 import IconButton from '../../../../components/CustomButtons/IconButton';
 

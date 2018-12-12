@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import { withStyles, IconButton } from '@material-ui/core';
-import { Edit } from '@material-ui/icons';
+import Edit from '@material-ui/icons/Edit';
 
 import iconButtonStyle from './../../variables/styles/iconButtonStyle';
 

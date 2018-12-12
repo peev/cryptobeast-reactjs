@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 
-import { Close } from '@material-ui/icons';
+import Close from '@material-ui/icons/Close';
 import { inject, observer } from 'mobx-react';
 import IconButton from '../CustomButtons/IconButton';
 

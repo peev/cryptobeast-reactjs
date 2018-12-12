@@ -49,8 +49,8 @@ function getTransationSortableObject(transationAsArray: Object, allTrades: Array
     amount: BigNumberService.toNumber(BigNumberService.tokenToEth(transationAsArray.amount, decimals)),
     price_eth: BigNumberService.toNumber(transationAsArray.priceETH),
     fee: BigNumberService.toNumber(transationAsArray.txFee),
-    total_eth: BigNumberService.toNumber(BigNumberService.tokenToEth(transationAsArray.priceTotalETH, decimals)),
-    total_usd: BigNumberService.toNumber(BigNumberService.tokenToEth(transationAsArray.priceTotalUSD, decimals)),
+    total_eth: BigNumberService.toNumber(BigNumberService.gweiToEth(transationAsArray.priceTotalETH)),
+    total_usd: BigNumberService.toNumber(transationAsArray.priceTotalUSD),
   });
 }
 

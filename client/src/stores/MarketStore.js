@@ -29,9 +29,9 @@ class MarketStore {
   }
 
   init() {
-    requester.Market.getAllCurrencies()
-      .then(() => this.getAllCurrencies())
-      .catch((err: object) => console.log(err));
+    // requester.Market.getAllCurrencies()
+    //   .then(() => this.getAllCurrencies())
+    //   .catch((err: object) => console.log(err));
 
     requester.Market.getTickersFromCoinMarketCap()
       .then(this.convertMarketPriceHistory)
@@ -128,20 +128,20 @@ class MarketStore {
       .catch((err: object) => console.log(err));
   }
 
-  @action.bound
-  getAllCurrencies() {
-    requester.Market.getAllCurrencies()
-      .then(action((response: object) => {
-        this.allCurrencies = response.data;
-        // TODO FOR DELETE
-        // this.allCurrencies = response.data.map((el: oject) => ({
-        //   value: el.currency,
-        //   label: `${el.currencyLong} [${el.currency}]`,
-        //   // label: el.currency,
-        // }));
-      }))
-      .catch((err: object) => console.log(err));
-  }
+  // @action.bound
+  // getAllCurrencies() {
+  //   requester.Market.getAllCurrencies()
+  //     .then(action((response: object) => {
+  //       this.allCurrencies = response.data;
+  //       // TODO FOR DELETE
+  //       // this.allCurrencies = response.data.map((el: oject) => ({
+  //       //   value: el.currency,
+  //       //   label: `${el.currencyLong} [${el.currency}]`,
+  //       //   // label: el.currency,
+  //       // }));
+  //     }))
+  //     .catch((err: object) => console.log(err));
+  // }
 
   @action
   getSyncedSummaries() {

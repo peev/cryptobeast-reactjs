@@ -22,7 +22,7 @@ import BigNumberService from '../../../services/BigNumber';
 type Props = {
   classes: Object,
   PortfolioStore: Object,
-  MarketStore: Object,
+  CurrencyStore: Object,
   tableHead: Array<Object>,
   tableHeaderColor: string,
 };
@@ -110,7 +110,7 @@ const TableHeader = ({
   );
 };
 
-@inject('PortfolioStore', 'MarketStore')
+@inject('PortfolioStore', 'CurrencyStore')
 @observer
 // eslint-disable-next-line
 class HistoryTable extends React.Component<Props, State> {
@@ -140,7 +140,7 @@ class HistoryTable extends React.Component<Props, State> {
     this.setState({ rowsPerPage: event.target.value });
   };
   render() {
-    const { classes, tableHead, tableHeaderColor, PortfolioStore, MarketStore } = this.props;
+    const { classes, tableHead, tableHeaderColor, PortfolioStore, CurrencyStore } = this.props;
     const trades = PortfolioStore.currentPortfolioTrades;
     const { order, orderBy } = this.state;
 
@@ -166,7 +166,7 @@ class HistoryTable extends React.Component<Props, State> {
           {tableHead !== undefined ? header : null}
           <TableBody>
             {trades
-              .map((tradesArray: Array) => getTransationSortableObject(tradesArray, MarketStore.allCurrencies))
+              .map((tradesArray: Array) => getTransationSortableObject(tradesArray, CurrencyStore.currencies))
               .sort(getSorting(order, orderBy))
               .map((obj: Object) => Object.values(obj))
               .slice(this.state.page * this.state.rowsPerPage, (this.state.page * this.state.rowsPerPage) + this.state.rowsPerPage)

@@ -1,8 +1,8 @@
 const { Router } = require('express');
 
-const attachTo = (app) => {
+const attachTo = (app, repository) => {
   const router = new Router();
-  const controller = require('./market-controller')();
+  const controller = require('./market-controller')(repository);
 
   router
     .get('/tickersFromCoinMarketCap', controller.getTickersFromCoinMarketCap);

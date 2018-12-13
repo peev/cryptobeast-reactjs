@@ -1,11 +1,12 @@
-const { coinMarketCapServices } = require('../../integrations/coinMarketCap-services');
+const marketController = (repository) => {
+  const modelName = 'CoinMarketCapCurrency';
 
-const marketController = () => {
-  const getTickersFromCoinMarketCap = async (req, res) => {
-    await coinMarketCapServices().getTickers('ETH')
-      .then(data => res.status(200).send(data))
-      .catch(err => res.status(400).send(err));
-  };
+  const getTickersFromCoinMarketCap = async (req, res) =>
+    repository.find({
+      modelName,
+    })
+      .then(response => res.status(200).send(response))
+      .catch(error => res.json(error));
 
   return {
     getTickersFromCoinMarketCap,

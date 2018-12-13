@@ -532,6 +532,9 @@ class PortfolioStore {
       this.saveSelectedPortfolioId();
       this.getCurrentPortfolioAssets();
       this.getCurrentPortfolioTrades();
+      TransactionStore.getTransactions();
+      this.getPortfolioValueHistory();
+      MarketStore.getTickersFromCoinMarketCap();
     }
     // FOR DELETE
     // InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable

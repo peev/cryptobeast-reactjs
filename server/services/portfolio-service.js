@@ -1,7 +1,8 @@
 const portfolioService = (repository) => {
   const bigNumberService = require('./big-number-service');
-  const weidexService = require('./weidex-service');
-  const weidexFiatMsService = require('./weidex-fiat-ms-service');
+  const weidexService = require('./weidex-service')();
+  const commomService = require('./common-methods-service')();
+  const intReqService = require('./internal-requeter-service')(repository);
   const { etherScanServices } = require('../integrations/etherScan-services');
 
   const calculateTokenValueETH = async (name, amount) => {
@@ -19,20 +20,23 @@ const portfolioService = (repository) => {
 
   const getPortfolioInvestmentSum = async (address, fetchDeposits) => {
     let items = [];
-    const user = await weidexService().getUserHttp(address);
+    const user = await weidexService.getUserHttp(address);
     if (fetchDeposits) {
-      items = await weidexService().getUserDepositHttp(user.id);
+      items = await weidexService.getUserDepositHttp(user.id);
     } else {
-      items = await weidexService().getUserWithdrawHttp(user.id);
+      items = await weidexService.getUserWithdrawHttp(user.id);
     }
-    const transactionsArray = await items.map(async (transaction) => {
-      const etherScanTransaction = await etherScanServices().getTransactionByHash(transaction.txHash);
+    const transactionsArray = await items.map(async (tr) => {
+      const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
       const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-      const ethToUsd = await weidexFiatMsService().getEtherValueByTimestamp(Number(etherScanTrBlock.timestamp) * 1000).then(data => data.priceUSD);
+      const ethToUsd = await commomService.getEthToUsd(etherScanTrBlock.timestamp);
+      const currency = await intReqService.getCurrencyByTokenName(tr.tokenName);
+      const tokenPriceInEth = await (tr.tokenName === 'ETH') ? 1 :
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
       return (etherScanTransaction !== null && etherScanTransaction !== undefined) ?
         {
-          eth: transaction.amount,
-          usd: bigNumberService().product(bigNumberService().gweiToEth(transaction.amount), ethToUsd),
+          eth: commomService.tokenToEth(tr.amount, tokenPriceInEth),
+          usd: commomService.tokenToEthToUsd(tr.amount, tokenPriceInEth, ethToUsd),
         } : 0;
     });
     return Promise.all(transactionsArray).then((transactions) => {

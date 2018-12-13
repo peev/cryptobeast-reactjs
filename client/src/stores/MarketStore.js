@@ -33,9 +33,10 @@ class MarketStore {
     //   .then(() => this.getAllCurrencies())
     //   .catch((err: object) => console.log(err));
 
-    requester.Market.getTickersFromCoinMarketCap()
-      .then(this.convertMarketPriceHistory)
-      .catch((err: object) => console.log(err));
+    this.getTickersFromCoinMarketCap();
+    // requester.Market.getTickersFromCoinMarketCap()
+    //   .then(this.convertMarketPriceHistory)
+    //   .catch((err: object) => console.log(err));
     // // Setups the database. This request gives the back-end what
     // // currencies to get from internet, writes them to database.
     // // After that, fetches information from  database.
@@ -80,6 +81,13 @@ class MarketStore {
     // requester.Market.getCorrelationMatrixHistory()
     //   .then(this.getCorrelationMatrixHistory)
     //   .catch((err: object) => console.log(err));
+  }
+
+  @action.bound
+  getTickersFromCoinMarketCap() {
+    return requester.Market.getTickersFromCoinMarketCap()
+      .then(this.convertMarketPriceHistory)
+      .catch((err: object) => console.log(err));
   }
 
   @computed

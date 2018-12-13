@@ -11,7 +11,7 @@ const cors = require('cors');
 
 const init = async (repository) => {
   // const portfolioService = require('../../services/portfolio-service')(repository);
-  // const marketService = require('../../services/market-service')(repository);
+  const marketService = require('../../services/market-service')(repository);
 
   const app = express();
 
@@ -66,7 +66,7 @@ const init = async (repository) => {
   // }
 
   // Market jobs
-  // marketService.createMarketJob(marketService.syncCurrenciesFromApi, { hour: 23, minute: 59 });
+  marketService.createMarketJob(marketService.syncCurrenciesFromApi, { minute: 0 });
   // marketService.createMarketJob(marketService.syncSummaries, { second: 0 }); // sync every minute
   // marketService.createMarketJob(marketService.syncTickersFromKraken, { second: 0 }); // sync every minute
   // marketService.createMarketJob(marketService.syncTickersFromCoinMarketCap, { minute: 0 }); // sync every hour

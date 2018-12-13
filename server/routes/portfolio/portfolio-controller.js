@@ -97,7 +97,8 @@ const portfolioController = (repository) => {
     const currencies = await intReqService.getCurrencies();
     const result = currencies.map(async (currency) => {
       const tokenValue = (currency.tokenName === 'ETH') ? 1 :
-        await WeidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp);
+        await WeidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp)
+          .then(data => ((data.length > 0) ? data : 0));
       return {
         timestamp,
         tokenName: currency.tokenName,

@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 const { etherScanServices } = require('../../integrations/etherScan-services');
 
 const modelName = 'Transaction';
@@ -144,10 +146,13 @@ const transactionController = (repository) => {
     return (deposit === null) || ((deposit !== null) && (deposit.txHash === transaction.txHash));
   };
 
-  const calculateAllocationBalance = async (portfolioId) => {
-    const timestamp = new Date().getTime();
+  const calculateAllocationBalance = async (portfolioId, tr) => {
+    const timestamp = tr.txTimestamp.getTime();
     const allocation = await intReqService.getAllocationBeforeTimestampByPortfolioId(portfolioId, timestamp);
-    const tokensValue = allocation.balance.map(async (token) => {
+    if (allocation === null) {
+      return 0;
+    }
+    const tokensValue = allocation.dataValues.balance.map(async (token) => {
       const currency = await intReqService.getCurrencyByTokenName(token.tokenName);
       const tokenPriceInEth = (token.tokenName === 'ETH') ? 1 :
         await weidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp);
@@ -159,19 +164,20 @@ const transactionController = (repository) => {
   };
 
   const calculatePortfolioValueBeforeTx = async (portfolioId, tr, isFirstDeposit, ethUsd) => {
-    if (tr.type === 'd') {
-      return (isFirstDeposit) ? 0 :
-        Number(bigNumberService.product(bigNumberService.gweiToEth(await calculateAllocationBalance(portfolioId)), ethUsd));
-    }
-    return Number(bigNumberService.product(bigNumberService.gweiToEth(await calculateAllocationBalance(portfolioId)), ethUsd));
+    const allocationBalanceTotal = await calculateAllocationBalance(portfolioId, tr);
+    return (isFirstDeposit) ? 0 : commomService.ethToUsd(allocationBalanceTotal, ethUsd);
   };
 
-  const calculateNumSharesBefore = async (txHash, isFirstDeposit, allTransactions, portfolioId) => {
+  const calculateNumSharesBefore = async (txHash, isFirstDeposit, allTransactions, transactionsForUpdate, portfolioId) => {
     if (isFirstDeposit) {
       return 0;
     }
-    const index = allTransactions.findIndex(tr => tr.txHash === txHash);
-    const transaction = await intReqService.getTransactionByPortfolioIdAndTxHash(portfolioId, allTransactions[index - 1].txHash);
+    if (transactionsForUpdate.length === 0) {
+      const index = allTransactions.findIndex(tr => tr.txHash === txHash);
+      const transaction = await intReqService.getTransactionByPortfolioIdAndTxHash(portfolioId, allTransactions[index - 1].txHash);
+      return transaction.numSharesAfter;
+    }
+    const transaction = transactionsForUpdate[transactionsForUpdate.length - 1];
     return transaction.numSharesAfter;
   };
 
@@ -191,26 +197,24 @@ const transactionController = (repository) => {
     return bigNumberService.difference(numSharesBefore, sharesLiquidated);
   };
 
-  const updateTransactionsShareParamsArray = async (req, res, portfolioId, transactions, allTransactions) =>
-    Promise.all(transactions.map(async (tr) => {
-      const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
-      const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
+  const updateTransactionsShareParamsArray = async (req, res, portfolioId, transactions, allTransactions) => {
+    const transactionsForUpdate = [];
+    for (const tr of transactions) {
       const currency = await intReqService.getCurrencyByTokenName(tr.tokenName);
       const tokenPriceInEth = (tr.tokenName === 'ETH') ? 1 :
-        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
-      const ethUsd = await commomService.getEthToUsd(etherScanTrBlock.timestamp);
-      const ethUsdNow = await commomService.getEthToUsdNow();
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, tr.txTimestamp.getTime());
+      const ethUsd = await commomService.getEthToUsdMiliseconds(tr.txTimestamp.getTime());
       const totalValueUsd = commomService.tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);
 
       const isFirstDeposit = await calculateIsFirstDeposit(tr, portfolioId);
-      const portfolioValueBeforeTx = await calculatePortfolioValueBeforeTx(portfolioId, tr, isFirstDeposit, ethUsdNow);
-      const numSharesBefore = await calculateNumSharesBefore(tr.txHash, isFirstDeposit, allTransactions, portfolioId);
+      const portfolioValueBeforeTx = await calculatePortfolioValueBeforeTx(portfolioId, tr, isFirstDeposit, ethUsd);
+      const numSharesBefore = await calculateNumSharesBefore(tr.txHash, isFirstDeposit, allTransactions, transactionsForUpdate, portfolioId);
       const currentSharePriceUSD = await calculateCurrentSharePriceUSD(isFirstDeposit, portfolioValueBeforeTx, numSharesBefore);
       const sharesCreated = await calculateSharesCreated(tr.type, totalValueUsd, currentSharePriceUSD);
       const sharesLiquidated = await calculateSharesLiquidated(tr.type, totalValueUsd, currentSharePriceUSD);
       const numSharesAfter = await calculateNumSharesAfter(tr.type, isFirstDeposit, numSharesBefore, sharesCreated, sharesLiquidated);
 
-      return Object.assign({}, tr, {
+      transactionsForUpdate.push(Object.assign({}, tr, {
         id: tr.id,
         isFirstDeposit,
         portfolioValueBeforeTx,
@@ -219,8 +223,10 @@ const transactionController = (repository) => {
         sharesCreated,
         sharesLiquidated,
         numSharesAfter,
-      });
-    }));
+      }));
+    }
+    return transactionsForUpdate;
+  };
 
   const updateTransactionsShareParams = async (req, res, transactions) => {
     await Promise.all(transactions.map(async transaction =>

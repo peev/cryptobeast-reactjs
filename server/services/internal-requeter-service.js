@@ -157,10 +157,10 @@ const internalRequesterService = (repository) => {
       where: {
         portfolioId,
         timestamp: {
-          [op.lte]: timestamp,
+          [op.lt]: timestamp,
         },
       },
-      order: [['timestamp', 'ASC']],
+      order: [['timestamp', 'DESC']],
     },
   }).catch(err => console.log(err));
 

@@ -25,8 +25,8 @@ type Props = {
   PortfolioStore: Object,
 };
 
-const SummaryPerformanceCard = inject('Analytics')(observer(({ ...props }: Props) => {
-  const { classes, Analytics } = props;
+const SummaryPerformanceCard = inject('Analytics', 'PortfolioStore')(observer(({ ...props }: Props) => {
+  const { classes, Analytics, PortfolioStore } = props;
 
   return (
     <Paper className={classes.container}>
@@ -44,11 +44,11 @@ const SummaryPerformanceCard = inject('Analytics')(observer(({ ...props }: Props
       </div>
       <div className={classes.item}>
         <p>profit/loss:</p>
-        <p>{`${Number(`${Math.round(`${Analytics.performanceProfitLoss}e2`)}e-2`)}%`}</p>
+        <p>${PortfolioStore.summaryTotalProfitLossUsd}</p>
       </div>
       <div className={classes.item}>
         <p>avg. change:</p>
-        <p>{`${Number(`${Math.round(`${Analytics.performanceAverageChange}e2`)}e-2`)}%`}</p>
+        <p>${PortfolioStore.avgChangeUsd}</p>
       </div>
       <div className={classes.item}>
         <p>last 24h:</p>

@@ -2,7 +2,7 @@ const modelName = 'Portfolio';
 
 const portfolioController = (repository) => {
   const portfolioService = require('../../services/portfolio-service')(repository);
-  const WeidexService = require('../../services/weidex-service')(repository);
+  const weidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service')();
   const intReqService = require('../../services/internal-requeter-service')(repository);
   const commomService = require('../../services/common-methods-service')();
@@ -97,7 +97,7 @@ const portfolioController = (repository) => {
     const currencies = await intReqService.getCurrencies();
     const result = currencies.map(async (currency) => {
       const tokenValue = (currency.tokenName === 'ETH') ? 1 :
-        await WeidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp)
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp)
           .then(data => ((data.length > 0) ? data : 0));
       return {
         timestamp,
@@ -166,6 +166,16 @@ const portfolioController = (repository) => {
     return dates;
   };
 
+  const calculateDaysBackwards = (days) => {
+    const result = [];
+    for (let i = 0; i <= days - 1; i += 1) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      result.push(date.getTime());
+    }
+    return result;
+  };
+
   const getPortfolioValueHistory = async (req, res) => {
     const { id } = req.params;
     try {
@@ -185,10 +195,64 @@ const portfolioController = (repository) => {
     }
   };
 
+  const sumAllocationBalance = async (balance, timestamp) => {
+    const result = balance.map(async (item) => {
+      if (item !== null) {
+        const currency = await intReqService.getCurrencyByTokenName(item.tokenName);
+        const ethToUsd = await commomService.getEthToUsdMiliseconds(timestamp);
+        const tokenPriceInEth = (item.tokenName === 'ETH') ? 1 :
+          await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commomService.millisecondsToTimestamp(item.timestamp));
+        const eth = bigNumberService.product(item.amount, tokenPriceInEth);
+        const usd = commomService.ethToUsd(eth, ethToUsd);
+        return { timestamp, eth, usd };
+      }
+      return { timestamp, eth: 0, usd: 0 };
+    });
+    return Promise.all(result).then(data => data);
+  };
+
+  const resolveAllocationsBalances = async (allocations) => {
+    const result = await allocations.map(async (allocation) => {
+      await sumAllocationBalance(allocation.balance, allocation.timestamp);
+    });
+    return Promise.all(result).then((data) => {
+      console.log('------------------------------------');
+      console.log(data);
+      console.log('------------------------------------');
+      return data;
+      // const eth = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].eth)), 0);
+      // const usd = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].usd)), 0);
+      // return { timestamp: data.timestamp, eth, usd };
+    });
+  };
+
+  const resolveAllocations = async (portfolioId, timestamps) => {
+    const result = await timestamps.map(async (timestamp) => {
+      const allocation = await intReqService.getAllocationBeforeTimestampByPortfolioId(portfolioId, timestamp);
+      return (allocation !== null) ? { timestamp, balance: allocation.balance } : { timestamp, balance: [] };
+    });
+    return Promise.all(result).then(data => data);
+  };
+
+  const getPortfolioValueByIdAndPeriod = async (req, res) => {
+    const { id } = req.params;
+    const { period } = req.params;
+    const daysCount = commomService.handlePeriod(period);
+    const timestamps = calculateDaysBackwards(daysCount);
+    try {
+      const allocations = await resolveAllocations(id, timestamps);
+      const rr = await resolveAllocationsBalances(allocations);
+      await res.status(200).send(rr);
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error);
+    }
+  };
+
   const sync = async (req, res, addresses) => {
     const portfolioArray = addresses.map(async (address) => {
       try {
-        const portfolio = await WeidexService.getUserHttp(address);
+        const portfolio = await weidexService.getUserHttp(address);
         const bodyWrapper = Object.assign({ body: portfolio });
         await syncPortfolio(bodyWrapper, res);
       } catch (error) {
@@ -206,6 +270,7 @@ const portfolioController = (repository) => {
     getPortfoliosByAddresses,
     getPortfolioAssetsByPortfolioId,
     getPortfolioValueHistory,
+    getPortfolioValueByIdAndPeriod,
   };
 };
 

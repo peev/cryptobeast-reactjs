@@ -209,6 +209,35 @@ class PortfolioStore {
     return 0;
   }
 
+  @computed
+  get summaryTotalProfitLossUsd() {
+    if (this.selectedPortfolio && this.portfolioValueHistory.length > 0 && this.summaryTotalInvestmentInUSD !== 0) {
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .quotient(BigNumberService
+            .difference(
+              this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
+              this.summaryTotalInvestmentInUSD,
+            ), this.summaryTotalInvestmentInUSD), 2));
+    }
+    return 0;
+  }
+
+  @computed
+  get avgChangeUsd() {
+    if (this.selectedPortfolio && this.portfolioValueHistory.length > 0) {
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .quotient(BigNumberService
+            .quotient(BigNumberService
+              .difference(
+                this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
+                this.summaryTotalInvestmentInUSD,
+              ), this.summaryTotalInvestmentInUSD), this.portfolioValueHistory.length - 1), 2));
+    }
+    return 0;
+  }
+
   @action
   setFetchingPortfolios(value: boolean) {
     this.fethingPortfolios = value;

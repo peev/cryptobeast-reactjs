@@ -40,6 +40,8 @@ const commonMethodsService = (repository) => {
   const getEthToUsdMiliseconds = async timestamp =>
     weidexFiatMsService().getEtherValueByTimestamp(Number(timestamp)).then(data => data.priceUSD);
 
+  const millisecondsToTimestamp = timestamp => ((timestamp - (timestamp % 1000)) / 1000);
+
   const calculateDays = (begin, end) => {
     const dates = [];
     for (let i = begin; i <= end; i += (24 * 60 * 60 * 1000)) {
@@ -105,6 +107,19 @@ const commonMethodsService = (repository) => {
     return result;
   };
 
+  const handlePeriod = (period) => {
+    switch (period) {
+      case 'd':
+        return 1;
+      case 'w':
+        return 7;
+      case 'm':
+        return 31;
+      default:
+        return 0;
+    }
+  };
+
   return {
     getTimestampByTxHash,
     tokenToEthToUsd,
@@ -119,6 +134,8 @@ const commonMethodsService = (repository) => {
     fillPreviousBalances,
     ethToUsd,
     tokenToEth,
+    handlePeriod,
+    millisecondsToTimestamp,
   };
 };
 

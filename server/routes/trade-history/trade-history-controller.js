@@ -39,6 +39,13 @@ const tradeController = (repository) => {
     return newTradeObject;
   };
 
+  const updateAction = async (req, res, id, tradeObject, isSyncing) => {
+    const newTradeData = Object.assign({}, tradeObject, { id });
+    await repository.update({ modelName, updatedRecord: newTradeData })
+      .then(response => (isSyncing ? response : res.status(200).send(response)))
+      .catch(error => res.json(error));
+  };
+
   const createAction = async (req, res, tradeObject, isSyncing) => {
     await repository.create({ modelName, newObject: tradeObject })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
@@ -53,17 +60,19 @@ const tradeController = (repository) => {
     const trade = req.body;
 
     try {
-      const tradeExist = await intReqService.getTradeByTxHash(trade.txHash);
-      if (tradeExist === null) {
-        const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
-        const transactionFee = calculateTransactionFee(transaction);
-        const timestamp = await commomService.getTimestampByTxHash(trade.txHash);
-        const ethUsd = await commomService.getEthToUsdMiliseconds(timestamp);
-        const priceUSD = bigNumberService.product(trade.price, ethUsd);
-        const priceTotalUSD = await commomService.tokenToEthToUsd(trade.amount, trade.price, ethUsd);
+      const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
+      const transactionFee = calculateTransactionFee(transaction);
+      const timestamp = await commomService.getTimestampByTxHash(trade.txHash);
+      const ethUsd = await commomService.getEthToUsdMiliseconds(timestamp);
+      const priceUSD = bigNumberService.product(trade.price, ethUsd);
+      const priceTotalUSD = await commomService.tokenToEthToUsd(trade.amount, trade.price, ethUsd);
 
-        const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee, address, priceUSD, priceTotalUSD);
+      const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee, address, priceUSD, priceTotalUSD);
+      const tradeExist = await intReqService.getTradeByTxHash(trade.txHash);
+      if (tradeExist === null || tradeExist === undefined) {
         await createAction(req, res, tradeObject, true);
+      } else {
+        await updateAction(req, res, Number(tradeExist.id), tradeObject, true);
       }
     } catch (error) {
       console.log(error);

@@ -51,28 +51,32 @@ const transactionController = (repository) => {
 
   const syncTransaction = async (req, res) => {
     const tr = req.body;
-    const transaction = await intReqService.getTransactionByTxHash(tr.txHash);
-    if (transaction === null || transaction === undefined) {
-      try {
-        const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
-        const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-        const currency = await intReqService.getCurrencyByTokenName(tr.tokenName);
-        const tokenPriceInEth = (tr.tokenName === 'ETH') ? 1 :
-          await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
-        const ethTotalValue = (tr.type === 'd') ?
-          await bigNumberService.toNumber(etherScanTransaction.value) : bigNumberService.product(tr.amount, tokenPriceInEth);
-        const ethUsd = await commomService.getEthToUsd(etherScanTrBlock.timestamp);
-        const tokenPriceUSD = bigNumberService.product(tokenPriceInEth, ethUsd);
-        const totalValueUSD = commomService.tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);
 
-        const transactionObject = createTransactionObject(
-          tr.amount, tr.txHash, tr.status, tr.tokenName, tr.type, tr.portfolioId, etherScanTrBlock.timestamp,
-          tokenPriceInEth, ethTotalValue, tokenPriceUSD, totalValueUSD, ethUsd,
-        );
+    try {
+      const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
+      const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
+      const currency = await intReqService.getCurrencyByTokenName(tr.tokenName);
+      const tokenPriceInEth = (tr.tokenName === 'ETH') ? 1 :
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
+      const ethTotalValue = (tr.type === 'd') ?
+        await bigNumberService.toNumber(etherScanTransaction.value) : bigNumberService.product(tr.amount, tokenPriceInEth);
+      const ethUsd = await commomService.getEthToUsd(etherScanTrBlock.timestamp);
+      const tokenPriceUSD = bigNumberService.product(tokenPriceInEth, ethUsd);
+      const totalValueUSD = commomService.tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);
+
+      const transactionObject = createTransactionObject(
+        tr.amount, tr.txHash, tr.status, tr.tokenName, tr.type, tr.portfolioId, etherScanTrBlock.timestamp,
+        tokenPriceInEth, ethTotalValue, tokenPriceUSD, totalValueUSD, ethUsd,
+      );
+
+      const transactionExist = await intReqService.getTransactionByTxHash(tr.txHash);
+      if (transactionExist === null || transactionExist === undefined) {
         await createAction(req, res, transactionObject, true);
-      } catch (error) {
-        console.log(error);
+      } else {
+        await updateAction(req, res, Number(transactionExist.id), transactionObject, true);
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 

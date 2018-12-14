@@ -196,40 +196,37 @@ const portfolioController = (repository) => {
   };
 
   const sumAllocationBalance = async (balance, timestamp) => {
-    const result = balance.map(async (item) => {
-      if (item !== null) {
+    let result = { timestamp, eth: 0, usd: 0 };
+    if (balance !== null) {
+      result = balance.map(async (item) => {
         const currency = await intReqService.getCurrencyByTokenName(item.tokenName);
         const ethToUsd = await commomService.getEthToUsdMiliseconds(timestamp);
         const tokenPriceInEth = (item.tokenName === 'ETH') ? 1 :
-          await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commomService.millisecondsToTimestamp(item.timestamp));
+          await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commomService.millisecondsToTimestamp(timestamp));
         const eth = bigNumberService.product(item.amount, tokenPriceInEth);
         const usd = commomService.ethToUsd(eth, ethToUsd);
         return { timestamp, eth, usd };
-      }
-      return { timestamp, eth: 0, usd: 0 };
-    });
+      });
+    } else {
+      return result;
+    }
     return Promise.all(result).then(data => data);
   };
 
   const resolveAllocationsBalances = async (allocations) => {
-    const result = await allocations.map(async (allocation) => {
-      await sumAllocationBalance(allocation.balance, allocation.timestamp);
-    });
-    return Promise.all(result).then((data) => {
-      console.log('------------------------------------');
-      console.log(data);
-      console.log('------------------------------------');
-      return data;
-      // const eth = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].eth)), 0);
-      // const usd = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].usd)), 0);
-      // return { timestamp: data.timestamp, eth, usd };
-    });
+    const result = await allocations.map(async allocation => sumAllocationBalance(allocation.balance, allocation.timestamp));
+    return Promise.all(result).then(data =>
+      data.map((item) => {
+        const eth = item.reduce((acc, obj) => (bigNumberService.sum(acc, obj.eth)), 0);
+        const usd = item.reduce((acc, obj) => (bigNumberService.sum(acc, obj.usd)), 0);
+        return { timestamp: item[0].timestamp, eth, usd };
+      }));
   };
 
   const resolveAllocations = async (portfolioId, timestamps) => {
     const result = await timestamps.map(async (timestamp) => {
       const allocation = await intReqService.getAllocationBeforeTimestampByPortfolioId(portfolioId, timestamp);
-      return (allocation !== null) ? { timestamp, balance: allocation.balance } : { timestamp, balance: [] };
+      return (allocation !== null) ? { timestamp, balance: allocation.balance } : { timestamp, balance: null };
     });
     return Promise.all(result).then(data => data);
   };
@@ -241,8 +238,9 @@ const portfolioController = (repository) => {
     const timestamps = calculateDaysBackwards(daysCount);
     try {
       const allocations = await resolveAllocations(id, timestamps);
-      const rr = await resolveAllocationsBalances(allocations);
-      await res.status(200).send(rr);
+      const filtertedAllocations = allocations.filter(data => data.balance !== null);
+      const result = await resolveAllocationsBalances(filtertedAllocations);
+      await res.status(200).send(result);
     } catch (error) {
       console.log(error);
       res.status(400).send(error);

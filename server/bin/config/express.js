@@ -66,7 +66,7 @@ const init = async (repository) => {
   // }
 
   // Market jobs
-  marketService.createMarketJob(marketService.syncTickersFromCoinMarketCap, { minute: 7 });
+  marketService.createMarketJob(marketService.syncTickersFromCoinMarketCap, '*/7 * * * *');
   // marketService.createMarketJob(marketService.syncSummaries, { second: 0 }); // sync every minute
   // marketService.createMarketJob(marketService.syncTickersFromKraken, { second: 0 }); // sync every minute
   // marketService.createMarketJob(marketService.syncTickersFromCoinMarketCap, { minute: 0 }); // sync every hour

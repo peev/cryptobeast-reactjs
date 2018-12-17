@@ -13,19 +13,15 @@ const marketService = (repository) => {
     }
   };
 
-  const createMarketJob = (marketFunction, time) => {
-    // const time = { second: 1 } // every first second of each minute
-    const { hour = '*', minute = '*', second = '*' } = time;
-
-    return new CronJob({
-      cronTime: `${second} ${minute} ${hour} * * *`,
+  const createMarketJob = (marketFunction, time) =>
+    new CronJob({
+      cronTime: time,
       onTick: () => {
         marketFunction();
       },
       start: true,
       // timeZone: 'America/Los_Angeles',
     });
-  };
 
   return {
     syncTickersFromCoinMarketCap,

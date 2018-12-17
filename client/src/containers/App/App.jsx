@@ -71,7 +71,7 @@ class App extends React.Component<Props> {
 
   render() {
     const { classes, theme, PortfolioStore, WeidexStore, LoadingStore, location, children, ...rest } = this.props;
-    const { fetchingPortfolios } = PortfolioStore;
+    // const { fetchingPortfolios } = PortfolioStore;
 
     // if (fetchingPortfolios) {
     //   return (

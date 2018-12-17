@@ -10,7 +10,6 @@ import {
 } from 'mobx';
 import math from 'mathjs';
 import requester from '../services/requester';
-import FiatCurrenciesStore from './FiatCurrenciesStore';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
@@ -19,7 +18,6 @@ import history from '../services/History';
 import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
 import LoadingStore from './LoadingStore';
-import CurrencyStore from './CurrencyStore';
 import TransactionStore from './TransactionStore';
 
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
@@ -451,29 +449,30 @@ class PortfolioStore {
     return [];
   }
 
-  @computed
-  get summaryPortfolioAssets() {
-    // NOTE: all the conditions needs to be fulfilled in order to create
-    // portfolio asset summary
-    // debugger;
-    if (this.selectedPortfolio &&
-      this.currentPortfolioAssets.length > 0 &&
-      FiatCurrenciesStore.fiatCurrencies.length > 0 ) {
-      const { marketPriceHistory } = MarketStore;
-      const currentAssets = this.groupedCurrentPortfolioAssets;
-      const selectedPortfolioSummary = [];
+  // FOR DELETE
+  // @computed
+  // get summaryPortfolioAssets() {
+  //   // NOTE: all the conditions needs to be fulfilled in order to create
+  //   // portfolio asset summary
+  //   // debugger;
+  //   if (this.selectedPortfolio &&
+  //     this.currentPortfolioAssets.length > 0 &&
+  //     FiatCurrenciesStore.fiatCurrencies.length > 0 ) {
+  //     const { marketPriceHistory } = MarketStore;
+  //     const currentAssets = this.groupedCurrentPortfolioAssets;
+  //     const selectedPortfolioSummary = [];
 
-      // Creates the needed array, that will be shown in the view
-      currentAssets.forEach((asset) => {
-        
-      });
+  //     // Creates the needed array, that will be shown in the view
+  //     currentAssets.forEach((asset) => {
+  //     });
 
-      return selectedPortfolioSummary;
-    }
+  //     return selectedPortfolioSummary;
+  //   }
 
-    return [];
-  }
+  //   return [];
+  // }
   // #endregion
+
   // used !!!
   @computed
   get currentMarketSummaryPercentageChange() {

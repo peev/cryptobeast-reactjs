@@ -12,7 +12,6 @@ import ApiIntegrations from './../../components/CustomTables/ApiIntegrations';
 import AddApiAccount from './../../components/Modal/ApiAccountModals/AddApiAccount';
 import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
 import storage from '../../services/storage';
-import PortfolioStore from '../../stores/PortfolioStore';
 
 type Props = {
   MarketStore: {

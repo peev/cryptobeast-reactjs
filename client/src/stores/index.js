@@ -9,7 +9,6 @@ import NotificationStore from './NotificationStore';
 import Analytics from './Analytics';
 import Allocations from './Allocations';
 import CurrencyStore from './CurrencyStore';
-import FiatCurrencies from './FiatCurrenciesStore';
 import LoadingStore from './LoadingStore';
 import TransactionStore from './TransactionStore';
 
@@ -24,7 +23,6 @@ const stores = {
   Analytics,
   Allocations,
   CurrencyStore,
-  FiatCurrencies,
   WeidexStore,
   LoadingStore,
   TransactionStore,

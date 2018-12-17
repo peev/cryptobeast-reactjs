@@ -3,7 +3,6 @@ import * as React from 'react';
 import { withStyles, Grid, Paper } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import selectFromPortfoliosStyles from './SelectFromPortfoliosStyles';
-import CreatePortfolio from '../../../components/Modal/CreatePortfolio';
 import history from '../../../services/History';
 
 
@@ -14,7 +13,7 @@ type Props = {
 };
 
 const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ ...props }: Props) => {
-  const { classes, PortfolioStore, UserStore } = props;
+  const { classes, PortfolioStore } = props;
 
   const handleClick = (id: number) => {
     PortfolioStore.selectPortfolio(id);

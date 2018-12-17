@@ -3,7 +3,6 @@ import { observable, action, computed, onBecomeObserved } from 'mobx';
 import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
-import LoadingStore from './LoadingStore';
 import BigNumberService from '../services/BigNumber';
 
 

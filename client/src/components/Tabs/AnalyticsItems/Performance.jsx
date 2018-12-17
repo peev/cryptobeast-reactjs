@@ -3,7 +3,6 @@ import React from 'react';
 import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
-import MotionSelect from '../../Selectors/MotionSelect';
 import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 import TotalAssetsValue from '../../HighCharts/TotalAssetsValue';
 import PerformanceAssets from '../../HighCharts/PerformanceAssets';
@@ -26,11 +25,11 @@ const styles = () => ({
     'text-align': 'center',
   },
   flexCenter: {
-    'justify-content': 'center'
+    'justify-content': 'center',
   },
   flexBottom: {
-    'justify-content': 'flex-end'
-  }
+    'justify-content': 'flex-end',
+  },
 });
 
 type Props = {
@@ -40,22 +39,19 @@ type Props = {
 @inject('Analytics')
 @observer
 class Performance extends React.Component<Props, State> {
+  // constructor(props: Object) {
+  //   super(props);
+  //   this.handleSelectPeriod = this.handleSelectPeriod.bind(this);
+  // }
 
-  constructor(props) {
-    super(props);
-    this.handleSelectPeriod = this.handleSelectPeriod.bind(this);
-  }
+  // handleSelectPeriod = (data: Object) => {
+  //   if (!data) {
+  //     return;
+  //   }
 
-  handleSelectPeriod = (data) => {
-    const { Analytics } = this.props;
-
-    if (!data) {
-      return;
-    }
-
-    Analytics.selectTimeInPerformance(data);
-    Analytics.getPortfolioPriceHistoryForTimePeriod();
-  };
+  //   this.props.Analytics.selectTimeInPerformance(data);
+  //   this.props.Analytics.getPortfolioPriceHistoryForTimePeriod();
+  // };
 
   render() {
     const { classes } = this.props;
@@ -93,6 +89,6 @@ class Performance extends React.Component<Props, State> {
       </Grid>
     );
   }
-};
+}
 
 export default withStyles(styles)(Performance);

@@ -13,7 +13,6 @@ import SummaryCard from './../../components/Cards/Summary/SummaryCard';
 import AssetBreakdown from './../../components/Cards/Summary/AssetBreakdown';
 import SummaryTabs from './../../components/Tabs/SummaryTabs';
 import PortfolioSummaryTable from './../../components/CustomTables/PortfolioSummaryTable';
-import BigNumberService from '../../services/BigNumber';
 
 const styles = () => ({
   container: {

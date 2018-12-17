@@ -69,20 +69,26 @@ const WeidexService = (repository) => {
   };
 
   const getTokenTicker = tokenId => new Promise((resolve, reject) => {
-    request({
-      url: `${staging}/token/ticker/${tokenId}`,
-      json: true,
-      maxAttempts: 3,
-      retryDelay: 3100,
-      retryStrategy: request.RetryStrategies.HTTPOrNetworkError, // (default) retry on 5xx or network errors
-    }, (err, response, body) => {
-      if (err) return reject(err);
-      if (body) {
-        if (body.error) return reject(body.error); // Probably invalid API call
-        return resolve(body);
-      }
-      return resolve([]); // eslint rule of consistent returns. Function must return value in every case;
-    });
+    http.get(`${staging}/token/ticker/${tokenId}`)
+      .then((response) => {
+        const parsedResult = JSON.parse(response);
+        return resolve(parsedResult);
+      })
+      .catch(err => reject(err)); // eslint-disable-line
+    // request({
+    //   url: `${staging}/token/ticker/${tokenId}`,
+    //   json: true,
+    //   maxAttempts: 3,
+    //   retryDelay: 3100,
+    //   retryStrategy: request.RetryStrategies.HTTPOrNetworkError, // (default) retry on 5xx or network errors
+    // }, (err, response, body) => {
+    //   if (err) return reject(err);
+    //   if (body) {
+    //     if (body.error) return reject(body.error); // Probably invalid API call
+    //     return resolve(body);
+    //   }
+    //   return resolve([]); // eslint rule of consistent returns. Function must return value in every case;
+    // });
   });
 
   const getCurrencyStats = (currencyId, from, to) => new Promise((resolve, reject) => {

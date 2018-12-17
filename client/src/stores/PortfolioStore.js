@@ -37,6 +37,7 @@ class PortfolioStore {
   @observable currentPortfolioPrices;
   @observable newPortfolioName;
   @observable portfolioValueHistory;
+  @observable portfolioValueHistoryByPeriod;
   @observable standardDeviationPeriod;
 
   constructor() {
@@ -52,6 +53,7 @@ class PortfolioStore {
     this.currentPortfolioPrices = [];
     this.newPortfolioName = '';
     this.portfolioValueHistory = [];
+    this.portfolioValueHistoryByPeriod = [];
     this.standardDeviationPeriod = null;
 
     // only start data fetching if those properties are actually used!
@@ -61,6 +63,7 @@ class PortfolioStore {
     onBecomeObserved(this, 'currentPortfolioTrades', this.getCurrentPortfolioTrades);
     onBecomeObserved(this, 'currentPortfolioPrices', this.getCurrentPortfolioPrices);
     onBecomeObserved(this, 'portfolioValueHistory', this.getPortfolioValueHistory);
+    onBecomeObserved(this, 'portfolioValueHistoryByPeriod', this.getPortfolioValueHistoryByPeriod);
   }
 
   @action.bound
@@ -69,6 +72,30 @@ class PortfolioStore {
       .then(action((result: object) => {
         this.portfolioValueHistory = result.data;
       }));
+  }
+
+  @action.bound
+  getPortfolioValueHistoryByPeriod() {
+    requester.Portfolio.getPortfolioValueHistoryByPeriod(this.selectedPortfolioId, 'w')
+      .then(action((result: object) => {
+        this.portfolioValueHistoryByPeriod = result.data;
+      }));
+  }
+
+  @computed
+  get portfolueValueLastDay() {
+    if (this.portfolioValueHistoryByPeriod.length && this.portfolioValueHistoryByPeriod.length > 0) {
+      return this.portfolioValueHistoryByPeriod[0].usd - this.portfolioValueHistoryByPeriod[1].usd;
+    }
+    return 0;
+  }
+
+  @computed
+  get portfolueValueLastWeek() {
+    if (this.portfolioValueHistoryByPeriod.length && this.portfolioValueHistoryByPeriod.length > 0) {
+      return this.portfolioValueHistoryByPeriod[0].usd - this.portfolioValueHistoryByPeriod[this.portfolioValueHistoryByPeriod.length - 1].usd;
+    }
+    return 0;
   }
 
   @computed
@@ -82,6 +109,22 @@ class PortfolioStore {
           ]));
     }
     return [];
+  }
+
+  @computed
+  get performanceMin() {
+    if (this.selectedPortfolio && this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return Math.min(this.portfolioValueHistory.map((el: Object) => el.usd)).toFixed(2);
+    }
+    return 0;
+  }
+
+  @computed
+  get performanceMax() {
+    if (this.selectedPortfolio && this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return Math.max(this.portfolioValueHistory.map((el: Object) => el.usd)).toFixed(2);
+    }
+    return 0;
   }
 
   @computed

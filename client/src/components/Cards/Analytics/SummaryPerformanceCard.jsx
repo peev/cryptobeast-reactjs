@@ -32,15 +32,15 @@ const SummaryPerformanceCard = inject('Analytics', 'PortfolioStore')(observer(({
     <Paper className={classes.container}>
       <div className={classes.item}>
         <p>min:</p>
-        <p>{`$${Number(`${Math.round(`${Analytics.performanceMin}e2`)}e-2`)}`}</p>
+        <p>${PortfolioStore.performanceMin}</p>
       </div>
       <div className={classes.item}>
         <p>max:</p>
-        <p>{`$${Number(`${Math.round(`${Analytics.performanceMax}e2`)}e-2`)}`}</p>
+        <p>${PortfolioStore.performanceMax}</p>
       </div>
       <div className={classes.item}>
         <p>ath:</p>
-        <p>{`$${Number(`${Math.round(`${Analytics.performanceATH}e2`)}e-2`)}`}</p>
+        <p>${PortfolioStore.performanceMax}</p>
       </div>
       <div className={classes.item}>
         <p>profit/loss:</p>
@@ -52,16 +52,16 @@ const SummaryPerformanceCard = inject('Analytics', 'PortfolioStore')(observer(({
       </div>
       <div className={classes.item}>
         <p>last 24h:</p>
-        <p>{`${Number(`${Math.round(`${Analytics.performanceLast24H}e2`)}e-2`)}%`}</p>
+        <p>${PortfolioStore.portfolueValueLastDay}</p>
       </div>
       <div className={classes.item}>
         <p>last 7d:</p>
-        <p>{`${Number(`${Math.round(`${Analytics.performanceLast7D}e2`)}e-2`)}%`}</p>
+        <p>${PortfolioStore.portfolueValueLastWeek}</p>
       </div>
-      <div className={classes.item}>
+      {/* <div className={classes.item}>
         <p>top performer:</p>
         <p>{Analytics.performanceTopPerformer}</p>
-      </div>
+      </div> */}
     </Paper>
   );
 }));

@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 // @flow
 import React from 'react';
 import {
@@ -32,15 +33,15 @@ const SummaryPerformanceCard = inject('Analytics', 'PortfolioStore')(observer(({
     <Paper className={classes.container}>
       <div className={classes.item}>
         <p>min:</p>
-        <p>${PortfolioStore.performanceMin}</p>
+        <p>${isNaN(PortfolioStore.performanceMin) ? 0 : PortfolioStore.performanceMin}</p>
       </div>
       <div className={classes.item}>
         <p>max:</p>
-        <p>${PortfolioStore.performanceMax}</p>
+        <p>${isNaN(PortfolioStore.performanceMax) ? 0 : PortfolioStore.performanceMax}</p>
       </div>
       <div className={classes.item}>
         <p>ath:</p>
-        <p>${PortfolioStore.performanceMax}</p>
+        <p>${isNaN(PortfolioStore.performanceMax) ? 0 : PortfolioStore.performanceMax}</p>
       </div>
       <div className={classes.item}>
         <p>profit/loss:</p>
@@ -48,7 +49,7 @@ const SummaryPerformanceCard = inject('Analytics', 'PortfolioStore')(observer(({
       </div>
       <div className={classes.item}>
         <p>avg. change:</p>
-        <p>${PortfolioStore.avgChangeUsd}</p>
+        <p>${isNaN(PortfolioStore.avgChangeUsd) ? 0 : PortfolioStore.avgChangeUsd}</p>
       </div>
       <div className={classes.item}>
         <p>last 24h:</p>

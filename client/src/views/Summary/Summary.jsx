@@ -63,9 +63,11 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             icon={TotalIcon}
             iconColor="gray"
             title="Total number of shares"
-            description={TransactionStore.numOfShares !== 0
+            // eslint-disable-next-line no-restricted-globals
+            description={TransactionStore.numOfShares !== 0 && !isNaN(TransactionStore.numOfShares)
               ? `${TransactionStore.numOfShares}` : ''}
-            hasInfo={TransactionStore.numOfShares === 0}
+            // eslint-disable-next-line no-restricted-globals
+            hasInfo={TransactionStore.numOfShares === 0 || isNaN(TransactionStore.numOfShares)}
             infoMessage="Please add an investment to see your number of shares"
           />
 
@@ -73,9 +75,11 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             icon={AscendantBarsIcon}
             iconColor="gray"
             title="Share price"
-            description={PortfolioStore.currentPortfolioSharePrice !== 0
+            // eslint-disable-next-line no-restricted-globals
+            description={PortfolioStore.currentPortfolioSharePrice !== 0 && !isNaN(TransactionStore.currentPortfolioSharePrice)
               ? `$${PortfolioStore.currentPortfolioSharePrice}` : ''}
-            hasInfo={PortfolioStore.currentPortfolioSharePrice === 0}
+            // eslint-disable-next-line no-restricted-globals
+            hasInfo={PortfolioStore.currentPortfolioSharePrice === 0 || isNaN(TransactionStore.currentPortfolioSharePrice)}
             infoMessage="Please add an investment to see your current share price"
           />
 

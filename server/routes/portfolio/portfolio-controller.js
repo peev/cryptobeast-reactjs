@@ -1,11 +1,11 @@
 const modelName = 'Portfolio';
 
 const portfolioController = (repository) => {
-  const portfolioService = require('../../services/portfolio-service')(repository);
   const weidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service')();
   const intReqService = require('../../services/internal-requeter-service')(repository);
   const commomService = require('../../services/common-methods-service')();
+  const { etherScanServices } = require('../../integrations/etherScan-services');
 
   const createPortfolioObject = (address, id, totalInvestmentETH, totalInvestmentUSD) => {
     const portfolio = {
@@ -30,12 +30,49 @@ const portfolioController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const getPortfolioInvestmentSum = async (address, fetchDeposits) => {
+    let items = [];
+    const user = await weidexService.getUserHttp(address);
+    if (fetchDeposits) {
+      items = await weidexService.getUserDepositHttp(user.id);
+    } else {
+      items = await weidexService.getUserWithdrawHttp(user.id);
+    }
+    const transactionsArray = await items.map(async (tr) => {
+      const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
+      const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
+      const ethToUsd = await commomService.getEthToUsd(etherScanTrBlock.timestamp);
+      const currency = await intReqService.getCurrencyByTokenName(tr.tokenName);
+      const tokenPriceInEth = await (tr.tokenName === 'ETH') ? 1 :
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
+      return (etherScanTransaction !== null && etherScanTransaction !== undefined) ?
+        {
+          eth: commomService.tokenToEth(tr.amount, tokenPriceInEth),
+          usd: commomService.tokenToEthToUsd(tr.amount, tokenPriceInEth, ethToUsd),
+        } : 0;
+    });
+    return Promise.all(transactionsArray).then((transactions) => {
+      const eth = transactions.reduce((acc, obj) => ((bigNumberService.sum(acc, obj.eth))), 0);
+      const usd = transactions.reduce((acc, obj) => ((bigNumberService.sum(acc, obj.usd))), 0);
+      return { eth, usd };
+    });
+  };
+
+  const calcPortfolioTotalInvestment = async (portfolioAddress) => {
+    const depositAmount = await getPortfolioInvestmentSum(portfolioAddress, true);
+    const withdrawAmount = await getPortfolioInvestmentSum(portfolioAddress, false);
+    return Promise.resolve({
+      eth: bigNumberService.difference(depositAmount.eth, withdrawAmount.eth),
+      usd: bigNumberService.difference(depositAmount.usd, withdrawAmount.usd),
+    });
+  };
+
   const syncPortfolio = async (req, res) => {
     const user = req.body;
 
     try {
       const porfolioFound = await intReqService.getPortfolioByUserAddress(user.address);
-      const totalInvestment = await portfolioService.calcPortfolioTotalInvestment(user.address).then(data => data);
+      const totalInvestment = await calcPortfolioTotalInvestment(user.address).then(data => data);
       const newPortfolioObject = createPortfolioObject(user.address, user.id, totalInvestment.eth, totalInvestment.usd);
       if (porfolioFound === null || porfolioFound === undefined) {
         await createAction(req, res, newPortfolioObject, true);

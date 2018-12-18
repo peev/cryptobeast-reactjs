@@ -75,10 +75,10 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             iconColor="gray"
             title="Share price"
             // eslint-disable-next-line no-restricted-globals
-            description={PortfolioStore.currentPortfolioSharePrice !== 0 && !isNaN(TransactionStore.currentPortfolioSharePrice)
+            description={PortfolioStore.currentPortfolioSharePrice !== 0 && !isNaN(PortfolioStore.currentPortfolioSharePrice)
               ? `$${PortfolioStore.currentPortfolioSharePrice}` : ''}
             // eslint-disable-next-line no-restricted-globals
-            hasInfo={PortfolioStore.currentPortfolioSharePrice === 0 || isNaN(TransactionStore.currentPortfolioSharePrice)}
+            hasInfo={PortfolioStore.currentPortfolioSharePrice === 0 || isNaN(PortfolioStore.currentPortfolioSharePrice)}
             infoMessage="Please add an investment to see your current share price"
           />
 

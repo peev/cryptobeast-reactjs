@@ -83,7 +83,9 @@ class PortfolioStore {
   @computed
   get portfolueValueLastDay() {
     if (this.portfolioValueHistoryByPeriod.length && this.portfolioValueHistoryByPeriod.length > 0) {
-      return this.portfolioValueHistoryByPeriod[0].usd - this.portfolioValueHistoryByPeriod[1].usd;
+      return Number(BigNumberService
+        .toFixedParam(this.portfolioValueHistoryByPeriod[0].usd -
+          this.portfolioValueHistoryByPeriod[1].usd, 2));
     }
     return 0;
   }
@@ -91,7 +93,9 @@ class PortfolioStore {
   @computed
   get portfolueValueLastWeek() {
     if (this.portfolioValueHistoryByPeriod.length && this.portfolioValueHistoryByPeriod.length > 0) {
-      return this.portfolioValueHistoryByPeriod[0].usd - this.portfolioValueHistoryByPeriod[this.portfolioValueHistoryByPeriod.length - 1].usd;
+      return Number(BigNumberService
+        .toFixedParam(this.portfolioValueHistoryByPeriod[0].usd -
+          this.portfolioValueHistoryByPeriod[this.portfolioValueHistoryByPeriod.length - 1].usd, 2));
     }
     return 0;
   }
@@ -112,7 +116,8 @@ class PortfolioStore {
   @computed
   get performanceMin() {
     if (this.selectedPortfolio && this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
-      return Math.min(this.portfolioValueHistory.map((el: Object) => el.usd)).toFixed(2);
+      const arr = this.portfolioValueHistory.map((el: Object) => el.usd);
+      return Math.min(...arr).toFixed(2);
     }
     return 0;
   }
@@ -120,7 +125,8 @@ class PortfolioStore {
   @computed
   get performanceMax() {
     if (this.selectedPortfolio && this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
-      return Math.max(this.portfolioValueHistory.map((el: Object) => el.usd)).toFixed(2);
+      const arr = this.portfolioValueHistory.map((el: Object) => el.usd);
+      return Math.max(...arr).toFixed(2);
     }
     return 0;
   }
@@ -255,11 +261,10 @@ class PortfolioStore {
     if (this.selectedPortfolio && this.portfolioValueHistory.length > 0 && this.summaryTotalInvestmentInUSD !== 0) {
       return Number(BigNumberService
         .toFixedParam(BigNumberService
-          .quotient(BigNumberService
-            .difference(
-              this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
-              this.summaryTotalInvestmentInUSD,
-            ), this.summaryTotalInvestmentInUSD), 2));
+          .difference(
+            this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
+            this.summaryTotalInvestmentInUSD,
+          ), 2));
     }
     return 0;
   }
@@ -270,11 +275,10 @@ class PortfolioStore {
       return Number(BigNumberService
         .toFixedParam(BigNumberService
           .quotient(BigNumberService
-            .quotient(BigNumberService
-              .difference(
-                this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
-                this.summaryTotalInvestmentInUSD,
-              ), this.summaryTotalInvestmentInUSD), this.portfolioValueHistory.length - 1), 2));
+            .difference(
+              this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
+              this.summaryTotalInvestmentInUSD,
+            ), this.portfolioValueHistory.length - 1), 2));
     }
     return 0;
   }

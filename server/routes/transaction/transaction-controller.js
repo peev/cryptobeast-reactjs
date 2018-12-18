@@ -244,13 +244,8 @@ const transactionController = (repository) => {
       try {
         const portfolio = await intReqService.getPortfolioByUserAddress(address);
         const transactions = await intReqService.getTransactionsByPortfolioIdAsc(portfolio.id);
-        const filteredTransactions = transactions.filter(tr => tr.isFirstDeposit === null);
-        if (filteredTransactions.length && filteredTransactions.length > 0) {
-          const firstDeposit = await updateTransactionsShareParamsArray(req, res, portfolio.id, [filteredTransactions[0]], transactions);
-          await updateTransactionsShareParams(req, res, firstDeposit);
-          const updatedTransactions = await updateTransactionsShareParamsArray(req, res, portfolio.id, filteredTransactions, transactions);
-          await updateTransactionsShareParams(req, res, updatedTransactions);
-        }
+        const updatedTransactions = await updateTransactionsShareParamsArray(req, res, portfolio.id, transactions, transactions);
+        await updateTransactionsShareParams(req, res, updatedTransactions);
       } catch (error) {
         console.log(error);
       }

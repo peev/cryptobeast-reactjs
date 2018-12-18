@@ -716,14 +716,12 @@ class PortfolioStore {
 
   @action.bound
   getCurrentPortfolioInvestors() {
-    const searchedItem = {
-      portfolioId: this.selectedPortfolioId,
-      item: 'Investor',
-    };
-    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
-      .then(action((result) => {
-        this.currentPortfolioInvestors = result.data;
-      }));
+    if (this.selectedPortfolioId !== null && this.selectedPortfolioId !== undefined) {
+      requester.Investor.getAllInvestors(this.selectedPortfolioId)
+        .then(action((result: Object) => {
+          this.currentPortfolioInvestors = result.data;
+        }));
+    }
   }
 
   @action.bound

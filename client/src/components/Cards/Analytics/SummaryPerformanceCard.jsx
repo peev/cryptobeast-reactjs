@@ -45,19 +45,19 @@ const SummaryPerformanceCard = inject('Analytics', 'PortfolioStore')(observer(({
       </div>
       <div className={classes.item}>
         <p>profit/loss:</p>
-        <p>${PortfolioStore.summaryTotalProfitLossUsd}</p>
+        <p>{PortfolioStore.summaryTotalProfitLoss}%</p>
       </div>
       <div className={classes.item}>
         <p>avg. change:</p>
-        <p>${isNaN(PortfolioStore.avgChangeUsd) ? 0 : PortfolioStore.avgChangeUsd}</p>
+        <p>{isNaN(PortfolioStore.avgChange) ? 0 : PortfolioStore.avgChange}%</p>
       </div>
       <div className={classes.item}>
         <p>last 24h:</p>
-        <p>${PortfolioStore.portfolueValueLastDay}</p>
+        <p>{PortfolioStore.portfolueValueLastDay}%</p>
       </div>
       <div className={classes.item}>
         <p>last 7d:</p>
-        <p>${PortfolioStore.portfolueValueLastWeek}</p>
+        <p>{PortfolioStore.portfolueValueLastWeek}%</p>
       </div>
       {/* <div className={classes.item}>
         <p>top performer:</p>

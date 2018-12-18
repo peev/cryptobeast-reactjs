@@ -378,10 +378,10 @@ class InvestorStore {
       portfolioId,
       dateOfEntry,
       isFounder: this.newInvestorValues.isFounder,
-      fullName: this.newInvestorValues.fullName,
+      name: this.newInvestorValues.fullName,
       email: this.newInvestorValues.email,
-      telephone: this.newInvestorValues.telephone,
-      managementFee: this.newInvestorValues.managementFee,
+      phone: this.newInvestorValues.telephone,
+      fee: this.newInvestorValues.managementFee,
     };
 
     const depositData = {

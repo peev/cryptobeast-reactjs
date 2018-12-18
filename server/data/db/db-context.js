@@ -30,6 +30,7 @@ const init = databaseConfig => new Promise((resolve) => {
       db.Currency = sequelize.import(path.join(__dirname, '/models/currency.js'));
       db.Transaction = sequelize.import(path.join(__dirname, '/models/transaction.js'));
       db.Portfolio = sequelize.import(path.join(__dirname, '/models/portfolio.js'));
+      db.CoinMarketCapCurrency = sequelize.import(path.join(__dirname, '/models/CoinMarketCapCurrency.js'));
 
       db.Portfolio.hasMany(db.TradeHistory);
       db.TradeHistory.belongsTo(db.Portfolio);

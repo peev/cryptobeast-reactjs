@@ -78,7 +78,7 @@ class SelectInvestor extends React.Component<Props> {
     const { classes, PortfolioStore, value, style } = this.props;
     const { currentPortfolioInvestors } = PortfolioStore;
     const investorsToShow = [];
-    currentPortfolioInvestors.map((investor: object) => ({ value: investor.id, label: investor.fullName }))
+    currentPortfolioInvestors.map((investor: object) => ({ value: investor.id, label: investor.name }))
       .forEach((investor: object) => {
         investorsToShow.push(investor);
       });

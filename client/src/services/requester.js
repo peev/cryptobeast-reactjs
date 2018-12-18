@@ -69,11 +69,13 @@ const Portfolio = {
   update: (requestParams, id) => requests.put(`/portfolio/update/${id}`, requestParams), // id + newName
   delete: id => requests.delete(`/portfolio/delete/${id}`),
   getPortfolioValueHistory: id => requests.get(`/portfolio/history/${id}`),
+  getPortfolioValueHistoryByPeriod: (id, period) => requests.get(`/portfolio/historyByPeriod/${id}/${period}`),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
 const Investor = {
   add: investorData => requests.post('/investor/add', investorData),
+  getAllInvestors: portfolioId => requests.get(`/investor/all/${portfolioId}`),
   addDeposit: requestParams => requests.put('/investor/deposit', requestParams),
   withdrawal: requestParams => requests.put('/investor/withdrawal', requestParams),
   update: (id, requestParams) => requests.put(`/investor/update/${id}`, requestParams),

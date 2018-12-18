@@ -2,7 +2,7 @@ const userController = (repository, jobs) => {
   const { closingSharePriceJobs, openingSharePriceJobs, closingPortfolioCostJobs } = jobs;
   const { bittrexServices } = require('../../integrations/bittrex-services');
   const { krakenServices } = require('../../integrations/kraken-services');
-  const portfolioService = require('../../services/portfolio-service')(repository);
+  // const portfolioService = require('../../services/portfolio-service')(repository);
 
   const modelName = 'User';
 
@@ -41,9 +41,9 @@ const userController = (repository, jobs) => {
     }
 
     // TODO: PortfolioID should be changed with UserID
-    closingSharePriceJobs[req.body.portfolioId] = await portfolioService.createSaveClosingSharePriceJob(req.body.portfolioId);
-    openingSharePriceJobs[req.body.portfolioId] = await portfolioService.createSaveOpeningSharePriceJob(req.body.portfolioId);
-    closingPortfolioCostJobs[req.body.portfolioId] = await portfolioService.createSaveClosingPortfolioCostJob(req.body.portfolioId);
+    // closingSharePriceJobs[req.body.portfolioId] = await portfolioService.createSaveClosingSharePriceJob(req.body.portfolioId);
+    // openingSharePriceJobs[req.body.portfolioId] = await portfolioService.createSaveOpeningSharePriceJob(req.body.portfolioId);
+    // closingPortfolioCostJobs[req.body.portfolioId] = await portfolioService.createSaveClosingPortfolioCostJob(req.body.portfolioId);
   };
 
   const verifiedPatchUserMetadata = async (req, res) => {

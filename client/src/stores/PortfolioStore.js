@@ -10,7 +10,6 @@ import {
 } from 'mobx';
 import math from 'mathjs';
 import requester from '../services/requester';
-import FiatCurrenciesStore from './FiatCurrenciesStore';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
@@ -19,7 +18,6 @@ import history from '../services/History';
 import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
 import LoadingStore from './LoadingStore';
-import CurrencyStore from './CurrencyStore';
 import TransactionStore from './TransactionStore';
 
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
@@ -37,6 +35,7 @@ class PortfolioStore {
   @observable currentPortfolioPrices;
   @observable newPortfolioName;
   @observable portfolioValueHistory;
+  @observable portfolioValueHistoryByPeriod;
   @observable standardDeviationPeriod;
 
   constructor() {
@@ -52,6 +51,7 @@ class PortfolioStore {
     this.currentPortfolioPrices = [];
     this.newPortfolioName = '';
     this.portfolioValueHistory = [];
+    this.portfolioValueHistoryByPeriod = [];
     this.standardDeviationPeriod = null;
 
     // only start data fetching if those properties are actually used!
@@ -61,6 +61,7 @@ class PortfolioStore {
     onBecomeObserved(this, 'currentPortfolioTrades', this.getCurrentPortfolioTrades);
     onBecomeObserved(this, 'currentPortfolioPrices', this.getCurrentPortfolioPrices);
     onBecomeObserved(this, 'portfolioValueHistory', this.getPortfolioValueHistory);
+    onBecomeObserved(this, 'portfolioValueHistoryByPeriod', this.getPortfolioValueHistoryByPeriod);
   }
 
   @action.bound
@@ -69,6 +70,34 @@ class PortfolioStore {
       .then(action((result: object) => {
         this.portfolioValueHistory = result.data;
       }));
+  }
+
+  @action.bound
+  getPortfolioValueHistoryByPeriod() {
+    requester.Portfolio.getPortfolioValueHistoryByPeriod(this.selectedPortfolioId, 'w')
+      .then(action((result: object) => {
+        this.portfolioValueHistoryByPeriod = result.data;
+      }));
+  }
+
+  @computed
+  get portfolueValueLastDay() {
+    if (this.portfolioValueHistoryByPeriod.length && this.portfolioValueHistoryByPeriod.length > 0) {
+      return Number(BigNumberService
+        .toFixedParam(this.portfolioValueHistoryByPeriod[0].usd -
+          this.portfolioValueHistoryByPeriod[1].usd, 2));
+    }
+    return 0;
+  }
+
+  @computed
+  get portfolueValueLastWeek() {
+    if (this.portfolioValueHistoryByPeriod.length && this.portfolioValueHistoryByPeriod.length > 0) {
+      return Number(BigNumberService
+        .toFixedParam(this.portfolioValueHistoryByPeriod[0].usd -
+          this.portfolioValueHistoryByPeriod[this.portfolioValueHistoryByPeriod.length - 1].usd, 2));
+    }
+    return 0;
   }
 
   @computed
@@ -82,6 +111,24 @@ class PortfolioStore {
           ]));
     }
     return [];
+  }
+
+  @computed
+  get performanceMin() {
+    if (this.selectedPortfolio && this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      const arr = this.portfolioValueHistory.map((el: Object) => el.usd);
+      return Math.min(...arr).toFixed(2);
+    }
+    return 0;
+  }
+
+  @computed
+  get performanceMax() {
+    if (this.selectedPortfolio && this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      const arr = this.portfolioValueHistory.map((el: Object) => el.usd);
+      return Math.max(...arr).toFixed(2);
+    }
+    return 0;
   }
 
   @computed
@@ -205,6 +252,33 @@ class PortfolioStore {
           .product(BigNumberService
             .quotient(BigNumberService
               .difference(this.currentPortfolioCostInUSD, this.summaryTotalInvestmentInUSD), this.summaryTotalInvestmentInUSD), 100), 2));
+    }
+    return 0;
+  }
+
+  @computed
+  get summaryTotalProfitLossUsd() {
+    if (this.selectedPortfolio && this.portfolioValueHistory.length > 0 && this.summaryTotalInvestmentInUSD !== 0) {
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .difference(
+            this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
+            this.summaryTotalInvestmentInUSD,
+          ), 2));
+    }
+    return 0;
+  }
+
+  @computed
+  get avgChangeUsd() {
+    if (this.selectedPortfolio && this.portfolioValueHistory.length > 0) {
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .quotient(BigNumberService
+            .difference(
+              this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
+              this.summaryTotalInvestmentInUSD,
+            ), this.portfolioValueHistory.length - 1), 2));
     }
     return 0;
   }
@@ -379,29 +453,30 @@ class PortfolioStore {
     return [];
   }
 
-  @computed
-  get summaryPortfolioAssets() {
-    // NOTE: all the conditions needs to be fulfilled in order to create
-    // portfolio asset summary
-    // debugger;
-    if (this.selectedPortfolio &&
-      this.currentPortfolioAssets.length > 0 &&
-      FiatCurrenciesStore.fiatCurrencies.length > 0 ) {
-      const { marketPriceHistory } = MarketStore;
-      const currentAssets = this.groupedCurrentPortfolioAssets;
-      const selectedPortfolioSummary = [];
+  // FOR DELETE
+  // @computed
+  // get summaryPortfolioAssets() {
+  //   // NOTE: all the conditions needs to be fulfilled in order to create
+  //   // portfolio asset summary
+  //   // debugger;
+  //   if (this.selectedPortfolio &&
+  //     this.currentPortfolioAssets.length > 0 &&
+  //     FiatCurrenciesStore.fiatCurrencies.length > 0 ) {
+  //     const { marketPriceHistory } = MarketStore;
+  //     const currentAssets = this.groupedCurrentPortfolioAssets;
+  //     const selectedPortfolioSummary = [];
 
-      // Creates the needed array, that will be shown in the view
-      currentAssets.forEach((asset) => {
-        
-      });
+  //     // Creates the needed array, that will be shown in the view
+  //     currentAssets.forEach((asset) => {
+  //     });
 
-      return selectedPortfolioSummary;
-    }
+  //     return selectedPortfolioSummary;
+  //   }
 
-    return [];
-  }
+  //   return [];
+  // }
   // #endregion
+
   // used !!!
   @computed
   get currentMarketSummaryPercentageChange() {
@@ -645,14 +720,12 @@ class PortfolioStore {
 
   @action.bound
   getCurrentPortfolioInvestors() {
-    const searchedItem = {
-      portfolioId: this.selectedPortfolioId,
-      item: 'Investor',
-    };
-    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
-      .then(action((result) => {
-        this.currentPortfolioInvestors = result.data;
-      }));
+    if (this.selectedPortfolioId !== null && this.selectedPortfolioId !== undefined) {
+      requester.Investor.getAllInvestors(this.selectedPortfolioId)
+        .then(action((result: Object) => {
+          this.currentPortfolioInvestors = result.data;
+        }));
+    }
   }
 
   @action.bound

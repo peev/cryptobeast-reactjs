@@ -34,6 +34,21 @@ const investorController = (repository) => {
     }
   };
 
+  const getInvestors = async (req, res) => {
+    const { portfolioId } = req.params;
+    repository.find({
+      modelName,
+      options: {
+        where: {
+          portfolioId,
+        },
+      },
+    })
+      .then(response => res.status(200).send(response))
+      .catch(error => res.status(400).send(error));
+  };
+
+
   const updateInvestor = async (req, res) => {
     const { id } = req.params;
     const investor = req.body;
@@ -83,6 +98,7 @@ const investorController = (repository) => {
     createInvestor,
     updateInvestor,
     removeInvestor,
+    getInvestors,
   };
 };
 

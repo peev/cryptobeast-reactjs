@@ -86,18 +86,6 @@ const currencyController = (repository) => {
       .catch(error => res.status(400).send({ message: error }));
   };
 
-  const createCurrency = async (req, res) => {
-    const currency = req.body;
-
-    const currencyObject = getCurrencyObject(currency);
-    const currencyFound = fetchCurrencyObject(currency.name);
-
-    if (currencyFound === null) {
-      await createAction(req, res, currencyObject, false);
-    }
-    await updateAction(req, res, Number(currencyFound.id), currencyObject, false);
-  };
-
   const syncCurrency = async (req, res) => {
     const currency = req.body;
 
@@ -132,19 +120,6 @@ const currencyController = (repository) => {
       });
   };
 
-  const updateCurrency = async (req, res) => {
-    const { id } = req.params;
-    const currency = getCurrencyObject(req.body);
-    return updateAction(req, res, Number(id), currency, false);
-  };
-
-  const removeCurrency = (req, res) => {
-    const { id } = req.params;
-    repository.remove({ modelName, id })
-      .then(result => responseHandler(res, result))
-      .catch(error => res.json(error));
-  };
-
   const sync = async (req, res) => {
     const tokens = await WeidexService.getAllTokensHttp();
     const tokenArray = await tokens.map((token) => {
@@ -157,11 +132,8 @@ const currencyController = (repository) => {
   };
 
   return {
-    createCurrency,
     getCurrency,
     getAllCurrencies,
-    updateCurrency,
-    removeCurrency,
     sync,
   };
 };

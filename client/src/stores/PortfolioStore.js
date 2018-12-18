@@ -239,31 +239,31 @@ class PortfolioStore {
   @computed
   get summaryTotalInvestmentInUSD() {
     if (this.selectedPortfolio) {
-      return this.selectedPortfolio.totalInvestmentUSD;
+      return Number(BigNumberService.toFixedParam(this.selectedPortfolio.totalInvestmentUSD, 2));
     }
     return 0;
   }
 
   @computed
   get summaryTotalProfitLoss() {
-    if (this.selectedPortfolio && TransactionStore.transactions.length > 0 && this.summaryTotalInvestmentInUSD !== 0) {
+    if (this.selectedPortfolio && TransactionStore.transactions.length > 0 && this.selectedPortfolio.totalInvestmentUSD !== 0) {
       return Number(BigNumberService
         .toFixedParam(BigNumberService
           .product(BigNumberService
             .quotient(BigNumberService
-              .difference(this.currentPortfolioCostInUSD, this.summaryTotalInvestmentInUSD), this.summaryTotalInvestmentInUSD), 100), 2));
+              .difference(this.currentPortfolioCostInUSD, this.selectedPortfolio.totalInvestmentUSD), this.selectedPortfolio.totalInvestmentUSD), 100), 2));
     }
     return 0;
   }
 
   @computed
   get summaryTotalProfitLossUsd() {
-    if (this.selectedPortfolio && this.portfolioValueHistory.length > 0 && this.summaryTotalInvestmentInUSD !== 0) {
+    if (this.selectedPortfolio && this.portfolioValueHistory.length > 0 && this.selectedPortfolio.totalInvestmentUSD !== 0) {
       return Number(BigNumberService
         .toFixedParam(BigNumberService
           .difference(
             this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
-            this.summaryTotalInvestmentInUSD,
+            this.selectedPortfolio.totalInvestmentUSD,
           ), 2));
     }
     return 0;
@@ -277,7 +277,7 @@ class PortfolioStore {
           .quotient(BigNumberService
             .difference(
               this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
-              this.summaryTotalInvestmentInUSD,
+              this.selectedPortfolio.totalInvestmentUSD,
             ), this.portfolioValueHistory.length - 1), 2));
     }
     return 0;

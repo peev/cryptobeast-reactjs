@@ -244,8 +244,15 @@ const transactionController = (repository) => {
       try {
         const portfolio = await intReqService.getPortfolioByUserAddress(address);
         const transactions = await intReqService.getTransactionsByPortfolioIdAsc(portfolio.id);
-        const updatedTransactions = await updateTransactionsShareParamsArray(req, res, portfolio.id, transactions, transactions);
-        await updateTransactionsShareParams(req, res, updatedTransactions);
+        const filteredTransactions = transactions.filter(tr => tr.isFirstDeposit === null &&
+          // eslint-disable-next-line no-restricted-globals
+          (tr.ETHUSD !== null && tr.ETHUSD !== undefined && !isNaN(tr.ETHUSD)));
+        if (filteredTransactions.length && filteredTransactions.length > 0) {
+          const firstDeposit = await updateTransactionsShareParamsArray(req, res, portfolio.id, [filteredTransactions[0]], transactions);
+          await updateTransactionsShareParams(req, res, firstDeposit);
+          const updatedTransactions = await updateTransactionsShareParamsArray(req, res, portfolio.id, filteredTransactions, transactions);
+          await updateTransactionsShareParams(req, res, updatedTransactions);
+        }
       } catch (error) {
         console.log(error);
       }

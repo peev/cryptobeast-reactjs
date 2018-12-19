@@ -37,6 +37,7 @@ class PortfolioStore {
   @observable portfolioValueHistory;
   @observable portfolioValueHistoryByPeriod;
   @observable standardDeviationPeriod;
+  @observable alphaData;
 
   constructor() {
     this.portfolios = [];
@@ -53,6 +54,7 @@ class PortfolioStore {
     this.portfolioValueHistory = [];
     this.portfolioValueHistoryByPeriod = [];
     this.standardDeviationPeriod = null;
+    this.alphaData = null;
 
     // only start data fetching if those properties are actually used!
     onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
@@ -328,6 +330,58 @@ class PortfolioStore {
           ),
           100,
         ), this.portfolioValueHistory.length),
+        2,
+      ));
+    }
+    return 0;
+  }
+
+  @action.bound
+  getAlphaData(period: number, benchmark: string) {
+    if (this.selectedPortfolioId !== null && this.selectedPortfolioId !== undefined) {
+      LoadingStore.setShowLoading(true);
+      requester.Portfolio.getAlpha(this.selectedPortfolioId, period, benchmark)
+        .then(action((result: Object) => {
+          this.alphaData = result.data;
+          LoadingStore.setShowLoading(false);
+        }))
+        .catch(action((error: Object) => {
+          console.log(error);
+          this.alphaData = null;
+          LoadingStore.setShowLoading(false);
+        }));
+    }
+    return null;
+  }
+
+  @computed
+  get portfolioAlpha() {
+    if (this.selectedPortfolioId !== null && this.selectedPortfolioId !== undefined && this.alphaData !== null) {
+      const ethValue = BigNumberService.product(
+        BigNumberService.quotient(
+          BigNumberService.difference(
+            this.alphaData[1].ethUsd,
+            this.alphaData[0].ethUsd,
+          ),
+          this.alphaData[0].ethUsd,
+        ),
+        100,
+      );
+      const sharePrice = BigNumberService.product(
+        BigNumberService.quotient(
+          BigNumberService.difference(
+            this.alphaData[1].sharePrice,
+            this.alphaData[0].sharePrice,
+          ),
+          this.alphaData[0].sharePrice,
+        ),
+        100,
+      );
+      return Number(BigNumberService.toFixedParam(
+        BigNumberService.difference(
+          sharePrice,
+          ethValue,
+        ),
         2,
       ));
     }

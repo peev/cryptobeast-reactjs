@@ -96,6 +96,9 @@ class Volatility extends React.Component<Props, State> {
     if (nextState.selectPeriod !== this.state.selectPeriod) {
       this.props.PortfolioStore.setStandardDeviationPeriod(nextState.selectPeriod);
     }
+    if (nextState.selectBenchmark !== this.state.selectBenchmark) {
+      this.props.PortfolioStore.getAlphaData(nextState.selectPeriod, nextState.selectBenchmark);
+    }
   }
 
   handleSelectPeriod = (data: string) => {
@@ -121,7 +124,7 @@ class Volatility extends React.Component<Props, State> {
       return;
     }
     this.setState({
-      selectedBenchmark: data,
+      selectBenchmark: data.split(' ')[0],
     });
   }
 
@@ -165,7 +168,7 @@ class Volatility extends React.Component<Props, State> {
 
             <Grid container>
               <Grid item xs={3}><p>STANDARD DEVIATION: <b>{PortfolioStore.standardDeviation}</b></p></Grid>
-              <Grid item xs={3}><p>PORTFOLIO ALPHA: <b>2.14%</b></p></Grid>
+              <Grid item xs={3}><p>PORTFOLIO ALPHA: <b>{PortfolioStore.portfolioAlpha}%</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO BETA: <b>0.65%</b></p></Grid>
               <Grid item xs={3}><p>PORTFOLIO VARIANCE: <b>0.65</b></p></Grid>
             </Grid>

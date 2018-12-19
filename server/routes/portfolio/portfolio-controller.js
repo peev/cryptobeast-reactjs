@@ -284,6 +284,56 @@ const portfolioController = (repository) => {
     }
   };
 
+  const getAlphaResult = async (transaction, allocation, timestamp, ethUsd) => {
+    const numOfShares = transaction.dataValues.numSharesAfter;
+    const { balance } = allocation.dataValues;
+    const tokenPricesByDate = await getTokensPriceByDate([timestamp]);
+    const portfolioValue = await calculatePortfolioValueHistory([timestamp / 1000], tokenPricesByDate, [{ balance }]);
+    const sharePrice = bigNumberService.quotient(portfolioValue[0].usd, numOfShares);
+    return { timestamp, ethUsd, sharePrice };
+  };
+
+  const getAlpha = async (req, res) => {
+    const { id } = req.params;
+    const { period } = req.params;
+    const { benchmark } = req.params;
+    try {
+      const startingDate = new Date();
+      startingDate.setDate(startingDate.getDate() - period);
+      const periodTs = startingDate.getTime();
+      const firstDeposit = await intReqService.getFirstDeposit(id);
+      const firstDepositTs = new Date((firstDeposit.txTimestamp).toString()).getTime();
+      const nowTs = new Date().getTime();
+      const ethUsdNow = await commomService.getEthToUsdMiliseconds(nowTs);
+
+      let transaction = null;
+      let allocation = null;
+      let ethUsd = null;
+      let start = null;
+
+      if (firstDepositTs > periodTs) {
+        transaction = firstDeposit;
+        allocation = await intReqService.getAllocationByPortfolioIdAndTimestamp(id, firstDepositTs);
+        ethUsd = await commomService.getEthToUsdMiliseconds(firstDepositTs);
+        start = await getAlphaResult(transaction, allocation, firstDepositTs, ethUsd);
+      } else {
+        transaction = await intReqService.getTransactionBeforeTimestampByPortfolioId(id, periodTs);
+        allocation = await intReqService.getAllocationBeforeTimestampByPortfolioId(id, periodTs);
+        ethUsd = await commomService.getEthToUsdMiliseconds(periodTs);
+        start = await getAlphaResult(transaction, allocation, periodTs, ethUsd);
+      }
+
+      const lastTransaction = await intReqService.getLastTransactionByPortfolioId(id);
+      const lastAllocation = await intReqService.getLastAllocationByPortfolioId(id);
+
+      const end = await getAlphaResult(lastTransaction, lastAllocation, nowTs, ethUsdNow);
+      res.status(200).send([start, end]);
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error);
+    }
+  };
+
   const sync = async (req, res, addresses) => {
     const portfolioArray = addresses.map(async (address) => {
       try {
@@ -306,6 +356,7 @@ const portfolioController = (repository) => {
     getPortfolioAssetsByPortfolioId,
     getPortfolioValueHistory,
     getPortfolioValueByIdAndPeriod,
+    getAlpha,
   };
 };
 

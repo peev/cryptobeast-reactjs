@@ -60,13 +60,14 @@ const styles = (theme: Object) => ({
 type Props = {
   classes: Object,
   PortfolioStore: Object,
+  TransactionStore: Object,
 };
 
 type State = {
   open: boolean,
 };
 
-@inject('PortfolioStore')
+@inject('PortfolioStore', 'TransactionStore')
 @observer
 class SharesInCirculation extends React.Component<Props, State> {
   state = {
@@ -81,10 +82,13 @@ class SharesInCirculation extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, PortfolioStore } = this.props;
+    const { classes, PortfolioStore, TransactionStore } = this.props;
     const purchasedShares = PortfolioStore.currentPortfolioInvestors.filter((el: object) => el.purchasedShares > 0);
     const { selectedPortfolio } = PortfolioStore;
-    const portfolioShares = selectedPortfolio ? selectedPortfolio.shares : 0;
+    // const portfolioShares = selectedPortfolio ? selectedPortfolio.shares : 0;
+    const portfolioShares = selectedPortfolio && TransactionStore.numOfShares !== 0 &&
+      // eslint-disable-next-line no-restricted-globals
+      !isNaN(TransactionStore.numOfShares) ? TransactionStore.numOfShares : 0;
 
     return (
       <Grid container className={classes.buttonStyle}>

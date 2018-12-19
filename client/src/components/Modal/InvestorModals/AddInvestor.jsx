@@ -6,11 +6,9 @@ import Typography from '@material-ui/core/Typography';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
-import SelectBaseCurrency from '../../Selectors/SelectBaseCurrency';
 import Button from '../../CustomButtons/Button';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
-import DisplayInformation from '../../Cards/Investors/DisplayInformation';
 
 const getModalStyle = () => {
   const top = 25;
@@ -144,10 +142,7 @@ class AddInvestor extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      classes, InvestorStore, PortfolioStore, NotificationStore,
-    } = this.props;
-    const today = new Date().toISOString().substring(0, 10);
+    const { classes, InvestorStore, NotificationStore } = this.props;
 
     return (
       <Grid container>
@@ -231,55 +226,11 @@ class AddInvestor extends React.Component<Props, State> {
                       name="telephone"
                       className={classes.inputStyle}
                       value={InvestorStore.newInvestorValues.telephone}
-                      validators={['isNumber']}
-                      errorMessages={['telephone is not valid']}
+                      validators={['required', 'isNumber']}
+                      errorMessages={['this field is required', 'telephone is not valid']}
                     />
                   </div>
                 </Grid>
-                <Grid className={classes.gridColumn}>
-                  <div className={classes.gridRow}>
-                    <TextValidator
-                      onChange={this.handleRequests('dateOfEntry')}
-                      type="date"
-                      name="date"
-                      value={InvestorStore.newInvestorValues.dateOfEntry || today}
-                      validators={['required']}
-                      errorMessages={['this field is required']}
-                      className={classes.dateOfEntry}
-                    />
-                  </div>
-                </Grid>
-              </Grid>
-              <Grid container>
-                <Grid className={classes.gridColumn}>
-                  <div className={`${classes.selectBaseCurrency} ${classes.gridRow}`}>
-                    <SelectBaseCurrency />
-                  </div>
-                </Grid>
-                <Grid className={classes.gridColumn}>
-                  <div className={classes.gridRow}>
-                    <TextValidator
-                      label="Deposited Amount*"
-                      onChange={this.handleRequests('depositedAmount')}
-                      name="depositedAmount"
-                      // type="number"
-                      className={classes.inputStyle}
-                      value={InvestorStore.newInvestorValues.depositedAmount}
-                      validators={['required', 'isPositive']}
-                      errorMessages={['this field is required', 'value must be a positive number']}
-                    />
-                  </div>
-                </Grid>
-              </Grid>
-              <Grid className={classes.gridColumn}>
-                <div className={classes.gridRow}>
-                  <DisplayInformation
-                    value={`$${Math.round(InvestorStore.convertedUsdEquiv() * 100) / 100}`}
-                    placeholderText="deposited equivalent"
-                  />
-                </div>
-              </Grid>
-              <Grid container>
                 <Grid className={classes.gridColumn}>
                   <div className={classes.gridRow}>
                     <TextValidator
@@ -289,31 +240,12 @@ class AddInvestor extends React.Component<Props, State> {
                       // type="number"
                       className={classes.inputStyle}
                       value={InvestorStore.newInvestorValues.managementFee || ''}
-                      validators={['isPositive', 'maxNumber:100']}
-                      errorMessages={['value must be a positive number', 'must be a number between 0 and 100']}
+                      validators={['required', 'isPositive', 'maxNumber:100']}
+                      errorMessages={['this field is required', 'value must be a positive number', 'must be a number between 0 and 100']}
                     />
                   </div>
                 </Grid>
               </Grid>
-              <Grid container>
-                <Grid className={classes.gridColumn}>
-                  <div className={classes.gridRow}>
-                    <DisplayInformation
-                      value={`$${Math.round(PortfolioStore.currentPortfolioSharePrice * 100) / 100}`}
-                      placeholderText="share price at entry date"
-                    />
-                  </div>
-                </Grid>
-                <Grid className={classes.gridColumn}>
-                  <div className={classes.gridRow}>
-                    <DisplayInformation
-                      value={`${Math.round(InvestorStore.purchasedShares * 1000000) / 1000000 || '0'}`}
-                      placeholderText="purchased shares"
-                    />
-                  </div>
-                </Grid>
-              </Grid>
-
               <Grid container justify="flex-end">
                 <Grid className={classes.gridColumn}>
                   <div className={classes.gridRow} style={{ textAlign: 'right' }}>

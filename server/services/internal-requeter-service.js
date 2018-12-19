@@ -164,12 +164,57 @@ const internalRequesterService = (repository) => {
     },
   }).catch(err => console.log(err));
 
+  const getTransactionBeforeTimestampByPortfolioId = (portfolioId, timestamp) => repository.findOne({
+    modelName: 'Transaction',
+    options: {
+      where: {
+        portfolioId,
+        txTimestamp: {
+          [op.lt]: timestamp,
+        },
+      },
+      order: [['txTimestamp', 'DESC']],
+    },
+  }).catch(err => console.log(err));
+
+  const getLastTransactionByPortfolioId = portfolioId => repository.findOne({
+    modelName: 'Transaction',
+    options: {
+      where: {
+        portfolioId,
+      },
+      order: [['txTimestamp', 'DESC']],
+    },
+  }).catch(err => console.log(err));
+
+  const getAllocationByPortfolioIdAndTimestamp = (portfolioId, timestamp) => repository.findOne({
+    modelName: 'Allocation',
+    options: {
+      where: {
+        portfolioId,
+        timestamp: {
+          [op.eq]: timestamp,
+        },
+      },
+    },
+  }).catch(err => console.log(err));
+
   const getTransactionByPortfolioIdAndTxHash = (portfolioId, txHash) => repository.findOne({
     modelName: 'Transaction',
     options: {
       where: {
         portfolioId,
         txHash,
+      },
+    },
+  }).catch(err => console.log(err));
+
+  const getFirstDeposit = portfolioId => repository.findOne({
+    modelName: 'Transaction',
+    options: {
+      where: {
+        portfolioId,
+        isFirstDeposit: true,
       },
     },
   }).catch(err => console.log(err));
@@ -191,7 +236,11 @@ const internalRequesterService = (repository) => {
     getTransactionsByPortfolioIdAsc,
     getFirstDepositByPortfolioId,
     getAllocationBeforeTimestampByPortfolioId,
+    getTransactionBeforeTimestampByPortfolioId,
+    getLastTransactionByPortfolioId,
+    getAllocationByPortfolioIdAndTimestamp,
     getTransactionByPortfolioIdAndTxHash,
+    getFirstDeposit,
   };
 };
 

@@ -9,7 +9,8 @@ const attachTo = (app, repository, jobs) => {
     .get('/getPortfolioAssetsByPortfolioId/:id', controller.getPortfolioAssetsByPortfolioId)
     .get('/:address', controller.getPortfolio)
     .get('/history/:id', controller.getPortfolioValueHistory)
-    .get('/historyByPeriod/:id/:period', controller.getPortfolioValueByIdAndPeriod);
+    .get('/historyByPeriod/:id/:period', controller.getPortfolioValueByIdAndPeriod)
+    .get('/alpha/:id/:period/:benchmark', controller.getAlpha);
 
   app.use('/portfolio', router);
 };

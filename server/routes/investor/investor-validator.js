@@ -21,9 +21,14 @@ const investorValidator = () => {
       errors.phone = 'Investor must have valid Telephone number!';
     }
 
-    if (!payload || !payload.hasOwnProperty('userAddress') || !validator.isLength(payload.userAddress, { min: 1, max: 50 })) {
+    if (!payload || !payload.hasOwnProperty('portfolioId') || typeof payload.portfolioId !== 'number') {
       isFormValid = false;
-      errors.phone = 'Investor must have valid user address number!';
+      errors.phone = 'Investor must have valid user portfolio ID number!';
+    }
+
+    if (!payload || !payload.hasOwnProperty('fee') || !validator.isLength(payload.fee, { min: 1, max: 50 })) {
+      isFormValid = false;
+      errors.phone = 'Investor must have valid user portfolio ID number!';
     }
 
     if (!isFormValid) {
@@ -48,25 +53,21 @@ const investorValidator = () => {
         isFormValid = false;
         errors.name = 'Investor must have a name!';
       }
-
       if (!payload || !payload.hasOwnProperty('email') || !validator.isEmail(payload.email)) {
         isFormValid = false;
         errors.email = 'Investor must have valid E-mail address!';
       }
-
       if (!payload || !payload.hasOwnProperty('phone') || !validator.isLength(payload.phone, { min: 1, max: 50 })) {
         isFormValid = false;
         errors.phone = 'Investor must have valid Telephone number!';
       }
-
-      if (!payload || !payload.hasOwnProperty('fee') || typeof payload.fee !== 'number') {
+      if (!payload || !payload.hasOwnProperty('portfolioId') || typeof payload.portfolioId !== 'number') {
         isFormValid = false;
-        errors.phone = 'Investor must have fee parameter!';
+        errors.phone = 'Investor must have valid user portfolio ID number!';
       }
-
-      if (!payload || !payload.hasOwnProperty('userAddress') || !validator.isLength(payload.userAddress, { min: 1, max: 50 })) {
+      if (!payload || !payload.hasOwnProperty('fee') || !validator.isLength(payload.fee, { min: 1, max: 50 })) {
         isFormValid = false;
-        errors.phone = 'Investor must have valid user address number!';
+        errors.phone = 'Investor must have valid user portfolio ID number!';
       }
     }
 
@@ -87,9 +88,9 @@ const investorValidator = () => {
 
     if (Object.keys(payload).length === 0) {
       isFormValid = false;
-    } else if (!payload || !payload.hasOwnProperty('userAddress') || !validator.isLength(payload.userAddress, { min: 1, max: 50 })) {
+    } else if (!payload || !payload.hasOwnProperty('portfolioId') || typeof payload.portfolioId !== 'number') {
       isFormValid = false;
-      errors.phone = 'Provide valid user address!';
+      errors.phone = 'Provide valid portfolio ID!';
     }
 
     if (!isFormValid) {

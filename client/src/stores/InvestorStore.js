@@ -367,51 +367,18 @@ class InvestorStore {
   // #region Investor
   @action.bound
   createNewInvestor(portfolioId) {
-    let dateOfEntry = null;
-    if (this.newInvestorValues.dateOfEntry) {
-      dateOfEntry = new Date(this.newInvestorValues.dateOfEntry).toISOString();
-    } else {
-      dateOfEntry = new Date().toISOString();
-    }
 
     const newInvestor = {
       portfolioId,
-      dateOfEntry,
-      isFounder: this.newInvestorValues.isFounder,
       name: this.newInvestorValues.fullName,
       email: this.newInvestorValues.email,
       phone: this.newInvestorValues.telephone,
       fee: this.newInvestorValues.managementFee,
     };
 
-    const depositData = {
-      currency: MarketStore.selectedBaseCurrency.pair,
-      balance: +this.newInvestorValues.depositedAmount,
-      portfolioId,
-      transaction: {
-        portfolioId,
-        dateOfEntry,
-        investorName: this.newInvestorValues.fullName,
-        amountInUSD: this.convertedUsdEquiv(),
-        sharePrice: PortfolioStore.currentPortfolioSharePrice,
-        shares: parseFloat(this.newInvestorValues.purchasedShares),
-      },
-    };
-
     requester.Investor.add(newInvestor)
-      .then(action((result) => {
-        const createdInvestor = result.data;
-        Object.assign(depositData.transaction, { investorId: createdInvestor.id });
-        requester.Investor.addDeposit(depositData)
-          .then(action((response) => {
-            createdInvestor.purchasedShares = response.data.shares;
-            PortfolioStore.currentPortfolioInvestors.push(createdInvestor);
-            PortfolioStore.currentPortfolioTransactions.push(response.data);
-            PortfolioStore.selectedPortfolio.shares += response.data.shares;
-
-            PortfolioStore.getCurrentPortfolioAssets();
-          }))
-          .catch(err => console.log(err));
+      .then(action(() => {
+        PortfolioStore.getCurrentPortfolioInvestors();
       }))
       .catch(err => console.log(err));
   }
@@ -626,28 +593,19 @@ class InvestorStore {
   handleAddInvestorErrors() {
     const currentInvestor = this.newInvestorValues;
     let noErrors = true;
-    const baseCurrency = MarketStore.selectedBaseCurrency;
 
     // Checks if portfolio is selected
     noErrors = this.handleIsPortfolioSelected();
-
     noErrors = this.handleEmailValidation();
-    // Checks if base currency is added
-    if (baseCurrency === null) {
-      // NotificationStore.addMessage('errorMessages', 'Please select currency');
-      noErrors = false;
-    }
-
-    // Checks if email is valid - duplication only
 
 
     // Checks the currently entered values. If value is empty and it is required,
     // than adds a error massage to the array of errors
     Object.keys(currentInvestor).forEach((prop) => {
-      if (currentInvestor[prop] === '' && prop === 'depositedAmount') {
-        // NotificationStore.addMessage('errorMessages', 'Deposited amount is required.');
-        noErrors = false;
-      }
+      // if (currentInvestor[prop] === '' && prop === 'depositedAmount') {
+      //   // NotificationStore.addMessage('errorMessages', 'Deposited amount is required.');
+      //   noErrors = false;
+      // }
       if (currentInvestor[prop] === '' && prop === 'email') {
         // NotificationStore.addMessage('errorMessages', 'Email is required.');
         noErrors = false;

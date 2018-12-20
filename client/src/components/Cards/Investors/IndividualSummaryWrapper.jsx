@@ -21,30 +21,33 @@ type Props = {
   classes: Object,
   InvestorStore: Object,
   PortfolioStore: Object,
+  TransactionStore: Object,
 };
 
-@inject('InvestorStore', 'PortfolioStore')
+@inject('InvestorStore', 'PortfolioStore', 'TransactionStore')
 @observer
 class IndividualSummaryWrapper extends Component<Props> {
   render() {
-    const { classes, InvestorStore, PortfolioStore } = this.props;
+    const { classes, InvestorStore, PortfolioStore, TransactionStore } = this.props;
 
     const data = InvestorStore.selectedInvestorIndividualSummary
-      ? PortfolioStore.currentPortfolioTransactions
+      ? TransactionStore.transactions
         .filter((t: Object) => t.investorId === InvestorStore.selectedInvestorIndividualSummary.id)
-      : PortfolioStore.currentPortfolioTransactions;
+      : TransactionStore.transactions;
 
     const investorsTable = (
       <AllInvestorTable
         tableData={data}
         tableHead={[
+
+          { id: 'id', numberic: true, disablePadding: false, label: 'ID' },
           { id: 'name', numberic: false, disablePadding: false, label: 'Name' },
           { id: 'dateOfEntry', numberic: true, disablePadding: false, label: 'Date of Entry' },
-          // { id: 'transactionDate', numberic: true, disablePadding: false, label: 'Transaction date' },
+          { id: 'transactionDate', numberic: true, disablePadding: false, label: 'Transaction date' },
           { id: 'amountUSD', numberic: true, disablePadding: false, label: 'Amount (USD)' },
           { id: 'sharePrice', numberic: true, disablePadding: false, label: 'Share price' },
           { id: 'shares', numberic: true, disablePadding: false, label: 'Shares' },
-          { id: 'comission', numberic: true, disablePadding: false, label: 'Commission' },
+          { id: 'action', disablePadding: false, label: '' },
         ]}
       />
     );

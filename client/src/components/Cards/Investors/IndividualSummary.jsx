@@ -46,7 +46,7 @@ class IndividualSummary extends React.Component<Props> {
   }
 
   handleSelectInvestorForSummary = (value: *) => {
-    this.props.InvestorStore.selectInvestorIndividualSummary(value);
+    this.props.InvestorStore.selectInvestorIndividualSummary(value.value);
   }
 
   render() {

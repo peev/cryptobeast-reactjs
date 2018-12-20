@@ -9,6 +9,7 @@ import {
   TableCell,
   Tooltip,
   TableSortLabel,
+  Button,
 } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import uuid from 'uuid/v4';
@@ -38,17 +39,19 @@ function getSorting(order: string, orderBy: string) {
 
 
 function getInvestorSortableObject(portfolioStore: Object) {
-  const findInvestorID = (transaction: Object) => portfolioStore.currentPortfolioInvestors
-    .findIndex((investor: Object) => investor.fullName === transaction.investorName);
+  // const findInvestorID = (transaction: Object) => portfolioStore.currentPortfolioInvestors
+  //   .findIndex((investor: Object) => investor.fullName === transaction.investorName);
   return (investor: Object) => Object.assign({}, {
-    name: investor.investorName,
-    dateOfEntry: investor.dateOfEntry,
-    // transactionDate: new Date(investor.createdAt).getTime(),
-    amountUSD: investor.amountInUSD,
+    id: investor.id,
+    name: investor.investorName || 'unassigned',
+    dateOfEntry: new Date(investor.createdAt).getTime(),
+    transactionDate: new Date(investor.txTimestamp).getTime(),
+    amountUSD: investor.totalValueUSD,
     sharePrice: investor.sharePrice,
     shares: investor.shares,
-    comission: investor.amountInUSD < 0 ?
-      Math.abs((investor.amountInUSD * portfolioStore.currentPortfolioInvestors[findInvestorID(investor)].managementFee) / 100) : 0,
+    // comission: investor.amountInUSD < 0 ?
+    //   Math.abs((investor.amountInUSD * portfolioStore.currentPortfolioInvestors[findInvestorID(investor)].managementFee) / 100) : 0,
+    investor,
   });
 }
 
@@ -148,11 +151,22 @@ class AllInvestorTable extends React.Component<Props, State> {
               .map((prop: Object) => (
               <TableRow key={uuid()}>
                 {Object.keys(prop).map((el: Object, key: number) => {
-                  if (key > 6) return null;
-                  if (key === 1) {
+                  if (key > 7) return null;
+                  if (key === 2 || key === 3) {
                     return (
                       <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
                         {moment(prop[el]).format('LL')}
+                      </TableCell>
+                    );
+                  } if (key === 7) {
+                    return (
+                      <TableCell className={`${classes.tableCell}`} key={uuid()}>
+                        <Button
+                          color="primary"
+                          onClick={this.handleClose}
+                        >
+                          Assign
+                        </Button>
                       </TableCell>
                     );
                   } else {

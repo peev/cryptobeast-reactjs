@@ -242,22 +242,22 @@ class InvestorStore {
 
   @computed
   get individualBTCEquivalent() {
-    if (this.selectedInvestorIndividualSummary) {
-      const calculatedIndividualBTCEquivalent = this.individualUSDEquivalent / MarketStore.baseCurrencies[3].last;
+    // if (this.selectedInvestorIndividualSummary) {
+    //   const calculatedIndividualBTCEquivalent = this.individualUSDEquivalent / MarketStore.baseCurrencies[3].last;
 
-      return calculatedIndividualBTCEquivalent;
-    }
+    //   return calculatedIndividualBTCEquivalent;
+    // }
 
     return null;
   }
 
   @computed
   get individualETHEquivalent() {
-    if (this.selectedInvestorIndividualSummary && MarketStore.baseCurrencies) {
-      const calculatedIndividualETHEquivalent = this.individualBTCEquivalent / MarketStore.baseCurrencies[0].last;
+    // if (this.selectedInvestorIndividualSummary && MarketStore.baseCurrencies) {
+    //   const calculatedIndividualETHEquivalent = this.individualBTCEquivalent / MarketStore.baseCurrencies[0].last;
 
-      return calculatedIndividualETHEquivalent;
-    }
+    //   return calculatedIndividualETHEquivalent;
+    // }
 
     return null;
   }
@@ -268,7 +268,7 @@ class InvestorStore {
       // Get 1 day in milliseconds
       const oneDay = 1000 * 60 * 60 * 24;
       const currentDate = new Date();
-      const dateOfEntryConverted = new Date(this.selectedInvestorIndividualSummary.dateOfEntry);
+      const dateOfEntryConverted = new Date(this.selectedInvestorIndividualSummary.createdAt);
       const calculatedIndividualInvestmentPeriod = Math.round((currentDate - dateOfEntryConverted) / oneDay);
 
       return calculatedIndividualInvestmentPeriod;

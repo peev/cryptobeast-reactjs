@@ -62,8 +62,8 @@ class SelectInvestor extends React.Component<Props> {
   handleChange = (event: SyntheticEvent) => {
     if (event) {
       this.props.handleChange({
-        label: event.value,
-        value: event.value
+        label: event.label,
+        value: event.value,
       });
     } else {
       this.props.handleChange('');

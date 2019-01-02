@@ -118,6 +118,16 @@ const internalRequesterService = (repository) => {
   })
     .catch(err => console.log(err));
 
+  const getTransactionById = async id => repository.findOne({
+    modelName: 'Transaction',
+    options: {
+      where: {
+        id,
+      },
+    },
+  })
+    .catch(err => console.log(err));
+
   const getPortfolioByUserAddressIncludeAll = async userAddress => repository.findOne({
     modelName: 'Portfolio',
     options: {
@@ -239,6 +249,7 @@ const internalRequesterService = (repository) => {
     getPortfolioByIdIncludeAll,
     getPortfolioById,
     getTransactionByTxHash,
+    getTransactionById,
     getPortfolioByUserAddressIncludeAll,
     getTradeByTxHash,
     getTransactionsByPortfolioIdAsc,

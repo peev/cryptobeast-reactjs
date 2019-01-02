@@ -172,7 +172,6 @@ class EditInvestor extends React.Component<Props, State> {
                 <Grid className={classes.gridColumn}>
                   <div className={classes.gridRow}>
                     <SelectInvestor
-                      value={InvestorStore.selectedInvestorId || ''}
                       handleChange={this.handleSelectInvestor}
                       style={{
                         marginTop: '12px',

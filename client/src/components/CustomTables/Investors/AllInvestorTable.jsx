@@ -9,7 +9,6 @@ import {
   TableCell,
   Tooltip,
   TableSortLabel,
-  Button,
 } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import uuid from 'uuid/v4';
@@ -17,6 +16,7 @@ import moment from 'moment';
 
 
 import tableStyle from '../../../variables/styles/tableStyle';
+import AssignInvestor from '../../../components/Modal/InvestorModals/AssignInvestor';
 
 type Props = {
   classes: Object,
@@ -160,12 +160,7 @@ class AllInvestorTable extends React.Component<Props, State> {
                   } if (key === 6) {
                     return (
                       <TableCell className={`${classes.tableCell}`} key={uuid()}>
-                        <Button
-                          color="primary"
-                          onClick={this.handleClose}
-                        >
-                          Assign
-                        </Button>
+                        <AssignInvestor />
                       </TableCell>
                     );
                   } else {

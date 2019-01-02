@@ -1,12 +1,11 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, Grid } from '@material-ui/core';
+import { withStyles, Grid, Button } from '@material-ui/core';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
-import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 
 
@@ -37,6 +36,14 @@ const styles = (theme: Object) => ({
   },
   gridRow: {
     padding: '10px 40px 0 40px',
+  },
+  tableBtn: {
+    margin: 0,
+    minHeight: '23px',
+    paddingTop: 0,
+    paddingBottom: 0,
+    fontSize: '0.75rem',
+    fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
   },
 });
 
@@ -82,7 +89,7 @@ class AssignInvestor extends React.Component<Props, State> {
 
     return (
       <Grid container>
-        <Button onClick={this.handleOpen} color="primary" style={{ fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}>
+        <Button className={classes.tableBtn} onClick={this.handleOpen} color="primary">
           Assign
         </Button>
         <Modal

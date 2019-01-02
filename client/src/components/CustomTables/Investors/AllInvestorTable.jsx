@@ -13,10 +13,15 @@ import {
 import { inject, observer } from 'mobx-react';
 import uuid from 'uuid/v4';
 import moment from 'moment';
-
-
 import tableStyle from '../../../variables/styles/tableStyle';
 import AssignInvestor from '../../../components/Modal/InvestorModals/AssignInvestor';
+import combineStyles from '../../../features/CombineStyles';
+
+const styles = () => ({
+  italic: {
+    fontStyle: 'italic',
+  },
+});
 
 type Props = {
   classes: Object,
@@ -38,19 +43,24 @@ function getSorting(order: string, orderBy: string) {
 }
 
 
+const findInvestor = (portfolioStore: Object, transaction: Object) => {
+  if (transaction.investorId !== null) {
+    return portfolioStore.currentPortfolioInvestors.find((item: Object) => item.id === transaction.investorId).name;
+  }
+  return 'unassigned';
+};
+
 function getInvestorSortableObject(portfolioStore: Object) {
-  // const findInvestorID = (transaction: Object) => portfolioStore.currentPortfolioInvestors
-  //   .findIndex((investor: Object) => investor.fullName === transaction.investorName);
-  return (investor: Object) => Object.assign({}, {
-    id: investor.id,
-    name: investor.investorName || 'unassigned',
-    transactionDate: new Date(investor.createdAt).getTime(),
-    amountUSD: investor.totalValueUSD,
-    sharePrice: investor.sharePrice,
-    shares: investor.shares,
+  return (transaction: Object) => Object.assign({}, {
+    id: transaction.id,
+    name: findInvestor(portfolioStore, transaction),
+    transactionDate: new Date(transaction.txTimestamp).getTime(),
+    amountUSD: transaction.totalValueUSD,
+    sharePrice: transaction.sharePrice,
+    shares: transaction.shares,
     // comission: investor.amountInUSD < 0 ?
     //   Math.abs((investor.amountInUSD * portfolioStore.currentPortfolioInvestors[findInvestorID(investor)].managementFee) / 100) : 0,
-    investor,
+    transaction,
   });
 }
 
@@ -151,7 +161,17 @@ class AllInvestorTable extends React.Component<Props, State> {
               <TableRow key={uuid()}>
                 {Object.keys(prop).map((el: Object, key: number) => {
                   if (key > 6) return null;
-                  if (key === 2) {
+                  if (key === 1) {
+                    return (
+                      <TableCell
+                        className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}
+                        ${prop.name === 'unassigned' ? classes.italic : ''}`}
+                        key={uuid()}
+                      >
+                       {prop[el]}
+                      </TableCell>
+                    );
+                  } if (key === 2) {
                     return (
                       <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
                         {moment(prop[el]).format('LL')}
@@ -160,7 +180,7 @@ class AllInvestorTable extends React.Component<Props, State> {
                   } if (key === 6) {
                     return (
                       <TableCell className={`${classes.tableCell}`} key={uuid()}>
-                        <AssignInvestor />
+                       { prop.name === 'unassigned' ? <AssignInvestor /> : null }
                       </TableCell>
                     );
                   } else {
@@ -180,4 +200,6 @@ class AllInvestorTable extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(tableStyle)(AllInvestorTable);
+const combinedStyles = combineStyles(tableStyle, styles);
+
+export default withStyles(combinedStyles)(AllInvestorTable);

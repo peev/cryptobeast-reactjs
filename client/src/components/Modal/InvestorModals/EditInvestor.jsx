@@ -118,7 +118,7 @@ class EditInvestor extends React.Component<Props, State> {
   }
 
   handleSelectInvestor = (value: *) => {
-    this.props.InvestorStore.selectInvestor(value);
+    this.props.InvestorStore.selectInvestor(value.value);
   }
 
   handleSave = () => {
@@ -193,8 +193,8 @@ class EditInvestor extends React.Component<Props, State> {
                       name="name"
                       // type="text"
                       label="Full name"
-                      value={InvestorStore.updateInvestorValues.fullName}
-                      onChange={this.handleEditRequests('fullName')}
+                      value={InvestorStore.updateInvestorValues.name}
+                      onChange={this.handleEditRequests('name')}
                       className={classes.inputStyle}
                     // autoFocus
                     />
@@ -222,8 +222,8 @@ class EditInvestor extends React.Component<Props, State> {
                       name="phone"
                       // type="number"
                       label="Telephone"
-                      value={InvestorStore.updateInvestorValues.telephone}
-                      onChange={this.handleEditRequests('telephone')}
+                      value={InvestorStore.updateInvestorValues.phone}
+                      onChange={this.handleEditRequests('phone')}
                       className={classes.inputStyle}
                       validators={['isNumber']}
                       errorMessages={['telephone is not valid']}
@@ -236,8 +236,8 @@ class EditInvestor extends React.Component<Props, State> {
                       name="fee"
                       // type="number"
                       label="Management Fee (%)"
-                      value={InvestorStore.updateInvestorValues.managementFee}
-                      onChange={this.handleEditRequests('managementFee')}
+                      value={InvestorStore.updateInvestorValues.fee}
+                      onChange={this.handleEditRequests('fee')}
                       className={classes.inputStyle}
                       validators={['isPositive', 'maxNumber:100']}
                       errorMessages={['Fee must be a positive number', 'must be a number between 0 and 100']}

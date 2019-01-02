@@ -106,7 +106,7 @@ class SelectInvestor extends React.Component<Props> {
             className={classes.select}
           />
         </FormControl>
-      </div >
+      </div>
     );
   }
 }

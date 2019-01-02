@@ -5,7 +5,6 @@ import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
 import NotificationStore from './NotificationStore';
-// import InvestorDeposit from '../components/Modal/InvestorModals/InvestorDeposit';
 
 class InvestorStore {
   @observable newInvestorValues;
@@ -23,20 +22,20 @@ class InvestorStore {
     // #region Initialize Values
     this.newInvestorValues = {
       isFounder: false, // this stays, because BE model still has it
-      fullName: '',
+      name: '',
       email: '',
-      telephone: '',
+      phone: '',
       dateOfEntry: '',
       depositedAmount: '',
-      managementFee: '',
+      fee: '',
       sharePriceAtEntryDate: '',
       purchasedShares: '',
     };
     this.updateInvestorValues = {
-      fullName: '',
+      name: '',
       email: '',
-      telephone: '',
-      managementFee: '',
+      phone: '',
+      fee: '',
     };
     this.newDepositValues = {
       amount: '',
@@ -367,13 +366,12 @@ class InvestorStore {
   // #region Investor
   @action.bound
   createNewInvestor(portfolioId) {
-
     const newInvestor = {
       portfolioId,
-      name: this.newInvestorValues.fullName,
+      name: this.newInvestorValues.name,
       email: this.newInvestorValues.email,
-      phone: this.newInvestorValues.telephone,
-      fee: this.newInvestorValues.managementFee,
+      phone: this.newInvestorValues.phone,
+      fee: this.newInvestorValues.fee,
     };
 
     requester.Investor.add(newInvestor)
@@ -387,11 +385,11 @@ class InvestorStore {
   createDefaultInvestor(newPortfolio) {
     const newInvestor = {
       isFounder: true,
-      fullName: 'default investor',
+      name: 'default investor',
       email: 'default@email.com',
-      telephone: '',
+      phone: '',
       dateOfEntry: new Date().toISOString(),
-      managementFee: '0.0',
+      fee: '0.0',
       portfolioId: newPortfolio.id,
     };
     let depositData;
@@ -466,7 +464,9 @@ class InvestorStore {
       }
     }
 
-    requester.Investor.update(investorId, finalResult)
+    const addPortfolioId = Object.assign({}, finalResult, { portfolioId: PortfolioStore.selectedPortfolioId });
+
+    requester.Investor.update(investorId, addPortfolioId)
       .then(action(() => {
         const portfolioInvestors = PortfolioStore.currentPortfolioInvestors;
         // console.log(PortfolioStore.currentPortfolioInvestors, finalResult, investorId)
@@ -476,7 +476,7 @@ class InvestorStore {
             // eslint-disable-next-line no-restricted-syntax
             for (const key in investor) {
               if (investor.hasOwnProperty(key) && finalResult.hasOwnProperty(key)) {
-                investor[key] = finalResult[key]; // eslint-disable-line
+                investor[key] = addPortfolioId[key]; // eslint-disable-line
               }
             }
           }
@@ -502,7 +502,7 @@ class InvestorStore {
       investorId: id,
       transaction: {
         dateOfEntry,
-        investorName: this.selectedInvestor.fullName,
+        investorName: this.selectedInvestor.name,
         // transactionDate: this.newDepositValues.transactionDate || today,
         amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
@@ -551,7 +551,7 @@ class InvestorStore {
       investorId: id,
       transaction: {
         dateOfEntry,
-        investorName: this.selectedInvestor.fullName,
+        investorName: this.selectedInvestor.name,
         // transactionDate: this.withdrawalValues.transactionDate || today,
         amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
@@ -610,11 +610,11 @@ class InvestorStore {
         // NotificationStore.addMessage('errorMessages', 'Email is required.');
         noErrors = false;
       }
-      if (currentInvestor[prop] === '' && prop === 'fullName') {
+      if (currentInvestor[prop] === '' && prop === 'name') {
         // NotificationStore.addMessage('errorMessages', 'Full name is required.');
         noErrors = false;
       }
-      if (currentInvestor[prop] === '' && prop === 'managementFee') {
+      if (currentInvestor[prop] === '' && prop === 'fee') {
         // NotificationStore.addMessage('errorMessages', 'Management Fee is required.');
         noErrors = false;
       }
@@ -721,22 +721,22 @@ class InvestorStore {
   @action
   reset() {
     this.newInvestorValues.isFounder = false;
-    this.newInvestorValues.fullName = '';
+    this.newInvestorValues.name = '';
     this.newInvestorValues.email = '';
-    this.newInvestorValues.telephone = '';
+    this.newInvestorValues.phone = '';
     this.newInvestorValues.dateOfEntry = '';
     this.newInvestorValues.depositedAmount = '';
-    this.newInvestorValues.managementFee = '';
+    this.newInvestorValues.fee = '';
     this.newInvestorValues.sharePriceAtEntryDate = '';
     this.newInvestorValues.purchasedShares = '';
   }
 
   @action
   resetUpdate() {
-    this.updateInvestorValues.fullName = '';
+    this.updateInvestorValues.name = '';
     this.updateInvestorValues.email = '';
-    this.updateInvestorValues.telephone = '';
-    this.updateInvestorValues.managementFee = '';
+    this.updateInvestorValues.phone = '';
+    this.updateInvestorValues.fee = '';
 
     this.selectedInvestor = '';
   }
@@ -782,10 +782,10 @@ class InvestorStore {
 
     if (this.selectedInvestor) {
       // sets the editing values for the current investor
-      this.updateInvestorValues.fullName = this.selectedInvestor.fullName;
+      this.updateInvestorValues.name = this.selectedInvestor.name;
       this.updateInvestorValues.email = this.selectedInvestor.email;
-      this.updateInvestorValues.telephone = this.selectedInvestor.telephone;
-      this.updateInvestorValues.managementFee = this.selectedInvestor.managementFee;
+      this.updateInvestorValues.phone = this.selectedInvestor.phone;
+      this.updateInvestorValues.fee = this.selectedInvestor.fee;
     }
   }
 

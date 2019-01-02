@@ -194,10 +194,10 @@ class AddInvestor extends React.Component<Props, State> {
                   <div className={classes.gridRow}>
                     <TextValidator
                       label="Full Name*"
-                      onChange={this.handleRequests('fullName')}
+                      onChange={this.handleRequests('name')}
                       name="name"
                       className={classes.inputStyle}
-                      value={InvestorStore.newInvestorValues.fullName}
+                      value={InvestorStore.newInvestorValues.name}
                       validators={['required']}
                       errorMessages={['this field is required']}
                     />
@@ -222,10 +222,10 @@ class AddInvestor extends React.Component<Props, State> {
                   <div className={classes.gridRow}>
                     <TextValidator
                       label="Telephone"
-                      onChange={this.handleRequests('telephone')}
+                      onChange={this.handleRequests('phone')}
                       name="telephone"
                       className={classes.inputStyle}
-                      value={InvestorStore.newInvestorValues.telephone}
+                      value={InvestorStore.newInvestorValues.phone}
                       validators={['required', 'isNumber']}
                       errorMessages={['this field is required', 'telephone is not valid']}
                     />
@@ -235,11 +235,11 @@ class AddInvestor extends React.Component<Props, State> {
                   <div className={classes.gridRow}>
                     <TextValidator
                       label="Management Fee (%)"
-                      onChange={this.handleRequests('managementFee')}
+                      onChange={this.handleRequests('fee')}
                       name="fee"
                       // type="number"
                       className={classes.inputStyle}
-                      value={InvestorStore.newInvestorValues.managementFee || ''}
+                      value={InvestorStore.newInvestorValues.fee || ''}
                       validators={['required', 'isPositive', 'maxNumber:100']}
                       errorMessages={['this field is required', 'value must be a positive number', 'must be a number between 0 and 100']}
                     />

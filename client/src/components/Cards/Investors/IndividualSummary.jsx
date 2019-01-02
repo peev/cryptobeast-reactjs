@@ -5,6 +5,9 @@ import { inject, observer } from 'mobx-react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 
+import AddInvestorWrapped from '../../../components/Modal/InvestorModals/AddInvestor';
+import EditInvestorWrapped from '../../../components/Modal/InvestorModals/EditInvestor';
+
 
 const styles = () => ({
   gridColumn: {
@@ -68,7 +71,15 @@ class IndividualSummary extends React.Component<Props> {
               }}
             />
           </Grid>
+          <Grid item xs={12} sm={9} md={5} lg={3} />
+          <Grid item xs={12} sm={9} md={5} lg={3}>
+            <AddInvestorWrapped />
+          </Grid>
+          <Grid item xs={12} sm={9} md={5} lg={3}>
+            <EditInvestorWrapped />
+          </Grid>
         </Grid>
+
 
         <Grid container>
           <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>

@@ -44,8 +44,7 @@ function getInvestorSortableObject(portfolioStore: Object) {
   return (investor: Object) => Object.assign({}, {
     id: investor.id,
     name: investor.investorName || 'unassigned',
-    dateOfEntry: new Date(investor.createdAt).getTime(),
-    transactionDate: new Date(investor.txTimestamp).getTime(),
+    transactionDate: new Date(investor.createdAt).getTime(),
     amountUSD: investor.totalValueUSD,
     sharePrice: investor.sharePrice,
     shares: investor.shares,
@@ -151,14 +150,14 @@ class AllInvestorTable extends React.Component<Props, State> {
               .map((prop: Object) => (
               <TableRow key={uuid()}>
                 {Object.keys(prop).map((el: Object, key: number) => {
-                  if (key > 7) return null;
-                  if (key === 2 || key === 3) {
+                  if (key > 6) return null;
+                  if (key === 2) {
                     return (
                       <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
                         {moment(prop[el]).format('LL')}
                       </TableCell>
                     );
-                  } if (key === 7) {
+                  } if (key === 6) {
                     return (
                       <TableCell className={`${classes.tableCell}`} key={uuid()}>
                         <Button

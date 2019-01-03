@@ -1,14 +1,14 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, Grid } from '@material-ui/core';
+import { withStyles, Grid, Button } from '@material-ui/core';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
-import Button from '../../CustomButtons/Button';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
+import AddIcon from '../../../assets/img/Add.svg';
 
 const getModalStyle = () => {
   const top = 25;
@@ -86,6 +86,18 @@ const styles = (theme: Object) => ({
   font: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
   },
+  btnIcon: {
+    height: '36px',
+    width: '36px',
+    marginLeft: '24px',
+  },
+  textWrapper: {
+    padding: '30px 25px 0 25px;',
+    justifyContent: 'flex-end',
+  },
+  buttonNoMargin: {
+    margin: 0,
+  },
 });
 
 type Props = {
@@ -145,11 +157,14 @@ class AddInvestor extends React.Component<Props, State> {
     const { classes, InvestorStore, NotificationStore } = this.props;
 
     return (
-      <Grid container>
-        <Button onClick={this.handleOpen} color="primary" style={{ fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }} >
-          Add new investor
+      <Grid container className={classes.textWrapper}>
+        <Button
+          onClick={this.handleOpen}
+          color="primary"
+          className={classes.buttonNoMargin}
+        >
+          Add new investor <img src={AddIcon} className={classes.btnIcon} alt="button-icon" />
         </Button>
-
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"

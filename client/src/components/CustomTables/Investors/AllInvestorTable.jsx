@@ -58,9 +58,9 @@ function getInvestorSortableObject(portfolioStore: Object) {
     id: transaction.id,
     name: findInvestor(portfolioStore, transaction),
     transactionDate: new Date(transaction.txTimestamp).getTime(),
-    amountUSD: transaction.totalValueUSD,
-    sharePrice: transaction.sharePrice,
-    shares: transaction.shares,
+    amountUSD: transaction.totalValueUSD.toFixed(2),
+    sharePrice: transaction.currentSharePriceUSD.toFixed(2),
+    shares: transaction.sharesCreated !== null ? transaction.sharesCreated.toFixed(2) : transaction.sharesLiquidated.toFixed(2),
     // comission: investor.amountInUSD < 0 ?
     //   Math.abs((investor.amountInUSD * portfolioStore.currentPortfolioInvestors[findInvestorID(investor)].managementFee) / 100) : 0,
     transaction,
@@ -185,7 +185,7 @@ class AllInvestorTable extends React.Component<Props, State> {
                         <TableCell className={`${classes.tableCell}`} key={uuid()}>
                           {
                             prop.name === 'unassigned' ?
-                              <AssignInvestor transactionId={prop.id} />
+                              <AssignInvestor transaction={prop.transaction} />
                               :
                               null
                           }

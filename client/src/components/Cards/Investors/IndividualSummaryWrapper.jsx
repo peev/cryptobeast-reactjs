@@ -45,7 +45,7 @@ class IndividualSummaryWrapper extends Component<Props> {
           { id: 'amountUSD', numberic: true, disablePadding: false, label: 'Amount (USD)' },
           { id: 'sharePrice', numberic: true, disablePadding: false, label: 'Share price' },
           { id: 'shares', numberic: true, disablePadding: false, label: 'Shares' },
-          { id: 'action', disablePadding: false, label: '' },
+          { id: 'action', disablePadding: false, label: 'Action' },
         ]}
       />
     );

@@ -1,12 +1,12 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, Grid } from '@material-ui/core';
+import { withStyles, Grid, Button } from '@material-ui/core';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+import EditIcon from '../../../assets/img/Edit.svg';
 
-import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 
 
@@ -79,6 +79,19 @@ const styles = (theme: Object) => ({
     textTransform: 'uppercase',
     fontSize: '13px',
   },
+  btnIcon: {
+    height: '28px',
+    width: '28px',
+    marginLeft: '24px',
+    padding: '4px',
+  },
+  textWrapper: {
+    padding: '30px 25px 0 25px;',
+    justifyContent: 'flex-end',
+  },
+  buttonNoMargin: {
+    margin: 0,
+  },
 });
 
 type Props = {
@@ -132,11 +145,14 @@ class EditInvestor extends React.Component<Props, State> {
     const { classes, InvestorStore } = this.props;
 
     return (
-      <Grid container>
-        <Button onClick={this.handleOpen} color="primary" style={{ fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}>
-          Edit Investor
+      <Grid container className={classes.textWrapper}>
+        <Button
+          onClick={this.handleOpen}
+          color="primary"
+          className={classes.buttonNoMargin}
+        >
+          Edit Investor Info <img src={EditIcon} className={classes.btnIcon} alt="button-icon" />
         </Button>
-
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
@@ -190,12 +206,10 @@ class EditInvestor extends React.Component<Props, State> {
                   <div className={classes.gridRow}>
                     <TextValidator
                       name="name"
-                      // type="text"
                       label="Full name"
                       value={InvestorStore.updateInvestorValues.name}
                       onChange={this.handleEditRequests('name')}
                       className={classes.inputStyle}
-                    // autoFocus
                     />
                   </div>
                 </Grid>

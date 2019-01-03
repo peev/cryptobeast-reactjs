@@ -1,9 +1,10 @@
 // @flow
 import React from 'react';
-import { withStyles, Grid, Button } from '@material-ui/core';
+import { withStyles, Grid, Button, TextField, InputAdornment } from '@material-ui/core';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import { inject, observer } from 'mobx-react';
+import moment from 'moment';
 
 import SelectInvestor from '../../Selectors/SelectInvestor';
 import AssignInvestorConfirm from './AssignInvestorConfirm';
@@ -44,10 +45,17 @@ const styles = (theme: Object) => ({
     fontSize: '0.75rem',
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
   },
+  adornment: {
+    textTransform: 'uppercase',
+    width: '70%',
+  },
+  fullWidth: {
+    width: '100%',
+  },
 });
 
 type Props = {
-  transactionId: number,
+  transaction: Object,
   classes: Object,
   InvestorStore: Object,
 };
@@ -79,7 +87,7 @@ class AssignInvestor extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes, transactionId } = this.props;
+    const { classes, transaction } = this.props;
 
     return (
       <Grid container>
@@ -92,6 +100,8 @@ class AssignInvestor extends React.Component<Props, State> {
           open={this.state.open}
         >
           <div
+            // ref="form"
+            // onError={errors => console.log(errors)}
             style={getModalStyle()}
             className={classes.paper}
           >
@@ -114,7 +124,6 @@ class AssignInvestor extends React.Component<Props, State> {
                   </div>
                 </Grid>
               </Grid>
-
               <Grid container>
                 <Grid className={classes.gridColumn}>
                   <div className={classes.gridRow}>
@@ -132,6 +141,120 @@ class AssignInvestor extends React.Component<Props, State> {
                   </div>
                 </Grid>
               </Grid>
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextField
+                      className={classes.fullWidth}
+                      value={moment(new Date(transaction.txTimestamp).getTime()).format('YYYY/MM/DD')}
+                      inputProps={{
+                        style: { textAlign: 'right' },
+                      }}
+                      // eslint-disable-next-line react/jsx-no-duplicate-props
+                      InputProps={{
+                        startAdornment:
+                          <InputAdornment
+                            position="start"
+                            className={classes.adornment}
+                          >
+                            Date:
+                          </InputAdornment>,
+                      }}
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextField
+                      className={classes.fullWidth}
+                      value={transaction.currentSharePriceUSD.toFixed(2)}
+                      inputProps={{
+                        style: { textAlign: 'right' },
+                      }}
+                      // eslint-disable-next-line react/jsx-no-duplicate-props
+                      InputProps={{
+                        startAdornment:
+                          <InputAdornment
+                            position="start"
+                            className={classes.adornment}
+                          >
+                            Share Price:
+                          </InputAdornment>,
+                      }}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextField
+                      className={classes.fullWidth}
+                      value={transaction.type === 'd' ? 'DEPOST' : 'WITHDRAW'}
+                      inputProps={{
+                        style: { textAlign: 'right' },
+                      }}
+                      // eslint-disable-next-line react/jsx-no-duplicate-props
+                      InputProps={{
+                        startAdornment:
+                          <InputAdornment
+                            position="start"
+                            className={classes.adornment}
+                          >
+                            Type:
+                          </InputAdornment>,
+                      }}
+                    />
+                  </div>
+                </Grid>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextField
+                      className={classes.fullWidth}
+                      value={transaction.sharesCreated !== null ? transaction.sharesCreated.toFixed(2) : transaction.sharesLiquidated.toFixed(2)}
+                      inputProps={{
+                        style: { textAlign: 'right' },
+                      }}
+                      // eslint-disable-next-line react/jsx-no-duplicate-props
+                      InputProps={{
+                        startAdornment:
+                          <InputAdornment
+                            position="start"
+                            className={classes.adornment}
+                          >
+                            Total Shares:
+                          </InputAdornment>,
+                      }}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+
+              <Grid container>
+                <Grid className={classes.gridColumn}>
+                  <div className={classes.gridRow}>
+                    <TextField
+                      className={classes.fullWidth}
+                      value={transaction.totalValueUSD.toFixed(2)}
+                      inputProps={{
+                        style: { textAlign: 'right' },
+                      }}
+                      // eslint-disable-next-line react/jsx-no-duplicate-props
+                      InputProps={{
+                        startAdornment:
+                          <InputAdornment
+                            position="start"
+                            className={classes.adornment}
+                          >
+                            Amount (USD):
+                          </InputAdornment>,
+                      }}
+                    />
+                  </div>
+                </Grid>
+              </Grid>
+
               <Grid container justify="flex-end">
                 <Grid className={classes.gridColumn}>
                   <div className={classes.gridRow} style={{ textAlign: 'right' }}>
@@ -142,7 +265,7 @@ class AssignInvestor extends React.Component<Props, State> {
                       Cancel
                     </Button>
                     <AssignInvestorConfirm
-                      transactionId={transactionId}
+                      transactionId={transaction.id}
                       investorId={this.state.selectedInvestor.value}
                       closeParent={this.handleClose}
                     />

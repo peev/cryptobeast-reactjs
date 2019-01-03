@@ -52,6 +52,7 @@ const Transaction = {
   deleteTrade: id => requests.delete(`/account/deleteTrade/${id}`, id),
   getAllTrades: () => requests.get('/account/allTrades'),
   getAllTransactions: portfolioId => requests.get(`/transaction/all/${portfolioId}`),
+  setInvestor: (transactionId, investorId) => requests.put(`/transaction/setInvestor/${transactionId}/${investorId}`),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 

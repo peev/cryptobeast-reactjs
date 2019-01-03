@@ -45,7 +45,10 @@ function getSorting(order: string, orderBy: string) {
 
 const findInvestor = (portfolioStore: Object, transaction: Object) => {
   if (transaction.investorId !== null) {
-    return portfolioStore.currentPortfolioInvestors.find((item: Object) => item.id === transaction.investorId).name;
+    if (portfolioStore.currentPortfolioInvestors.length > 0) {
+      return portfolioStore.currentPortfolioInvestors.find((item: Object) => item.id === transaction.investorId).name;
+    }
+    return 'unassigned';
   }
   return 'unassigned';
 };
@@ -158,41 +161,46 @@ class AllInvestorTable extends React.Component<Props, State> {
               .map(getInvestorSortableObject(PortfolioStore))
               .sort(getSorting(order, orderBy))
               .map((prop: Object) => (
-              <TableRow key={uuid()}>
-                {Object.keys(prop).map((el: Object, key: number) => {
-                  if (key > 6) return null;
-                  if (key === 1) {
-                    return (
-                      <TableCell
-                        className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}
+                <TableRow key={uuid()}>
+                  {Object.keys(prop).map((el: Object, key: number) => {
+                    if (key > 6) return null;
+                    if (key === 1) {
+                      return (
+                        <TableCell
+                          className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}
                         ${prop.name === 'unassigned' ? classes.italic : ''}`}
-                        key={uuid()}
-                      >
-                       {prop[el]}
-                      </TableCell>
-                    );
-                  } if (key === 2) {
-                    return (
-                      <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
-                        {moment(prop[el]).format('LL')}
-                      </TableCell>
-                    );
-                  } if (key === 6) {
-                    return (
-                      <TableCell className={`${classes.tableCell}`} key={uuid()}>
-                       { prop.name === 'unassigned' ? <AssignInvestor /> : null }
-                      </TableCell>
-                    );
-                  } else {
-                    return (
-                      <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
-                        {prop[el]}
-                      </TableCell>
-                    );
-                  }
-                })}
-              </TableRow>
-            ))}
+                          key={uuid()}
+                        >
+                          {prop[el]}
+                        </TableCell>
+                      );
+                    } if (key === 2) {
+                      return (
+                        <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
+                          {moment(prop[el]).format('LL')}
+                        </TableCell>
+                      );
+                    } if (key === 6) {
+                      return (
+                        <TableCell className={`${classes.tableCell}`} key={uuid()}>
+                          {
+                            prop.name === 'unassigned' ?
+                              <AssignInvestor transactionId={prop.id} />
+                              :
+                              null
+                          }
+                        </TableCell>
+                      );
+                    } else {
+                      return (
+                        <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
+                          {prop[el]}
+                        </TableCell>
+                      );
+                    }
+                  })}
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </div>

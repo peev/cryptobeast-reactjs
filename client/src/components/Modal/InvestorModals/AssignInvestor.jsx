@@ -1,13 +1,12 @@
 // @flow
-import React, { SyntheticEvent } from 'react';
+import React from 'react';
 import { withStyles, Grid, Button } from '@material-ui/core';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import { inject, observer } from 'mobx-react';
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
 import SelectInvestor from '../../Selectors/SelectInvestor';
-
+import AssignInvestorConfirm from './AssignInvestorConfirm';
 
 const getModalStyle = () => {
   const top = 25;
@@ -48,6 +47,7 @@ const styles = (theme: Object) => ({
 });
 
 type Props = {
+  transactionId: number,
   classes: Object,
   InvestorStore: Object,
 };
@@ -78,14 +78,8 @@ class AssignInvestor extends React.Component<Props, State> {
     this.setState({ selectedInvestor: value });
   }
 
-  handleSave = () => {
-    const { InvestorStore } = this.props;
-    InvestorStore.updateCurrentInvestor(this.state.selectedInvestor.value);
-    this.handleClose();
-  }
-
   render() {
-    const { classes, InvestorStore } = this.props;
+    const { classes, transactionId } = this.props;
 
     return (
       <Grid container>
@@ -97,8 +91,7 @@ class AssignInvestor extends React.Component<Props, State> {
           aria-describedby="simple-modal-description"
           open={this.state.open}
         >
-          <ValidatorForm
-            onSubmit={this.handleSave}
+          <div
             style={getModalStyle()}
             className={classes.paper}
           >
@@ -148,18 +141,16 @@ class AssignInvestor extends React.Component<Props, State> {
                     >
                       Cancel
                     </Button>
-                    <Button
-                      type="submit"
-                      color="primary"
-                      style={{ marginLeft: '25px' }}
-                    >
-                      Save
-                    </Button>
+                    <AssignInvestorConfirm
+                      transactionId={transactionId}
+                      investorId={this.state.selectedInvestor.value}
+                      closeParent={this.handleClose}
+                    />
                   </div>
                 </Grid>
               </Grid >
             </div>
-          </ValidatorForm>
+          </div>
         </Modal>
       </Grid >
     );

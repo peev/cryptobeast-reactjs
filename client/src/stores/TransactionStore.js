@@ -38,6 +38,15 @@ class TransactionStore {
     }
     return 0;
   }
+
+  @action.bound
+  setInvestor(transactionId: number, investorId: number) {
+    requester.Transaction.setInvestor(transactionId, investorId)
+      .then(action((result: object) => {
+        console.log(result);
+        this.getTransactions();
+      }));
+  }
 }
 
 export default new TransactionStore();

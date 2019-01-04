@@ -317,10 +317,19 @@ class InvestorStore {
     if (PortfolioStore.selectedPortfolio) {
       let totalFeeValue = 0;
       PortfolioStore.currentPortfolioInvestors.forEach((el) => {
-        totalFeeValue += el.purchasedShares * (el.fee / 100) * PortfolioStore.currentPortfolioSharePrice;
+        let result = 0;
+        const transactions = TransactionStore.transactions.filter(item => item.investorId === el.id);
+        transactions.forEach((tr) => {
+          if (tr.type === 'd') {
+            result = BigNumberService.sum(result, tr.sharesCreated);
+          } else {
+            result = BigNumberService.difference(result, tr.sharesLiquidated);
+          }
+        });
+        totalFeeValue += result * (el.fee / 100) * PortfolioStore.currentPortfolioSharePrice;
       });
 
-      return this.prettifyNumber(totalFeeValue);
+      return BigNumberService.toFixedParam(totalFeeValue, 2);
     }
 
     return 0;

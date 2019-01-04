@@ -385,9 +385,13 @@ class InvestorStore {
 
     requester.Investor.add(newInvestor)
       .then(action(() => {
+        NotificationStore.addMessage('successMessages', 'Investor created successfully!');
         PortfolioStore.getCurrentPortfolioInvestors();
       }))
-      .catch(err => console.log(err));
+      .catch((err) => {
+        NotificationStore.addMessage('errorMessages', 'Error occurred, please try again.');
+        console.log(err);
+      });
   }
 
   @action.bound
@@ -477,6 +481,7 @@ class InvestorStore {
 
     requester.Investor.update(investorId, addPortfolioId)
       .then(action(() => {
+        NotificationStore.addMessage('successMessages', 'Investor updated successfully!');
         const portfolioInvestors = PortfolioStore.currentPortfolioInvestors;
         // console.log(PortfolioStore.currentPortfolioInvestors, finalResult, investorId)
         PortfolioStore.getCurrentPortfolioTransactions();
@@ -491,7 +496,10 @@ class InvestorStore {
           }
         });
       }))
-      .catch(err => console.log(err));
+      .catch((err) => {
+        NotificationStore.addMessage('errorMessages', 'Error occurred, please try again.');
+        console.log(err);
+      });
   }
 
   @action.bound

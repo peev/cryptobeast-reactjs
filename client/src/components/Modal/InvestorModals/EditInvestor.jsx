@@ -136,7 +136,6 @@ class EditInvestor extends React.Component<Props, State> {
 
   handleSave = () => {
     const { InvestorStore } = this.props;
-
     InvestorStore.updateCurrentInvestor(InvestorStore.selectedInvestor.id);
     this.handleClose();
   }

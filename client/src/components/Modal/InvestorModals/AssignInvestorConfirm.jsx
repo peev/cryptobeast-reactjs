@@ -132,7 +132,7 @@ class AssignInvestorConfirm extends React.Component<Props, State> {
                 </Typography>
               </div>
               <div className={classes.gridRow}>
-                Investor can be assing to transaction once. Ary you sure you want to assing?
+                Investor can be assinged to transaction once. Are you sure you want to assing?
               </div>
               <Grid container justify="flex-end">
                 <Grid className={classes.gridColumn}>

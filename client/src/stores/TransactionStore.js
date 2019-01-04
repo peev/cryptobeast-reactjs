@@ -4,6 +4,7 @@ import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
 import BigNumberService from '../services/BigNumber';
+import NotificationStore from './NotificationStore';
 
 
 class TransactionStore {
@@ -42,10 +43,13 @@ class TransactionStore {
   @action.bound
   setInvestor(transactionId: number, investorId: number) {
     requester.Transaction.setInvestor(transactionId, investorId)
-      .then(action((result: object) => {
-        console.log(result);
+      .then(action(() => {
+        NotificationStore.addMessage('successMessages', 'Investor assigned successfully!');
         this.getTransactions();
-      }));
+      }))
+      .catch(() => {
+        NotificationStore.addMessage('errorMessages', 'Error occurred, please try again.');
+      });
   }
 }
 

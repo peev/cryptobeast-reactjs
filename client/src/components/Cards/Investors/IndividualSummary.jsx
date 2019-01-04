@@ -123,7 +123,7 @@ class IndividualSummary extends React.Component<Props> {
             <div className={classes.item}>
               <p>BTC Equivalent:</p>
               <span>{InvestorStore.individualBTCEquivalent !== null
-                ? InvestorStore.nearZeroRounding(InvestorStore.individualBTCEquivalent, 2)
+                ? InvestorStore.nearZeroRounding(InvestorStore.individualBTCEquivalent, 4)
                 : ''}
               </span>
             </div>
@@ -159,7 +159,7 @@ class IndividualSummary extends React.Component<Props> {
             <div className={classes.item}>
               <p>ETH Equivalent:</p>
               <span>{InvestorStore.individualETHEquivalent !== null
-                ? InvestorStore.nearZeroRounding(InvestorStore.individualETHEquivalent, 2)
+                ? InvestorStore.nearZeroRounding(InvestorStore.individualETHEquivalent, 4)
                 : ''}
               </span>
             </div>

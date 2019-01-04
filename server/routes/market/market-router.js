@@ -5,7 +5,8 @@ const attachTo = (app, repository) => {
   const controller = require('./market-controller')(repository);
 
   router
-    .get('/tickersFromCoinMarketCap', controller.getTickersFromCoinMarketCap);
+    .get('/tickersFromCoinMarketCap', controller.getTickersFromCoinMarketCap)
+    .get('/getEthToUsd', controller.getEthToUsd);
 
   app.use('/market', router);
 };

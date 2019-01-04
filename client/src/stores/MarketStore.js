@@ -14,6 +14,7 @@ class MarketStore {
   @observable profitLoss;
   @observable liquidity;
   @observable correlationMatrix;
+  @observable ethToUsd;
 
   constructor() {
     this.marketSummaries = {};
@@ -26,6 +27,7 @@ class MarketStore {
     this.profitLoss = {};
     this.liquidity = [];
     this.correlationMatrix = [];
+    this.ethToUsd = null;
   }
 
   init() {
@@ -34,6 +36,7 @@ class MarketStore {
     //   .catch((err: object) => console.log(err));
 
     this.getTickersFromCoinMarketCap();
+    this.getEthToUsd();
     // requester.Market.getTickersFromCoinMarketCap()
     //   .then(this.convertMarketPriceHistory)
     //   .catch((err: object) => console.log(err));
@@ -87,6 +90,15 @@ class MarketStore {
   getTickersFromCoinMarketCap() {
     return requester.Market.getTickersFromCoinMarketCap()
       .then(this.convertMarketPriceHistory)
+      .catch((err: object) => console.log(err));
+  }
+
+  @action.bound
+  getEthToUsd() {
+    return requester.Market.getEthToUsd()
+      .then((result: Object) => {
+        this.ethToUsd = result.data;
+      })
       .catch((err: object) => console.log(err));
   }
 

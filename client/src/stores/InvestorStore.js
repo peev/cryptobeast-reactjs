@@ -250,23 +250,18 @@ class InvestorStore {
 
   @computed
   get individualBTCEquivalent() {
-    // if (this.selectedInvestorIndividualSummary) {
-    //   const calculatedIndividualBTCEquivalent = this.individualUSDEquivalent / MarketStore.baseCurrencies[3].last;
-
-    //   return calculatedIndividualBTCEquivalent;
-    // }
-
+    if (this.selectedInvestorIndividualSummary && MarketStore.marketPriceHistory) {
+      const btc = MarketStore.marketPriceHistory.BTC;
+      return BigNumberService.quotient(this.individualETHEquivalent, btc.price);
+    }
     return null;
   }
 
   @computed
   get individualETHEquivalent() {
-    // if (this.selectedInvestorIndividualSummary && MarketStore.baseCurrencies) {
-    //   const calculatedIndividualETHEquivalent = this.individualBTCEquivalent / MarketStore.baseCurrencies[0].last;
-
-    //   return calculatedIndividualETHEquivalent;
-    // }
-
+    if (this.selectedInvestorIndividualSummary && MarketStore.ethToUsd) {
+      return BigNumberService.quotient(this.individualUSDEquivalent, MarketStore.ethToUsd);
+    }
     return null;
   }
 
@@ -317,10 +312,19 @@ class InvestorStore {
     if (PortfolioStore.selectedPortfolio) {
       let totalFeeValue = 0;
       PortfolioStore.currentPortfolioInvestors.forEach((el) => {
-        totalFeeValue += el.purchasedShares * (el.fee / 100) * PortfolioStore.currentPortfolioSharePrice;
+        let result = 0;
+        const transactions = TransactionStore.transactions.filter(item => item.investorId === el.id);
+        transactions.forEach((tr) => {
+          if (tr.type === 'd') {
+            result = BigNumberService.sum(result, tr.sharesCreated);
+          } else {
+            result = BigNumberService.difference(result, tr.sharesLiquidated);
+          }
+        });
+        totalFeeValue += result * (el.fee / 100) * PortfolioStore.currentPortfolioSharePrice;
       });
 
-      return this.prettifyNumber(totalFeeValue);
+      return BigNumberService.toFixedParam(totalFeeValue, 2);
     }
 
     return 0;

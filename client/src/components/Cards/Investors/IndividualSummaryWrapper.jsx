@@ -20,15 +20,14 @@ const styles = () => ({
 type Props = {
   classes: Object,
   InvestorStore: Object,
-  PortfolioStore: Object,
   TransactionStore: Object,
 };
 
-@inject('InvestorStore', 'PortfolioStore', 'TransactionStore')
+@inject('InvestorStore', 'TransactionStore')
 @observer
 class IndividualSummaryWrapper extends Component<Props> {
   render() {
-    const { classes, InvestorStore, PortfolioStore, TransactionStore } = this.props;
+    const { classes, InvestorStore, TransactionStore } = this.props;
 
     const data = InvestorStore.selectedInvestorIndividualSummary
       ? TransactionStore.transactions

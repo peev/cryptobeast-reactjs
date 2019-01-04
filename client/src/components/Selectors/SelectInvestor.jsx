@@ -95,9 +95,15 @@ class SelectInvestor extends React.Component<Props> {
             // onOpen={this.handleOpen}
             onChange={this.handleChange}
             options={investorsToShow}
-            style={{
-              ...style,
+            styles={{
+              ...styles,
               width: '100%',
+              control: (base: any) => ({
+                ...base,
+                '&:hover': { borderColor: 'gray' }, // border style on hover
+                border: '1px solid lightgray', // default border color
+                boxShadow: 'none', // no box-shadow
+              }),
             }}
             inputProps={{
               id: 'controlled-open-select',

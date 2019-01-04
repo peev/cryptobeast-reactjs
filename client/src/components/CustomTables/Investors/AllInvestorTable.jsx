@@ -177,7 +177,7 @@ class AllInvestorTable extends React.Component<Props, State> {
                     } if (key === 2) {
                       return (
                         <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
-                          {moment(prop[el]).format('LL')}
+                          {moment(prop[el]).format('MMMM DD, YYYY HH:mm')}
                         </TableCell>
                       );
                     } if (key === 6) {

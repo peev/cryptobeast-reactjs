@@ -317,7 +317,7 @@ class InvestorStore {
     if (PortfolioStore.selectedPortfolio) {
       let totalFeeValue = 0;
       PortfolioStore.currentPortfolioInvestors.forEach((el) => {
-        totalFeeValue += el.purchasedShares * (el.managementFee / 100) * PortfolioStore.currentPortfolioSharePrice;
+        totalFeeValue += el.purchasedShares * (el.fee / 100) * PortfolioStore.currentPortfolioSharePrice;
       });
 
       return this.prettifyNumber(totalFeeValue);

@@ -5,6 +5,8 @@ import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
 import NotificationStore from './NotificationStore';
+import TransactionStore from './TransactionStore';
+import BigNumberService from '../services/BigNumber';
 
 class InvestorStore {
   @observable newInvestorValues;
@@ -66,9 +68,7 @@ class InvestorStore {
   @computed
   get purchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const {
-      currentPortfolioSharePrice,
-    } = PortfolioStore;
+    const { currentPortfolioSharePrice } = PortfolioStore;
     if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
       const calculatedPurchasedShares = (this.convertedUsdEquiv() / (currentPortfolioSharePrice || 1)).toFixed(2);
       this.newInvestorValues.purchasedShares = calculatedPurchasedShares;
@@ -96,9 +96,7 @@ class InvestorStore {
   @computed
   get depositPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const {
-      currentPortfolioSharePrice,
-    } = PortfolioStore;
+    const { currentPortfolioSharePrice } = PortfolioStore;
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
       // const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
@@ -137,9 +135,7 @@ class InvestorStore {
 
   @computed
   get withdrawPurchasedShares() {
-    const {
-      currentPortfolioSharePrice,
-    } = PortfolioStore;
+    const { currentPortfolioSharePrice } = PortfolioStore;
 
     if (this.selectedInvestor && this.withdrawalValues.amount) {
       // const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / 1.75).toFixed(2);
@@ -167,15 +163,28 @@ class InvestorStore {
   // #region Investor Individual Summary
   @computed
   get selectedInvestorTotalSharesHeld() {
-    if (this.selectedInvestorIndividualSummary) {
-      if (this.selectedInvestorIndividualSummary.purchasedShares === null) {
-        return 0;
-      }
-
-      return this.selectedInvestorIndividualSummary.purchasedShares;
+    if (TransactionStore.transactions.length !== 0 && this.selectedInvestorIndividualSummary !== null) {
+      let result = 0;
+      const transactions = TransactionStore.transactions.filter(item => item.investorId === this.selectedInvestorIndividualSummary.id);
+      transactions.forEach((tr) => {
+        if (tr.type === 'd') {
+          result = BigNumberService.sum(result, tr.sharesCreated);
+        } else {
+          result = BigNumberService.difference(result, tr.sharesLiquidated);
+        }
+      });
+      return BigNumberService.toFixedParam(result, 2);
     }
+    return '';
+    // if (this.selectedInvestorIndividualSummary) {
+    //   if (this.selectedInvestorIndividualSummary.purchasedShares === null) {
+    //     return 0;
+    //   }
 
-    return null;
+    //   return this.selectedInvestorIndividualSummary.purchasedShares;
+    // }
+
+    // return null;
   }
 
   @action
@@ -294,7 +303,7 @@ class InvestorStore {
   @computed
   get individualFeePotential() {
     if (this.selectedInvestorIndividualSummary) {
-      const calculatedIndividualFeePotential = (this.individualUSDEquivalent * this.selectedInvestorIndividualSummary.managementFee) / 100;
+      const calculatedIndividualFeePotential = (this.individualUSDEquivalent * this.selectedInvestorIndividualSummary.fee) / 100;
 
       return calculatedIndividualFeePotential;
     }

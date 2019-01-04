@@ -62,7 +62,6 @@ class IndividualSummary extends React.Component<Props> {
         <Grid container>
           <Grid item xs={12} md={6} lg={3} className={classes.gridColumn} style={{ marginBottom: '20px' }}>
             <SelectInvestor
-              value={InvestorStore.selectedInvestorIndividualSummaryId || ''}
               handleChange={this.handleSelectInvestorForSummary}
               style={{
                 border: 'none',

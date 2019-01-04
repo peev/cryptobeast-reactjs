@@ -250,23 +250,18 @@ class InvestorStore {
 
   @computed
   get individualBTCEquivalent() {
-    // if (this.selectedInvestorIndividualSummary) {
-    //   const calculatedIndividualBTCEquivalent = this.individualUSDEquivalent / MarketStore.baseCurrencies[3].last;
-
-    //   return calculatedIndividualBTCEquivalent;
-    // }
-
+    if (this.selectedInvestorIndividualSummary && MarketStore.marketPriceHistory) {
+      const btc = MarketStore.marketPriceHistory.BTC;
+      return BigNumberService.quotient(this.individualETHEquivalent, btc.price);
+    }
     return null;
   }
 
   @computed
   get individualETHEquivalent() {
-    // if (this.selectedInvestorIndividualSummary && MarketStore.baseCurrencies) {
-    //   const calculatedIndividualETHEquivalent = this.individualBTCEquivalent / MarketStore.baseCurrencies[0].last;
-
-    //   return calculatedIndividualETHEquivalent;
-    // }
-
+    if (this.selectedInvestorIndividualSummary && MarketStore.ethToUsd) {
+      return BigNumberService.quotient(this.individualUSDEquivalent, MarketStore.ethToUsd);
+    }
     return null;
   }
 

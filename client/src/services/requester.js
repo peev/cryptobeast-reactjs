@@ -98,6 +98,7 @@ const Market = {
   getLiquidityHistory: requestParams => requests.get('/market/liquidityHistory', requestParams),
   getCorrelationMatrixHistory: requestParams => requests.get('/market/correlationMatrixHistory', requestParams),
   getTickersFromCoinMarketCap: () => requests.get('/market/tickersFromCoinMarketCap'),
+  getEthToUsd: () => requests.get('/market/getEthToUsd'),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 

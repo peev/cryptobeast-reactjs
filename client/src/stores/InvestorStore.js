@@ -785,6 +785,7 @@ class InvestorStore {
     this.selectedInvestorId = null;
     this.selectedInvestorIndividualSummary = null;
     this.selectedInvestorIndividualSummaryTransactions = null;
+    this.selectedInvestorIndividualSummaryId = null;
   }
   // #endregion
 

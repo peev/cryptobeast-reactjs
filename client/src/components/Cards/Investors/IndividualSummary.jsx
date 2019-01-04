@@ -34,6 +34,9 @@ const styles = () => ({
   negativeValue: {
     color: '#B94A48',
   },
+  textWrapper: {
+    padding: '30px 25px 0 25px',
+  },
 });
 
 type Props = {
@@ -52,6 +55,10 @@ class IndividualSummary extends React.Component<Props> {
     this.props.InvestorStore.selectInvestorIndividualSummary(value.value);
   }
 
+  resetSelectedInvestor = () => {
+    this.props.InvestorStore.resetSelectedInvestor();
+  }
+
   render() {
     const { classes, InvestorStore } = this.props;
 
@@ -62,6 +69,7 @@ class IndividualSummary extends React.Component<Props> {
         <Grid container>
           <Grid item xs={12} md={6} lg={3} className={classes.gridColumn} style={{ marginBottom: '20px' }}>
             <SelectInvestor
+              isClearable
               handleChange={this.handleSelectInvestorForSummary}
               style={{
                 border: 'none',

@@ -1,14 +1,14 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, Grid } from '@material-ui/core';
+import { withStyles, Grid, Button } from '@material-ui/core';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 
-import Button from '../../CustomButtons/Button';
 import NotificationSnackbar from '../../Modal/NotificationSnackbar';
 import addInvestorModalStyle from '../../../variables/styles/addInvestorModalStyle';
+import AddIcon from '../../../assets/img/Add.svg';
 
 const getModalStyle = () => {
   const top = 25;
@@ -86,6 +86,18 @@ const styles = (theme: Object) => ({
   font: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
   },
+  btnIcon: {
+    height: '36px',
+    width: '36px',
+    marginLeft: '24px',
+  },
+  textWrapper: {
+    padding: '30px 25px 0 25px;',
+    justifyContent: 'flex-end',
+  },
+  buttonNoMargin: {
+    margin: 0,
+  },
 });
 
 type Props = {
@@ -145,11 +157,14 @@ class AddInvestor extends React.Component<Props, State> {
     const { classes, InvestorStore, NotificationStore } = this.props;
 
     return (
-      <Grid container>
-        <Button onClick={this.handleOpen} color="primary" style={{ fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }} >
-          Add new investor
+      <Grid container className={classes.textWrapper}>
+        <Button
+          onClick={this.handleOpen}
+          color="primary"
+          className={classes.buttonNoMargin}
+        >
+          Add new investor <img src={AddIcon} className={classes.btnIcon} alt="button-icon" />
         </Button>
-
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
@@ -194,10 +209,10 @@ class AddInvestor extends React.Component<Props, State> {
                   <div className={classes.gridRow}>
                     <TextValidator
                       label="Full Name*"
-                      onChange={this.handleRequests('fullName')}
+                      onChange={this.handleRequests('name')}
                       name="name"
                       className={classes.inputStyle}
-                      value={InvestorStore.newInvestorValues.fullName}
+                      value={InvestorStore.newInvestorValues.name}
                       validators={['required']}
                       errorMessages={['this field is required']}
                     />
@@ -222,10 +237,10 @@ class AddInvestor extends React.Component<Props, State> {
                   <div className={classes.gridRow}>
                     <TextValidator
                       label="Telephone"
-                      onChange={this.handleRequests('telephone')}
+                      onChange={this.handleRequests('phone')}
                       name="telephone"
                       className={classes.inputStyle}
-                      value={InvestorStore.newInvestorValues.telephone}
+                      value={InvestorStore.newInvestorValues.phone}
                       validators={['required', 'isNumber']}
                       errorMessages={['this field is required', 'telephone is not valid']}
                     />
@@ -235,11 +250,11 @@ class AddInvestor extends React.Component<Props, State> {
                   <div className={classes.gridRow}>
                     <TextValidator
                       label="Management Fee (%)"
-                      onChange={this.handleRequests('managementFee')}
+                      onChange={this.handleRequests('fee')}
                       name="fee"
                       // type="number"
                       className={classes.inputStyle}
-                      value={InvestorStore.newInvestorValues.managementFee || ''}
+                      value={InvestorStore.newInvestorValues.fee || ''}
                       validators={['required', 'isPositive', 'maxNumber:100']}
                       errorMessages={['this field is required', 'value must be a positive number', 'must be a number between 0 and 100']}
                     />

@@ -6,7 +6,8 @@ const attachTo = (app, repository, jobs) => {
 
   router
     .get('/:id', controller.getTransaction)
-    .get('/all/:portfolioId', controller.getTransactions);
+    .get('/all/:portfolioId', controller.getTransactions)
+    .put('/setInvestor/:id/:investorId', controller.setInvestor);
 
   app.use('/transaction', router);
 };

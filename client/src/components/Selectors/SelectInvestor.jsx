@@ -53,6 +53,7 @@ type Props = {
   PortfolioStore: Object,
   value: string,
   style: Object,
+  isClearable: boolean,
 };
 
 
@@ -62,8 +63,8 @@ class SelectInvestor extends React.Component<Props> {
   handleChange = (event: SyntheticEvent) => {
     if (event) {
       this.props.handleChange({
-        label: event.value,
-        value: event.value
+        label: event.label,
+        value: event.value,
       });
     } else {
       this.props.handleChange('');
@@ -75,7 +76,7 @@ class SelectInvestor extends React.Component<Props> {
   );
 
   render() {
-    const { classes, PortfolioStore, value, style } = this.props;
+    const { classes, PortfolioStore, value, style, isClearable } = this.props;
     const { currentPortfolioInvestors } = PortfolioStore;
     const investorsToShow = [];
     currentPortfolioInvestors.map((investor: object) => ({ value: investor.id, label: investor.name }))
@@ -95,9 +96,16 @@ class SelectInvestor extends React.Component<Props> {
             // onOpen={this.handleOpen}
             onChange={this.handleChange}
             options={investorsToShow}
-            style={{
-              ...style,
+            isClearable={isClearable}
+            styles={{
+              ...styles,
               width: '100%',
+              control: (base: any) => ({
+                ...base,
+                '&:hover': { borderColor: 'gray' }, // border style on hover
+                border: '1px solid lightgray', // default border color
+                boxShadow: 'none', // no box-shadow
+              }),
             }}
             inputProps={{
               id: 'controlled-open-select',
@@ -106,7 +114,7 @@ class SelectInvestor extends React.Component<Props> {
             className={classes.select}
           />
         </FormControl>
-      </div >
+      </div>
     );
   }
 }

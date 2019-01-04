@@ -4,6 +4,7 @@ import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
 import BigNumberService from '../services/BigNumber';
+import NotificationStore from './NotificationStore';
 
 
 class TransactionStore {
@@ -37,6 +38,18 @@ class TransactionStore {
       return BigNumberService.toFixedParam((this.transactions[this.transactions.length - 1].currentSharePriceUSD), 2);
     }
     return 0;
+  }
+
+  @action.bound
+  setInvestor(transactionId: number, investorId: number) {
+    requester.Transaction.setInvestor(transactionId, investorId)
+      .then(action(() => {
+        NotificationStore.addMessage('successMessages', 'Investor assigned successfully!');
+        this.getTransactions();
+      }))
+      .catch(() => {
+        NotificationStore.addMessage('errorMessages', 'Error occurred, please try again.');
+      });
   }
 }
 

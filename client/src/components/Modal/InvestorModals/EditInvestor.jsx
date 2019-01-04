@@ -1,12 +1,12 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles, Grid } from '@material-ui/core';
+import { withStyles, Grid, Button } from '@material-ui/core';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import { inject, observer } from 'mobx-react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+import EditIcon from '../../../assets/img/Edit.svg';
 
-import Button from '../../CustomButtons/Button';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 
 
@@ -79,6 +79,19 @@ const styles = (theme: Object) => ({
     textTransform: 'uppercase',
     fontSize: '13px',
   },
+  btnIcon: {
+    height: '28px',
+    width: '28px',
+    marginLeft: '24px',
+    padding: '4px',
+  },
+  textWrapper: {
+    padding: '30px 25px 0 25px;',
+    justifyContent: 'flex-end',
+  },
+  buttonNoMargin: {
+    margin: 0,
+  },
 });
 
 type Props = {
@@ -118,12 +131,11 @@ class EditInvestor extends React.Component<Props, State> {
   }
 
   handleSelectInvestor = (value: *) => {
-    this.props.InvestorStore.selectInvestor(value);
+    this.props.InvestorStore.selectInvestor(value.value);
   }
 
   handleSave = () => {
     const { InvestorStore } = this.props;
-
     InvestorStore.updateCurrentInvestor(InvestorStore.selectedInvestor.id);
     this.handleClose();
   }
@@ -132,11 +144,14 @@ class EditInvestor extends React.Component<Props, State> {
     const { classes, InvestorStore } = this.props;
 
     return (
-      <Grid container>
-        <Button onClick={this.handleOpen} color="primary" style={{ fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif' }}>
-          Edit Investor
+      <Grid container className={classes.textWrapper}>
+        <Button
+          onClick={this.handleOpen}
+          color="primary"
+          className={classes.buttonNoMargin}
+        >
+          Edit Investor Info <img src={EditIcon} className={classes.btnIcon} alt="button-icon" />
         </Button>
-
         <Modal
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
@@ -172,7 +187,6 @@ class EditInvestor extends React.Component<Props, State> {
                 <Grid className={classes.gridColumn}>
                   <div className={classes.gridRow}>
                     <SelectInvestor
-                      value={InvestorStore.selectedInvestorId || ''}
                       handleChange={this.handleSelectInvestor}
                       style={{
                         marginTop: '12px',
@@ -191,12 +205,10 @@ class EditInvestor extends React.Component<Props, State> {
                   <div className={classes.gridRow}>
                     <TextValidator
                       name="name"
-                      // type="text"
                       label="Full name"
-                      value={InvestorStore.updateInvestorValues.fullName}
-                      onChange={this.handleEditRequests('fullName')}
+                      value={InvestorStore.updateInvestorValues.name}
+                      onChange={this.handleEditRequests('name')}
                       className={classes.inputStyle}
-                    // autoFocus
                     />
                   </div>
                 </Grid>
@@ -222,8 +234,8 @@ class EditInvestor extends React.Component<Props, State> {
                       name="phone"
                       // type="number"
                       label="Telephone"
-                      value={InvestorStore.updateInvestorValues.telephone}
-                      onChange={this.handleEditRequests('telephone')}
+                      value={InvestorStore.updateInvestorValues.phone}
+                      onChange={this.handleEditRequests('phone')}
                       className={classes.inputStyle}
                       validators={['isNumber']}
                       errorMessages={['telephone is not valid']}
@@ -236,8 +248,8 @@ class EditInvestor extends React.Component<Props, State> {
                       name="fee"
                       // type="number"
                       label="Management Fee (%)"
-                      value={InvestorStore.updateInvestorValues.managementFee}
-                      onChange={this.handleEditRequests('managementFee')}
+                      value={InvestorStore.updateInvestorValues.fee}
+                      onChange={this.handleEditRequests('fee')}
                       className={classes.inputStyle}
                       validators={['isPositive', 'maxNumber:100']}
                       errorMessages={['Fee must be a positive number', 'must be a number between 0 and 100']}

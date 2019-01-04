@@ -15,7 +15,7 @@ class Analytics {
     this.currentPortfolioPriceHistoryForPeriod = [];
     this.selectedTimeInPerformance = '';
 
-    onBecomeObserved(this, 'currentPortfolioClosingSharePrices', this.getClosingSharePriceHistory);
+    // onBecomeObserved(this, 'currentPortfolioClosingSharePrices', this.getClosingSharePriceHistory);
   }
 
   @computed

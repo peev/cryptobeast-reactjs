@@ -840,8 +840,7 @@ class PortfolioStore {
       item: 'Transaction',
     };
     requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
-      .then(action((result) => {
-        // console.log(result.data);
+      .then(action((result: Object) => {
         this.currentPortfolioTransactions = result.data;
       }));
   }

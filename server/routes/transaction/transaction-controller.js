@@ -49,6 +49,22 @@ const transactionController = (repository) => {
       .catch(error => res.json(error));
   };
 
+  const setInvestor = async (req, res) => {
+    const { id } = req.params;
+    const { investorId } = req.params;
+    const transaction = await intReqService.getTransactionById(id);
+    if (transaction.investorId === null) {
+      const transactionData = Object.assign({}, transaction, { id: transaction.id, investorId });
+      await repository.update({ modelName, updatedRecord: transactionData })
+        .then((response) => {
+          res.status(200).send(response);
+        })
+        .catch(error => res.status(400).send(error));
+    } else {
+      res.status(400).send('Unable to change investor!');
+    }
+  };
+
   const syncTransaction = async (req, res) => {
     const tr = req.body;
 
@@ -268,6 +284,7 @@ const transactionController = (repository) => {
     getTransactions,
     sync,
     updateTransactions,
+    setInvestor,
   };
 };
 

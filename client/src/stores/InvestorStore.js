@@ -5,7 +5,8 @@ import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
 import NotificationStore from './NotificationStore';
-// import InvestorDeposit from '../components/Modal/InvestorModals/InvestorDeposit';
+import TransactionStore from './TransactionStore';
+import BigNumberService from '../services/BigNumber';
 
 class InvestorStore {
   @observable newInvestorValues;
@@ -23,20 +24,20 @@ class InvestorStore {
     // #region Initialize Values
     this.newInvestorValues = {
       isFounder: false, // this stays, because BE model still has it
-      fullName: '',
+      name: '',
       email: '',
-      telephone: '',
+      phone: '',
       dateOfEntry: '',
       depositedAmount: '',
-      managementFee: '',
+      fee: '',
       sharePriceAtEntryDate: '',
       purchasedShares: '',
     };
     this.updateInvestorValues = {
-      fullName: '',
+      name: '',
       email: '',
-      telephone: '',
-      managementFee: '',
+      phone: '',
+      fee: '',
     };
     this.newDepositValues = {
       amount: '',
@@ -67,9 +68,7 @@ class InvestorStore {
   @computed
   get purchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const {
-      currentPortfolioSharePrice,
-    } = PortfolioStore;
+    const { currentPortfolioSharePrice } = PortfolioStore;
     if (baseCurrency && (this.newInvestorValues.depositedAmount || this.newDepositValues.amount)) {
       const calculatedPurchasedShares = (this.convertedUsdEquiv() / (currentPortfolioSharePrice || 1)).toFixed(2);
       this.newInvestorValues.purchasedShares = calculatedPurchasedShares;
@@ -97,9 +96,7 @@ class InvestorStore {
   @computed
   get depositPurchasedShares() {
     const baseCurrency = MarketStore.selectedBaseCurrency;
-    const {
-      currentPortfolioSharePrice,
-    } = PortfolioStore;
+    const { currentPortfolioSharePrice } = PortfolioStore;
     if (baseCurrency && this.newDepositValues.amount) {
       // TODO: To add Assets value below
       // const calculatedPurchasedShares = 1 / this.newDepositValues.amount;
@@ -138,9 +135,7 @@ class InvestorStore {
 
   @computed
   get withdrawPurchasedShares() {
-    const {
-      currentPortfolioSharePrice,
-    } = PortfolioStore;
+    const { currentPortfolioSharePrice } = PortfolioStore;
 
     if (this.selectedInvestor && this.withdrawalValues.amount) {
       // const calculatedWithdrawPurchasedShares = (this.withdrawalValues.amount / 1.75).toFixed(2);
@@ -168,15 +163,28 @@ class InvestorStore {
   // #region Investor Individual Summary
   @computed
   get selectedInvestorTotalSharesHeld() {
-    if (this.selectedInvestorIndividualSummary) {
-      if (this.selectedInvestorIndividualSummary.purchasedShares === null) {
-        return 0;
-      }
-
-      return this.selectedInvestorIndividualSummary.purchasedShares;
+    if (TransactionStore.transactions.length !== 0 && this.selectedInvestorIndividualSummary !== null) {
+      let result = 0;
+      const transactions = TransactionStore.transactions.filter(item => item.investorId === this.selectedInvestorIndividualSummary.id);
+      transactions.forEach((tr) => {
+        if (tr.type === 'd') {
+          result = BigNumberService.sum(result, tr.sharesCreated);
+        } else {
+          result = BigNumberService.difference(result, tr.sharesLiquidated);
+        }
+      });
+      return BigNumberService.toFixedParam(result, 2);
     }
+    return '';
+    // if (this.selectedInvestorIndividualSummary) {
+    //   if (this.selectedInvestorIndividualSummary.purchasedShares === null) {
+    //     return 0;
+    //   }
 
-    return null;
+    //   return this.selectedInvestorIndividualSummary.purchasedShares;
+    // }
+
+    // return null;
   }
 
   @action
@@ -242,22 +250,22 @@ class InvestorStore {
 
   @computed
   get individualBTCEquivalent() {
-    if (this.selectedInvestorIndividualSummary) {
-      const calculatedIndividualBTCEquivalent = this.individualUSDEquivalent / MarketStore.baseCurrencies[3].last;
+    // if (this.selectedInvestorIndividualSummary) {
+    //   const calculatedIndividualBTCEquivalent = this.individualUSDEquivalent / MarketStore.baseCurrencies[3].last;
 
-      return calculatedIndividualBTCEquivalent;
-    }
+    //   return calculatedIndividualBTCEquivalent;
+    // }
 
     return null;
   }
 
   @computed
   get individualETHEquivalent() {
-    if (this.selectedInvestorIndividualSummary && MarketStore.baseCurrencies) {
-      const calculatedIndividualETHEquivalent = this.individualBTCEquivalent / MarketStore.baseCurrencies[0].last;
+    // if (this.selectedInvestorIndividualSummary && MarketStore.baseCurrencies) {
+    //   const calculatedIndividualETHEquivalent = this.individualBTCEquivalent / MarketStore.baseCurrencies[0].last;
 
-      return calculatedIndividualETHEquivalent;
-    }
+    //   return calculatedIndividualETHEquivalent;
+    // }
 
     return null;
   }
@@ -268,7 +276,7 @@ class InvestorStore {
       // Get 1 day in milliseconds
       const oneDay = 1000 * 60 * 60 * 24;
       const currentDate = new Date();
-      const dateOfEntryConverted = new Date(this.selectedInvestorIndividualSummary.dateOfEntry);
+      const dateOfEntryConverted = new Date(this.selectedInvestorIndividualSummary.createdAt);
       const calculatedIndividualInvestmentPeriod = Math.round((currentDate - dateOfEntryConverted) / oneDay);
 
       return calculatedIndividualInvestmentPeriod;
@@ -295,7 +303,7 @@ class InvestorStore {
   @computed
   get individualFeePotential() {
     if (this.selectedInvestorIndividualSummary) {
-      const calculatedIndividualFeePotential = (this.individualUSDEquivalent * this.selectedInvestorIndividualSummary.managementFee) / 100;
+      const calculatedIndividualFeePotential = (this.individualUSDEquivalent * this.selectedInvestorIndividualSummary.fee) / 100;
 
       return calculatedIndividualFeePotential;
     }
@@ -309,7 +317,7 @@ class InvestorStore {
     if (PortfolioStore.selectedPortfolio) {
       let totalFeeValue = 0;
       PortfolioStore.currentPortfolioInvestors.forEach((el) => {
-        totalFeeValue += el.purchasedShares * (el.managementFee / 100) * PortfolioStore.currentPortfolioSharePrice;
+        totalFeeValue += el.purchasedShares * (el.fee / 100) * PortfolioStore.currentPortfolioSharePrice;
       });
 
       return this.prettifyNumber(totalFeeValue);
@@ -367,31 +375,34 @@ class InvestorStore {
   // #region Investor
   @action.bound
   createNewInvestor(portfolioId) {
-
     const newInvestor = {
       portfolioId,
-      name: this.newInvestorValues.fullName,
+      name: this.newInvestorValues.name,
       email: this.newInvestorValues.email,
-      phone: this.newInvestorValues.telephone,
-      fee: this.newInvestorValues.managementFee,
+      phone: this.newInvestorValues.phone,
+      fee: this.newInvestorValues.fee,
     };
 
     requester.Investor.add(newInvestor)
       .then(action(() => {
+        NotificationStore.addMessage('successMessages', 'Investor created successfully!');
         PortfolioStore.getCurrentPortfolioInvestors();
       }))
-      .catch(err => console.log(err));
+      .catch((err) => {
+        NotificationStore.addMessage('errorMessages', 'Error occurred, please try again.');
+        console.log(err);
+      });
   }
 
   @action.bound
   createDefaultInvestor(newPortfolio) {
     const newInvestor = {
       isFounder: true,
-      fullName: 'default investor',
+      name: 'default investor',
       email: 'default@email.com',
-      telephone: '',
+      phone: '',
       dateOfEntry: new Date().toISOString(),
-      managementFee: '0.0',
+      fee: '0.0',
       portfolioId: newPortfolio.id,
     };
     let depositData;
@@ -466,8 +477,11 @@ class InvestorStore {
       }
     }
 
-    requester.Investor.update(investorId, finalResult)
+    const addPortfolioId = Object.assign({}, finalResult, { portfolioId: PortfolioStore.selectedPortfolioId });
+
+    requester.Investor.update(investorId, addPortfolioId)
       .then(action(() => {
+        NotificationStore.addMessage('successMessages', 'Investor updated successfully!');
         const portfolioInvestors = PortfolioStore.currentPortfolioInvestors;
         // console.log(PortfolioStore.currentPortfolioInvestors, finalResult, investorId)
         PortfolioStore.getCurrentPortfolioTransactions();
@@ -476,13 +490,16 @@ class InvestorStore {
             // eslint-disable-next-line no-restricted-syntax
             for (const key in investor) {
               if (investor.hasOwnProperty(key) && finalResult.hasOwnProperty(key)) {
-                investor[key] = finalResult[key]; // eslint-disable-line
+                investor[key] = addPortfolioId[key]; // eslint-disable-line
               }
             }
           }
         });
       }))
-      .catch(err => console.log(err));
+      .catch((err) => {
+        NotificationStore.addMessage('errorMessages', 'Error occurred, please try again.');
+        console.log(err);
+      });
   }
 
   @action.bound
@@ -502,7 +519,7 @@ class InvestorStore {
       investorId: id,
       transaction: {
         dateOfEntry,
-        investorName: this.selectedInvestor.fullName,
+        investorName: this.selectedInvestor.name,
         // transactionDate: this.newDepositValues.transactionDate || today,
         amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
@@ -551,7 +568,7 @@ class InvestorStore {
       investorId: id,
       transaction: {
         dateOfEntry,
-        investorName: this.selectedInvestor.fullName,
+        investorName: this.selectedInvestor.name,
         // transactionDate: this.withdrawalValues.transactionDate || today,
         amountInUSD: this.convertedUsdEquiv(),
         sharePrice: PortfolioStore.currentPortfolioSharePrice,
@@ -610,11 +627,11 @@ class InvestorStore {
         // NotificationStore.addMessage('errorMessages', 'Email is required.');
         noErrors = false;
       }
-      if (currentInvestor[prop] === '' && prop === 'fullName') {
+      if (currentInvestor[prop] === '' && prop === 'name') {
         // NotificationStore.addMessage('errorMessages', 'Full name is required.');
         noErrors = false;
       }
-      if (currentInvestor[prop] === '' && prop === 'managementFee') {
+      if (currentInvestor[prop] === '' && prop === 'fee') {
         // NotificationStore.addMessage('errorMessages', 'Management Fee is required.');
         noErrors = false;
       }
@@ -721,22 +738,22 @@ class InvestorStore {
   @action
   reset() {
     this.newInvestorValues.isFounder = false;
-    this.newInvestorValues.fullName = '';
+    this.newInvestorValues.name = '';
     this.newInvestorValues.email = '';
-    this.newInvestorValues.telephone = '';
+    this.newInvestorValues.phone = '';
     this.newInvestorValues.dateOfEntry = '';
     this.newInvestorValues.depositedAmount = '';
-    this.newInvestorValues.managementFee = '';
+    this.newInvestorValues.fee = '';
     this.newInvestorValues.sharePriceAtEntryDate = '';
     this.newInvestorValues.purchasedShares = '';
   }
 
   @action
   resetUpdate() {
-    this.updateInvestorValues.fullName = '';
+    this.updateInvestorValues.name = '';
     this.updateInvestorValues.email = '';
-    this.updateInvestorValues.telephone = '';
-    this.updateInvestorValues.managementFee = '';
+    this.updateInvestorValues.phone = '';
+    this.updateInvestorValues.fee = '';
 
     this.selectedInvestor = '';
   }
@@ -768,6 +785,7 @@ class InvestorStore {
     this.selectedInvestorId = null;
     this.selectedInvestorIndividualSummary = null;
     this.selectedInvestorIndividualSummaryTransactions = null;
+    this.selectedInvestorIndividualSummaryId = null;
   }
   // #endregion
 
@@ -782,10 +800,10 @@ class InvestorStore {
 
     if (this.selectedInvestor) {
       // sets the editing values for the current investor
-      this.updateInvestorValues.fullName = this.selectedInvestor.fullName;
+      this.updateInvestorValues.name = this.selectedInvestor.name;
       this.updateInvestorValues.email = this.selectedInvestor.email;
-      this.updateInvestorValues.telephone = this.selectedInvestor.telephone;
-      this.updateInvestorValues.managementFee = this.selectedInvestor.managementFee;
+      this.updateInvestorValues.phone = this.selectedInvestor.phone;
+      this.updateInvestorValues.fee = this.selectedInvestor.fee;
     }
   }
 

@@ -5,6 +5,9 @@ import { inject, observer } from 'mobx-react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 
+import AddInvestorWrapped from '../../../components/Modal/InvestorModals/AddInvestor';
+import EditInvestorWrapped from '../../../components/Modal/InvestorModals/EditInvestor';
+
 
 const styles = () => ({
   gridColumn: {
@@ -31,6 +34,9 @@ const styles = () => ({
   negativeValue: {
     color: '#B94A48',
   },
+  textWrapper: {
+    padding: '30px 25px 0 25px',
+  },
 });
 
 type Props = {
@@ -46,7 +52,11 @@ class IndividualSummary extends React.Component<Props> {
   }
 
   handleSelectInvestorForSummary = (value: *) => {
-    this.props.InvestorStore.selectInvestorIndividualSummary(value);
+    this.props.InvestorStore.selectInvestorIndividualSummary(value.value);
+  }
+
+  resetSelectedInvestor = () => {
+    this.props.InvestorStore.resetSelectedInvestor();
   }
 
   render() {
@@ -59,7 +69,7 @@ class IndividualSummary extends React.Component<Props> {
         <Grid container>
           <Grid item xs={12} md={6} lg={3} className={classes.gridColumn} style={{ marginBottom: '20px' }}>
             <SelectInvestor
-              value={InvestorStore.selectedInvestorIndividualSummaryId || ''}
+              isClearable
               handleChange={this.handleSelectInvestorForSummary}
               style={{
                 border: 'none',
@@ -68,7 +78,15 @@ class IndividualSummary extends React.Component<Props> {
               }}
             />
           </Grid>
+          <Grid item xs={12} sm={9} md={5} lg={3} />
+          <Grid item xs={12} sm={9} md={5} lg={3}>
+            <AddInvestorWrapped />
+          </Grid>
+          <Grid item xs={12} sm={9} md={5} lg={3}>
+            <EditInvestorWrapped />
+          </Grid>
         </Grid>
+
 
         <Grid container>
           <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>

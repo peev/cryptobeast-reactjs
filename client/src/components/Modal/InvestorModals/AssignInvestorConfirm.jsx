@@ -47,6 +47,7 @@ const styles = (theme: Object) => ({
 type Props = {
   transactionId: number,
   investorId: number,
+  investorName: string,
   closeParent: any,
   classes: Object,
   TransactionStore: Object,
@@ -93,7 +94,7 @@ class AssignInvestorConfirm extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, investorName } = this.props;
 
     return (
       <span>
@@ -132,7 +133,7 @@ class AssignInvestorConfirm extends React.Component<Props, State> {
                 </Typography>
               </div>
               <div className={classes.gridRow}>
-                Investor can be assinged to transaction once. Are you sure you want to assing?
+                Are you sure you want to assign this transaction to {investorName}?
               </div>
               <Grid container justify="flex-end">
                 <Grid className={classes.gridColumn}>

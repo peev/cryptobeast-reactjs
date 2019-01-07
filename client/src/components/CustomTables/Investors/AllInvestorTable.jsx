@@ -58,6 +58,7 @@ function getInvestorSortableObject(portfolioStore: Object) {
     id: transaction.id,
     name: findInvestor(portfolioStore, transaction),
     transactionDate: new Date(transaction.txTimestamp).getTime(),
+    type: transaction.type === 'd' ? 'DEPOSIT' : 'WITHDRAW',
     amountUSD: transaction.totalValueUSD.toFixed(2),
     sharePrice: transaction.currentSharePriceUSD.toFixed(2),
     shares: transaction.sharesCreated !== null ? transaction.sharesCreated.toFixed(2) : transaction.sharesLiquidated.toFixed(2),
@@ -163,11 +164,11 @@ class AllInvestorTable extends React.Component<Props, State> {
               .map((prop: Object) => (
                 <TableRow key={uuid()}>
                   {Object.keys(prop).map((el: Object, key: number) => {
-                    if (key > 6) return null;
+                    if (key > 7) return null;
                     if (key === 1) {
                       return (
                         <TableCell
-                          className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}
+                          className={`${classes.tableCell} ${prop.type === 'DEPOSIT' ? classes.positive : classes.negative}
                         ${prop.name === 'unassigned' ? classes.italic : ''}`}
                           key={uuid()}
                         >
@@ -176,11 +177,11 @@ class AllInvestorTable extends React.Component<Props, State> {
                       );
                     } if (key === 2) {
                       return (
-                        <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
+                        <TableCell className={`${classes.tableCell} ${prop.type === 'DEPOSIT' ? classes.positive : classes.negative}`} key={uuid()}>
                           {moment(prop[el]).format('MMMM DD, YYYY HH:mm')}
                         </TableCell>
                       );
-                    } if (key === 6) {
+                    } if (key === 7) {
                       return (
                         <TableCell className={`${classes.tableCell}`} key={uuid()}>
                           {
@@ -193,7 +194,7 @@ class AllInvestorTable extends React.Component<Props, State> {
                       );
                     } else {
                       return (
-                        <TableCell className={`${classes.tableCell} ${prop.amountUSD > 0 ? classes.positive : classes.negative}`} key={uuid()}>
+                        <TableCell className={`${classes.tableCell} ${prop.type === 'DEPOSIT' ? classes.positive : classes.negative}`} key={uuid()}>
                           {prop[el]}
                         </TableCell>
                       );

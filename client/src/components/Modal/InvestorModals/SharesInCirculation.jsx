@@ -61,13 +61,14 @@ type Props = {
   classes: Object,
   PortfolioStore: Object,
   TransactionStore: Object,
+  InvestorStore: Object,
 };
 
 type State = {
   open: boolean,
 };
 
-@inject('PortfolioStore', 'TransactionStore')
+@inject('PortfolioStore', 'TransactionStore', 'InvestorStore')
 @observer
 class SharesInCirculation extends React.Component<Props, State> {
   state = {
@@ -82,7 +83,7 @@ class SharesInCirculation extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, PortfolioStore, TransactionStore } = this.props;
+    const { classes, PortfolioStore, TransactionStore, InvestorStore } = this.props;
     const purchasedShares = PortfolioStore.currentPortfolioInvestors.filter((el: object) => el.purchasedShares > 0);
     const { selectedPortfolio } = PortfolioStore;
     // const portfolioShares = selectedPortfolio ? selectedPortfolio.shares : 0;
@@ -118,7 +119,7 @@ class SharesInCirculation extends React.Component<Props, State> {
 
               <Grid item xs={12} sm={12} md={12}>
                 <InvestorPieChart
-                  investors={purchasedShares}
+                  shares={InvestorStore.investorsShares}
                   portfolioShares={portfolioShares}
                 />
               </Grid>

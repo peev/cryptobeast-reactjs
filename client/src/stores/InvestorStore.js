@@ -187,6 +187,39 @@ class InvestorStore {
     // return null;
   }
 
+  @computed
+  // eslint-disable-next-line class-methods-use-this
+  get investorsShares() {
+    if (TransactionStore.transactions.length !== 0 && PortfolioStore.currentPortfolioInvestors !== null) {
+      const result = [];
+      let unassignedShares = 0;
+      const unassignedTransactions = TransactionStore.transactions.filter(transaction => transaction.investorId === null);
+      unassignedTransactions.forEach((transaction) => {
+        if (transaction.type === 'd') {
+          unassignedShares = BigNumberService.sum(unassignedShares, transaction.sharesCreated);
+        } else {
+          unassignedShares = BigNumberService.difference(unassignedShares, transaction.sharesLiquidated);
+        }
+      });
+      result.push({ name: 'Unassigned', id: null, shares: unassignedShares });
+
+      PortfolioStore.currentPortfolioInvestors.forEach((investor) => {
+        const transactions = TransactionStore.transactions.filter(transaction => transaction.investorId === investor.id);
+        let shares = 0;
+        transactions.forEach((transaction) => {
+          if (transaction.type === 'd') {
+            shares = BigNumberService.sum(shares, transaction.sharesCreated);
+          } else {
+            shares = BigNumberService.difference(shares, transaction.sharesLiquidated);
+          }
+        });
+        result.push({ name: investor.name, id: investor.id, shares });
+      });
+      return result;
+    }
+    return [];
+  }
+
   @action
   withdrawAllShares() {
     if (MarketStore.selectedBaseCurrency && this.selectedInvestorIndividualSummary) {

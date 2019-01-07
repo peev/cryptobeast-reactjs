@@ -826,10 +826,6 @@ class InvestorStore {
     this.selectedInvestorIndividualSummaryTransactions = TransactionStore.transactions
       .filter(t => t.investorId === id);
 
-      console.log('------------------------------------');
-      console.log(this.selectedInvestorIndividualSummaryTransactions);
-      console.log('------------------------------------');
-
     // if (this.selectedInvestorIndividualSummary) {
     //   // sets the editing values for the current investor
     //   this.updateInvestorValues.fullName = this.selectedInvestorIndividualSummary.fullName;

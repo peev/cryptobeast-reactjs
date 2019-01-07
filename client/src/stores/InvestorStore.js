@@ -220,20 +220,17 @@ class InvestorStore {
       let totalInvestmentValue = 0;
       let totalSharesBought = 0;
       this.selectedInvestorIndividualSummaryTransactions.forEach((transaction) => {
-        if (transaction.amountInUSD > 0) {
-          totalInvestmentValue += transaction.amountInUSD;
-          totalSharesBought += transaction.shares;
+        if (transaction.type === 'd') {
+          totalInvestmentValue += transaction.totalValueUSD;
+          totalSharesBought += transaction.sharesCreated;
         }
       });
-
       if (totalSharesBought !== 0) {
         const calculatedIndividualWeightedEntryPrice = totalInvestmentValue / totalSharesBought;
         return calculatedIndividualWeightedEntryPrice;
       }
-
       return null;
     }
-
     return null;
   }
 
@@ -826,8 +823,12 @@ class InvestorStore {
       this.selectedInvestorIndividualSummary = null;
     }
 
-    this.selectedInvestorIndividualSummaryTransactions = PortfolioStore.currentPortfolioTransactions
+    this.selectedInvestorIndividualSummaryTransactions = TransactionStore.transactions
       .filter(t => t.investorId === id);
+
+      console.log('------------------------------------');
+      console.log(this.selectedInvestorIndividualSummaryTransactions);
+      console.log('------------------------------------');
 
     // if (this.selectedInvestorIndividualSummary) {
     //   // sets the editing values for the current investor

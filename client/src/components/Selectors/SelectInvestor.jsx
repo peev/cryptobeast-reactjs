@@ -52,7 +52,6 @@ type Props = {
   handleChange: PropTypes.func,
   PortfolioStore: Object,
   value: string,
-  style: Object,
   isClearable: boolean,
 };
 
@@ -76,7 +75,7 @@ class SelectInvestor extends React.Component<Props> {
   );
 
   render() {
-    const { classes, PortfolioStore, value, style, isClearable } = this.props;
+    const { classes, PortfolioStore, value, isClearable } = this.props;
     const { currentPortfolioInvestors } = PortfolioStore;
     const investorsToShow = [];
     currentPortfolioInvestors.map((investor: object) => ({ value: investor.id, label: investor.name }))

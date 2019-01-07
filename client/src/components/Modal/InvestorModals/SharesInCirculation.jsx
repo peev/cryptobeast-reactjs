@@ -84,7 +84,7 @@ class SharesInCirculation extends React.Component<Props, State> {
 
   render() {
     const { classes, PortfolioStore, TransactionStore, InvestorStore } = this.props;
-    const purchasedShares = PortfolioStore.currentPortfolioInvestors.filter((el: object) => el.purchasedShares > 0);
+    // const purchasedShares = PortfolioStore.currentPortfolioInvestors.filter((el: object) => el.purchasedShares > 0);
     const { selectedPortfolio } = PortfolioStore;
     // const portfolioShares = selectedPortfolio ? selectedPortfolio.shares : 0;
     const portfolioShares = selectedPortfolio && TransactionStore.numOfShares !== 0 &&

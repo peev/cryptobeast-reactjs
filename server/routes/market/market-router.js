@@ -6,7 +6,8 @@ const attachTo = (app, repository) => {
 
   router
     .get('/tickersFromCoinMarketCap', controller.getTickersFromCoinMarketCap)
-    .get('/getEthToUsd', controller.getEthToUsd);
+    .get('/getEthToUsd', controller.getEthToUsd)
+    .get('/ethHistory/:portfolioId', controller.getEthHistory);
 
   app.use('/market', router);
 };

@@ -30,6 +30,16 @@ const internalRequesterService = (repository) => {
     },
   }).catch(err => console.log(err));
 
+  const getFirstAllocationByPortfolioId = async portfolioId => repository.findOne({
+    modelName: 'Allocation',
+    options: {
+      where: {
+        portfolioId,
+      },
+      order: [['timestamp', 'ASC']],
+    },
+  }).catch(err => console.log(err));
+
   const getAssetsByPortfolioId = async portfolioId => repository.find({
     modelName: 'Asset',
     options: {
@@ -240,6 +250,7 @@ const internalRequesterService = (repository) => {
     getCurrencyByTokenName,
     getPortfolioByUserAddress,
     getLastAllocationByPortfolioId,
+    getFirstAllocationByPortfolioId,
     getAssetsByPortfolioId,
     getTradesByPortfolioIdGreaterThanTimestampDesc,
     getTransactionsByPortfolioIdGreaterThanTimestampDesc,

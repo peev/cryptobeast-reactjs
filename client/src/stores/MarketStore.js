@@ -2,6 +2,7 @@
 /* eslint no-console: 0 */
 import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
+import PortfolioStore from './PortfolioStore';
 
 class MarketStore {
   @observable marketSummaries;
@@ -15,6 +16,7 @@ class MarketStore {
   @observable liquidity;
   @observable correlationMatrix;
   @observable ethToUsd;
+  @observable ethHistory;
 
   constructor() {
     this.marketSummaries = {};
@@ -28,6 +30,7 @@ class MarketStore {
     this.liquidity = [];
     this.correlationMatrix = [];
     this.ethToUsd = null;
+    this.ethHistory = null;
   }
 
   init() {
@@ -37,6 +40,7 @@ class MarketStore {
 
     this.getTickersFromCoinMarketCap();
     this.getEthToUsd();
+    this.getEthHistory();
     // requester.Market.getTickersFromCoinMarketCap()
     //   .then(this.convertMarketPriceHistory)
     //   .catch((err: object) => console.log(err));
@@ -100,6 +104,18 @@ class MarketStore {
         this.ethToUsd = result.data;
       })
       .catch((err: object) => console.log(err));
+  }
+
+  @action.bound
+  getEthHistory() {
+    if (PortfolioStore.selectedPortfolioId !== null) {
+      return requester.Market.getEthHistory(PortfolioStore.selectedPortfolioId)
+        .then((result: Object) => {
+          this.ethHistory = result.data;
+        })
+        .catch((err: object) => console.log(err));
+    }
+    return [];
   }
 
   @computed

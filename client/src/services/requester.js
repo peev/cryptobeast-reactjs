@@ -47,9 +47,7 @@ const User = {
 };
 
 const Transaction = {
-  addTrade: data => requests.post('/account/createTrade', data),
   updateTrade: requestParams => requests.put('/account/updateTrade', requestParams),
-  deleteTrade: id => requests.delete(`/account/deleteTrade/${id}`, id),
   getAllTrades: () => requests.get('/account/allTrades'),
   getAllTransactions: portfolioId => requests.get(`/transaction/all/${portfolioId}`),
   setInvestor: (transactionId, investorId) => requests.put(`/transaction/setInvestor/${transactionId}/${investorId}`),
@@ -72,6 +70,7 @@ const Portfolio = {
   getPortfolioValueHistory: id => requests.get(`/portfolio/history/${id}`),
   getPortfolioValueHistoryByPeriod: (id, period) => requests.get(`/portfolio/historyByPeriod/${id}/${period}`),
   getAlpha: (id, period, benchmark) => requests.get(`/portfolio/alpha/${id}/${period}/${benchmark}`),
+  getShareHistory: id => requests.get(`/portfolio/shareHistory/${id}`),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
@@ -99,6 +98,7 @@ const Market = {
   getCorrelationMatrixHistory: requestParams => requests.get('/market/correlationMatrixHistory', requestParams),
   getTickersFromCoinMarketCap: () => requests.get('/market/tickersFromCoinMarketCap'),
   getEthToUsd: () => requests.get('/market/getEthToUsd'),
+  getEthHistory: portfolioId => requests.get(`/market/ethHistory/${portfolioId}`),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 

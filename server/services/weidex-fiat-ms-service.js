@@ -21,9 +21,19 @@ const WeidexFiatMsService = () => {
       .catch(err => reject(err));
   });
 
+  const getEtherValueByRange = (start, end) => new Promise((resolve, reject) => {
+    requester.get(`${weidexFiatMsUrl}/ether/etherPriceByRange?start=${start}&end=${end}`)
+      .then((response) => {
+        const parsedResult = JSON.parse(response);
+        resolve(parsedResult);
+      })
+      .catch(err => reject(err));
+  });
+
   return {
     getFiatValueByTimestamp,
     getEtherValueByTimestamp,
+    getEtherValueByRange,
   };
 };
 

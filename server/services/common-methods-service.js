@@ -21,6 +21,9 @@ const commonMethodsService = (repository) => {
   const ethToUsd = (amount, ethToUsdParam) =>
     bigNumberService().product(bigNumberService().gweiToEth(amount), ethToUsdParam);
 
+  const getEthHistory = (start, end) =>
+    weidexFiatMsService().getEtherValueByRange(start, end).then(data => data);
+
   const getTokenPriceEthByTransaction = async (tr) => {
     const timestamp = await getTimestampByTxHash(tr.txHash);
     const tokenName = (tr.type === 'SELL' || tr.type === 'BUY') ? tr.token.name : tr.tokenName;
@@ -127,6 +130,7 @@ const commonMethodsService = (repository) => {
     getEthToUsd,
     getEthToUsdNow,
     getEthToUsdMiliseconds,
+    getEthHistory,
     calculateDays,
     getEndOfDay,
     getStartOfDay,

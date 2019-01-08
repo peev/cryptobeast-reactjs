@@ -30,7 +30,7 @@ class MarketStore {
     this.liquidity = [];
     this.correlationMatrix = [];
     this.ethToUsd = null;
-    this.ethHistory = null;
+    this.ethHistory = [];
   }
 
   init() {
@@ -109,11 +109,23 @@ class MarketStore {
   @action.bound
   getEthHistory() {
     if (PortfolioStore.selectedPortfolioId !== null) {
-      return requester.Market.getEthHistory(PortfolioStore.selectedPortfolioId)
+      requester.Market.getEthHistory(PortfolioStore.selectedPortfolioId)
         .then((result: Object) => {
           this.ethHistory = result.data;
         })
         .catch((err: object) => console.log(err));
+    }
+    this.ethHistory = [];
+  }
+
+  @computed
+  get ethHistoryBreakdown() {
+    if (this.ethHistory.length > 0) {
+      const result = [];
+      this.ethHistory.forEach((item: Object) => {
+        result.push(item.priceUsd);
+      });
+      return result;
     }
     return [];
   }

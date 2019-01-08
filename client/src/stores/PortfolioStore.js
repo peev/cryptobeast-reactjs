@@ -9,11 +9,11 @@ import {
   onBecomeObserved,
 } from 'mobx';
 import math from 'mathjs';
+import moment from 'moment';
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
-import AssetStore from './AssetStore';
 import history from '../services/History';
 import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
@@ -38,6 +38,7 @@ class PortfolioStore {
   @observable portfolioValueHistoryByPeriod;
   @observable standardDeviationPeriod;
   @observable alphaData;
+  @observable sharesHistory;
 
   constructor() {
     this.portfolios = [];
@@ -55,6 +56,7 @@ class PortfolioStore {
     this.portfolioValueHistoryByPeriod = [];
     this.standardDeviationPeriod = null;
     this.alphaData = null;
+    this.sharesHistory = [];
 
     // only start data fetching if those properties are actually used!
     onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
@@ -64,6 +66,7 @@ class PortfolioStore {
     onBecomeObserved(this, 'currentPortfolioPrices', this.getCurrentPortfolioPrices);
     onBecomeObserved(this, 'portfolioValueHistory', this.getPortfolioValueHistory);
     onBecomeObserved(this, 'portfolioValueHistoryByPeriod', this.getPortfolioValueHistoryByPeriod);
+    onBecomeObserved(this, 'sharesHistory', this.getShareHistory);
   }
 
   @action.bound
@@ -80,6 +83,46 @@ class PortfolioStore {
       .then(action((result: object) => {
         this.portfolioValueHistoryByPeriod = result.data;
       }));
+  }
+
+  @action.bound
+  getShareHistory() {
+    if (this.selectedPortfolioId !== null) {
+      requester.Portfolio.getShareHistory(this.selectedPortfolioId)
+        .then((result: Object) => {
+          this.sharesHistory = result.data;
+        })
+        .catch((err: object) => console.log(err));
+    }
+    this.sharesHistory = [];
+  }
+
+  @computed
+  get sharePriceBreakdownDates() {
+    if (this.sharesHistory.length) {
+      const result = [];
+      this.sharesHistory.forEach((item: Object) => {
+        result.push(moment(new Date(item.timestamp)).format('DD/MM/YYYY'));
+      });
+      return result;
+    }
+    return [];
+  }
+
+  @computed
+  get sharePriceBreakdownShares() {
+    if (this.sharesHistory.length > 0 && this.portfolioValueHistory.length > 0) {
+      const result = [];
+      this.sharesHistory.forEach((item: Object) => {
+        this.portfolioValueHistory.forEach((pItem: Object) => {
+          if (item.timestamp === pItem.timestamp) {
+            result.push(Number(BigNumberService.toFixedParam(BigNumberService.quotient(pItem.usd, item.shares), 2)));
+          }
+        });
+      });
+      return result;
+    }
+    return [];
   }
 
   @computed
@@ -420,117 +463,6 @@ class PortfolioStore {
       });
   };
 
-  // TODO: I am 90% sure this is deprecated
-  @action
-  createTrade(fromAsset, toAsset) {
-    const selectedExchange = AssetStore.selectedExchangeAssetAllocation !== '' ?
-      AssetStore.selectedExchangeAssetAllocation :
-      'Manually Added';
-    const today = new Date().toISOString().substring(0, 10);
-    const newAssetAllocation = {
-      selectedExchange,
-      selectedDate: AssetStore.assetAllocationSelectedDate || today,
-      fromCurrency: AssetStore.selectedCurrencyFromAssetAllocation.currency,
-      portfolioId: this.selectedPortfolioId,
-      fromAmount: AssetStore.assetAllocationFromAmount,
-      toCurrency: AssetStore.selectedCurrencyToAssetAllocation,
-      toAmount: AssetStore.assetAllocationToAmount,
-      feeCurrency: AssetStore.selectedCurrencyForTransactionFee,
-      feeAmount: AssetStore.assetAllocationFee,
-    };
-    let type = '';
-    let price = 0;
-    let filled = 0;
-    let market = '';
-    const tradingCoin = newAssetAllocation.toCurrency;
-    switch (tradingCoin) {
-      case 'BTC':
-      case 'ETH':
-      case 'USDT':
-        type = 'sell';
-        market = tradingCoin;
-        price = newAssetAllocation.toAmount / newAssetAllocation.fromAmount;
-        filled = newAssetAllocation.fromAmount;
-        break;
-      default:
-        type = 'buy';
-        market = newAssetAllocation.fromCurrency;
-        price = newAssetAllocation.fromAmount / newAssetAllocation.toAmount;
-        filled = newAssetAllocation.toAmount;
-        break;
-    }
-
-    let dateOfEntry = null;
-    if (newAssetAllocation.selectedDate) {
-      dateOfEntry = new Date(newAssetAllocation.selectedDate).toISOString();
-    } else {
-      dateOfEntry = new Date().toISOString();
-    }
-
-    const trade = {
-      dateOfEntry,
-      source: newAssetAllocation.selectedExchange,
-      pair: `${newAssetAllocation.fromCurrency}-${newAssetAllocation.toCurrency}`,
-      fromAssetId: fromAsset.id,
-      fromCurrency: fromAsset.currency,
-      fromAmount: newAssetAllocation.fromAmount,
-      toAssetId: toAsset.id,
-      toCurrency: toAsset.currency,
-      toAmount: newAssetAllocation.toAmount,
-      type,
-      price,
-      filled,
-      fee: newAssetAllocation.feeAmount,
-      feeCurrency: newAssetAllocation.feeCurrency,
-      totalPrice: price * filled,
-      market,
-      portfolioId: newAssetAllocation.portfolioId,
-    };
-    requester.Trade.addTrade(trade)
-      .then((response) => {
-        this.currentPortfolioTrades.push(response.data);
-      });
-  }
-
-  @action.bound
-  deleteTrade(trade) {
-    const selectedExchange = AssetStore.selectedExchangeAssetAllocation !== '' ?
-      AssetStore.selectedExchangeAssetAllocation :
-      'Manually Added';
-    const newAssetAllocation = {
-      selectedExchange,
-      selectedDate: trade.transactionDate,
-      fromCurrency: trade.toCurrency,
-      portfolioId: this.selectedPortfolioId,
-      fromAmount: trade.toAmount,
-      toCurrency: trade.fromCurrency,
-      toAmount: trade.fromAmount,
-      feeCurrency: trade.feeCurrency,
-      feeAmount: trade.fee,
-    };
-    const tradeId = trade.id;
-    console.log(newAssetAllocation);
-
-    // NOTE: allocation request has update, create and delete.
-    // That why it returns the updated assets for the current portfolio
-    return requester.Asset.allocate(newAssetAllocation)
-      .then(action((result) => {
-        this.currentPortfolioAssets = result.data.assets;
-        this.removeTrade(tradeId);
-      }))
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-  @action
-  removeTrade(id) {
-    requester.Trade.deleteTrade(id)
-      .then(action(() => {
-        this.currentPortfolioTrades = this.currentPortfolioTrades.filter(trade => trade.id !== id);
-      }))
-      .catch(err => console.log(err));
-  }
-
   @computed
   get groupedCurrentPortfolioAssets() {
     if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0 &&
@@ -558,30 +490,6 @@ class PortfolioStore {
     return [];
   }
 
-  // FOR DELETE
-  // @computed
-  // get summaryPortfolioAssets() {
-  //   // NOTE: all the conditions needs to be fulfilled in order to create
-  //   // portfolio asset summary
-  //   // debugger;
-  //   if (this.selectedPortfolio &&
-  //     this.currentPortfolioAssets.length > 0 &&
-  //     FiatCurrenciesStore.fiatCurrencies.length > 0 ) {
-  //     const { marketPriceHistory } = MarketStore;
-  //     const currentAssets = this.groupedCurrentPortfolioAssets;
-  //     const selectedPortfolioSummary = [];
-
-  //     // Creates the needed array, that will be shown in the view
-  //     currentAssets.forEach((asset) => {
-  //     });
-
-  //     return selectedPortfolioSummary;
-  //   }
-
-  //   return [];
-  // }
-  // #endregion
-
   // used !!!
   @computed
   get currentMarketSummaryPercentageChange() {
@@ -601,6 +509,7 @@ class PortfolioStore {
     return [];
   }
 
+  @computed
   get summaryAssetsBreakdown() {
     return this.currentPortfolioAssets.map((el: object) => ({
       y: Number(BigNumberService.toFixedParam(el.weight, 2)),
@@ -716,29 +625,6 @@ class PortfolioStore {
       this.getPortfolioValueHistory();
       MarketStore.getTickersFromCoinMarketCap();
     }
-    // FOR DELETE
-    // InvestorStore.selectedInvestor = ''; // reset InvestorDetailsTable
-    // if (id !== 0) {
-    //   this.selectedPortfolioId = id;
-    // }
-    // if (this.portfolios.length) {
-    //   this.portfolios.forEach((el) => {
-    //     // Returns only needed values from selected portfolio
-    //     if (el.id === id) {
-    //       this.selectedPortfolio = { ...el };
-
-    //       // removed eager loading and all data is separated
-    //       this.getCurrentPortfolioAssets();
-    //       this.getCurrentPortfolioPrices();
-    //       this.getCurrentPortfolioInvestors();
-    //       this.getCurrentPortfolioTrades();
-    //       this.getCurrentPortfolioTransactions();
-    //     }
-    //   });
-    //   InvestorStore.selectedInvestorIndividualSummary = null;
-    //   // Analytics.btcPriceHistoryForPeriod();
-    //   Analytics.getClosingSharePriceHistory();
-    // }
   }
 
   @action

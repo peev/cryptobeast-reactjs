@@ -330,7 +330,7 @@ class AssetStore {
     return requester.Asset.allocate(newAssetAllocation)
       .then(action((result: object) => {
         PortfolioStore.currentPortfolioAssets = result.data.assets;
-        PortfolioStore.createTrade(result.data.fromAsset, result.data.toAsset);
+        // PortfolioStore.createTrade(result.data.fromAsset, result.data.toAsset);
 
         NotificationStore.addMessage('successMessages', 'Successful asset allocation');
 

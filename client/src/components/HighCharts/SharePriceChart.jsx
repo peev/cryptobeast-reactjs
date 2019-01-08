@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
-import ReactHighcharts from 'react-highcharts';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import { withStyles } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
@@ -17,12 +18,13 @@ const styles = () => ({
 });
 
 type Props = {
-  Analytics: Object,
+  PortfolioStore: Object,
+  MarketStore: Object,
   classes: Object,
 };
 
-const SharePriceChart = inject('Analytics')(observer(({ ...props }: Props) => {
-  const { Analytics, classes } = props;
+const SharePriceChart = inject('PortfolioStore', 'MarketStore')(observer(({ ...props }: Props) => {
+  const { PortfolioStore, MarketStore, classes } = props;
 
   const config = {
     chart: {
@@ -32,53 +34,42 @@ const SharePriceChart = inject('Analytics')(observer(({ ...props }: Props) => {
       text: 'Protfolio share price',
     },
     xAxis: [{
-      categories: [],
+      categories: PortfolioStore.sharePriceBreakdownDates,
       crosshair: true,
+      type: 'datetime',
+      dateTimeLabelFormats: {
+        day: '%d %b %Y',
+      },
     }],
-    yAxis: [{ // Primary yAxis
+    yAxis: [{
+      gridLineWidth: 0,
+      title: {
+        text: 'ETH',
+        style: {
+          color: classes.etc,
+        },
+      },
+      labels: {
+        format: '{value}$',
+        style: {
+          color: classes.etc,
+        },
+      },
+      opposite: true,
+    }, {
       labels: {
         format: '{value}$',
         style: {
           color: classes.shares,
         },
       },
-      title: {
-        text: 'ETC',
-        style: {
-          color: classes.shares,
-        },
-      },
-      opposite: true,
-    }, { // Secondary yAxis
-      gridLineWidth: 0,
       title: {
         text: 'Share price',
         style: {
-          color: classes.btc,
+          color: classes.shares,
         },
       },
-      labels: {
-        format: '{value}$',
-        style: {
-          color: classes.btc,
-        },
-      },
-
-    }, { // Tertiary yAxis
-      gridLineWidth: 0,
-      title: {
-        text: 'BTC',
-        style: {
-          color: classes.etc,
-        },
-      },
-      labels: {
-        format: '{value}$',
-        style: {
-          color: classes.etc,
-        },
-      },
-      opposite: true,
+      opposite: false,
     }],
     tooltip: {
       shared: true,
@@ -90,40 +81,35 @@ const SharePriceChart = inject('Analytics')(observer(({ ...props }: Props) => {
       verticalAlign: 'top',
       y: 55,
       floating: true,
-      // backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255,255,255,0.25)',
+    },
+    credits: {
+      enabled: false,
     },
     series: [{
       name: 'Share price',
       type: 'spline',
       yAxis: 1,
-      data: [],
+      data: PortfolioStore.sharePriceBreakdownShares,
       tooltip: {
         valueSuffix: ' USD',
       },
-    }, {
-      name: 'BTC',
-      type: 'spline',
-      yAxis: 2,
-      data: [],
-      marker: {
-        enabled: false,
-      },
-      tooltip: {
-        valueSuffix: ' USD',
-      },
+      color: Highcharts.getOptions().colors[0],
     }, {
       name: 'ETH',
       type: 'spline',
-      data: [],
+      data: MarketStore.ethHistoryBreakdown,
       tooltip: {
         valueSuffix: ' USD',
       },
+      color: Highcharts.getOptions().colors[2],
     }],
   };
 
-
   return (
-    <ReactHighcharts config={config} />
+    <HighchartsReact
+      highcharts={Highcharts}
+      options={config}
+    />
   );
 }));
 

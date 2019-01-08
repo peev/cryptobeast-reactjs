@@ -74,13 +74,13 @@ class Performance extends React.Component<Props, State> {
           </Grid>
         </Grid>
 
-        <Grid container>
+        {/* <Grid container>
           <Grid item xs={2} sm={2} md={2} className={[classes.marginRight, classes.flex, classes.flexCenter].join(' ')}>
             <SelectBenchmark />
           </Grid>
-        </Grid>
+        </Grid> */}
 
-        <Grid container>
+        <Grid container className={classes.marginTop}>
           <Grid item xs={12} sm={12} md={12}>
             <SharePriceChart />
           </Grid>

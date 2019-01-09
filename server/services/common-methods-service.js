@@ -53,6 +53,16 @@ const commonMethodsService = (repository) => {
     return dates;
   };
 
+  const getEtherPriceByClosestTimestamp = (num, arr) => {
+    let curr = arr[0];
+    for (let i = 0; i < arr.length; i += 1) {
+      if (Math.abs(num - arr[i].createdAt) < Math.abs(num - curr.createdAt)) {
+        curr = arr[i];
+      }
+    }
+    return curr;
+  };
+
   const getEndOfDay = (timestamp) => {
     const firstDate = new Date(timestamp);
     firstDate.setHours(23);
@@ -140,6 +150,7 @@ const commonMethodsService = (repository) => {
     tokenToEth,
     handlePeriod,
     millisecondsToTimestamp,
+    getEtherPriceByClosestTimestamp,
   };
 };
 

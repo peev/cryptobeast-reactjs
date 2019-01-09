@@ -71,18 +71,26 @@ class PortfolioStore {
 
   @action.bound
   getPortfolioValueHistory() {
-    requester.Portfolio.getPortfolioValueHistory(this.selectedPortfolioId)
-      .then(action((result: object) => {
-        this.portfolioValueHistory = result.data;
-      }));
+    if (this.selectedPortfolioId !== null) {
+      requester.Portfolio.getPortfolioValueHistory(this.selectedPortfolioId)
+        .then(action((result: object) => {
+          this.portfolioValueHistory = result.data;
+        }));
+    } else {
+      this.portfolioValueHistory = [];
+    }
   }
 
   @action.bound
   getPortfolioValueHistoryByPeriod() {
-    requester.Portfolio.getPortfolioValueHistoryByPeriod(this.selectedPortfolioId, 'w')
-      .then(action((result: object) => {
-        this.portfolioValueHistoryByPeriod = result.data;
-      }));
+    if (this.selectedPortfolioId !== null) {
+      requester.Portfolio.getPortfolioValueHistoryByPeriod(this.selectedPortfolioId, 'w')
+        .then(action((result: object) => {
+          this.portfolioValueHistoryByPeriod = result.data;
+        }));
+    } else {
+      this.portfolioValueHistoryByPeriod = [];
+    }
   }
 
   @action.bound

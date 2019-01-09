@@ -20,11 +20,62 @@ const styles = () => ({
 type Props = {
   PortfolioStore: Object,
   MarketStore: Object,
+  sharePriceOnly: boolean,
   classes: Object,
 };
 
 const SharePriceChart = inject('PortfolioStore', 'MarketStore')(observer(({ ...props }: Props) => {
-  const { PortfolioStore, MarketStore, classes } = props;
+  const { PortfolioStore, MarketStore, classes, sharePriceOnly } = props;
+
+  const onlyShare = {
+    chart: {
+      zoomType: 'xy',
+    },
+    title: {
+      text: null,
+    },
+    xAxis: [{
+      categories: PortfolioStore.sharePriceBreakdownDates,
+      crosshair: true,
+      type: 'datetime',
+      dateTimeLabelFormats: {
+        day: '%d %b %Y',
+      },
+    }],
+    yAxis: [{
+      labels: {
+        format: '{value}$',
+        style: {
+          color: classes.shares,
+        },
+      },
+      title: {
+        text: 'Share price',
+        style: {
+          color: classes.shares,
+        },
+      },
+      opposite: false,
+    }],
+    tooltip: {
+      shared: true,
+    },
+    legend: {
+      verticalAlign: 'bottom',
+    },
+    credits: {
+      enabled: false,
+    },
+    series: [{
+      name: 'Share price',
+      type: 'spline',
+      data: PortfolioStore.sharePriceBreakdownShares,
+      tooltip: {
+        valueSuffix: ' USD',
+      },
+      color: Highcharts.getOptions().colors[0],
+    }],
+  };
 
   const config = {
     chart: {
@@ -75,12 +126,7 @@ const SharePriceChart = inject('PortfolioStore', 'MarketStore')(observer(({ ...p
       shared: true,
     },
     legend: {
-      layout: 'vertical',
-      align: 'left',
-      x: 80,
-      verticalAlign: 'top',
-      y: 55,
-      floating: true,
+      verticalAlign: 'bottom',
     },
     credits: {
       enabled: false,
@@ -106,10 +152,21 @@ const SharePriceChart = inject('PortfolioStore', 'MarketStore')(observer(({ ...p
   };
 
   return (
-    <HighchartsReact
-      highcharts={Highcharts}
-      options={config}
-    />
+    <div>
+      {
+        sharePriceOnly
+        ?
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={onlyShare}
+        />
+        :
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={config}
+        />
+      }
+    </div>
   );
 }));
 

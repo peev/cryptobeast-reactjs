@@ -3,7 +3,7 @@ import React from 'react';
 import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 
-import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
+// import SelectBenchmark from '../../Selectors/Analytics/SelectBenchmark';
 import TotalAssetsValue from '../../HighCharts/TotalAssetsValue';
 import SummaryPerformanceCard from '../../Cards/Analytics/SummaryPerformanceCard';
 import SharePriceChart from '../../HighCharts/SharePriceChart';
@@ -82,7 +82,9 @@ class Performance extends React.Component<Props, State> {
 
         <Grid container className={classes.marginTop}>
           <Grid item xs={12} sm={12} md={12}>
-            <SharePriceChart />
+            <SharePriceChart
+              sharePriceOnly={false}
+            />
           </Grid>
         </Grid>
 

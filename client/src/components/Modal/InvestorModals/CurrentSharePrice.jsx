@@ -2,25 +2,13 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withStyles, Grid } from '@material-ui/core';
-import {
-  HighchartsStockChart,
-  withHighcharts,
-  XAxis,
-  YAxis,
-  Chart,
-  Legend,
-  Tooltip,
-  Navigator,
-  SplineSeries,
-  RangeSelector,
-} from 'react-jsx-highstock';
-import Highcharts from 'highcharts/highstock';
 import { inject, observer } from 'mobx-react';
 
 import Modal from '@material-ui/core/Modal';
 import InvestorCard from '../../CustomElements/InvestorCard';
 import Button from '../../CustomButtons/Button';
 import InvestorCardButton from '../../CustomButtons/InvestorCardButton';
+import SharePriceChart from '../../HighCharts/SharePriceChart';
 
 const getModalStyle = () => {
   const top = 22;
@@ -119,61 +107,26 @@ class CurrentSharePrice extends React.Component<Props, State> {
                 <Typography
                   variant="title"
                   id="modal-title"
-                  style={{ fontSize: '18px', fontWeight: '400' }}
+                  style={{ fontSize: '18px', fontWeight: '400', marginBottom: '20px' }}
                 >
                   Share Price Breakdown
                 </Typography>
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
-                <HighchartsStockChart>
-                  <Chart zoomType="x" />
-                  <Legend>
-                    {/* <Legend.Title>Key</Legend.Title> */}
-                  </Legend>
-
-                  <RangeSelector>
-                    <RangeSelector.Button count={1} type="day">1d</RangeSelector.Button>
-                    <RangeSelector.Button count={7} type="day">7d</RangeSelector.Button>
-                    <RangeSelector.Button count={1} type="month">1m</RangeSelector.Button>
-                    <RangeSelector.Button type="all">All</RangeSelector.Button>
-                    <RangeSelector.Input />
-                  </RangeSelector>
-
-                  <Tooltip />
-
-                  <XAxis>
-                    <XAxis.Title>Time Interval</XAxis.Title>
-                  </XAxis>
-
-                  {/* <YAxis id="price">
-                      <YAxis.Title>USD</YAxis.Title>
-                      <AreaSplineSeries id="profit" name="Opening Time" data={PortfolioStore.currentPortfolioClosingSharePricesBreackdown} />
-                    </YAxis> */}
-
-                  <YAxis id="social" opposite>
-                    <YAxis.Title>USD</YAxis.Title>
-                    <SplineSeries
-                      id="twitter"
-                      name="Closing Time"
-                      data={Analytics.currentPortfolioClosingSharePricesBreakdown}
-                    />
-                  </YAxis>
-
-                  <Navigator>
-                    <Navigator.Series seriesId="profit" />
-                    <Navigator.Series seriesId="twitter" />
-                  </Navigator>
-                </HighchartsStockChart>
+                <SharePriceChart
+                  sharePriceOnly
+                />
               </Grid>
 
               <Grid item xs={12} sm={12} md={12}>
                 <Button
+                  style={{ float: 'right' }}
                   color="primary"
                   className={classes.button}
                   onClick={this.handleClose}
                 >
-                  Cancel
+                  Close
                 </Button>
               </Grid >
             </Grid>
@@ -184,4 +137,4 @@ class CurrentSharePrice extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(withHighcharts(CurrentSharePrice, Highcharts));
+export default withStyles(styles)(CurrentSharePrice);

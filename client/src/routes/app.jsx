@@ -2,7 +2,7 @@ import SummaryPage from './../views/Summary/Summary';
 // import AssetMovements from './../views/AssetMovements/AssetMovements';
 import Simulator from './../views/Simulator/Simulator';
 import TransactionHistory from './../views/TransactionHistory/TransactionHistory';
-import Ledgers from './../views/Ledgers/Ledgers';
+// import Ledgers from './../views/Ledgers/Ledgers';
 import Investors from './../views/Investors/Investors';
 import Analytics from './../views/Analytics/Analytics';
 import Settings from './../views/Settings/Settings';
@@ -13,7 +13,7 @@ import SettingsIcon from './../components/CustomIcons/Sidebar/SettingsIcon';
 import SimulatorIcon from './../components/CustomIcons/Sidebar/SimulatorIcon';
 import AnalyticsIcon from './../components/CustomIcons/Sidebar/AnalyticsIcon';
 import TransactionHistoryIcon from './../components/CustomIcons/Sidebar/TransactionHistoryIcon';
-import LedgersIcon from './../components/CustomIcons/Sidebar/LedgersIcon';
+// import LedgersIcon from './../components/CustomIcons/Sidebar/LedgersIcon';
 // import AssetMovementsIcon from './../components/CustomIcons/Sidebar/AssetMovementsIcon';
 
 const appRoutes = [
@@ -52,13 +52,13 @@ const appRoutes = [
     icon: TransactionHistoryIcon,
     component: TransactionHistory,
   },
-  {
-    path: '/Ledgers',
-    sidebarName: 'Ledgers',
-    navbarName: 'Ledgers',
-    icon: LedgersIcon,
-    component: Ledgers,
-  },
+  // {
+  //   path: '/Ledgers',
+  //   sidebarName: 'Ledgers',
+  //   navbarName: 'Ledgers',
+  //   icon: LedgersIcon,
+  //   component: Ledgers,
+  // },
   {
     path: '/Simulator',
     sidebarName: 'Simulator',

@@ -160,7 +160,6 @@ const portfolioController = (repository) => {
   const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp, ethPrices, isAlpha) => {
     const result = tokenPricesArr.map(async (token) => {
       if (balance.tokenName === token.tokenName) {
-        // TODO eth by range
         if (isAlpha) {
           const ethToUsd = await commonService.getEthToUsd(timestamp);
           const eth = bigNumberService.product(balance.amount, token.value);
@@ -315,7 +314,7 @@ const portfolioController = (repository) => {
         } else {
           const currentDateTransactions = transactions.filter(tr => tr.txTimestamp <= timestamp && tr.txTimestamp >= timestampsMiliseconds[index - 1]);
           if (currentDateTransactions.length === 0) {
-            result.push(result[index - 1]);
+            result.push({ timestamp, shares: result[index - 1].shares });
           } else {
             result.push({ timestamp, shares: currentDateTransactions[currentDateTransactions.length - 1].numSharesAfter });
           }

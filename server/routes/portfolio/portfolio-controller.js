@@ -245,16 +245,16 @@ const portfolioController = (repository) => {
     }
   };
 
-  const sumAllocationBalance = async (balance, timestamp) => {
+  const sumAllocationBalance = async (balance, timestamp, ethPriceHistory) => {
     let result = { timestamp, eth: 0, usd: 0 };
     if (balance !== null) {
       result = balance.map(async (item) => {
         const currency = await intReqService.getCurrencyByTokenName(item.tokenName);
-        const ethToUsd = await commonService.getEthToUsdMiliseconds(timestamp);
+        const ethToUsd = ethPriceHistory.find(el => (el.timestamp === timestamp));
         const tokenPriceInEth = (item.tokenName === 'ETH') ? 1 :
           await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commonService.millisecondsToTimestamp(timestamp));
         const eth = bigNumberService.product(item.amount, tokenPriceInEth);
-        const usd = commonService.ethToUsd(eth, ethToUsd);
+        const usd = commonService.ethToUsd(eth, ethToUsd.priceUsd);
         return { timestamp, eth, usd };
       });
     } else {
@@ -263,8 +263,8 @@ const portfolioController = (repository) => {
     return Promise.all(result).then(data => data);
   };
 
-  const resolveAllocationsBalances = async (allocations) => {
-    const result = await allocations.map(async allocation => sumAllocationBalance(allocation.balance, allocation.timestamp));
+  const resolveAllocationsBalances = async (allocations, ethPriceHistory) => {
+    const result = await allocations.map(async allocation => sumAllocationBalance(allocation.balance, allocation.timestamp, ethPriceHistory));
     return Promise.all(result).then(data =>
       data.map((item) => {
         const eth = item.reduce((acc, obj) => (bigNumberService.sum(acc, obj.eth)), 0);
@@ -287,9 +287,14 @@ const portfolioController = (repository) => {
     const daysCount = commonService.handlePeriod(period);
     const timestamps = calculateDaysBackwards(daysCount);
     try {
+      const ethHistory = await commonService.getEthHistory(timestamps[timestamps.length - 1], timestamps[0]);
+      const ethPriceHistory = [];
+      timestamps.forEach((timestamp) => {
+        ethPriceHistory.push({ timestamp, priceUsd: commonService.getEtherPriceByClosestTimestamp(timestamp, ethHistory).priceUSD });
+      });
       const allocations = await resolveAllocations(id, timestamps);
       const filtertedAllocations = allocations.filter(data => data.balance !== null);
-      const result = await resolveAllocationsBalances(filtertedAllocations);
+      const result = await resolveAllocationsBalances(filtertedAllocations, ethPriceHistory);
       await res.status(200).send(result);
     } catch (error) {
       console.log(error);

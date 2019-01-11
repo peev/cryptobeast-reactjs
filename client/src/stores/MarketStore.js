@@ -108,7 +108,7 @@ class MarketStore {
 
   @action.bound
   getEthHistory() {
-    if (PortfolioStore.selectedPortfolioId !== null) {
+    if (PortfolioStore.selectedPortfolioId !== null && PortfolioStore.selectedPortfolioId > 0) {
       requester.Market.getEthHistory(PortfolioStore.selectedPortfolioId)
         .then((result: Object) => {
           this.ethHistory = result.data;

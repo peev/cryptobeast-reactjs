@@ -71,7 +71,7 @@ class PortfolioStore {
 
   @action.bound
   getPortfolioValueHistory() {
-    if (this.selectedPortfolioId !== null) {
+    if (this.selectedPortfolioId !== null && this.selectedPortfolioId > 0) {
       requester.Portfolio.getPortfolioValueHistory(this.selectedPortfolioId)
         .then(action((result: object) => {
           this.portfolioValueHistory = result.data;

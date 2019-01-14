@@ -229,13 +229,13 @@ const portfolioController = (repository) => {
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
       const timestampsMiliseconds = commonService.calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
       const timestamps = calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
-      const ethHistory = await commonService.getEthHistory(begin, today);
+      const ethHistory = await commonService.getEthHistoryDayValue(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
       const tokenPricesByDate = await getTokensPriceByDate(timestamps);
       const balances = await commonService.getBalancesByDate(timestampsMiliseconds, allocations);
       const filledPreviousBalances = commonService.fillPreviousBalances(balances);
       const ethPriceHistory = [];
-      timestampsMiliseconds.forEach((timestamp) => {
-        ethPriceHistory.push({ timestamp, priceUsd: commonService.getEtherPriceByClosestTimestamp(timestamp, ethHistory).priceUSD });
+      timestampsMiliseconds.forEach((timestamp, index) => {
+        ethPriceHistory.push({ timestamp, priceUsd: ethHistory[index].priceUSD });
       });
       const portfolioValueHistory = await calculatePortfolioValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances, ethPriceHistory, false);
       res.status(200).send(portfolioValueHistory);

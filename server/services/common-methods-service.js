@@ -24,6 +24,9 @@ const commonMethodsService = (repository) => {
   const getEthHistory = (start, end) =>
     weidexFiatMsService().getEtherValueByRange(start, end).then(data => data);
 
+  const getEthHistoryDayValue = (start, end) =>
+    weidexFiatMsService().getEtherPriceByRangeDayValue(start, end).then(data => data);
+
   const getTokenPriceEthByTransaction = async (tr) => {
     const timestamp = await getTimestampByTxHash(tr.txHash);
     const tokenName = (tr.type === 'SELL' || tr.type === 'BUY') ? tr.token.name : tr.tokenName;
@@ -151,6 +154,7 @@ const commonMethodsService = (repository) => {
     handlePeriod,
     millisecondsToTimestamp,
     getEtherPriceByClosestTimestamp,
+    getEthHistoryDayValue,
   };
 };
 

@@ -36,11 +36,11 @@ const marketController = (repository) => {
       const firstAllocation = await intReqService.getFirstAllocationByPortfolioId(portfolioId);
       const start = new Date(firstAllocation.timestamp).getTime();
       const end = new Date().getTime();
-      const ethHistory = await commonService.getEthHistory(start, end);
+      const ethHistory = await commonService.getEthHistoryDayValue(start, end);
       const timestampsMiliseconds = commonService.calculateDays(commonService.getEndOfDay(start), commonService.getEndOfDay(end));
       const result = [];
-      timestampsMiliseconds.forEach((timestamp) => {
-        result.push({ timestamp, priceUsd: closest(timestamp, ethHistory).priceUSD });
+      timestampsMiliseconds.forEach((timestamp, index) => {
+        result.push({ timestamp, priceUsd: ethHistory[index].priceUSD });
       });
       return res.status(200).send(result);
     } catch (error) {

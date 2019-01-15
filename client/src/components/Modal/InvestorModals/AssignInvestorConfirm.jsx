@@ -42,15 +42,19 @@ const styles = (theme: Object) => ({
     fontSize: '0.75rem',
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
   },
+  negative: {
+    color: '#eb4562',
+  },
 });
 
 type Props = {
-  transactionId: number,
+  transaction: Object,
   investorId: number,
   investorName: string,
   closeParent: any,
   classes: Object,
   TransactionStore: Object,
+  InvestorStore: Object,
 };
 
 type State = {
@@ -58,7 +62,7 @@ type State = {
   selectedInvestor: Object,
 };
 
-@inject('TransactionStore')
+@inject('TransactionStore', 'InvestorStore')
 @observer
 class AssignInvestorConfirm extends React.Component<Props, State> {
   state = {
@@ -88,13 +92,14 @@ class AssignInvestorConfirm extends React.Component<Props, State> {
 
   handleSave = () => {
     const { TransactionStore } = this.props;
-    TransactionStore.setInvestor(this.props.transactionId, this.props.investorId);
+    TransactionStore.setInvestor(this.props.transaction.id, this.props.investorId);
     this.props.closeParent();
     this.handleClose();
   }
 
   render() {
-    const { classes, investorName } = this.props;
+    const { classes, investorName, investorId, transaction, InvestorStore } = this.props;
+    const abbleToConfirm = InvestorStore.ableToassignTransaction(transaction, investorName, investorId);
 
     return (
       <span>
@@ -132,9 +137,16 @@ class AssignInvestorConfirm extends React.Component<Props, State> {
                   Assign Investor
                 </Typography>
               </div>
-              <div className={classes.gridRow}>
-                Are you sure you want to assign this transaction to {investorName}?
-              </div>
+              {abbleToConfirm
+                ?
+                <div className={classes.gridRow}>
+                  Are you sure you want to assign this transaction to {investorName}?
+                </div>
+                :
+                <div className={[classes.gridRow, classes.negative].join(' ')}>
+                  This investor does not have enough shares for the withdrawal.
+                </div>
+              }
               <Grid container justify="flex-end">
                 <Grid className={classes.gridColumn}>
                   <div className={classes.gridRow} style={{ textAlign: 'right' }}>
@@ -144,13 +156,18 @@ class AssignInvestorConfirm extends React.Component<Props, State> {
                     >
                       Cancel
                     </Button>
-                    <Button
-                      type="submit"
-                      color="primary"
-                      style={{ marginLeft: '25px' }}
-                    >
-                      Save
-                    </Button>
+                    {abbleToConfirm
+                      ?
+                      <Button
+                        type="submit"
+                        color="primary"
+                        style={{ marginLeft: '25px' }}
+                      >
+                        Save
+                      </Button>
+                      :
+                      null
+                    }
                   </div>
                 </Grid>
               </Grid >

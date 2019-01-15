@@ -54,12 +54,21 @@ const transactionController = (repository) => {
     const { investorId } = req.params;
     const transaction = await intReqService.getTransactionById(id);
     if (transaction.investorId === null) {
-      const transactionData = Object.assign({}, transaction, { id: transaction.id, investorId });
-      await repository.update({ modelName, updatedRecord: transactionData })
-        .then((response) => {
-          res.status(200).send(response);
-        })
-        .catch(error => res.status(400).send(error));
+      const investor = await intReqService.getInvestorById(investorId);
+      const { portfolioId } = investor;
+      const transactionsFromInvestor = await intReqService.getTransactionsByPortfolioIdAndInvestorIdWithoutTransactionIdAsc(portfolioId, investorId, transaction.id);
+      const totalShares = transactionsFromInvestor.reduce((acc, obj) => bigNumberService.sum(acc, obj.numSharesAfter), 0);
+      const ableToAssign = transaction.type === 'd' || (transaction.type === 'w' && transaction.sharesLiquidated <= totalShares);
+      if (ableToAssign) {
+        const transactionData = Object.assign({}, transaction, { id: transaction.id, investorId });
+        await repository.update({ modelName, updatedRecord: transactionData })
+          .then((response) => {
+            res.status(200).send(response);
+          })
+          .catch(error => res.status(400).send(error));
+      } else {
+        res.status(400).send('This investor does not have enough shares for the withdrawal.');
+      }
     } else {
       res.status(400).send('Unable to change investor!');
     }

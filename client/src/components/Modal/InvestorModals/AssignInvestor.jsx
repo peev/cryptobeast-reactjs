@@ -265,7 +265,7 @@ class AssignInvestor extends React.Component<Props, State> {
                       Cancel
                     </Button>
                     <AssignInvestorConfirm
-                      transactionId={transaction.id}
+                      transaction={transaction}
                       investorId={this.state.selectedInvestor.value}
                       investorName={this.state.selectedInvestor.label}
                       closeParent={this.handleClose}

@@ -120,7 +120,6 @@ class SharesInCirculation extends React.Component<Props, State> {
               <Grid item xs={12} sm={12} md={12}>
                 <InvestorPieChart
                   shares={InvestorStore.investorsShares}
-                  portfolioShares={portfolioShares}
                 />
               </Grid>
 

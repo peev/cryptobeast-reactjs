@@ -167,6 +167,20 @@ const internalRequesterService = (repository) => {
     },
   }).catch(err => console.log(err));
 
+  const getTransactionsByPortfolioIdAndInvestorIdWithoutTransactionIdAsc = (portfolioId, investorId, transactionId) => repository.find({
+    modelName: 'Transaction',
+    options: {
+      where: {
+        portfolioId,
+        investorId,
+        id: {
+          [op.ne]: transactionId,
+        },
+      },
+      order: [['txTimestamp', 'ASC']],
+    },
+  }).catch(err => console.log(err));
+
   const getFirstDepositByPortfolioId = portfolioId => repository.findOne({
     modelName: 'Transaction',
     options: {
@@ -246,6 +260,15 @@ const internalRequesterService = (repository) => {
     },
   }).catch(err => console.log(err));
 
+  const getInvestorById = id => repository.findOne({
+    modelName: 'Investor',
+    options: {
+      where: {
+        id,
+      },
+    },
+  }).catch(err => console.log(err));
+
   return {
     getCurrencyByTokenName,
     getPortfolioByUserAddress,
@@ -264,6 +287,7 @@ const internalRequesterService = (repository) => {
     getPortfolioByUserAddressIncludeAll,
     getTradeByTxHash,
     getTransactionsByPortfolioIdAsc,
+    getTransactionsByPortfolioIdAndInvestorIdWithoutTransactionIdAsc,
     getFirstDepositByPortfolioId,
     getAllocationBeforeTimestampByPortfolioId,
     getTransactionBeforeTimestampByPortfolioId,
@@ -271,6 +295,7 @@ const internalRequesterService = (repository) => {
     getAllocationByPortfolioIdAndTimestamp,
     getTransactionByPortfolioIdAndTxHash,
     getFirstDeposit,
+    getInvestorById,
   };
 };
 

@@ -3,19 +3,20 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import BigNumberService from '../../services/BigNumber';
 
 type Props = {
   shares: Object,
-  portfolioShares: Float,
 };
 
 const InvestorPieChart = (observer(({ ...props }: Props) => {
-  const { shares, portfolioShares } = props;
+  const { shares } = props;
+  const total = shares.reduce((acc: number, obj: number) => BigNumberService.sum(acc, obj.shares), 0);
   const filterEmpty = shares.filter((item: Object) => item.shares > 0);
   const pieData = filterEmpty.map((inv: Object) => {
-    const invSharesWeight = (inv.shares / portfolioShares) * 100;
+    const invSharesWeight = (inv.shares / total) * 100;
     return {
-      name: `${inv.name} (${Number(`${Math.round(`${invSharesWeight}e2`)}e-2`) || 0}%)`,
+      name: `${inv.name} ${BigNumberService.toFixedParam(inv.shares, 2)} (${Number(`${Math.round(`${invSharesWeight}e2`)}e-2`) || 0}%)`,
       y: Number(`${Math.round(`${invSharesWeight}e2`)}e-2`),
     };
   });

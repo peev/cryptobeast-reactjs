@@ -229,14 +229,11 @@ const portfolioController = (repository) => {
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
       const timestampsMiliseconds = commonService.calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
       const timestamps = calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
-      const ethHistory = await commonService.getEthHistory(begin, today);
+      const ethHistory = await commonService.getEthHistoryDayValue(timestampsMiliseconds[0], timestampsMiliseconds[timestampsMiliseconds.length - 1]);
       const tokenPricesByDate = await getTokensPriceByDate(timestamps);
       const balances = await commonService.getBalancesByDate(timestampsMiliseconds, allocations);
       const filledPreviousBalances = commonService.fillPreviousBalances(balances);
-      const ethPriceHistory = [];
-      timestampsMiliseconds.forEach((timestamp) => {
-        ethPriceHistory.push({ timestamp, priceUsd: commonService.getEtherPriceByClosestTimestamp(timestamp, ethHistory).priceUSD });
-      });
+      const ethPriceHistory = commonService.defineEthHistory(timestampsMiliseconds, ethHistory);
       const portfolioValueHistory = await calculatePortfolioValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances, ethPriceHistory, false);
       res.status(200).send(portfolioValueHistory);
     } catch (error) {
@@ -287,11 +284,10 @@ const portfolioController = (repository) => {
     const daysCount = commonService.handlePeriod(period);
     const timestamps = calculateDaysBackwards(daysCount);
     try {
-      const ethHistory = await commonService.getEthHistory(timestamps[timestamps.length - 1], timestamps[0]);
-      const ethPriceHistory = [];
-      timestamps.forEach((timestamp) => {
-        ethPriceHistory.push({ timestamp, priceUsd: commonService.getEtherPriceByClosestTimestamp(timestamp, ethHistory).priceUSD });
-      });
+      const ethHistory = await commonService.getEthHistoryDayValue(timestamps[timestamps.length - 1], timestamps[0]);
+      timestamps.sort(commonService.sortNumberDesc);
+      ethHistory.sort((a, b) => b.createdAt - a.createdAt);
+      const ethPriceHistory = commonService.defineEthHistory(timestamps, ethHistory);
       const allocations = await resolveAllocations(id, timestamps);
       const filtertedAllocations = allocations.filter(data => data.balance !== null);
       const result = await resolveAllocationsBalances(filtertedAllocations, ethPriceHistory);
@@ -363,11 +359,8 @@ const portfolioController = (repository) => {
       const today = new Date().getTime();
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
       const timestampsMiliseconds = commonService.calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
-      const ethHistory = await commonService.getEthHistory(begin, today);
-      const ethPriceHistory = [];
-      timestampsMiliseconds.forEach((timestamp) => {
-        ethPriceHistory.push({ timestamp, priceUsd: commonService.getEtherPriceByClosestTimestamp(timestamp, ethHistory).priceUSD });
-      });
+      const ethHistory = await commonService.getEthHistoryDayValue(timestampsMiliseconds[0], timestampsMiliseconds[timestampsMiliseconds.length - 1]);
+      const ethPriceHistory = commonService.defineEthHistory(timestampsMiliseconds, ethHistory);
 
       if (firstDepositTs > periodTs) {
         transaction = firstDeposit;

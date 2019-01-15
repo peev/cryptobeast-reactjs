@@ -21,8 +21,16 @@ const commonMethodsService = (repository) => {
   const ethToUsd = (amount, ethToUsdParam) =>
     bigNumberService().product(bigNumberService().gweiToEth(amount), ethToUsdParam);
 
-  const getEthHistory = (start, end) =>
-    weidexFiatMsService().getEtherValueByRange(start, end).then(data => data);
+  const getEthHistoryDayValue = (start, end) =>
+    weidexFiatMsService().getEtherPriceByRangeDayValue(start, end).then(data => data);
+
+  const defineEthHistory = (timestamps, ethHistory) => {
+    const result = [];
+    timestamps.forEach((timestamp, index) => {
+      result.push({ timestamp, priceUsd: ethHistory[index].priceUSD });
+    });
+    return result;
+  };
 
   const getTokenPriceEthByTransaction = async (tr) => {
     const timestamp = await getTimestampByTxHash(tr.txHash);
@@ -133,6 +141,10 @@ const commonMethodsService = (repository) => {
     }
   };
 
+  const sortNumberAsc = (a, b) => (a - b);
+
+  const sortNumberDesc = (a, b) => (b - a);
+
   return {
     getTimestampByTxHash,
     tokenToEthToUsd,
@@ -140,7 +152,6 @@ const commonMethodsService = (repository) => {
     getEthToUsd,
     getEthToUsdNow,
     getEthToUsdMiliseconds,
-    getEthHistory,
     calculateDays,
     getEndOfDay,
     getStartOfDay,
@@ -151,6 +162,10 @@ const commonMethodsService = (repository) => {
     handlePeriod,
     millisecondsToTimestamp,
     getEtherPriceByClosestTimestamp,
+    getEthHistoryDayValue,
+    sortNumberAsc,
+    sortNumberDesc,
+    defineEthHistory,
   };
 };
 

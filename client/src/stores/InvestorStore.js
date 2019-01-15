@@ -192,17 +192,6 @@ class InvestorStore {
   get investorsShares() {
     if (TransactionStore.transactions.length !== 0 && PortfolioStore.currentPortfolioInvestors !== null) {
       const result = [];
-      let unassignedShares = 0;
-      const unassignedTransactions = TransactionStore.transactions.filter(transaction => transaction.investorId === null);
-      unassignedTransactions.forEach((transaction) => {
-        if (transaction.type === 'd') {
-          unassignedShares = BigNumberService.sum(unassignedShares, transaction.sharesCreated);
-        } else {
-          unassignedShares = BigNumberService.difference(unassignedShares, transaction.sharesLiquidated);
-        }
-      });
-      result.push({ name: 'Unassigned', id: null, shares: unassignedShares });
-
       PortfolioStore.currentPortfolioInvestors.forEach((investor) => {
         const transactions = TransactionStore.transactions.filter(transaction => transaction.investorId === investor.id);
         let shares = 0;
@@ -218,6 +207,14 @@ class InvestorStore {
       return result;
     }
     return [];
+  }
+
+  @action
+  ableToassignTransaction(transaction, investorName, investorId) {
+    const shares = this.investorsShares;
+    const currentInvestorShares = shares.filter(item => item.id === investorId);
+    const total = currentInvestorShares.reduce((acc, obj) => BigNumberService.sum(acc, obj.shares), 0);
+    return transaction.type === 'd' || (transaction.type === 'w' && transaction.sharesLiquidated <= total);
   }
 
   @action

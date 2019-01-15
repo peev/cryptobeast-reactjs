@@ -229,7 +229,7 @@ const portfolioController = (repository) => {
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
       const timestampsMiliseconds = commonService.calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
       const timestamps = calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
-      const ethHistory = await commonService.getEthHistoryDayValue(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
+      const ethHistory = await commonService.getEthHistoryDayValue(timestampsMiliseconds[0], timestampsMiliseconds[timestampsMiliseconds.length - 1]);
       const tokenPricesByDate = await getTokensPriceByDate(timestamps);
       const balances = await commonService.getBalancesByDate(timestampsMiliseconds, allocations);
       const filledPreviousBalances = commonService.fillPreviousBalances(balances);

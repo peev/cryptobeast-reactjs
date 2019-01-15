@@ -365,10 +365,10 @@ const portfolioController = (repository) => {
       const today = new Date().getTime();
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
       const timestampsMiliseconds = commonService.calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
-      const ethHistory = await commonService.getEthHistory(begin, today);
+      const ethHistory = await commonService.getEthHistoryDayValue(timestampsMiliseconds[0], timestampsMiliseconds[timestampsMiliseconds.length - 1]);
       const ethPriceHistory = [];
-      timestampsMiliseconds.forEach((timestamp) => {
-        ethPriceHistory.push({ timestamp, priceUsd: commonService.getEtherPriceByClosestTimestamp(timestamp, ethHistory).priceUSD });
+      timestampsMiliseconds.forEach((timestamp, index) => {
+        ethPriceHistory.push({ timestamp, priceUsd: ethHistory[index].priceUSD });
       });
 
       if (firstDepositTs > periodTs) {

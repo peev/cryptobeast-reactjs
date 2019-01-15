@@ -234,11 +234,8 @@ const assetController = (repository) => {
       const tokenPricesByDate = await getTokensPriceByDate(timestamps);
       const balances = await commonService.getBalancesByDate(timestamps, allocations);
       const filledPreviousBalances = commonService.fillPreviousBalances(balances);
-      const ethHistory = await commonService.getEthHistoryDayValue(begin, today);
-      const ethPriceHistory = [];
-      timestamps.forEach((timestamp, index) => {
-        ethPriceHistory.push({ timestamp, priceUsd: ethHistory[index].priceUSD });
-      });
+      const ethHistory = await commonService.getEthHistoryDayValue(timestamps[0], timestamps[timestamps.length - 1]);
+      const ethPriceHistory = commonService.defineEthHistory(timestamps, ethHistory);
       const portfolioValueHistory = await calculatePortfolioAssetsValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances, ethPriceHistory);
       res.status(200).send(portfolioValueHistory);
     } catch (error) {

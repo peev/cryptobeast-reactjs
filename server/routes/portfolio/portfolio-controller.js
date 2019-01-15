@@ -233,10 +233,7 @@ const portfolioController = (repository) => {
       const tokenPricesByDate = await getTokensPriceByDate(timestamps);
       const balances = await commonService.getBalancesByDate(timestampsMiliseconds, allocations);
       const filledPreviousBalances = commonService.fillPreviousBalances(balances);
-      const ethPriceHistory = [];
-      timestampsMiliseconds.forEach((timestamp, index) => {
-        ethPriceHistory.push({ timestamp, priceUsd: ethHistory[index].priceUSD });
-      });
+      const ethPriceHistory = commonService.defineEthHistory(timestampsMiliseconds, ethHistory);
       const portfolioValueHistory = await calculatePortfolioValueHistory(timestamps, tokenPricesByDate, filledPreviousBalances, ethPriceHistory, false);
       res.status(200).send(portfolioValueHistory);
     } catch (error) {
@@ -288,12 +285,9 @@ const portfolioController = (repository) => {
     const timestamps = calculateDaysBackwards(daysCount);
     try {
       const ethHistory = await commonService.getEthHistoryDayValue(timestamps[timestamps.length - 1], timestamps[0]);
-      const ethPriceHistory = [];
       timestamps.sort(commonService.sortNumberDesc);
       ethHistory.sort((a, b) => b.createdAt - a.createdAt);
-      timestamps.forEach((timestamp, index) => {
-        ethPriceHistory.push({ timestamp, priceUsd: ethHistory[index].priceUSD });
-      });
+      const ethPriceHistory = commonService.defineEthHistory(timestamps, ethHistory);
       const allocations = await resolveAllocations(id, timestamps);
       const filtertedAllocations = allocations.filter(data => data.balance !== null);
       const result = await resolveAllocationsBalances(filtertedAllocations, ethPriceHistory);
@@ -366,10 +360,7 @@ const portfolioController = (repository) => {
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
       const timestampsMiliseconds = commonService.calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
       const ethHistory = await commonService.getEthHistoryDayValue(timestampsMiliseconds[0], timestampsMiliseconds[timestampsMiliseconds.length - 1]);
-      const ethPriceHistory = [];
-      timestampsMiliseconds.forEach((timestamp, index) => {
-        ethPriceHistory.push({ timestamp, priceUsd: ethHistory[index].priceUSD });
-      });
+      const ethPriceHistory = commonService.defineEthHistory(timestampsMiliseconds, ethHistory);
 
       if (firstDepositTs > periodTs) {
         transaction = firstDeposit;

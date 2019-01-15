@@ -136,6 +136,10 @@ const commonMethodsService = (repository) => {
     }
   };
 
+  const sortNumberAsc = (a, b) => (a - b);
+
+  const sortNumberDesc = (a, b) => (b - a);
+
   return {
     getTimestampByTxHash,
     tokenToEthToUsd,
@@ -155,6 +159,8 @@ const commonMethodsService = (repository) => {
     millisecondsToTimestamp,
     getEtherPriceByClosestTimestamp,
     getEthHistoryDayValue,
+    sortNumberAsc,
+    sortNumberDesc,
   };
 };
 

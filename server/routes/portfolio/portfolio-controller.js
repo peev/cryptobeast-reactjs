@@ -287,10 +287,12 @@ const portfolioController = (repository) => {
     const daysCount = commonService.handlePeriod(period);
     const timestamps = calculateDaysBackwards(daysCount);
     try {
-      const ethHistory = await commonService.getEthHistory(timestamps[timestamps.length - 1], timestamps[0]);
+      const ethHistory = await commonService.getEthHistoryDayValue(timestamps[timestamps.length - 1], timestamps[0]);
       const ethPriceHistory = [];
-      timestamps.forEach((timestamp) => {
-        ethPriceHistory.push({ timestamp, priceUsd: commonService.getEtherPriceByClosestTimestamp(timestamp, ethHistory).priceUSD });
+      timestamps.sort(commonService.sortNumberDesc);
+      ethHistory.sort((a, b) => b.createdAt - a.createdAt);
+      timestamps.forEach((timestamp, index) => {
+        ethPriceHistory.push({ timestamp, priceUsd: ethHistory[index].priceUSD });
       });
       const allocations = await resolveAllocations(id, timestamps);
       const filtertedAllocations = allocations.filter(data => data.balance !== null);

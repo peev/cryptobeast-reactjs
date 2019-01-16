@@ -18,15 +18,6 @@ const requests = {
   delete: url => axios.delete(`${API_ROOT}${url}`, options), // axios.delete doesn't support body in requests !!!
 };
 
-// not used
-const ApiAccount = {
-  addAccount: data => requests.post('/account/add', data),
-  update: requestParams => requests.put('/account/update', requestParams),
-  delete: id => requests.delete(`/account/delete/${id}`, id),
-  getBalance: data => requests.post('/account/getBalance', data),
-  sync: data => requests.get(`/weidex/sync/${data.id}`),
-};
-
 const Asset = {
   add: data => requests.post('/asset/add', data),
   update: requestParams => requests.put('/asset/update', requestParams),
@@ -116,7 +107,6 @@ const Weidex = {
 };
 
 export default {
-  ApiAccount,
   Asset,
   Currency,
   User,

@@ -10,10 +10,10 @@ import portfolioSelectStyles from './PortfolioSelectStyles';
 type Props = {
   classes: PropTypes.object.isRequired,
   PortfolioStore: PropTypes.object,
-  UserStore: PropTypes.object,
+  // UserStore: PropTypes.object,
 };
 
-@inject('PortfolioStore', 'UserStore', 'ApiAccountStore')
+@inject('PortfolioStore', 'UserStore')
 @observer
 class PortfolioSelect extends React.Component<Props> {
   handleChange = (event: SyntheticEvent) => {
@@ -23,20 +23,7 @@ class PortfolioSelect extends React.Component<Props> {
 
     // TODO FOR DELETE
     // this.updateUserDataInterval = null;
-    // if (this.props.ApiAccountStore.convertUserApis.length > 0) {
-    //   this.props.ApiAccountStore.syncUserApiData();
-
-    //   this.updateUserDataInterval = setInterval(() => this.props.ApiAccountStore.syncUserApiData(), 30000);
-    // }
   };
-
-  // TODO FOR DELETE
-  // componentDidMount() {
-  //   if (this.props.ApiAccountStore.convertUserApis.length > 0) {
-  //     this.props.ApiAccountStore.syncUserApiData();
-  //     this.updateUserDataInterval = setInterval(() => this.props.ApiAccountStore.syncUserApiData(), 30000);
-  //   }
-  // }
 
   render() {
     const { classes, PortfolioStore } = this.props;

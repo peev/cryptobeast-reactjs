@@ -8,8 +8,6 @@ import RegularButton from './../../components/CustomButtons/Button';
 import CreatePortfolio from './../../components/Modal/CreatePortfolio';
 import PortfoliosTable from './../../components/CustomTables/PortfoliosTable';
 import TimeSettings from '../../components/Cards/TimeSettings';
-import ApiIntegrations from './../../components/CustomTables/ApiIntegrations';
-import AddApiAccount from './../../components/Modal/ApiAccountModals/AddApiAccount';
 import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
 import storage from '../../services/storage';
 
@@ -36,18 +34,6 @@ const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }:
   return (
     <Grid container>
       <ItemGrid xs={12} sm={12} md={12}>
-        <RegularCard
-          cardTitle="API Integrations"
-          button={<AddApiAccount />}
-          content={
-            <ApiIntegrations
-              tableHead={['Exchange', 'Account', 'Status', 'Key', 'Secret', '']}
-            />
-          }
-        />
-      </ItemGrid>
-
-      <ItemGrid xs={12} sm={12} md={12} style={{ margin: '50px 0' }}>
         <RegularCard
           cardTitle="Portfolios"
           button={<CreatePortfolio place="settings" />}

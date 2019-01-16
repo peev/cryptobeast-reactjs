@@ -3,7 +3,6 @@ import * as React from 'react';
 import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import createStartPortfolioStyles from './CreateStartPortfolioStyles';
-import CreatePortfolio from '../../../components/Modal/CreatePortfolio';
 
 type Props = {
   classes: Object,
@@ -19,7 +18,6 @@ const CreateStartPortfolio = inject('PortfolioStore')(observer(({ classes, Portf
         <p className={classes.subTitle}>
           You currently have no portfolio to display. Please create a portfolio to start
         </p>
-        <CreatePortfolio place="startScreen" />
       </Grid>
     </Grid>
   );

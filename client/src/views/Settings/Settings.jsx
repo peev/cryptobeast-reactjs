@@ -5,7 +5,6 @@ import { inject, observer } from 'mobx-react';
 
 import { RegularCard, ItemGrid } from './../../components';
 import RegularButton from './../../components/CustomButtons/Button';
-import CreatePortfolio from './../../components/Modal/CreatePortfolio';
 import PortfoliosTable from './../../components/CustomTables/PortfoliosTable';
 import TimeSettings from '../../components/Cards/TimeSettings';
 import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
@@ -33,10 +32,9 @@ const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }:
 
   return (
     <Grid container>
-      <ItemGrid xs={12} sm={12} md={12}>
+      <ItemGrid xs={12} sm={12} md={12} style={{ margin: '0 0 50px 0' }}>
         <RegularCard
           cardTitle="Portfolios"
-          button={<CreatePortfolio place="settings" />}
           content={
             <PortfoliosTable
               tableHead={[

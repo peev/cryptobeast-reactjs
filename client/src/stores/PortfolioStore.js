@@ -548,22 +548,6 @@ class PortfolioStore {
     this.newPortfolioName = newValue;
   }
 
-  @action.bound
-  createPortfolio(placeCalled) {
-    const newPortfolio = {
-      name: this.newPortfolioName,
-    };
-    requester.Portfolio.create(newPortfolio)
-      .then(action((result) => {
-        InvestorStore.createDefaultInvestor(result.data);
-
-        if (placeCalled === 'startScreen') {
-          history.push('/summary');
-        }
-      }))
-      .catch(err => console.log(err));
-  }
-
   @action
   // eslint-disable-next-line class-methods-use-this
   handlePortfolioValidation() {

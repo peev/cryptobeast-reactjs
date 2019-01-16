@@ -590,19 +590,6 @@ class PortfolioStore {
       .catch(err => console.log(err));
   }
 
-  @action
-  // eslint-disable-next-line class-methods-use-this
-  removePortfolio(id) {
-    requester.Portfolio.delete(id)
-      .then(action((result) => {
-        if (result.data === 1) {
-          this.portfolios = this.portfolios.filter(el => el.id !== id);
-        }
-
-        this.selectPortfolio(this.portfolios[this.portfolios.length - 1].id);
-      }))
-      .catch(err => console.log(err));
-  }
   // #endregion
 
   @action.bound

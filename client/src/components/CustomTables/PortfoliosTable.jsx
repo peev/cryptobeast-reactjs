@@ -14,8 +14,6 @@ import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
 import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
 import tableStyle from '../../variables/styles/tableStyle';
-import ConfirmationModal from '../Modal/ConfirmationModal';
-
 
 type Props = {
   classes: Object,
@@ -41,15 +39,14 @@ function getSorting(order: string, orderBy: string) {
 }
 
 function createPortfolioSortableObjectFromArray(portfolioAsArray: Array) {
-  if (portfolioAsArray.length === 7) {
+  if (portfolioAsArray.length === 6) {
     return {
       name: portfolioAsArray[0],
       numShares: portfolioAsArray[1],
       sharePrice: portfolioAsArray[2],
       totalUSD: portfolioAsArray[3],
       update: portfolioAsArray[4],
-      delete: portfolioAsArray[5],
-      id: portfolioAsArray[6],
+      id: portfolioAsArray[5],
     };
   }
   return null;
@@ -120,11 +117,6 @@ class PortfoliosTable extends React.Component<Props, State> {
     orderBy: 'numShares',
   };
 
-  handleRemove = (id: string) => {
-    this.props.PortfolioStore.removePortfolio(id);
-    // console.log(id);
-  }
-
   handleUpdate = (id: string, newName: string) => {
     this.props.PortfolioStore.updatePortfolio(newName, id);
   }
@@ -168,7 +160,6 @@ class PortfoliosTable extends React.Component<Props, State> {
       null, // share price
       null, // total USD
       null, // remove
-      null, // delete
       obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
     ]);
 
@@ -186,15 +177,7 @@ class PortfoliosTable extends React.Component<Props, State> {
                 </TableCell>
               );
             }
-            if (ind === 5) {
-              return (
-                <TableCell className={classes.tableCell} key={uuid()}>
-                  {item}
-                  <ConfirmationModal onSave={() => this.handleRemove(arr[arr.length - 1])} message="Are you shure you want to delete this portfolio?" />
-                </TableCell>
-              );
-            }
-            if (ind < 6) {
+            if (ind < 5) {
               return (
                 <TableCell className={classes.tableCell} key={uuid()}>
                   {item}

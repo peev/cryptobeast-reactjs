@@ -730,6 +730,25 @@ class PortfolioStore {
   resetPortfolio() {
     this.newPortfolioName = '';
   }
+
+  @action
+  // eslint-disable-next-line class-methods-use-this
+  getPortfolioData(portfolioId: number) {
+    requester.Portfolio.getPortfolioAssetsByPortfolioId(portfolioId)
+      .then(action((result: object) => {
+        console.log(result);
+        if (result.data.length && result.data.length > 0) {
+          console.log(BigNumberService.toFixedParam((result.data
+            .reduce((acc: number, obj: Object) => BigNumberService.sum(acc, obj.totalUSD), 0)), 2));
+          return BigNumberService.toFixedParam((result.data
+            .reduce((acc: number, obj: Object) => BigNumberService.sum(acc, obj.totalUSD), 0)), 2);
+        }
+        return 0;
+      }))
+      .catch(action((err: object) => {
+        console.log(err);
+      }));
+  }
 }
 
 export default new PortfolioStore();

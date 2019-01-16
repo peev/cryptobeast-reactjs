@@ -22,7 +22,6 @@ type Props = {
   // tableData: Array<Array<string>>,
   PortfolioStore: {
     portfolios: Array<Object>,
-    removePortfolio: (id: string) => any,
     updatePortfolio: (id: string, newName: string) => any,
   },
 };
@@ -82,7 +81,7 @@ const TableHeader = ({
             sortDirection={orderBy === headerItem.id ? order : false}
           >
             {(() => {
-              if (index > 1 && index < 6) {
+              if (index > 1 && index < 5) {
                 return headerItem.label;
               }
               return (
@@ -140,6 +139,7 @@ class PortfoliosTable extends React.Component<Props, State> {
       PortfolioStore,
     } = this.props;
     const { portfolios } = PortfolioStore;
+    
     const { order, orderBy } = this.state;
 
     const header = (
@@ -155,9 +155,9 @@ class PortfoliosTable extends React.Component<Props, State> {
 
     // const itemsToArray = Object.values(portfolios);
     const filteredItems = portfolios.map((obj: Object) => [
-      obj.name,
+      obj.name || obj.userAddress,
       obj.shares,
-      null, // share price
+      PortfolioStore.getPortfolioData(obj.id) || 5,// share price
       null, // total USD
       null, // remove
       obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])

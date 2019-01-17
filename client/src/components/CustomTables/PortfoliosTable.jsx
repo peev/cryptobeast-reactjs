@@ -23,6 +23,7 @@ type Props = {
   PortfolioStore: {
     portfolios: Array<Object>,
     updatePortfolio: (id: string, newName: string) => any,
+    getPortfoliosData: Function,
   },
 };
 
@@ -114,7 +115,15 @@ class PortfoliosTable extends React.Component<Props, State> {
   state = {
     order: 'desc',
     orderBy: 'numShares',
+    data: [],
   };
+
+  componentDidMount() {
+    this.props.PortfolioStore.getPortfoliosData()
+      .then((data: Array<Object>) => {
+        this.setState({ data });
+      });
+  }
 
   handleUpdate = (id: string, newName: string) => {
     this.props.PortfolioStore.updatePortfolio(newName, id);
@@ -139,7 +148,7 @@ class PortfoliosTable extends React.Component<Props, State> {
       PortfolioStore,
     } = this.props;
     const { portfolios } = PortfolioStore;
-    
+
     const { order, orderBy } = this.state;
 
     const header = (
@@ -153,17 +162,7 @@ class PortfoliosTable extends React.Component<Props, State> {
       />
     );
 
-    // const itemsToArray = Object.values(portfolios);
-    const filteredItems = portfolios.map((obj: Object) => [
-      obj.name || obj.userAddress,
-      obj.shares,
-      PortfolioStore.getPortfolioData(obj.id) || 5,// share price
-      null, // total USD
-      null, // remove
-      obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
-    ]);
-
-    const tableInfo = filteredItems
+    const tableInfo = this.state.data
       .map(createPortfolioSortableObjectFromArray)
       .sort(getSorting(order, orderBy))
       .map((portfolio: Object) => (

@@ -734,20 +734,40 @@ class PortfolioStore {
   @action
   // eslint-disable-next-line class-methods-use-this
   getPortfolioData(portfolioId: number) {
-    requester.Portfolio.getPortfolioAssetsByPortfolioId(portfolioId)
-      .then(action((result: object) => {
-        console.log(result);
-        if (result.data.length && result.data.length > 0) {
-          console.log(BigNumberService.toFixedParam((result.data
-            .reduce((acc: number, obj: Object) => BigNumberService.sum(acc, obj.totalUSD), 0)), 2));
-          return BigNumberService.toFixedParam((result.data
-            .reduce((acc: number, obj: Object) => BigNumberService.sum(acc, obj.totalUSD), 0)), 2);
-        }
-        return 0;
-      }))
-      .catch(action((err: object) => {
-        console.log(err);
-      }));
+    return new Promise((resolve, reject) => {
+      requester.Portfolio.getPortfolioAssetsByPortfolioId(portfolioId)
+        .then(action((result: object) => {
+          if (result.data.length && result.data.length > 0) {
+            return resolve(BigNumberService.toFixedParam((result.data
+              .reduce((acc: number, obj: Object) => BigNumberService.sum(acc, obj.totalUSD), 0)), 2));
+          }
+          return resolve(0);
+        }))
+        .catch(action((err: object) => reject(console.log(err))));
+    });
+  }
+
+  @action
+  getPortfoliosData() {
+    // new Promise(function(resolve, reject) {
+    //   resolve('Success!');
+    // });
+    const result = this.portfolios.map(async (obj: Object) => [
+      obj.name || obj.userAddress,
+      obj.shares,
+      await this.getPortfolioData(obj.id).then((data) => {
+        console.log(data);
+        return Number(data);
+      }), // share price
+      null, // total USD
+      null, // remove
+      obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
+    ]);
+
+    return Promise.all(result).then((data: Array<Object>) => {
+      console.log(data);
+      return data;
+    });
   }
 }
 

@@ -37,7 +37,7 @@ const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }:
           cardTitle="Portfolios"
           content={
             <PortfoliosTable
-              portfolios={props.PortfolioStore.portfolios}
+              portfolios={props.PortfolioStore.allPortfoliosData}
               tableHead={[
                 { id: 'name', numberic: false, disablePadding: false, label: 'Name' },
                 { id: 'numShares', numberic: true, disablePadding: false, label: 'Number of Shares' },

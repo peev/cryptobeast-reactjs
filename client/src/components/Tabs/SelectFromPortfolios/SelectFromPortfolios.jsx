@@ -26,7 +26,7 @@ const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ .
         <Paper className={classes.paper}>
           <div>
             <div>
-              <p className={`${classes.generalPStyle} ${classes.portfolioName}`}>{el.userAddress}</p>
+              <p className={`${classes.generalPStyle} ${classes.portfolioName}`}>{el.portfolioName || el.userAddress}</p>
               <span className={`${classes.portfolioPercent} ${i >= 0 ? classes.positivePercent : classes.negativePercent}`}>{` ^ ${8.45 + i}%`}</span>
             </div>
 

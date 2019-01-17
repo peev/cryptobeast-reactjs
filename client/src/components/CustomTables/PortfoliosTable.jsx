@@ -20,7 +20,7 @@ type Props = {
   tableHeaderColor: 'warning' | 'primary' | 'danger' | 'success' | 'info' | 'rose' | 'gray',
   tableHead: Array<string>,
   PortfolioStore: {
-    portfolios: Array<Object>,
+    allPortfoliosData: Array<Object>,
     updatePortfolio: (id: string, newName: string) => any,
     getPortfoliosData: Function,
   },
@@ -107,7 +107,6 @@ const TableHeader = ({
   );
 };
 
-// TODO add Inject PortfolioStore and Remake function to const = () =>{}
 @inject('PortfolioStore')
 @observer
 class PortfoliosTable extends React.Component<Props, State> {
@@ -118,18 +117,8 @@ class PortfoliosTable extends React.Component<Props, State> {
   };
 
   componentWillReceiveProps(nextProps: Object) {
-    console.log(nextProps.PortfolioStore.portfolios);
-    console.log(this.props.PortfolioStore.portfolios);
-    console.log(this.state.data);
-    this.state.data.forEach((item: Object) => {
-      nextProps.PortfolioStore.portfolios.forEach((portfolio: Object) => {
-        if (portfolio.id === item[5]) {
-          item[4] = portfolio.porfolioName;
-        }
-      });
-    });
-    if (this.props.PortfolioStore.portfolios !== nextProps.PortfolioStore.portfolios) {
-      console.log('weeeee');
+    if (nextProps.PortfolioStore.allPortfoliosData !== this.state.data) {
+      this.setState({ data: nextProps.PortfolioStore.allPortfoliosData });
     }
   }
 
@@ -160,7 +149,6 @@ class PortfoliosTable extends React.Component<Props, State> {
       classes,
       tableHead,
       tableHeaderColor,
-      PortfolioStore,
     } = this.props;
 
     const { order, orderBy } = this.state;
@@ -176,7 +164,7 @@ class PortfoliosTable extends React.Component<Props, State> {
       />
     );
 
-    const tableInfo = PortfolioStore.allPortfoliosData
+    const tableInfo = this.state.data
       .map(createPortfolioSortableObjectFromArray)
       .sort(getSorting(order, orderBy))
       .map((portfolio: Object) => (

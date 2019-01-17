@@ -38,7 +38,7 @@ class PortfolioSelect extends React.Component<Props> {
       // select={i === 1 ? el.id : undefined}
       >
         <div className={classes.listItemContainer}>
-          <div className={classes.listItemName}>{el.userAddress}</div>
+          <div className={classes.listItemName}>{el.portfolioName || el.userAddress}</div>
           <div className={classes.listItemDescription}>
             <div style={{ padding: '0 15px', margin: '0 -7px' }}>
               <DropDownArrow className={classes.upArrow} />

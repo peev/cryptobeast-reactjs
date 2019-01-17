@@ -69,7 +69,6 @@ class PortfolioStore {
     onBecomeObserved(this, 'portfolioValueHistory', this.getPortfolioValueHistory);
     onBecomeObserved(this, 'portfolioValueHistoryByPeriod', this.getPortfolioValueHistoryByPeriod);
     onBecomeObserved(this, 'sharesHistory', this.getShareHistory);
-    onBecomeObserved(this, 'allPortfoliosData', this.getPortfoliosData);
   }
 
   @action.bound
@@ -579,7 +578,6 @@ class PortfolioStore {
   }
 
   @action
-  // eslint-disable-next-line class-methods-use-this
   updatePortfolio(portfolioName: string, id: number) {
     requester.Portfolio.setName({ portfolioName }, id)
       .then(action(() => {
@@ -591,14 +589,10 @@ class PortfolioStore {
         });
         this.allPortfoliosData = this.allPortfoliosData.map((item: Object) => {
           if (item[5] === id) {
-            console.log(item);
-            console.log(Object.assign([], item, { 4: portfolioName, 0: portfolioName }));
             return Object.assign([], item, { 4: portfolioName, 0: portfolioName });
           }
           return item;
         });
-        console.log(this.allPortfoliosData);
-        
         NotificationStore.addMessage('successMessages', 'Portfolio renamed successfully!');
       }))
       .catch((err: Object) => {
@@ -794,31 +788,29 @@ class PortfolioStore {
   @action
   getPortfoliosData() {
     LoadingStore.setShowLoading(true);
-    if (this.portfolios !== null && this.portfolios !== undefined && this.portfolios.length > 0) {
-      const result = this.portfolios.map(async (obj: Object) => {
-        const numOfShares = await this.getPortfolioNumOfShares(obj.id).then((data: number) => Number(data));
-        const totalValueUsd = await this.getPortfolioTotalAmountUsd(obj.id).then((data: number) => Number(data));
-        const sharePrice = this.getPortfolioSharePrice(totalValueUsd, numOfShares);
-        return [
-          obj.portfolioName || obj.userAddress,
-          numOfShares,
-          sharePrice,
-          totalValueUsd,
-          obj.portfolioName || '',
-          obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
-        ];
-      });
-      return Promise.all(result).then((data: Array<Object>) => {
+    const result = this.portfolios.map(async (obj: Object) => {
+      const numOfShares = await this.getPortfolioNumOfShares(obj.id).then((data: number) => Number(data));
+      const totalValueUsd = await this.getPortfolioTotalAmountUsd(obj.id).then((data: number) => Number(data));
+      const sharePrice = this.getPortfolioSharePrice(totalValueUsd, numOfShares);
+      return [
+        obj.portfolioName || obj.userAddress,
+        numOfShares,
+        sharePrice,
+        totalValueUsd,
+        obj.portfolioName || '',
+        obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
+      ];
+    });
+    return Promise.all(result).then((data: Array<Object>) => {
+      LoadingStore.setShowLoading(false);
+      this.allPortfoliosData = data;
+      return data;
+    })
+      .catch(action((err: object) => {
         LoadingStore.setShowLoading(false);
-        this.allPortfoliosData = data;
-        return data;
-      })
-        .catch(action((err: object) => {
-          LoadingStore.setShowLoading(false);
-          this.allPortfoliosData = [];
-          return new Error(err);
-        }));
-    }
+        this.allPortfoliosData = [];
+        return new Error(err);
+      }));
   }
 }
 

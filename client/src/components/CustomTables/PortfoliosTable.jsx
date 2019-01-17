@@ -117,6 +117,22 @@ class PortfoliosTable extends React.Component<Props, State> {
     data: [],
   };
 
+  componentWillReceiveProps(nextProps: Object) {
+    console.log(nextProps.PortfolioStore.portfolios);
+    console.log(this.props.PortfolioStore.portfolios);
+    console.log(this.state.data);
+    this.state.data.forEach((item: Object) => {
+      nextProps.PortfolioStore.portfolios.forEach((portfolio: Object) => {
+        if (portfolio.id === item[5]) {
+          item[4] = portfolio.porfolioName;
+        }
+      });
+    });
+    if (this.props.PortfolioStore.portfolios !== nextProps.PortfolioStore.portfolios) {
+      console.log('weeeee');
+    }
+  }
+
   componentDidMount() {
     this.props.PortfolioStore.getPortfoliosData()
       .then((data: Array<Object>) => {
@@ -144,6 +160,7 @@ class PortfoliosTable extends React.Component<Props, State> {
       classes,
       tableHead,
       tableHeaderColor,
+      PortfolioStore,
     } = this.props;
 
     const { order, orderBy } = this.state;
@@ -159,7 +176,7 @@ class PortfoliosTable extends React.Component<Props, State> {
       />
     );
 
-    const tableInfo = this.state.data
+    const tableInfo = PortfolioStore.allPortfoliosData
       .map(createPortfolioSortableObjectFromArray)
       .sort(getSorting(order, orderBy))
       .map((portfolio: Object) => (

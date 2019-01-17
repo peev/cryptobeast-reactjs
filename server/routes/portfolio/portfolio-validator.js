@@ -21,9 +21,21 @@ const portfolioValidator = () => {
     return next();
   };
 
+  const verifyUpdatePortfolioName = (req, res, next) => {
+    const payload = req.body;
+
+    if (!payload || typeof payload.portfolioName !== 'string' || !validator.isLength(payload.portfolioName, { min: 1, max: 150 }) ||
+       !validator.matches(payload.portfolioName, /^[a-zA-Z0-9 _.-]*$/)) {
+      return res.status(400).send({ isSuccessful: false, message: 'Invalid portfolio name format!' });
+    }
+
+    return next();
+  };
+
   return {
     verifyCreatePortfolio,
     verifyUpdatePortfolio,
+    verifyUpdatePortfolioName,
   };
 };
 

@@ -385,6 +385,18 @@ const portfolioController = (repository) => {
     }
   };
 
+  const setName = async (req, res) => {
+    const { id } = req.params;
+    const { portfolioName } = req.body;
+    const portfolio = await intReqService.getPortfolioById(id);
+    const portfolioData = Object.assign({}, portfolio, { id, portfolioName });
+    await repository.update({ modelName, updatedRecord: portfolioData })
+      .then((response) => {
+        res.status(200).send(response);
+      })
+      .catch(error => res.status(400).send(error));
+  };
+
   const sync = async (req, res, addresses) => {
     const portfolioArray = addresses.map(async (address) => {
       try {
@@ -409,6 +421,7 @@ const portfolioController = (repository) => {
     getPortfolioValueByIdAndPeriod,
     getAlpha,
     getShareHistory,
+    setName,
   };
 };
 

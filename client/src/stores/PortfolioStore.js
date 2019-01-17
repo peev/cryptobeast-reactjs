@@ -782,7 +782,7 @@ class PortfolioStore {
       const totalValueUsd = await this.getPortfolioTotalAmountUsd(obj.id).then((data: number) => Number(data));
       const sharePrice = this.getPortfolioSharePrice(totalValueUsd, numOfShares);
       return [
-        obj.name || obj.userAddress,
+        obj.portfolioName || obj.userAddress,
         numOfShares,
         sharePrice,
         totalValueUsd,

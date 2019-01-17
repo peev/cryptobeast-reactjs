@@ -198,16 +198,6 @@ class MarketStore {
       .catch((err: object) => console.log(err));
   }
 
-  @action
-  syncMarketPriceHistory() {
-    // syncs the price history to the market for the past 1h, 24h and 7d
-    // convertCurrency is given, so user can chose in what base currency
-    // information will be displayed
-    requester.Market.syncMarketPriceHistory({ convertCurrency: 'BTC' })
-      .then(this.convertMarketPriceHistory)
-      .catch((err: object) => console.log(err));
-  }
-
   @action.bound
   convertMarketSummaries(response: object) {
     const result = {};

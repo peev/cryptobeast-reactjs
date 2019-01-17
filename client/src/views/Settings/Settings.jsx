@@ -22,7 +22,6 @@ const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }:
   const getMarketSummaries = () => {
     props.MarketStore.getSyncedSummaries();
     props.MarketStore.getBaseCurrencies();
-    props.MarketStore.syncMarketPriceHistory();
   };
 
   const syncData = () => {

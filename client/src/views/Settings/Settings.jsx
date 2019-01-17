@@ -5,11 +5,8 @@ import { inject, observer } from 'mobx-react';
 
 import { RegularCard, ItemGrid } from './../../components';
 import RegularButton from './../../components/CustomButtons/Button';
-import CreatePortfolio from './../../components/Modal/CreatePortfolio';
 import PortfoliosTable from './../../components/CustomTables/PortfoliosTable';
 import TimeSettings from '../../components/Cards/TimeSettings';
-import ApiIntegrations from './../../components/CustomTables/ApiIntegrations';
-import AddApiAccount from './../../components/Modal/ApiAccountModals/AddApiAccount';
 import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
 import storage from '../../services/storage';
 
@@ -25,7 +22,6 @@ const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }:
   const getMarketSummaries = () => {
     props.MarketStore.getSyncedSummaries();
     props.MarketStore.getBaseCurrencies();
-    props.MarketStore.syncMarketPriceHistory();
   };
 
   const syncData = () => {
@@ -35,31 +31,18 @@ const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }:
 
   return (
     <Grid container>
-      <ItemGrid xs={12} sm={12} md={12}>
-        <RegularCard
-          cardTitle="API Integrations"
-          button={<AddApiAccount />}
-          content={
-            <ApiIntegrations
-              tableHead={['Exchange', 'Account', 'Status', 'Key', 'Secret', '']}
-            />
-          }
-        />
-      </ItemGrid>
-
-      <ItemGrid xs={12} sm={12} md={12} style={{ margin: '50px 0' }}>
+      <ItemGrid xs={12} sm={12} md={12} style={{ margin: '0 0 50px 0' }}>
         <RegularCard
           cardTitle="Portfolios"
-          button={<CreatePortfolio place="settings" />}
           content={
             <PortfoliosTable
+              portfolios={props.PortfolioStore.allPortfoliosData}
               tableHead={[
                 { id: 'name', numberic: false, disablePadding: false, label: 'Name' },
                 { id: 'numShares', numberic: true, disablePadding: false, label: 'Number of Shares' },
                 { id: 'sharePrice', numberic: true, disablePadding: false, label: 'Current share price' },
                 { id: 'totalUSD', numberic: true, disablePadding: false, label: 'Total Amount' },
-                { id: 'update', numberic: false, disablePadding: false, label: '' },
-                { id: 'delete', numberic: false, disablePadding: false, label: '' },
+                { id: 'update', numberic: false, disablePadding: false, label: 'Action' },
               ]}
             />
           }

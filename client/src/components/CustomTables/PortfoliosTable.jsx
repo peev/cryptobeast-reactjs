@@ -14,18 +14,15 @@ import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
 import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
 import tableStyle from '../../variables/styles/tableStyle';
-import ConfirmationModal from '../Modal/ConfirmationModal';
-
 
 type Props = {
   classes: Object,
   tableHeaderColor: 'warning' | 'primary' | 'danger' | 'success' | 'info' | 'rose' | 'gray',
   tableHead: Array<string>,
-  // tableData: Array<Array<string>>,
   PortfolioStore: {
-    portfolios: Array<Object>,
-    removePortfolio: (id: string) => any,
+    allPortfoliosData: Array<Object>,
     updatePortfolio: (id: string, newName: string) => any,
+    getPortfoliosData: Function,
   },
 };
 
@@ -41,15 +38,14 @@ function getSorting(order: string, orderBy: string) {
 }
 
 function createPortfolioSortableObjectFromArray(portfolioAsArray: Array) {
-  if (portfolioAsArray.length === 7) {
+  if (portfolioAsArray.length === 6) {
     return {
       name: portfolioAsArray[0],
       numShares: portfolioAsArray[1],
       sharePrice: portfolioAsArray[2],
       totalUSD: portfolioAsArray[3],
       update: portfolioAsArray[4],
-      delete: portfolioAsArray[5],
-      id: portfolioAsArray[6],
+      id: portfolioAsArray[5],
     };
   }
   return null;
@@ -85,7 +81,7 @@ const TableHeader = ({
             sortDirection={orderBy === headerItem.id ? order : false}
           >
             {(() => {
-              if (index > 1 && index < 6) {
+              if (index > 1 && index < 5) {
                 return headerItem.label;
               }
               return (
@@ -111,18 +107,26 @@ const TableHeader = ({
   );
 };
 
-// TODO add Inject PortfolioStore and Remake function to const = () =>{}
 @inject('PortfolioStore')
 @observer
 class PortfoliosTable extends React.Component<Props, State> {
   state = {
     order: 'desc',
     orderBy: 'numShares',
+    data: [],
   };
 
-  handleRemove = (id: string) => {
-    this.props.PortfolioStore.removePortfolio(id);
-    // console.log(id);
+  componentWillReceiveProps(nextProps: Object) {
+    if (nextProps.PortfolioStore.allPortfoliosData !== this.state.data) {
+      this.setState({ data: nextProps.PortfolioStore.allPortfoliosData });
+    }
+  }
+
+  componentDidMount() {
+    this.props.PortfolioStore.getPortfoliosData()
+      .then((data: Array<Object>) => {
+        this.setState({ data });
+      });
   }
 
   handleUpdate = (id: string, newName: string) => {
@@ -145,9 +149,8 @@ class PortfoliosTable extends React.Component<Props, State> {
       classes,
       tableHead,
       tableHeaderColor,
-      PortfolioStore,
     } = this.props;
-    const { portfolios } = PortfolioStore;
+
     const { order, orderBy } = this.state;
 
     const header = (
@@ -161,18 +164,7 @@ class PortfoliosTable extends React.Component<Props, State> {
       />
     );
 
-    // const itemsToArray = Object.values(portfolios);
-    const filteredItems = portfolios.map((obj: Object) => [
-      obj.name,
-      obj.shares,
-      null, // share price
-      null, // total USD
-      null, // remove
-      null, // delete
-      obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
-    ]);
-
-    const tableInfo = filteredItems
+    const tableInfo = this.state.data
       .map(createPortfolioSortableObjectFromArray)
       .sort(getSorting(order, orderBy))
       .map((portfolio: Object) => (
@@ -181,20 +173,14 @@ class PortfoliosTable extends React.Component<Props, State> {
             if (ind === 4) {
               return (
                 <TableCell className={classes.tableCell} key={uuid()}>
-                  {item}
-                  <UpdatePortfolioModal onUpdate={(newName: string) => this.handleUpdate(arr[arr.length - 1], newName)} />
+                  <UpdatePortfolioModal
+                    currentName={item || ''}
+                    onUpdate={(newName: string) => this.handleUpdate(arr[arr.length - 1], newName)}
+                  />
                 </TableCell>
               );
             }
-            if (ind === 5) {
-              return (
-                <TableCell className={classes.tableCell} key={uuid()}>
-                  {item}
-                  <ConfirmationModal onSave={() => this.handleRemove(arr[arr.length - 1])} message="Are you shure you want to delete this portfolio?" />
-                </TableCell>
-              );
-            }
-            if (ind < 6) {
+            if (ind < 5) {
               return (
                 <TableCell className={classes.tableCell} key={uuid()}>
                   {item}

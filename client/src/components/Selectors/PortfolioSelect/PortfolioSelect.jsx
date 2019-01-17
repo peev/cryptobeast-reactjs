@@ -10,10 +10,14 @@ import portfolioSelectStyles from './PortfolioSelectStyles';
 type Props = {
   classes: PropTypes.object.isRequired,
   PortfolioStore: PropTypes.object,
-  UserStore: PropTypes.object,
+  PortfolioStore: {
+    portfolios: Array<Object>,
+    selectPortfolio: Function,
+  },
+  // UserStore: PropTypes.object,
 };
 
-@inject('PortfolioStore', 'UserStore', 'ApiAccountStore')
+@inject('PortfolioStore', 'UserStore')
 @observer
 class PortfolioSelect extends React.Component<Props> {
   handleChange = (event: SyntheticEvent) => {
@@ -23,20 +27,7 @@ class PortfolioSelect extends React.Component<Props> {
 
     // TODO FOR DELETE
     // this.updateUserDataInterval = null;
-    // if (this.props.ApiAccountStore.convertUserApis.length > 0) {
-    //   this.props.ApiAccountStore.syncUserApiData();
-
-    //   this.updateUserDataInterval = setInterval(() => this.props.ApiAccountStore.syncUserApiData(), 30000);
-    // }
   };
-
-  // TODO FOR DELETE
-  // componentDidMount() {
-  //   if (this.props.ApiAccountStore.convertUserApis.length > 0) {
-  //     this.props.ApiAccountStore.syncUserApiData();
-  //     this.updateUserDataInterval = setInterval(() => this.props.ApiAccountStore.syncUserApiData(), 30000);
-  //   }
-  // }
 
   render() {
     const { classes, PortfolioStore } = this.props;
@@ -51,7 +42,7 @@ class PortfolioSelect extends React.Component<Props> {
       // select={i === 1 ? el.id : undefined}
       >
         <div className={classes.listItemContainer}>
-          <div className={classes.listItemName}>{el.userAddress}</div>
+          <div className={classes.listItemName}>{el.portfolioName || el.userAddress}</div>
           <div className={classes.listItemDescription}>
             <div style={{ padding: '0 15px', margin: '0 -7px' }}>
               <DropDownArrow className={classes.upArrow} />

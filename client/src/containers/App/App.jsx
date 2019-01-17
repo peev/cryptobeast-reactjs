@@ -34,7 +34,7 @@ type Props = {
   children?: React.Node
 };
 
-@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'ApiAccountStore', 'WeidexStore', 'location', 'LoadingStore')
+@inject('PortfolioStore', 'UserStore', 'MarketStore', 'UserStore', 'WeidexStore', 'location', 'LoadingStore')
 @observer
 class App extends React.Component<Props> {
   state = {

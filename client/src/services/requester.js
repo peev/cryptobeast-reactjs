@@ -18,15 +18,6 @@ const requests = {
   delete: url => axios.delete(`${API_ROOT}${url}`, options), // axios.delete doesn't support body in requests !!!
 };
 
-// not used
-const ApiAccount = {
-  addAccount: data => requests.post('/account/add', data),
-  update: requestParams => requests.put('/account/update', requestParams),
-  delete: id => requests.delete(`/account/delete/${id}`, id),
-  getBalance: data => requests.post('/account/getBalance', data),
-  sync: data => requests.get(`/weidex/sync/${data.id}`),
-};
-
 const Asset = {
   add: data => requests.post('/asset/add', data),
   update: requestParams => requests.put('/asset/update', requestParams),
@@ -65,12 +56,12 @@ const Portfolio = {
   getSharePriceHistory: requestParams => requests.post('/portfolio/sharePriceHistory', requestParams),
   getPriceHistory: requestParams => requests.post('/portfolio/priceHistory', requestParams),
   getPriceHistoryForPeriod: requestParams => requests.post('/portfolio/periodPriceHistory', requestParams),
-  update: (requestParams, id) => requests.put(`/portfolio/update/${id}`, requestParams), // id + newName
   delete: id => requests.delete(`/portfolio/delete/${id}`),
   getPortfolioValueHistory: id => requests.get(`/portfolio/history/${id}`),
   getPortfolioValueHistoryByPeriod: (id, period) => requests.get(`/portfolio/historyByPeriod/${id}/${period}`),
   getAlpha: (id, period, benchmark) => requests.get(`/portfolio/alpha/${id}/${period}/${benchmark}`),
   getShareHistory: id => requests.get(`/portfolio/shareHistory/${id}`),
+  setName: (requestParams, id) => requests.put(`/portfolio/setName/${id}`, requestParams), // id + newName
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
@@ -90,7 +81,6 @@ const Market = {
   getAllTickers: () => requests.get('/market/allTickers'),
   syncCurrencies: () => requests.get('/market/syncCurrencies'),
   getBaseTickers: searchedCurrencies => requests.post('/market/syncBaseTickers', searchedCurrencies),
-  syncMarketPriceHistory: convertCurrency => requests.post('/market/syncMarketPriceHistory', convertCurrency),
   getMarketPriceHistory: () => requests.get('/market/getMarketPriceHistory'),
   getBaseTickerHistory: requestParams => requests.post('/market/periodPriceHistory', requestParams),
   getProfitAndLossHistory: requestParams => requests.get('/market/profitAndLossHistory', requestParams),
@@ -116,7 +106,6 @@ const Weidex = {
 };
 
 export default {
-  ApiAccount,
   Asset,
   Currency,
   User,

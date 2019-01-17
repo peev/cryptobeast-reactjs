@@ -39,6 +39,7 @@ class PortfolioStore {
   @observable standardDeviationPeriod;
   @observable alphaData;
   @observable sharesHistory;
+  @observable allPortfoliosData;
 
   constructor() {
     this.portfolios = [];
@@ -57,6 +58,7 @@ class PortfolioStore {
     this.standardDeviationPeriod = null;
     this.alphaData = null;
     this.sharesHistory = [];
+    this.allPortfoliosData = [];
 
     // only start data fetching if those properties are actually used!
     onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
@@ -548,22 +550,6 @@ class PortfolioStore {
     this.newPortfolioName = newValue;
   }
 
-  @action.bound
-  createPortfolio(placeCalled) {
-    const newPortfolio = {
-      name: this.newPortfolioName,
-    };
-    requester.Portfolio.create(newPortfolio)
-      .then(action((result) => {
-        InvestorStore.createDefaultInvestor(result.data);
-
-        if (placeCalled === 'startScreen') {
-          history.push('/summary');
-        }
-      }))
-      .catch(err => console.log(err));
-  }
-
   @action
   // eslint-disable-next-line class-methods-use-this
   handlePortfolioValidation() {
@@ -592,33 +578,29 @@ class PortfolioStore {
   }
 
   @action
-  // eslint-disable-next-line class-methods-use-this
-  updatePortfolio(portfolioName, id) {
-    requester.Portfolio.update({ name: portfolioName }, id)
+  updatePortfolio(portfolioName: string, id: number) {
+    requester.Portfolio.setName({ portfolioName }, id)
       .then(action(() => {
-        this.portfolios = this.portfolios.map((portfl) => {
-          if (portfl.id === id) {
-            return Object.assign({}, portfl, { name: portfolioName });
+        this.portfolios = this.portfolios.map((item: Object) => {
+          if (item.id === id) {
+            return Object.assign({}, item, { name: portfolioName, portfolioName });
           }
-          return portfl;
+          return item;
         });
+        this.allPortfoliosData = this.allPortfoliosData.map((item: Object) => {
+          if (item[5] === id) {
+            return Object.assign([], item, { 4: portfolioName, 0: portfolioName });
+          }
+          return item;
+        });
+        NotificationStore.addMessage('successMessages', 'Portfolio renamed successfully!');
       }))
-      .catch(err => console.log(err));
+      .catch((err: Object) => {
+        NotificationStore.addMessage('errorMessages', 'Unable to rename portfolio');
+        console.log(err.response.data.message);
+      });
   }
 
-  @action
-  // eslint-disable-next-line class-methods-use-this
-  removePortfolio(id) {
-    requester.Portfolio.delete(id)
-      .then(action((result) => {
-        if (result.data === 1) {
-          this.portfolios = this.portfolios.filter(el => el.id !== id);
-        }
-
-        this.selectPortfolio(this.portfolios[this.portfolios.length - 1].id);
-      }))
-      .catch(err => console.log(err));
-  }
   // #endregion
 
   @action.bound
@@ -758,6 +740,77 @@ class PortfolioStore {
   @action.bound
   resetPortfolio() {
     this.newPortfolioName = '';
+  }
+
+  @action
+  // eslint-disable-next-line class-methods-use-this
+  getPortfolioTotalAmountUsd(portfolioId: number) {
+    return new Promise((resolve: Function, reject: Function) => {
+      requester.Portfolio.getPortfolioAssetsByPortfolioId(portfolioId)
+        .then(action((result: object) => {
+          if (result.data.length && result.data.length > 0) {
+            return resolve(BigNumberService.toFixedParam((result.data
+              .reduce((acc: number, obj: Object) => BigNumberService.sum(acc, obj.totalUSD), 0)), 2));
+          }
+          return resolve(0);
+        }))
+        .catch(action((err: object) => reject(err)));
+    });
+  }
+
+  @action
+  // eslint-disable-next-line class-methods-use-this
+  getPortfolioNumOfShares(portfolioId: number) {
+    return new Promise((resolve: Function, reject: Function) => {
+      requester.Transaction.getAllTransactions(portfolioId)
+        .then(action((result: object) => {
+          if (result.data.length && result.data.length > 0) {
+            return resolve(BigNumberService.toFixedParam((result.data[result.data.length - 1].numSharesAfter), 2));
+          }
+          return resolve(0);
+        }))
+        .catch(action((err: object) => reject(err)));
+    });
+  }
+
+
+  @action
+  // eslint-disable-next-line class-methods-use-this
+  getPortfolioSharePrice(portfolioCostInUSD: number, numOfSares: number) {
+    if (numOfSares !== 0 && portfolioCostInUSD !== 0) {
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .quotient(portfolioCostInUSD, numOfSares), 2));
+    }
+    return 0;
+  }
+
+  @action
+  getPortfoliosData() {
+    LoadingStore.setShowLoading(true);
+    const result = this.portfolios.map(async (obj: Object) => {
+      const numOfShares = await this.getPortfolioNumOfShares(obj.id).then((data: number) => Number(data));
+      const totalValueUsd = await this.getPortfolioTotalAmountUsd(obj.id).then((data: number) => Number(data));
+      const sharePrice = this.getPortfolioSharePrice(totalValueUsd, numOfShares);
+      return [
+        obj.portfolioName || obj.userAddress,
+        numOfShares,
+        sharePrice,
+        totalValueUsd,
+        obj.portfolioName || '',
+        obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
+      ];
+    });
+    return Promise.all(result).then((data: Array<Object>) => {
+      LoadingStore.setShowLoading(false);
+      this.allPortfoliosData = data;
+      return data;
+    })
+      .catch(action((err: object) => {
+        LoadingStore.setShowLoading(false);
+        this.allPortfoliosData = [];
+        return new Error(err);
+      }));
   }
 }
 

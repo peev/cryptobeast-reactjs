@@ -21,7 +21,8 @@ class TransactionStore {
     requester.Transaction.getAllTransactions(PortfolioStore.selectedPortfolioId)
       .then(action((result: object) => {
         this.transactions = result.data;
-      }));
+      }))
+      .catch(action((err: object) => new Error(err)));
   }
 
   @computed

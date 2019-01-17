@@ -733,8 +733,8 @@ class PortfolioStore {
 
   @action
   // eslint-disable-next-line class-methods-use-this
-  getPortfolioData(portfolioId: number) {
-    return new Promise((resolve, reject) => {
+  getPortfolioTotalAmountUsd(portfolioId: number) {
+    return new Promise((resolve: Function, reject: Function) => {
       requester.Portfolio.getPortfolioAssetsByPortfolioId(portfolioId)
         .then(action((result: object) => {
           if (result.data.length && result.data.length > 0) {
@@ -743,31 +743,54 @@ class PortfolioStore {
           }
           return resolve(0);
         }))
-        .catch(action((err: object) => reject(console.log(err))));
+        .catch(action((err: object) => reject(err)));
     });
   }
 
   @action
-  getPortfoliosData() {
-    // new Promise(function(resolve, reject) {
-    //   resolve('Success!');
-    // });
-    const result = this.portfolios.map(async (obj: Object) => [
-      obj.name || obj.userAddress,
-      obj.shares,
-      await this.getPortfolioData(obj.id).then((data) => {
-        console.log(data);
-        return Number(data);
-      }), // share price
-      null, // total USD
-      null, // remove
-      obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
-    ]);
-
-    return Promise.all(result).then((data: Array<Object>) => {
-      console.log(data);
-      return data;
+  // eslint-disable-next-line class-methods-use-this
+  getPortfolioNumOfShares(portfolioId: number) {
+    return new Promise((resolve: Function, reject: Function) => {
+      requester.Transaction.getAllTransactions(portfolioId)
+        .then(action((result: object) => {
+          if (result.data.length && result.data.length > 0) {
+            return resolve(BigNumberService.toFixedParam((result.data[result.data.length - 1].numSharesAfter), 2));
+          }
+          return resolve(0);
+        }))
+        .catch(action((err: object) => reject(err)));
     });
+  }
+
+
+  @action
+  // eslint-disable-next-line class-methods-use-this
+  getPortfolioSharePrice(portfolioCostInUSD: number, numOfSares: number) {
+    if (numOfSares !== 0 && portfolioCostInUSD !== 0) {
+      return Number(BigNumberService
+        .toFixedParam(BigNumberService
+          .quotient(portfolioCostInUSD, numOfSares), 2));
+    }
+    return 0;
+  }
+
+  @action
+  getPortfoliosData() {
+    const result = this.portfolios.map(async (obj: Object) => {
+      const numOfShares = await this.getPortfolioNumOfShares(obj.id).then((data: number) => Number(data));
+      const totalValueUsd = await this.getPortfolioTotalAmountUsd(obj.id).then((data: number) => Number(data));
+      const sharePrice = this.getPortfolioSharePrice(totalValueUsd, numOfShares);
+      return [
+        obj.name || obj.userAddress,
+        numOfShares,
+        sharePrice,
+        totalValueUsd,
+        null,
+        obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
+      ];
+    });
+
+    return Promise.all(result).then((data: Array<Object>) => data);
   }
 }
 

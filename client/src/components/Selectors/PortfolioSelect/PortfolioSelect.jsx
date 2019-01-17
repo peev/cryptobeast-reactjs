@@ -10,6 +10,10 @@ import portfolioSelectStyles from './PortfolioSelectStyles';
 type Props = {
   classes: PropTypes.object.isRequired,
   PortfolioStore: PropTypes.object,
+  PortfolioStore: {
+    portfolios: Array<Object>,
+    selectPortfolio: Function,
+  },
   // UserStore: PropTypes.object,
 };
 

@@ -583,7 +583,7 @@ class PortfolioStore {
       .then(action(() => {
         this.portfolios = this.portfolios.map((item: Object) => {
           if (item.id === id) {
-            return Object.assign({}, item, { name: portfolioName });
+            return Object.assign({}, item, { name: portfolioName, portfolioName });
           }
           return item;
         });

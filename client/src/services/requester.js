@@ -56,12 +56,12 @@ const Portfolio = {
   getSharePriceHistory: requestParams => requests.post('/portfolio/sharePriceHistory', requestParams),
   getPriceHistory: requestParams => requests.post('/portfolio/priceHistory', requestParams),
   getPriceHistoryForPeriod: requestParams => requests.post('/portfolio/periodPriceHistory', requestParams),
-  update: (requestParams, id) => requests.put(`/portfolio/update/${id}`, requestParams), // id + newName
   delete: id => requests.delete(`/portfolio/delete/${id}`),
   getPortfolioValueHistory: id => requests.get(`/portfolio/history/${id}`),
   getPortfolioValueHistoryByPeriod: (id, period) => requests.get(`/portfolio/historyByPeriod/${id}/${period}`),
   getAlpha: (id, period, benchmark) => requests.get(`/portfolio/alpha/${id}/${period}/${benchmark}`),
   getShareHistory: id => requests.get(`/portfolio/shareHistory/${id}`),
+  setName: (requestParams, id) => requests.put(`/portfolio/setName/${id}`, requestParams), // id + newName
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 

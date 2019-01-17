@@ -577,17 +577,22 @@ class PortfolioStore {
 
   @action
   // eslint-disable-next-line class-methods-use-this
-  updatePortfolio(portfolioName, id) {
-    requester.Portfolio.update({ name: portfolioName }, id)
+  updatePortfolio(portfolioName: string, id: number) {
+    requester.Portfolio.setName({ portfolioName }, id)
       .then(action(() => {
-        this.portfolios = this.portfolios.map((portfl) => {
-          if (portfl.id === id) {
-            return Object.assign({}, portfl, { name: portfolioName });
+        this.portfolios = this.portfolios.map((item: Object) => {
+          if (item.id === id) {
+            return Object.assign({}, item, { name: portfolioName });
           }
-          return portfl;
+          return item;
         });
+        console.log(this.portfolios);
+        NotificationStore.addMessage('successMessages', 'Portfolio renamed successfully!');
       }))
-      .catch(err => console.log(err));
+      .catch((err: Object) => {
+        NotificationStore.addMessage('errorMessages', 'Unable to rename portfolio');
+        console.log(err.response.data.message);
+      });
   }
 
   // #endregion
@@ -786,7 +791,7 @@ class PortfolioStore {
         numOfShares,
         sharePrice,
         totalValueUsd,
-        null,
+        obj.portfolioName || '',
         obj.id, // this will be hidden from table rows / cols. Find it with (arr[arr.length - 1])
       ];
     });

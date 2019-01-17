@@ -36,6 +36,7 @@ const styles = (theme: Object) => ({
 type Props = {
   classes: Object,
   onUpdate: Function,
+  currentName: string,
 };
 
 type State = {
@@ -66,7 +67,7 @@ class UpdatePortfolioModal extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, currentName } = this.props;
 
     return (
       <div style={{ display: 'inline-block' }}>
@@ -92,6 +93,7 @@ class UpdatePortfolioModal extends React.Component<Props, State> {
             </Typography>
 
             <TextField
+              defaultValue={currentName}
               style={{ width: '100%', marginBottom: '10px', marginTop: '10px' }}
               placeholder="Portfolio name"
               inputRef={(el: React.Ref<any>) => (this.name = el)} // eslint-disable-line

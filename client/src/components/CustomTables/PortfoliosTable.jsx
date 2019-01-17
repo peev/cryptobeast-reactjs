@@ -168,8 +168,10 @@ class PortfoliosTable extends React.Component<Props, State> {
             if (ind === 4) {
               return (
                 <TableCell className={classes.tableCell} key={uuid()}>
-                  {item}
-                  <UpdatePortfolioModal onUpdate={(newName: string) => this.handleUpdate(arr[arr.length - 1], newName)} />
+                  <UpdatePortfolioModal
+                    currentName={item || ''}
+                    onUpdate={(newName: string) => this.handleUpdate(arr[arr.length - 1], newName)}
+                  />
                 </TableCell>
               );
             }

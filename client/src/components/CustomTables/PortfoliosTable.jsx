@@ -19,7 +19,6 @@ type Props = {
   classes: Object,
   tableHeaderColor: 'warning' | 'primary' | 'danger' | 'success' | 'info' | 'rose' | 'gray',
   tableHead: Array<string>,
-  // tableData: Array<Array<string>>,
   PortfolioStore: {
     portfolios: Array<Object>,
     updatePortfolio: (id: string, newName: string) => any,
@@ -145,9 +144,7 @@ class PortfoliosTable extends React.Component<Props, State> {
       classes,
       tableHead,
       tableHeaderColor,
-      PortfolioStore,
     } = this.props;
-    const { portfolios } = PortfolioStore;
 
     const { order, orderBy } = this.state;
 

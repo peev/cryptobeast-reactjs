@@ -776,6 +776,7 @@ class PortfolioStore {
 
   @action
   getPortfoliosData() {
+    LoadingStore.setShowLoading(true);
     const result = this.portfolios.map(async (obj: Object) => {
       const numOfShares = await this.getPortfolioNumOfShares(obj.id).then((data: number) => Number(data));
       const totalValueUsd = await this.getPortfolioTotalAmountUsd(obj.id).then((data: number) => Number(data));
@@ -790,7 +791,14 @@ class PortfolioStore {
       ];
     });
 
-    return Promise.all(result).then((data: Array<Object>) => data);
+    return Promise.all(result).then((data: Array<Object>) => {
+      LoadingStore.setShowLoading(false);
+      return data;
+    })
+      .catch(action((err: object) => {
+        LoadingStore.setShowLoading(false);
+        return new Error(err);
+      }));
   }
 }
 

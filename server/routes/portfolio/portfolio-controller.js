@@ -230,7 +230,16 @@ const portfolioController = (repository) => {
       const timestampsMiliseconds = commonService.calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
       const timestamps = calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
       const ethHistory = await commonService.getEthHistoryDayValue(timestampsMiliseconds[0], timestampsMiliseconds[timestampsMiliseconds.length - 1]);
+      // TODO 
+      console.log(timestamps);
+      const tokensValues = await weidexService.getTokensValuesHistoryHttp(timestamps[timestamps.length - 1], timestamps.length);
+      console.log('------------------------------------');
+      console.log(tokensValues);
+      console.log('------------------------------------');
       const tokenPricesByDate = await getTokensPriceByDate(timestamps);
+      console.log('------------------------------------');
+      console.log(tokenPricesByDate);
+      console.log('------------------------------------');
       const balances = await commonService.getBalancesByDate(timestampsMiliseconds, allocations);
       const filledPreviousBalances = commonService.fillPreviousBalances(balances);
       const ethPriceHistory = commonService.defineEthHistory(timestampsMiliseconds, ethHistory);

@@ -11,6 +11,15 @@ const internalRequesterService = (repository) => {
     },
   }).catch(err => console.log(err));
 
+  const getCurrencyByTokenId = async tokenId => repository.findOne({
+    modelName: 'Currency',
+    options: {
+      where: {
+        tokenId,
+      },
+    },
+  }).catch(err => console.log(err));
+
   const getPortfolioByUserAddress = async userAddress => repository.findOne({
     modelName: 'Portfolio',
     options: {
@@ -271,6 +280,7 @@ const internalRequesterService = (repository) => {
 
   return {
     getCurrencyByTokenName,
+    getCurrencyByTokenId,
     getPortfolioByUserAddress,
     getLastAllocationByPortfolioId,
     getFirstAllocationByPortfolioId,

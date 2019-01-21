@@ -113,7 +113,7 @@ const assetController = (repository) => {
 
   const getDatesArray = (period) => {
     const interval = 1000 * 60 * 60 * 24;
-    const startOfDay = Math.floor(Date.now() / interval) * interval;
+    const startOfDay = commonService.getStartOfDay(new Date().getTime());
     let endOfDay = (startOfDay + interval) - 1;
     const arr = [];
 
@@ -124,31 +124,25 @@ const assetController = (repository) => {
     return arr;
   };
 
-  const resolveDates = async (req, res, datesArr, tokenId) => {
-    try {
-      return datesArr.map(async (item) => {
-        const date = (item - (item % 1000)) / 1000;
-        return {
-          date,
-          value: await weidexService.getTokenValueByTimestampHttp(Number(tokenId), date)
-            .then(data => ((data.length > 0) ? data : 0))
-            .catch(err => res.status(500).send(err)),
-        };
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(400).send(error);
-    }
+  const definePeriodTokenValues = (tokensValues, tokenName) => {
+    const result = [];
+    Object.keys(tokensValues).forEach((key) => {
+      result.push({ timestamp: Number(commonService.millisecondsToTimestamp(key)), value: tokensValues[key][tokenName] });
+    });
+    return result;
   };
 
   const getAssetPriceHistory = async (req, res) => {
     const { tokenId } = req.params;
     const { period } = req.params;
-    const datesArr = getDatesArray(period);
+    const timestamps = getDatesArray(period);
 
     try {
-      const result = await resolveDates(req, res, datesArr, tokenId);
-      return Promise.all(result).then(data => res.status(200).send(data));
+      const currency = await intReqService.getCurrencyByTokenId(tokenId);
+      const tokensValues = await weidexService
+        .getTokensValuesHistoryHttp(commonService.millisecondsToTimestamp(timestamps[0]), timestamps.length);
+      const tokenPricesByDate = definePeriodTokenValues(tokensValues, currency.tokenName);
+      return res.status(200).send(tokenPricesByDate);
     } catch (error) {
       console.log(error);
       return res.status(400).send(error);

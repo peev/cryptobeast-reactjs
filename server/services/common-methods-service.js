@@ -152,7 +152,6 @@ const commonMethodsService = (repository) => {
       return result;
     }, {});
 
-
   return {
     getTimestampByTxHash,
     tokenToEthToUsd,

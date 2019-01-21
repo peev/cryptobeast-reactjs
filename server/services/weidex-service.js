@@ -185,7 +185,7 @@ const WeidexService = (repository) => {
   const getTokensValuesHistoryHttp = (timestamp, days) => new Promise((resolve, reject) => {
     http.get(`${staging}/token/all/price/${timestamp}/days/${days}`)
       .then((response) => {
-        resolve(response);
+        resolve(JSON.parse(response));
       })
       .catch((err) => {
         console.log(err);

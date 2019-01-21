@@ -113,7 +113,7 @@ const assetController = (repository) => {
 
   const getDatesArray = (period) => {
     const interval = 1000 * 60 * 60 * 24;
-    const startOfDay = Math.floor(Date.now() / interval) * interval;
+    const startOfDay = commonService.getStartOfDay(new Date().getTime());
     let endOfDay = (startOfDay + interval) - 1;
     const arr = [];
 
@@ -124,61 +124,29 @@ const assetController = (repository) => {
     return arr;
   };
 
-  const resolveDates = async (req, res, datesArr, tokenId) => {
-    try {
-      return datesArr.map(async (item) => {
-        const date = (item - (item % 1000)) / 1000;
-        return {
-          date,
-          value: await weidexService.getTokenValueByTimestampHttp(Number(tokenId), date)
-            .then(data => ((data.length > 0) ? data : 0))
-            .catch(err => res.status(500).send(err)),
-        };
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(400).send(error);
-    }
+  const definePeriodTokenValues = (tokensValues, tokenName) => {
+    const result = [];
+    Object.keys(tokensValues).forEach((key) => {
+      result.push({ date: Number(key), value: tokensValues[key][tokenName] });
+    });
+    return result;
   };
 
   const getAssetPriceHistory = async (req, res) => {
     const { tokenId } = req.params;
     const { period } = req.params;
-    const datesArr = getDatesArray(period);
+    const timestamps = getDatesArray(period);
 
     try {
-      const result = await resolveDates(req, res, datesArr, tokenId);
-      return Promise.all(result).then(data => res.status(200).send(data));
+      const currency = await intReqService.getCurrencyByTokenId(tokenId);
+      const tokensValues = await weidexService
+        .getTokensValuesHistoryHttp(commonService.millisecondsToTimestamp(timestamps[0]), timestamps.length);
+      const tokenPricesByDate = definePeriodTokenValues(tokensValues, currency.tokenName);
+      return res.status(200).send(tokenPricesByDate);
     } catch (error) {
       console.log(error);
       return res.status(400).send(error);
     }
-  };
-
-  const getTokenPriceByDate = async (timestamp) => {
-    const currencies = await intReqService.getCurrencies();
-    const result = currencies.map(async (currency) => {
-      const tokenValue = (currency.tokenName === 'ETH') ? 1 :
-        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp);
-      return {
-        timestamp,
-        tokenName: currency.tokenName,
-        value: tokenValue,
-      };
-    });
-    return Promise.all(result)
-      .then(data => data)
-      .catch(err => console.log(err));
-  };
-
-  const getTokensPriceByDate = async (timestamps) => {
-    const result = timestamps.map(async (timestamp) => {
-      const tokenPrice = await getTokenPriceByDate(timestamp);
-      return tokenPrice;
-    });
-    return Promise.all(result)
-      .then(data => data)
-      .catch(err => console.log(err));
   };
 
   const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp, ethToUsd) => {
@@ -224,6 +192,19 @@ const assetController = (repository) => {
     return Promise.all(result).then(data => data);
   };
 
+  const defineTokenValues = (tokensValues) => {
+    const result = [];
+    Object.keys(tokensValues).forEach((key) => {
+      const item = [];
+      Object.keys(tokensValues[key]).forEach((innerKey) => {
+        item.push({ timestamp: Number(key), tokenName: innerKey, value: tokensValues[key][innerKey] });
+      });
+      item.push({ timestamp: Number(key), tokenName: 'ETH', value: 1 });
+      result.push(item);
+    });
+    return result;
+  };
+
   const getAssetsValueHistory = async (req, res) => {
     const { id } = req.params;
     try {
@@ -231,7 +212,10 @@ const assetController = (repository) => {
       const today = new Date().getTime();
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
       const timestamps = commonService.calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
-      const tokenPricesByDate = await getTokensPriceByDate(timestamps);
+      let tokensValues = await weidexService
+        .getTokensValuesHistoryHttp(commonService.millisecondsToTimestamp(timestamps[timestamps.length - 1]), timestamps.length);
+      tokensValues = commonService.sortTokensByDateAsc(tokensValues);
+      const tokenPricesByDate = defineTokenValues(tokensValues);
       const balances = await commonService.getBalancesByDate(timestamps, allocations);
       const filledPreviousBalances = commonService.fillPreviousBalances(balances);
       const ethHistory = await commonService.getEthHistoryDayValue(timestamps[0], timestamps[timestamps.length - 1]);

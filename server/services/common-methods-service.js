@@ -145,6 +145,13 @@ const commonMethodsService = (repository) => {
 
   const sortNumberDesc = (a, b) => (b - a);
 
+  const sortTokensByDateAsc = data =>
+    Object.keys(data).sort().reduce((result, key) => {
+      // eslint-disable-next-line no-param-reassign
+      result[key] = data[key];
+      return result;
+    }, {});
+
   return {
     getTimestampByTxHash,
     tokenToEthToUsd,
@@ -166,6 +173,7 @@ const commonMethodsService = (repository) => {
     sortNumberAsc,
     sortNumberDesc,
     defineEthHistory,
+    sortTokensByDateAsc,
   };
 };
 

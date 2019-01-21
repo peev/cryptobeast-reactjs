@@ -463,12 +463,15 @@ class PortfolioStore {
 
   @action
   sync = (addresses: Array<string>) => {
+    LoadingStore.setShowLoading(true);
     requester.Weidex.sync(addresses)
       .then(() => {
+        LoadingStore.setShowLoading(false);
         this.getPortfoliosByAddresses(addresses);
       })
       .catch((err: object) => {
         console.log(err);
+        LoadingStore.setShowLoading(false);
         LoadingStore.setShowContent(true);
       });
   };

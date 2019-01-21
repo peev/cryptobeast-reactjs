@@ -182,6 +182,17 @@ const WeidexService = (repository) => {
       });
   });
 
+  const getTokensValuesHistoryHttp = (timestamp, days) => new Promise((resolve, reject) => {
+    http.get(`${staging}/token/all/price/${timestamp}/days/${days}`)
+      .then((response) => {
+        resolve(JSON.parse(response));
+      })
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
+  });
+
   return {
     getUser,
     getUserHttp,
@@ -203,6 +214,7 @@ const WeidexService = (repository) => {
     getAllTokensHttp,
     getTokenPriceByTimestamp,
     getTokenValueByTimestampHttp,
+    getTokensValuesHistoryHttp,
   };
 };
 

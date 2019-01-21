@@ -1,6 +1,6 @@
 import SummaryPage from './../views/Summary/Summary';
 // import AssetMovements from './../views/AssetMovements/AssetMovements';
-import Simulator from './../views/Simulator/Simulator';
+// import Simulator from './../views/Simulator/Simulator';
 import TransactionHistory from './../views/TransactionHistory/TransactionHistory';
 // import Ledgers from './../views/Ledgers/Ledgers';
 import Investors from './../views/Investors/Investors';
@@ -10,7 +10,7 @@ import Settings from './../views/Settings/Settings';
 import InvestorsIcon from './../components/CustomIcons/Sidebar/InvestorsIcon';
 import SummaryIcon from './../components/CustomIcons/Sidebar/SummaryIcon';
 import SettingsIcon from './../components/CustomIcons/Sidebar/SettingsIcon';
-import SimulatorIcon from './../components/CustomIcons/Sidebar/SimulatorIcon';
+// import SimulatorIcon from './../components/CustomIcons/Sidebar/SimulatorIcon';
 import AnalyticsIcon from './../components/CustomIcons/Sidebar/AnalyticsIcon';
 import TransactionHistoryIcon from './../components/CustomIcons/Sidebar/TransactionHistoryIcon';
 // import LedgersIcon from './../components/CustomIcons/Sidebar/LedgersIcon';
@@ -59,13 +59,13 @@ const appRoutes = [
   //   icon: LedgersIcon,
   //   component: Ledgers,
   // },
-  {
-    path: '/Simulator',
-    sidebarName: 'Simulator',
-    navbarName: 'Simulator',
-    icon: SimulatorIcon,
-    component: Simulator,
-  },
+  // {
+  //   path: '/Simulator',
+  //   sidebarName: 'Simulator',
+  //   navbarName: 'Simulator',
+  //   icon: SimulatorIcon,
+  //   component: Simulator,
+  // },
   {
     path: '/Settings',
     sidebarName: 'Settings',

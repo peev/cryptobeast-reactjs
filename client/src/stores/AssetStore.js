@@ -134,7 +134,7 @@ class AssetStore {
   get assetHistoryBrakedownDates() {
     if (this.assetHistory.length && this.assetHistory.length > 0) {
       const result = this.assetHistory.map((el: object) => {
-        const date = new Date(el.date * 1000);
+        const date = new Date(el.date);
         let month = date.getUTCMonth() + 1;
         if (month.length === 1) {
           month = `0${month}`;

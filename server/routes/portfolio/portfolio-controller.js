@@ -257,14 +257,19 @@ const portfolioController = (repository) => {
     }
   };
 
-  const sumAllocationBalance = async (balance, timestamp, ethPriceHistory) => {
+  const sumAllocationBalance = async (balance, timestamp, ethPriceHistory, tokensValues) => {
     let result = { timestamp, eth: 0, usd: 0 };
     if (balance !== null) {
       result = balance.map(async (item) => {
-        const currency = await intReqService.getCurrencyByTokenName(item.tokenName);
+        // TODO test
+        // const currency = await intReqService.getCurrencyByTokenName(item.tokenName);
         const ethToUsd = ethPriceHistory.find(el => (el.timestamp === timestamp));
-        const tokenPriceInEth = (item.tokenName === 'ETH') ? 1 :
-          await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commonService.millisecondsToTimestamp(timestamp));
+        // TODO
+        const ts = commonService.millisecondsToTimestamp(timestamp);
+        const tokenPriceInEth = (item.tokenName === 'ETH') ? 1 : tokensValues[ts * 1000][item.tokenName];
+        // TODO test /portfolio/historyByPeriod/9/w
+        // const tokenPriceInEth = (item.tokenName === 'ETH') ? 1 :
+        //   await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commonService.millisecondsToTimestamp(timestamp));
         const eth = bigNumberService.product(item.amount, tokenPriceInEth);
         const usd = commonService.ethToUsd(eth, ethToUsd.priceUsd);
         return { timestamp, eth, usd };
@@ -275,8 +280,8 @@ const portfolioController = (repository) => {
     return Promise.all(result).then(data => data);
   };
 
-  const resolveAllocationsBalances = async (allocations, ethPriceHistory) => {
-    const result = await allocations.map(async allocation => sumAllocationBalance(allocation.balance, allocation.timestamp, ethPriceHistory));
+  const resolveAllocationsBalances = async (allocations, ethPriceHistory, tokensValues) => {
+    const result = await allocations.map(async allocation => sumAllocationBalance(allocation.balance, allocation.timestamp, ethPriceHistory, tokensValues));
     return Promise.all(result).then(data =>
       data.map((item) => {
         const eth = item.reduce((acc, obj) => (bigNumberService.sum(acc, obj.eth)), 0);
@@ -305,7 +310,8 @@ const portfolioController = (repository) => {
       const ethPriceHistory = commonService.defineEthHistory(timestamps, ethHistory);
       const allocations = await resolveAllocations(id, timestamps);
       const filtertedAllocations = allocations.filter(data => data.balance !== null);
-      const result = await resolveAllocationsBalances(filtertedAllocations, ethPriceHistory);
+      const tokensValues = await weidexService.getTokensValuesHistoryHttp(commonService.millisecondsToTimestamp(timestamps[0]), timestamps.length);
+      const result = await resolveAllocationsBalances(filtertedAllocations, ethPriceHistory, tokensValues);
       await res.status(200).send(result);
     } catch (error) {
       console.log(error);

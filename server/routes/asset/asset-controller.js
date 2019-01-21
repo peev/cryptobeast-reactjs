@@ -127,7 +127,7 @@ const assetController = (repository) => {
   const definePeriodTokenValues = (tokensValues, tokenName) => {
     const result = [];
     Object.keys(tokensValues).forEach((key) => {
-      result.push({ timestamp: Number(commonService.millisecondsToTimestamp(key)), value: tokensValues[key][tokenName] });
+      result.push({ date: Number(key), value: tokensValues[key][tokenName] });
     });
     return result;
   };

@@ -155,32 +155,6 @@ const assetController = (repository) => {
     }
   };
 
-  const getTokenPriceByDate = async (timestamp) => {
-    const currencies = await intReqService.getCurrencies();
-    const result = currencies.map(async (currency) => {
-      const tokenValue = (currency.tokenName === 'ETH') ? 1 :
-        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp);
-      return {
-        timestamp,
-        tokenName: currency.tokenName,
-        value: tokenValue,
-      };
-    });
-    return Promise.all(result)
-      .then(data => data)
-      .catch(err => console.log(err));
-  };
-
-  const getTokensPriceByDate = async (timestamps) => {
-    const result = timestamps.map(async (timestamp) => {
-      const tokenPrice = await getTokenPriceByDate(timestamp);
-      return tokenPrice;
-    });
-    return Promise.all(result)
-      .then(data => data)
-      .catch(err => console.log(err));
-  };
-
   const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp, ethToUsd) => {
     const result = tokenPricesArr.map(async (token) => {
       if (balance.tokenName === token.tokenName) {
@@ -224,6 +198,19 @@ const assetController = (repository) => {
     return Promise.all(result).then(data => data);
   };
 
+  const defineTokenValues = (tokensValues) => {
+    const result = [];
+    Object.keys(tokensValues).forEach((key) => {
+      const item = [];
+      Object.keys(tokensValues[key]).forEach((innerKey) => {
+        item.push({ timestamp: Number(key), tokenName: innerKey, value: tokensValues[key][innerKey] });
+      });
+      item.push({ timestamp: Number(key), tokenName: 'ETH', value: 1 });
+      result.push(item);
+    });
+    return result;
+  };
+
   const getAssetsValueHistory = async (req, res) => {
     const { id } = req.params;
     try {
@@ -231,7 +218,10 @@ const assetController = (repository) => {
       const today = new Date().getTime();
       const begin = new Date((allocations[0].timestamp).toString()).getTime();
       const timestamps = commonService.calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
-      const tokenPricesByDate = await getTokensPriceByDate(timestamps);
+      let tokensValues = await weidexService
+        .getTokensValuesHistoryHttp(commonService.millisecondsToTimestamp(timestamps[timestamps.length - 1]), timestamps.length);
+      tokensValues = commonService.sortTokensByDateAsc(tokensValues);
+      const tokenPricesByDate = defineTokenValues(tokensValues);
       const balances = await commonService.getBalancesByDate(timestamps, allocations);
       const filledPreviousBalances = commonService.fillPreviousBalances(balances);
       const ethHistory = await commonService.getEthHistoryDayValue(timestamps[0], timestamps[timestamps.length - 1]);

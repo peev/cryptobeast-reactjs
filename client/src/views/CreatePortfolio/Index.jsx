@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
 import { inject, observer } from 'mobx-react';
+import { Redirect } from 'react-router';
 import SelectFromPortfolios from '../../components/Tabs/SelectFromPortfolios/SelectFromPortfolios';
-import history from '../../services/History';
 import storage from '../../services/storage';
 
 type Props = {
@@ -42,7 +42,7 @@ class CreatePortfolioView extends React.Component<Props> {
       return ('Please use valid external link');
     } else if (this.props.PortfolioStore.portfolios.length === 1) {
       this.props.PortfolioStore.selectPortfolio(this.props.PortfolioStore.portfolios[0].id);
-      return history.push('/summary');
+      return <Redirect to="/summary" />;
     } else {
       this.props.PortfolioStore.selectPortfolio(0);
       return <SelectFromPortfolios />;

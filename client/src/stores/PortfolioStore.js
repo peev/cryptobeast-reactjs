@@ -14,7 +14,6 @@ import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
-import history from '../services/History';
 import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
 import LoadingStore from './LoadingStore';

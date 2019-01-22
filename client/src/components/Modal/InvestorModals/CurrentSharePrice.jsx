@@ -58,14 +58,13 @@ const styles = (theme: Object) => ({
 type Props = {
   classes: Object,
   PortfolioStore: Object,
-  Analytics: Object,
 };
 
 type State = {
   open: boolean,
 };
 
-@inject('PortfolioStore', 'Analytics')
+@inject('PortfolioStore')
 @observer
 class CurrentSharePrice extends React.Component<Props, State> {
   state = {
@@ -83,7 +82,7 @@ class CurrentSharePrice extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, PortfolioStore, Analytics } = this.props;
+    const { classes, PortfolioStore } = this.props;
 
     return (
       <Grid container className={classes.buttonStyle}>

@@ -1,11 +1,9 @@
-/* eslint-disable no-nested-ternary */
-const { responseHandler } = require('../utilities/response-handler');
-
 const modelName = 'Currency';
 
 const currencyController = (repository) => {
-  const WeidexService = require('../../services/weidex-service')(repository);
+  const weidexService = require('../../services/weidex-service')(repository);
   const bigNumberService = require('../../services/big-number-service');
+  const commonService = require('../../services/common-methods-service')();
 
   const calculateCurrencyChange = (open, close) =>
     Number(bigNumberService().product(bigNumberService().quotient(bigNumberService().difference(close, open), open), 100));
@@ -20,19 +18,18 @@ const currencyController = (repository) => {
   })
     .catch(err => console.log(err));
 
-  const getCurrencyObject = async (req) => {
+  const getCurrencyObject = async (req, tokenPricesByDate) => {
     let newCurrencyObject;
     try {
       const today = Math.floor(Date.now() / 1000);
       const yesterday = today - (24 * 3600);
-      const lastWeek = today - (24 * 7 * 3600);
       let currencyDayStatsJson = null;
       let volume24HStats = 0;
       let high24HStats = 0;
       let low24HStats = 0;
 
-      const priceResponse = await WeidexService.getTokenTicker(req.id);
-      const currencyDayStats = await WeidexService.getCurrencyStats(req.id, yesterday, today);
+      const priceResponse = await weidexService.getTokenTicker(req.id);
+      const currencyDayStats = await weidexService.getCurrencyStats(req.id, yesterday, today);
 
       currencyDayStatsJson = !Array.isArray(currencyDayStats) ? JSON.parse(currencyDayStats) : currencyDayStats;
 
@@ -42,22 +39,18 @@ const currencyController = (repository) => {
         low24HStats = currencyDayStatsJson.low24H;
       }
 
-      const todayValue = await WeidexService.getTokenValueByTimestampHttp(req.id, today);
-      const yesterdayValue = await WeidexService.getTokenValueByTimestampHttp(req.id, yesterday);
-      const lastWeekValue = await WeidexService.getTokenValueByTimestampHttp(req.id, lastWeek);
-
-      const change24HStats = (req.name === 'ETH') ? 0 :
-        (yesterdayValue.length && yesterdayValue.length > 0 && todayValue.length && todayValue.length > 0) ?
-          calculateCurrencyChange(yesterdayValue, todayValue) : null;
-      const change7DStats = (req.name === 'ETH') ? 0 :
-        (lastWeekValue.length && lastWeekValue.length > 0 && todayValue.length && todayValue.length > 0) ?
-          calculateCurrencyChange(lastWeekValue, todayValue) : null;
+      const todayValue = tokenPricesByDate.today;
+      const yesterdayValue = tokenPricesByDate.yesterday;
+      const lastWeekValue = tokenPricesByDate.lastWeek;
+      const change24HStats = (req.name === 'ETH') ? 0 : calculateCurrencyChange(yesterdayValue, todayValue);
+      const change7DStats = (req.name === 'ETH') ? 0 : calculateCurrencyChange(lastWeekValue, todayValue);
 
       newCurrencyObject = {
         tokenId: req.id,
         tokenName: req.name,
         tokenNameLong: req.fullName,
         decimals: req.decimals,
+        // eslint-disable-next-line no-nested-ternary
         lastPriceETH: (priceResponse.lastPrice !== null && priceResponse.lastPrice !== undefined) ? priceResponse.lastPrice : req.name === 'ETH' ? 1 : 0,
         volume24H: volume24HStats || 0,
         high24H: high24HStats || 0,
@@ -86,10 +79,10 @@ const currencyController = (repository) => {
       .catch(error => res.status(400).send({ message: error }));
   };
 
-  const syncCurrency = async (req, res) => {
+  const syncCurrency = async (req, res, tokenPricesByDate) => {
     const currency = req.body;
 
-    const currencyObject = await getCurrencyObject(currency);
+    const currencyObject = await getCurrencyObject(currency, tokenPricesByDate);
     const currencyFound = await fetchCurrencyObject(currency.name);
 
     if (currencyFound === null || currencyFound === undefined) {
@@ -120,11 +113,33 @@ const currencyController = (repository) => {
       });
   };
 
+  const definePeriodTokenValues = (tokensValues, tokenName) => {
+    const temp = [];
+    const result = {};
+    Object.keys(tokensValues).forEach((key) => {
+      temp.push({ date: Number(key), value: tokenName !== 'ETH' ? tokensValues[key][tokenName] : 1 });
+    });
+    temp.forEach((item, i) => {
+      if (i === 7) {
+        result.today = item.value;
+      } else if (i === 6) {
+        result.yesterday = item.value;
+      } else if (i === 0) {
+        result.lastWeek = item.value;
+      }
+    });
+    return result;
+  };
+
   const sync = async (req, res) => {
-    const tokens = await WeidexService.getAllTokensHttp();
-    const tokenArray = await tokens.map((token) => {
+    const tokens = await weidexService.getAllTokensHttp();
+    const today = Math.floor(Date.now() / 1000);
+    let tokensValues = await weidexService.getTokensValuesHistoryHttp(today, 8);
+    tokensValues = commonService.sortTokensByDateAsc(tokensValues);
+    const tokenArray = await tokens.map(async (token) => {
       const bodyWrapper = Object.assign({ body: token });
-      return syncCurrency(bodyWrapper, res);
+      const tokenPricesByDate = definePeriodTokenValues(tokensValues, token.name);
+      return syncCurrency(bodyWrapper, res, tokenPricesByDate);
     });
     await Promise.all(tokenArray).then(() => {
       console.log('================== END CURRENCY ==================');

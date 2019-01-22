@@ -29,7 +29,7 @@ const SharePriceChart = inject('PortfolioStore', 'MarketStore')(observer(({ ...p
 
   const onlyShare = {
     chart: {
-      zoomType: 'xy',
+      zoomType: 'x',
     },
     title: {
       text: null,
@@ -79,7 +79,7 @@ const SharePriceChart = inject('PortfolioStore', 'MarketStore')(observer(({ ...p
 
   const config = {
     chart: {
-      zoomType: 'xy',
+      zoomType: 'x',
     },
     title: {
       text: 'Protfolio share price',

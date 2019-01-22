@@ -5,8 +5,7 @@ const attachTo = (app, repository, jobs) => {
   const controller = require('./currency-controller')(repository, jobs);
 
   router
-    .get('/all', controller.getAllCurrencies)
-    .get('/:id', controller.getCurrency);
+    .get('/all', controller.getAllCurrencies);
 
   app.use('/currency', router);
 };

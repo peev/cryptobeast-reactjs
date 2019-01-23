@@ -18,6 +18,7 @@ import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
 import LoadingStore from './LoadingStore';
 import TransactionStore from './TransactionStore';
+import AssetStore from './AssetStore';
 
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
@@ -60,14 +61,14 @@ class PortfolioStore {
     this.allPortfoliosData = [];
 
     // only start data fetching if those properties are actually used!
-    onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
+    // onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
     onBecomeObserved(this, 'currentPortfolioInvestors', this.getCurrentPortfolioInvestors);
     onBecomeObserved(this, 'currentPortfolioTransactions', this.getCurrentPortfolioTransactions);
-    onBecomeObserved(this, 'currentPortfolioTrades', this.getCurrentPortfolioTrades);
+    // onBecomeObserved(this, 'currentPortfolioTrades', this.getCurrentPortfolioTrades);
     onBecomeObserved(this, 'currentPortfolioPrices', this.getCurrentPortfolioPrices);
-    onBecomeObserved(this, 'portfolioValueHistory', this.getPortfolioValueHistory);
+    // onBecomeObserved(this, 'portfolioValueHistory', this.getPortfolioValueHistory);
     onBecomeObserved(this, 'portfolioValueHistoryByPeriod', this.getPortfolioValueHistoryByPeriod);
-    onBecomeObserved(this, 'sharesHistory', this.getShareHistory);
+    // onBecomeObserved(this, 'sharesHistory', this.getShareHistory);
   }
 
   @action.bound
@@ -463,15 +464,18 @@ class PortfolioStore {
   @action
   sync = (addresses: Array<string>) => {
     LoadingStore.setShowLoading(true);
+    LoadingStore.setSyncing(true);
     requester.Weidex.sync(addresses)
       .then(() => {
         LoadingStore.setShowLoading(false);
+        LoadingStore.setSyncing(false);
         this.getPortfoliosByAddresses(addresses);
       })
       .catch((err: object) => {
         console.log(err);
         LoadingStore.setShowLoading(false);
         LoadingStore.setShowContent(true);
+        LoadingStore.setSyncing(false);
       });
   };
 
@@ -611,12 +615,24 @@ class PortfolioStore {
     if (this.selectedPortfolioId !== id) {
       this.selectedPortfolioId = id;
       this.saveSelectedPortfolioId();
-      this.getCurrentPortfolioAssets();
-      this.getCurrentPortfolioTrades();
-      TransactionStore.getTransactions();
-      this.getPortfolioValueHistory();
-      MarketStore.getTickersFromCoinMarketCap();
+      // this.getCurrentPortfolioAssets();
+      // this.getCurrentPortfolioTrades();
+      // TransactionStore.getTransactions();
+      // this.getPortfolioValueHistory();
+      // MarketStore.getTickersFromCoinMarketCap();
     }
+    this.loadData();
+  }
+
+  @action
+  loadData() {
+    this.getPortfolioValueHistory();
+    this.getCurrentPortfolioAssets();
+    this.getCurrentPortfolioTrades();
+    TransactionStore.getTransactions();
+    MarketStore.getTickersFromCoinMarketCap();
+    AssetStore.getAssetsValueHistory();
+    this.getShareHistory();
   }
 
   @action

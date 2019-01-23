@@ -1,6 +1,6 @@
 // @flow
 /* eslint no-console: 0 */
-import { observable, action, computed, onBecomeObserved } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import math from 'mathjs';
 import ubique from 'ubique';
 import requester from '../services/requester';
@@ -47,7 +47,7 @@ class AssetStore {
     this.assetHistory = [];
     this.assetsValueHistory = [];
 
-    onBecomeObserved(this, 'assetsValueHistory', this.getAssetsValueHistory);
+    // onBecomeObserved(this, 'assetsValueHistory', this.getAssetsValueHistory);
   }
 
   @action.bound

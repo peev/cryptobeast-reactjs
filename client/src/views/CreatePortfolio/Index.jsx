@@ -15,7 +15,7 @@ type Props = {
 @inject('PortfolioStore', 'WeidexStore', 'location', 'LoadingStore')
 @observer
 class CreatePortfolioView extends React.Component<Props> {
-  componentWillMount() {
+  componentDidMount() {
     this.handleStart();
   }
 
@@ -44,8 +44,13 @@ class CreatePortfolioView extends React.Component<Props> {
       this.props.PortfolioStore.selectPortfolio(this.props.PortfolioStore.portfolios[0].id);
       return <Redirect to="/summary" />;
     } else {
-      this.props.PortfolioStore.selectPortfolio(0);
-      return <SelectFromPortfolios />;
+      if (this.props.PortfolioStore.selectedPortfolioId > 0) {
+        this.props.PortfolioStore.selectPortfolio(this.props.PortfolioStore.selectedPortfolioId);
+        return <Redirect to="/summary" />;
+      } else {
+        this.props.PortfolioStore.selectPortfolio(0);
+        return <SelectFromPortfolios />;
+      }
     }
   };
 

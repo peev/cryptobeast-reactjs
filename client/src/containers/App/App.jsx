@@ -41,7 +41,7 @@ class App extends React.Component<Props> {
     open: false,
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.handleStart();
   }
 

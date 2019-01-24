@@ -20,6 +20,7 @@ import LoadingStore from './LoadingStore';
 import TransactionStore from './TransactionStore';
 import AssetStore from './AssetStore';
 
+// TODO handle if selected_portfolio_id has no set parameter
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
 class PortfolioStore {
@@ -635,6 +636,7 @@ class PortfolioStore {
     this.getCurrentPortfolioTrades();
     TransactionStore.getTransactions();
     MarketStore.getTickersFromCoinMarketCap();
+    MarketStore.getEthHistory();
     AssetStore.getAssetsValueHistory();
     this.getShareHistory();
   }

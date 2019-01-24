@@ -48,6 +48,7 @@ class PortfolioStore {
   @observable alphaData;
   @observable sharesHistory;
   @observable allPortfoliosData;
+  @observable ableToLogin;
 
   constructor() {
     this.portfolios = [];
@@ -67,6 +68,7 @@ class PortfolioStore {
     this.alphaData = null;
     this.sharesHistory = [];
     this.allPortfoliosData = [];
+    this.ableToLogin = false;
 
     // only start data fetching if those properties are actually used!
     // onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
@@ -631,9 +633,9 @@ class PortfolioStore {
       // this.getPortfolioValueHistory();
       // MarketStore.getTickersFromCoinMarketCap();
     }
-    if (this.selectedPortfolioId && this.selectedPortfolioId > 0) {
-      this.loadData();
-    }
+    // if (this.selectedPortfolioId && this.selectedPortfolioId > 0) {
+    //   this.loadData();
+    // }
   }
 
   @action
@@ -682,17 +684,54 @@ class PortfolioStore {
       .then(action((result: object) => {
         storage.setPortfolioAddresses(addresses);
         this.portfolios = result.data;
-        if (this.selectedPortfolioId > 0) {
-          this.selectPortfolio(this.selectedPortfolioId);
-        }
+        // if (this.selectedPortfolioId > 0) {
+        //   this.selectPortfolio(this.selectedPortfolioId);
+        // }
         this.setFetchingPortfolios(false);
         LoadingStore.setShowContent(true);
+        this.handleRedirect();
       }))
       .catch(action((err: object) => {
         LoadingStore.setShowContent(true);
         this.setFetchingPortfolios(false);
         console.log(err);
       }));
+  }
+
+  @action
+  handleRedirect() {
+    // '/'
+    if (this.portfolios.length === 0) {
+      // TODO handle this
+      return ('Please use valid external link');
+    } else if (this.portfolios.length === 1) {
+      const selectedPortfolio = this.portfolios.find((portfolio: Object) => portfolio.id === this.selectedPortfolioId);
+      if (selectedPortfolio !== null && selectedPortfolio !== undefined) {
+        this.selectPortfolio(selectedPortfolio.id);
+        this.loadData();
+        this.ableToLogin = true;
+      } else {
+        // Skip old one, choose currend and proceed
+        this.selectPortfolio(this.portfolios[0].id);
+        this.loadData();
+        this.ableToLogin = true;
+      }
+    } else {
+      if (this.selectedPortfolioId > 0) {
+        const selectedPortfolio = this.portfolios.find((portfolio: Object) => portfolio.id === this.selectedPortfolioId);
+        if (selectedPortfolio !== null && selectedPortfolio !== undefined) {
+          this.selectPortfolio(selectedPortfolio.id);
+          this.loadData();
+          this.ableToLogin = true;
+        } else {
+          this.selectPortfolio(0);
+          this.ableToLogin = false;
+        }
+      } else {
+        this.selectPortfolio(0);
+        this.ableToLogin = false;
+      }
+    }
   }
 
   @action

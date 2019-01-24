@@ -26,7 +26,7 @@ class CreatePortfolioView extends React.Component<Props> {
     } else {
       const storageAddresses = storage.getPortfolioAddresses();
       Promise.resolve(storageAddresses).then((addressesData: Array<string>) => {
-        if (addressesData.length) {
+        if (addressesData && addressesData.length) {
           return this.props.WeidexStore.validateAddresses(addressesData);
         } else {
           return this.props.LoadingStore.setShowContent(true);
@@ -38,34 +38,44 @@ class CreatePortfolioView extends React.Component<Props> {
   getAddresses = (locationSearch: string) => locationSearch.replace(/&w=/g, 'w=').substring(1).split('w=').slice(1);
 
   handlePortfoliosLength = () => {
-    if (this.props.PortfolioStore.portfolios.length === 0) {
-      return ('Please use valid external link');
-    } else if (this.props.PortfolioStore.portfolios.length === 1) {
-      const { portfolios } = this.props.PortfolioStore;
-      const selectedPortfolio = portfolios.find((portfolio: Object) => portfolio.id === this.props.PortfolioStore.selectedPortfolioId);
-      if (selectedPortfolio !== null && selectedPortfolio !== undefined) {
-        return <Redirect to="/summary" />;
-      } else {
-        // TODO handle load data twice
-        this.props.PortfolioStore.selectPortfolio(this.props.PortfolioStore.portfolios[0].id);
-        return <Redirect to="/summary" />;
-      }
+    console.log(this.props.PortfolioStore.ableToLogin);
+    if (this.props.PortfolioStore.ableToLogin) {
+      return <Redirect to="/summary" />;
     } else {
-      if (this.props.PortfolioStore.selectedPortfolioId > 0) {
-        const { portfolios } = this.props.PortfolioStore;
-        const selectedPortfolio = portfolios.find((portfolio: Object) => portfolio.id === this.props.PortfolioStore.selectedPortfolioId);
-        // In cases of old portfolio selected, which is not in params
-        if (selectedPortfolio !== null && selectedPortfolio !== undefined) {
-          return <Redirect to="/summary" />;
-        } else {
-          this.props.PortfolioStore.selectPortfolio(0);
-          return <SelectFromPortfolios />;
-        }
-      } else {
-        this.props.PortfolioStore.selectPortfolio(0);
-        return <SelectFromPortfolios />;
-      }
+      return <SelectFromPortfolios />;
     }
+    
+    // if (this.props.PortfolioStore.portfolios.length === 0) {
+    //   return ('Please use valid external link');
+    // } else if (this.props.PortfolioStore.portfolios.length === 1) {
+    //   const { portfolios } = this.props.PortfolioStore;
+    //   const selectedPortfolio = portfolios.find((portfolio: Object) => portfolio.id === this.props.PortfolioStore.selectedPortfolioId);
+    //   if (selectedPortfolio !== null && selectedPortfolio !== undefined) {
+    //     this.props.PortfolioStore.loadData();
+    //     return <Redirect to="/summary" />;
+    //   } else {
+    //     // TODO handle load data twice
+    //     this.props.PortfolioStore.selectPortfolio(this.props.PortfolioStore.portfolios[0].id);
+    //     this.props.PortfolioStore.loadData();
+    //     return <Redirect to="/summary" />;
+    //   }
+    // } else {
+    //   if (this.props.PortfolioStore.selectedPortfolioId > 0) {
+    //     const { portfolios } = this.props.PortfolioStore;
+    //     const selectedPortfolio = portfolios.find((portfolio: Object) => portfolio.id === this.props.PortfolioStore.selectedPortfolioId);
+    //     // In cases of old portfolio selected, which is not in params
+    //     if (selectedPortfolio !== null && selectedPortfolio !== undefined) {
+    //       this.props.PortfolioStore.loadData();
+    //       return <Redirect to="/summary" />;
+    //     } else {
+    //       this.props.PortfolioStore.selectPortfolio(0);
+    //       return <SelectFromPortfolios />;
+    //     }
+    //   } else {
+    //     this.props.PortfolioStore.selectPortfolio(0);
+    //     return <SelectFromPortfolios />;
+    //   }
+    // }
   };
 
   render() {

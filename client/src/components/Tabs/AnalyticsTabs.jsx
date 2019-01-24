@@ -63,8 +63,8 @@ class AnalyticsTabs extends React.Component<Props, State> {
           <Tab label="Performance" value={this.value} />
           <Tab label="Volatility/Risk" />
           <Tab label="Profit/Loss" />
-          <Tab label="Liquidity" />
-          <Tab label="Correlation matrix" />
+          {/* <Tab label="Liquidity" />
+          <Tab label="Correlation matrix" /> */}
         </Tabs>
 
         <SwipeableViews
@@ -78,9 +78,9 @@ class AnalyticsTabs extends React.Component<Props, State> {
 
           <ProfitLoss />
 
-          <Liquidity />
+          {/* <Liquidity />
 
-          <CorrelationMatrix />
+          <CorrelationMatrix /> */}
 
         </SwipeableViews>
       </div>

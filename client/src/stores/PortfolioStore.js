@@ -686,9 +686,6 @@ class PortfolioStore {
       .then(action((result: object) => {
         storage.setPortfolioAddresses(addresses);
         this.portfolios = result.data;
-        // if (this.selectedPortfolioId > 0) {
-        //   this.selectPortfolio(this.selectedPortfolioId);
-        // }
         this.setFetchingPortfolios(false);
         LoadingStore.setShowContent(true);
         this.handleRedirect();

@@ -52,7 +52,7 @@ class SelectPortfolioCurrency extends React.Component<Props> {
     if (event) {
       this.props.AssetStore.selectCurrencyFromAssetAllocation({
         label: event.value,
-        value: event.value
+        value: event.value,
       });
     } else {
       this.props.AssetStore.resetCurrency();

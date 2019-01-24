@@ -21,13 +21,14 @@ import TransactionStore from './TransactionStore';
 import AssetStore from './AssetStore';
 
 // TODO handle if selected_portfolio_id has no set parameter
-const persistedUserData = () => {
-  try {
-    return JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
-  } catch (error) {
-    return 0;
-  }
-};
+let persistedUserData = 0;
+
+try {
+  persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
+} catch (error) {
+  console.log(error.stack);
+}
+
 
 class PortfolioStore {
   @observable fetchingPortfolios;
@@ -52,7 +53,7 @@ class PortfolioStore {
     this.portfolios = [];
     this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
-    this.selectedPortfolioId = persistedUserData ? persistedUserData : 0;
+    this.selectedPortfolioId = persistedUserData;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];

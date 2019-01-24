@@ -49,6 +49,7 @@ class PortfolioStore {
   @observable sharesHistory;
   @observable allPortfoliosData;
   @observable ableToLogin;
+  @observable showErrorPage;
 
   constructor() {
     this.portfolios = [];
@@ -69,6 +70,7 @@ class PortfolioStore {
     this.sharesHistory = [];
     this.allPortfoliosData = [];
     this.ableToLogin = false;
+    this.showErrorPage = false;
 
     // only start data fetching if those properties are actually used!
     // onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
@@ -692,6 +694,8 @@ class PortfolioStore {
         this.handleRedirect();
       }))
       .catch(action((err: object) => {
+        this.ableToLogin = false;
+        this.showErrorPage = true;
         LoadingStore.setShowContent(true);
         this.setFetchingPortfolios(false);
         console.log(err);
@@ -703,7 +707,8 @@ class PortfolioStore {
     // '/'
     if (this.portfolios.length === 0) {
       // TODO handle this
-      return ('Please use valid external link');
+      this.ableToLogin = false;
+      this.showErrorPage = true;
     } else if (this.portfolios.length === 1) {
       const selectedPortfolio = this.portfolios.find((portfolio: Object) => portfolio.id === this.selectedPortfolioId);
       if (selectedPortfolio !== null && selectedPortfolio !== undefined) {

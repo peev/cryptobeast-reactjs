@@ -38,9 +38,9 @@ class MarketStore {
     //   .then(() => this.getAllCurrencies())
     //   .catch((err: object) => console.log(err));
 
-    this.getTickersFromCoinMarketCap();
+    // this.getTickersFromCoinMarketCap();
     this.getEthToUsd();
-    this.getEthHistory();
+    // this.getEthHistory();
     // requester.Market.getTickersFromCoinMarketCap()
     //   .then(this.convertMarketPriceHistory)
     //   .catch((err: object) => console.log(err));

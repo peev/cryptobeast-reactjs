@@ -18,7 +18,9 @@ import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
 import LoadingStore from './LoadingStore';
 import TransactionStore from './TransactionStore';
+import AssetStore from './AssetStore';
 
+// TODO handle if selected_portfolio_id has no set parameter
 const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
 
 class PortfolioStore {
@@ -60,14 +62,16 @@ class PortfolioStore {
     this.allPortfoliosData = [];
 
     // only start data fetching if those properties are actually used!
-    onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
+    // onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
     onBecomeObserved(this, 'currentPortfolioInvestors', this.getCurrentPortfolioInvestors);
-    onBecomeObserved(this, 'currentPortfolioTransactions', this.getCurrentPortfolioTransactions);
-    onBecomeObserved(this, 'currentPortfolioTrades', this.getCurrentPortfolioTrades);
-    onBecomeObserved(this, 'currentPortfolioPrices', this.getCurrentPortfolioPrices);
-    onBecomeObserved(this, 'portfolioValueHistory', this.getPortfolioValueHistory);
+    // TODO for delete getCurrentPortfolioTransactions
+    // onBecomeObserved(this, 'currentPortfolioTransactions', this.getCurrentPortfolioTransactions);
+    // onBecomeObserved(this, 'currentPortfolioTrades', this.getCurrentPortfolioTrades);
+    // TODO for delete getCurrentPortfolioPrices
+    // onBecomeObserved(this, 'currentPortfolioPrices', this.getCurrentPortfolioPrices);
+    // onBecomeObserved(this, 'portfolioValueHistory', this.getPortfolioValueHistory);
     onBecomeObserved(this, 'portfolioValueHistoryByPeriod', this.getPortfolioValueHistoryByPeriod);
-    onBecomeObserved(this, 'sharesHistory', this.getShareHistory);
+    // onBecomeObserved(this, 'sharesHistory', this.getShareHistory);
   }
 
   @action.bound
@@ -463,15 +467,18 @@ class PortfolioStore {
   @action
   sync = (addresses: Array<string>) => {
     LoadingStore.setShowLoading(true);
+    LoadingStore.setSyncing(true);
     requester.Weidex.sync(addresses)
       .then(() => {
         LoadingStore.setShowLoading(false);
+        LoadingStore.setSyncing(false);
         this.getPortfoliosByAddresses(addresses);
       })
       .catch((err: object) => {
         console.log(err);
         LoadingStore.setShowLoading(false);
         LoadingStore.setShowContent(true);
+        LoadingStore.setSyncing(false);
       });
   };
 
@@ -611,12 +618,27 @@ class PortfolioStore {
     if (this.selectedPortfolioId !== id) {
       this.selectedPortfolioId = id;
       this.saveSelectedPortfolioId();
-      this.getCurrentPortfolioAssets();
-      this.getCurrentPortfolioTrades();
-      TransactionStore.getTransactions();
-      this.getPortfolioValueHistory();
-      MarketStore.getTickersFromCoinMarketCap();
+      // this.getCurrentPortfolioAssets();
+      // this.getCurrentPortfolioTrades();
+      // TransactionStore.getTransactions();
+      // this.getPortfolioValueHistory();
+      // MarketStore.getTickersFromCoinMarketCap();
     }
+    if (this.selectedPortfolioId && this.selectedPortfolioId > 0) {
+      this.loadData();
+    }
+  }
+
+  @action
+  loadData() {
+    this.getPortfolioValueHistory();
+    this.getCurrentPortfolioAssets();
+    this.getCurrentPortfolioTrades();
+    TransactionStore.getTransactions();
+    MarketStore.getTickersFromCoinMarketCap();
+    MarketStore.getEthHistory();
+    AssetStore.getAssetsValueHistory();
+    this.getShareHistory();
   }
 
   @action
@@ -689,17 +711,17 @@ class PortfolioStore {
     }
   }
 
-  @action.bound
-  getCurrentPortfolioPrices() {
-    const searchedItem = {
-      portfolioId: this.selectedPortfolioId,
-      item: 'PortfolioPrice',
-    };
-    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
-      .then(action((result) => {
-        this.currentPortfolioPrices = result.data;
-      }));
-  }
+  // @action.bound
+  // getCurrentPortfolioPrices() {
+  //   const searchedItem = {
+  //     portfolioId: this.selectedPortfolioId,
+  //     item: 'PortfolioPrice',
+  //   };
+  //   requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
+  //     .then(action((result) => {
+  //       this.currentPortfolioPrices = result.data;
+  //     }));
+  // }
 
   @action.bound
   getCurrentPortfolioInvestors() {
@@ -711,17 +733,17 @@ class PortfolioStore {
     }
   }
 
-  @action.bound
-  getCurrentPortfolioTransactions() {
-    const searchedItem = {
-      portfolioId: this.selectedPortfolioId,
-      item: 'Transaction',
-    };
-    requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
-      .then(action((result: Object) => {
-        this.currentPortfolioTransactions = result.data;
-      }));
-  }
+  // @action.bound
+  // getCurrentPortfolioTransactions() {
+  //   const searchedItem = {
+  //     portfolioId: this.selectedPortfolioId,
+  //     item: 'Transaction',
+  //   };
+  //   requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
+  //     .then(action((result: Object) => {
+  //       this.currentPortfolioTransactions = result.data;
+  //     }));
+  // }
 
   @action.bound
   getCurrentPortfolioTrades() {

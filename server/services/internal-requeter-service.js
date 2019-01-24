@@ -166,6 +166,16 @@ const internalRequesterService = (repository) => {
     },
   }).catch(err => console.log(err));
 
+  const getTradeByTxHashAndType = (txHash, type) => repository.findOne({
+    modelName: 'TradeHistory',
+    options: {
+      where: {
+        txHash,
+        type,
+      },
+    },
+  }).catch(err => console.log(err));
+
   const getTransactionsByPortfolioIdAsc = portfolioId => repository.find({
     modelName: 'Transaction',
     options: {
@@ -296,6 +306,7 @@ const internalRequesterService = (repository) => {
     getTransactionById,
     getPortfolioByUserAddressIncludeAll,
     getTradeByTxHash,
+    getTradeByTxHashAndType,
     getTransactionsByPortfolioIdAsc,
     getTransactionsByPortfolioIdAndInvestorIdWithoutTransactionIdAsc,
     getFirstDepositByPortfolioId,

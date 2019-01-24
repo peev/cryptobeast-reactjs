@@ -15,7 +15,7 @@ type Props = {
 @inject('PortfolioStore', 'WeidexStore', 'location', 'LoadingStore')
 @observer
 class CreatePortfolioView extends React.Component<Props> {
-  componentWillMount() {
+  componentDidMount() {
     this.handleStart();
   }
 
@@ -41,11 +41,30 @@ class CreatePortfolioView extends React.Component<Props> {
     if (this.props.PortfolioStore.portfolios.length === 0) {
       return ('Please use valid external link');
     } else if (this.props.PortfolioStore.portfolios.length === 1) {
-      this.props.PortfolioStore.selectPortfolio(this.props.PortfolioStore.portfolios[0].id);
-      return <Redirect to="/summary" />;
+      const { portfolios } = this.props.PortfolioStore;
+      const selectedPortfolio = portfolios.find((portfolio: Object) => portfolio.id === this.props.PortfolioStore.selectedPortfolioId);
+      if (selectedPortfolio !== null && selectedPortfolio !== undefined) {
+        return <Redirect to="/summary" />;
+      } else {
+        // TODO handle load data twice
+        this.props.PortfolioStore.selectPortfolio(this.props.PortfolioStore.portfolios[0].id);
+        return <Redirect to="/summary" />;
+      }
     } else {
-      this.props.PortfolioStore.selectPortfolio(0);
-      return <SelectFromPortfolios />;
+      if (this.props.PortfolioStore.selectedPortfolioId > 0) {
+        const { portfolios } = this.props.PortfolioStore;
+        const selectedPortfolio = portfolios.find((portfolio: Object) => portfolio.id === this.props.PortfolioStore.selectedPortfolioId);
+        // In cases of old portfolio selected, which is not in params
+        if (selectedPortfolio !== null && selectedPortfolio !== undefined) {
+          return <Redirect to="/summary" />;
+        } else {
+          this.props.PortfolioStore.selectPortfolio(0);
+          return <SelectFromPortfolios />;
+        }
+      } else {
+        this.props.PortfolioStore.selectPortfolio(0);
+        return <SelectFromPortfolios />;
+      }
     }
   };
 

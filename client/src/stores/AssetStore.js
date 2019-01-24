@@ -1,6 +1,6 @@
 // @flow
 /* eslint no-console: 0 */
-import { observable, action, computed, onBecomeObserved } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import math from 'mathjs';
 import ubique from 'ubique';
 import requester from '../services/requester';
@@ -47,7 +47,7 @@ class AssetStore {
     this.assetHistory = [];
     this.assetsValueHistory = [];
 
-    onBecomeObserved(this, 'assetsValueHistory', this.getAssetsValueHistory);
+    // onBecomeObserved(this, 'assetsValueHistory', this.getAssetsValueHistory);
   }
 
   @action.bound
@@ -61,7 +61,9 @@ class AssetStore {
   @computed
   get protfolioAssetsTokenNames() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
-      return this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
+      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.filter((asset: Object) => asset.amount > 0);
+      const result = assets.map((asset: Object) => asset.tokenName).sort();
+      return result;
     }
     return [];
   }
@@ -81,8 +83,9 @@ class AssetStore {
   get assetsStdDeviation() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
       const result = [];
-      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
-      assets.map((assetName: string) => {
+      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.filter((asset: Object) => asset.amount > 0);
+      const items = assets.map((asset: Object) => asset.tokenName).sort();
+      items.map((assetName: string) => {
         const assetTotals = this.getAssetTotals(assetName);
         return result.push(Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(math.std(assetTotals)), 4)));
       });
@@ -94,8 +97,9 @@ class AssetStore {
   @computed
   get assetsSkewness() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
-      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
-      return assets.map((assetName: string) => {
+      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.filter((asset: Object) => asset.amount > 0);
+      const items = assets.map((asset: Object) => asset.tokenName).sort();
+      return items.map((assetName: string) => {
         const assetsTotal = this.getAssetTotals(assetName);
         return Number(BigNumberService.toFixedParam(ubique.skewness(assetsTotal), 4));
       });
@@ -106,8 +110,9 @@ class AssetStore {
   @computed
   get assetsKurtosis() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
-      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.map((asset: Object) => asset.tokenName).sort();
-      return assets.map((assetName: string) => {
+      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.filter((asset: Object) => asset.amount > 0);
+      const items = assets.map((asset: Object) => asset.tokenName).sort();
+      return items.map((assetName: string) => {
         const assetsTotal = this.getAssetTotals(assetName);
         return Number(BigNumberService.toFixedParam(ubique.kurtosis(assetsTotal), 4));
       });

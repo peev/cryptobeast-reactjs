@@ -41,7 +41,7 @@ class App extends React.Component<Props> {
     open: false,
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.handleStart();
   }
 
@@ -121,7 +121,7 @@ class App extends React.Component<Props> {
                 <Sidebar
                   routes={appRoutes}
                   handleDrawerToggle={this.handleDrawerToggle}
-                  disabled={checkPortfolioNumber}
+                  disabled={checkPortfolioNumber || LoadingStore.syncing}
                   closed={this.state.open}
                   {...rest}
                 />

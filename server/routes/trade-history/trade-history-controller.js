@@ -39,13 +39,6 @@ const tradeController = (repository) => {
     return newTradeObject;
   };
 
-  const updateAction = async (req, res, id, tradeObject, isSyncing) => {
-    const newTradeData = Object.assign({}, tradeObject, { id });
-    await repository.update({ modelName, updatedRecord: newTradeData })
-      .then(response => (isSyncing ? response : res.status(200).send(response)))
-      .catch(error => res.json(error));
-  };
-
   const createAction = async (req, res, tradeObject, isSyncing) => {
     await repository.create({ modelName, newObject: tradeObject })
       .then(response => (isSyncing ? null : res.status(200).send(response)))
@@ -68,11 +61,9 @@ const tradeController = (repository) => {
       const priceTotalUSD = await commomService.tokenToEthToUsd(trade.amount, trade.price, ethUsd);
 
       const tradeObject = createTradeObject(trade, lastPriceUSD, transactionFee, address, priceUSD, priceTotalUSD);
-      const tradeExist = await intReqService.getTradeByTxHash(trade.txHash);
+      const tradeExist = await intReqService.getTradeByTxHashAndType(trade.txHash, setStatus(address, trade));
       if (tradeExist === null || tradeExist === undefined) {
         await createAction(req, res, tradeObject, true);
-      } else {
-        await updateAction(req, res, Number(tradeExist.id), tradeObject, true);
       }
     } catch (error) {
       console.log(error);
@@ -119,8 +110,9 @@ const tradeController = (repository) => {
         const lastPriceUSD = await commomService.getEthToUsdNow();
         const portfolio = await intReqService.getPortfolioByUserAddressIncludeAll(address);
         const trades = await weidexService.getUserOrderHistoryByUserHttp(portfolio.userID);
+        const portfolioId = portfolio.id;
         if (trades) {
-          await getTrades(req, res, trades, portfolio.id, lastPriceUSD, address);
+          await getTrades(req, res, trades, portfolioId, lastPriceUSD, address);
         }
       } catch (error) {
         console.log(error);

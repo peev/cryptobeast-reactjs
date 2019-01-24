@@ -14,8 +14,11 @@ const storage = {
 
   getSelectedPortfolioId: () => new Promise((resolve) => {
     setTimeout(() => {
-      const userData = JSON.parse(window.localStorage.getItem('selected_portfolio_id'));
-      resolve(userData || initPortfolioData);
+      try {
+        return resolve(JSON.parse(window.localStorage.getItem('selected_portfolio_id')));
+      } catch (error) {
+        return resolve(initPortfolioData);
+      }
     }, 1);
   }),
 
@@ -28,8 +31,11 @@ const storage = {
 
   getPortfolioAddresses: () => new Promise((resolve) => {
     setTimeout(() => {
-      const addressesData = JSON.parse(window.localStorage.getItem('portfolio_user_addresses'));
-      resolve(addressesData || []);
+      try {
+        return resolve(JSON.parse(window.localStorage.getItem('portfolio_user_addresses')));
+      } catch (error) {
+        return resolve([]);
+      }
     }, 1);
   }),
 };

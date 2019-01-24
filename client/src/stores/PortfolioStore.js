@@ -21,7 +21,13 @@ import TransactionStore from './TransactionStore';
 import AssetStore from './AssetStore';
 
 // TODO handle if selected_portfolio_id has no set parameter
-const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
+const persistedUserData = () => {
+  try {
+    return JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
+  } catch (error) {
+    return 0;
+  }
+};
 
 class PortfolioStore {
   @observable fetchingPortfolios;

@@ -469,7 +469,7 @@ const portfolioController = (repository) => {
         console.log(error);
       }
     });
-    await Promise.all(portfolioArray).then((data) => {
+    await Promise.all(portfolioArray).then(() => {
       console.log('================== END PORTFOLIOS =========================================');
     });
   };

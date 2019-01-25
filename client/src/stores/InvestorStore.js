@@ -425,76 +425,76 @@ class InvestorStore {
       });
   }
 
-  @action.bound
-  createDefaultInvestor(newPortfolio) {
-    const newInvestor = {
-      isFounder: true,
-      name: 'default investor',
-      email: 'default@email.com',
-      phone: '',
-      dateOfEntry: new Date().toISOString(),
-      fee: '0.0',
-      portfolioId: newPortfolio.id,
-    };
-    let depositData;
-    if (MarketStore.selectedBaseCurrency) {
-      depositData = {
-        currency: MarketStore.selectedBaseCurrency.pair,
-        balance: +this.newInvestorValues.depositedAmount,
-        portfolioId: newPortfolio.id,
-        transaction: {
-          investorName: 'default investor',
-          dateOfEntry: new Date().toISOString(),
-          // transactionDate: (new Date()).toLocaleString(),
-          amountInUSD: this.convertedUsdEquiv(),
-          sharePrice: 1,
-          shares: parseFloat(this.convertedUsdEquiv()),
-          portfolioId: newPortfolio.id,
-        },
-      };
-    }
+  // @action.bound
+  // createDefaultInvestor(newPortfolio) {
+  //   const newInvestor = {
+  //     isFounder: true,
+  //     name: 'default investor',
+  //     email: 'default@email.com',
+  //     phone: '',
+  //     dateOfEntry: new Date().toISOString(),
+  //     fee: '0.0',
+  //     portfolioId: newPortfolio.id,
+  //   };
+  //   let depositData;
+  //   if (MarketStore.selectedBaseCurrency) {
+  //     depositData = {
+  //       currency: MarketStore.selectedBaseCurrency.pair,
+  //       balance: +this.newInvestorValues.depositedAmount,
+  //       portfolioId: newPortfolio.id,
+  //       transaction: {
+  //         investorName: 'default investor',
+  //         dateOfEntry: new Date().toISOString(),
+  //         // transactionDate: (new Date()).toLocaleString(),
+  //         amountInUSD: this.convertedUsdEquiv(),
+  //         sharePrice: 1,
+  //         shares: parseFloat(this.convertedUsdEquiv()),
+  //         portfolioId: newPortfolio.id,
+  //       },
+  //     };
+  //   }
 
 
-    return requester.Investor.add(newInvestor)
-      .then(action((result) => {
-        PortfolioStore.currentPortfolioInvestors.push(result.data);
-        if (depositData) {
-          Object.assign(depositData.transaction, { investorId: result.data.id });
-          requester.Investor.addDeposit(depositData)
-            .then(action((response) => {
-              // Update portfolios array
-              newPortfolio.shares = response.data.shares; // eslint-disable-line
-              PortfolioStore.portfolios.push(newPortfolio);
+  //   return requester.Investor.add(newInvestor)
+  //     .then(action((result) => {
+  //       PortfolioStore.currentPortfolioInvestors.push(result.data);
+  //       if (depositData) {
+  //         Object.assign(depositData.transaction, { investorId: result.data.id });
+  //         requester.Investor.addDeposit(depositData)
+  //           .then(action((response) => {
+  //             // Update portfolios array
+  //             newPortfolio.shares = response.data.shares; // eslint-disable-line
+  //             PortfolioStore.portfolios.push(newPortfolio);
 
-              // Update current selected portfolio
-              PortfolioStore.selectPortfolio(newPortfolio.id);
+  //             // Update current selected portfolio
+  //             PortfolioStore.selectPortfolio(newPortfolio.id);
 
-              // Update current selected portfolio transactions
-              PortfolioStore.currentPortfolioTransactions.push(response.data);
+  //             // Update current selected portfolio transactions
+  //             PortfolioStore.currentPortfolioTransactions.push(response.data);
 
-              NotificationStore.addMessage('successMessages', 'Successfully created portfolio');
-              PortfolioStore.resetPortfolio();
-              MarketStore.selectedBaseCurrency = '';
-            }))
-            .then(action(() => {
-              this.reset();
-              PortfolioStore.resetPortfolio();
-            }))
-            .catch(err => console.log(err));
-        } else {
-          // Update portfolios array
-          PortfolioStore.portfolios.push(newPortfolio);
+  //             NotificationStore.addMessage('successMessages', 'Successfully created portfolio');
+  //             PortfolioStore.resetPortfolio();
+  //             MarketStore.selectedBaseCurrency = '';
+  //           }))
+  //           .then(action(() => {
+  //             this.reset();
+  //             PortfolioStore.resetPortfolio();
+  //           }))
+  //           .catch(err => console.log(err));
+  //       } else {
+  //         // Update portfolios array
+  //         PortfolioStore.portfolios.push(newPortfolio);
 
-          // Update current selected portfolio
-          PortfolioStore.selectPortfolio(newPortfolio.id);
+  //         // Update current selected portfolio
+  //         PortfolioStore.selectPortfolio(newPortfolio.id);
 
-          NotificationStore.addMessage('successMessages', 'Successfully created portfolio');
-          PortfolioStore.resetPortfolio();
-          MarketStore.selectedBaseCurrency = '';
-        }
-      }))
-      .catch(err => console.log(err));
-  }
+  //         NotificationStore.addMessage('successMessages', 'Successfully created portfolio');
+  //         PortfolioStore.resetPortfolio();
+  //         MarketStore.selectedBaseCurrency = '';
+  //       }
+  //     }))
+  //     .catch(err => console.log(err));
+  // }
 
   @action
   updateCurrentInvestor(investorId) {

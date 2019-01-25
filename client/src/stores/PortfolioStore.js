@@ -19,9 +19,17 @@ import BigNumberService from '../services/BigNumber';
 import LoadingStore from './LoadingStore';
 import TransactionStore from './TransactionStore';
 import AssetStore from './AssetStore';
+import Allocations from './Allocations';
 
 // TODO handle if selected_portfolio_id has no set parameter
-const persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
+let persistedUserData = 0;
+
+try {
+  persistedUserData = JSON.parse(window.localStorage.getItem('selected_portfolio_id')); // eslint-disable-line
+} catch (error) {
+  console.log(error.stack);
+}
+
 
 class PortfolioStore {
   @observable fetchingPortfolios;
@@ -46,7 +54,7 @@ class PortfolioStore {
     this.portfolios = [];
     this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
-    this.selectedPortfolioId = persistedUserData ? persistedUserData : 0;
+    this.selectedPortfolioId = persistedUserData;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
     this.currentPortfolioTransactions = [];
@@ -613,18 +621,13 @@ class PortfolioStore {
   // #endregion
 
   @action.bound
-  selectPortfolio(id: number) {
+  selectPortfolio(id: number, loadData: boolean) {
     this.selectedPortfolio = this.portfolios.find((porfolio: object) => id === porfolio.id);
     if (this.selectedPortfolioId !== id) {
       this.selectedPortfolioId = id;
       this.saveSelectedPortfolioId();
-      // this.getCurrentPortfolioAssets();
-      // this.getCurrentPortfolioTrades();
-      // TransactionStore.getTransactions();
-      // this.getPortfolioValueHistory();
-      // MarketStore.getTickersFromCoinMarketCap();
     }
-    if (this.selectedPortfolioId && this.selectedPortfolioId > 0) {
+    if (loadData) {
       this.loadData();
     }
   }
@@ -639,6 +642,7 @@ class PortfolioStore {
     MarketStore.getEthHistory();
     AssetStore.getAssetsValueHistory();
     this.getShareHistory();
+    Allocations.getAllocations();
   }
 
   @action
@@ -675,13 +679,13 @@ class PortfolioStore {
       .then(action((result: object) => {
         storage.setPortfolioAddresses(addresses);
         this.portfolios = result.data;
-        if (this.selectedPortfolioId > 0) {
-          this.selectPortfolio(this.selectedPortfolioId);
-        }
         this.setFetchingPortfolios(false);
         LoadingStore.setShowContent(true);
+        LoadingStore.handleRedirect();
       }))
       .catch(action((err: object) => {
+        LoadingStore.ableToLogin = false;
+        LoadingStore.showErrorPage = true;
         LoadingStore.setShowContent(true);
         this.setFetchingPortfolios(false);
         console.log(err);

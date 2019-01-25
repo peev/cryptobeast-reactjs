@@ -6,13 +6,12 @@ import SelectFromPortfolios from '../../components/Tabs/SelectFromPortfolios/Sel
 import storage from '../../services/storage';
 
 type Props = {
-  PortfolioStore: Object,
   WeidexStore: Object,
   location: Object,
   LoadingStore: Object,
 };
 
-@inject('PortfolioStore', 'WeidexStore', 'location', 'LoadingStore')
+@inject('WeidexStore', 'location', 'LoadingStore')
 @observer
 class CreatePortfolioView extends React.Component<Props> {
   componentDidMount() {
@@ -29,7 +28,7 @@ class CreatePortfolioView extends React.Component<Props> {
         if (addressesData && addressesData.length) {
           return this.props.WeidexStore.validateAddresses(addressesData);
         } else {
-          this.props.PortfolioStore.showErrorPage = true;
+          this.props.LoadingStore.showErrorPage = true;
           return this.props.LoadingStore.setShowContent(true);
         }
       });
@@ -39,10 +38,10 @@ class CreatePortfolioView extends React.Component<Props> {
   getAddresses = (locationSearch: string) => locationSearch.replace(/&w=/g, 'w=').substring(1).split('w=').slice(1);
 
   handlePortfoliosLength = () => {
-    if (this.props.PortfolioStore.ableToLogin) {
+    if (this.props.LoadingStore.ableToLogin) {
       return <Redirect to="/summary" />;
     } else {
-      return this.props.PortfolioStore.showErrorPage ? ('Please use valid external link') : <SelectFromPortfolios />;
+      return this.props.LoadingStore.showErrorPage ? ('Please use valid external link') : <SelectFromPortfolios />;
     }
   };
 

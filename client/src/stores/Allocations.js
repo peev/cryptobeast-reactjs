@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 // @flow
-import { observable, action, onBecomeObserved } from 'mobx';
+import { observable, action } from 'mobx';
 import PortfolioStore from './PortfolioStore';
 import requester from '../services/requester';
 
@@ -9,8 +9,6 @@ class Allocations {
 
   constructor() {
     this.allocations = [];
-
-    onBecomeObserved(this, 'allocations', this.getAllocations);
   }
 
   @action.bound

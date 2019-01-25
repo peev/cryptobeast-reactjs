@@ -24,8 +24,7 @@ class PortfolioSelect extends React.Component<Props> {
   handleChange = (event: SyntheticEvent) => {
     const { value } = event.target;
     // this.props.UserStore.setPortfolio(value);
-    this.props.PortfolioStore.selectPortfolio(value);
-    this.props.PortfolioStore.loadData();
+    this.props.PortfolioStore.selectPortfolio(value, true);
 
     // TODO FOR DELETE
     // this.updateUserDataInterval = null;

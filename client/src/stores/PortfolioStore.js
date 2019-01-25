@@ -19,6 +19,7 @@ import BigNumberService from '../services/BigNumber';
 import LoadingStore from './LoadingStore';
 import TransactionStore from './TransactionStore';
 import AssetStore from './AssetStore';
+import Allocations from './Allocations';
 
 // TODO handle if selected_portfolio_id has no set parameter
 let persistedUserData = 0;
@@ -48,8 +49,6 @@ class PortfolioStore {
   @observable alphaData;
   @observable sharesHistory;
   @observable allPortfoliosData;
-  @observable ableToLogin;
-  @observable showErrorPage;
 
   constructor() {
     this.portfolios = [];
@@ -69,8 +68,6 @@ class PortfolioStore {
     this.alphaData = null;
     this.sharesHistory = [];
     this.allPortfoliosData = [];
-    this.ableToLogin = false;
-    this.showErrorPage = false;
 
     // only start data fetching if those properties are actually used!
     // onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
@@ -624,20 +621,15 @@ class PortfolioStore {
   // #endregion
 
   @action.bound
-  selectPortfolio(id: number) {
+  selectPortfolio(id: number, loadData: boolean) {
     this.selectedPortfolio = this.portfolios.find((porfolio: object) => id === porfolio.id);
     if (this.selectedPortfolioId !== id) {
       this.selectedPortfolioId = id;
       this.saveSelectedPortfolioId();
-      // this.getCurrentPortfolioAssets();
-      // this.getCurrentPortfolioTrades();
-      // TransactionStore.getTransactions();
-      // this.getPortfolioValueHistory();
-      // MarketStore.getTickersFromCoinMarketCap();
     }
-    // if (this.selectedPortfolioId && this.selectedPortfolioId > 0) {
-    //   this.loadData();
-    // }
+    if (loadData) {
+      this.loadData();
+    }
   }
 
   @action
@@ -650,6 +642,7 @@ class PortfolioStore {
     MarketStore.getEthHistory();
     AssetStore.getAssetsValueHistory();
     this.getShareHistory();
+    Allocations.getAllocations();
   }
 
   @action
@@ -688,52 +681,15 @@ class PortfolioStore {
         this.portfolios = result.data;
         this.setFetchingPortfolios(false);
         LoadingStore.setShowContent(true);
-        this.handleRedirect();
+        LoadingStore.handleRedirect();
       }))
       .catch(action((err: object) => {
-        this.ableToLogin = false;
-        this.showErrorPage = true;
+        LoadingStore.ableToLogin = false;
+        LoadingStore.showErrorPage = true;
         LoadingStore.setShowContent(true);
         this.setFetchingPortfolios(false);
         console.log(err);
       }));
-  }
-
-  @action
-  handleRedirect() {
-    // '/'
-    if (this.portfolios.length === 0) {
-      // TODO handle this
-      this.ableToLogin = false;
-      this.showErrorPage = true;
-    } else if (this.portfolios.length === 1) {
-      const selectedPortfolio = this.portfolios.find((portfolio: Object) => portfolio.id === this.selectedPortfolioId);
-      if (selectedPortfolio !== null && selectedPortfolio !== undefined) {
-        this.selectPortfolio(selectedPortfolio.id);
-        this.loadData();
-        this.ableToLogin = true;
-      } else {
-        // Skip old one, choose currend and proceed
-        this.selectPortfolio(this.portfolios[0].id);
-        this.loadData();
-        this.ableToLogin = true;
-      }
-    } else {
-      if (this.selectedPortfolioId > 0) {
-        const selectedPortfolio = this.portfolios.find((portfolio: Object) => portfolio.id === this.selectedPortfolioId);
-        if (selectedPortfolio !== null && selectedPortfolio !== undefined) {
-          this.selectPortfolio(selectedPortfolio.id);
-          this.loadData();
-          this.ableToLogin = true;
-        } else {
-          this.selectPortfolio(0);
-          this.ableToLogin = false;
-        }
-      } else {
-        this.selectPortfolio(0);
-        this.ableToLogin = false;
-      }
-    }
   }
 
   @action

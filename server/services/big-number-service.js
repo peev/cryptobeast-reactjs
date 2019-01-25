@@ -13,6 +13,8 @@ const bigNumberService = () => {
 
   const toNumber = number => new BigNumber(String(number)).toNumber();
 
+  const toFixedParam = (number, fixedParam) => Number(new BigNumber(String(number)).toFixed(fixedParam));
+
   return {
     sum,
     difference,
@@ -20,6 +22,7 @@ const bigNumberService = () => {
     quotient,
     gweiToEth,
     toNumber,
+    toFixedParam,
   };
 };
 

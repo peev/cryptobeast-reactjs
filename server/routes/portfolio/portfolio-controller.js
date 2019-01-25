@@ -418,6 +418,47 @@ const portfolioController = (repository) => {
       .catch(error => res.status(400).send(error));
   };
 
+  const getStats = async (req, res) => {
+    const addresses = req.body.map(address => address.toLowerCase());
+    const portfolioArray = addresses.map(async (addr) => {
+      try {
+        const portfolio = await intReqService.getPortfolioByUserAddress(addr);
+        const assets = await intReqService.getAssetsByPortfolioId(portfolio.id);
+        const transactions = await intReqService.getTransactionsByPortfolioIdAsc(portfolio.id);
+
+        const name = portfolio.portfolioName;
+        const address = portfolio.userAddress;
+        const totalInvestment = bigNumberService.toFixedParam(portfolio.totalInvestmentUSD, 2);
+        const numOfShares = bigNumberService.toFixedParam(transactions[transactions.length - 1].numSharesAfter, 2);
+        const portfolioCostInUSD = bigNumberService.toFixedParam(
+          assets.reduce((acc, obj) => ({ totalUSD: bigNumberService.sum(acc.totalUSD, obj.totalUSD) })).totalUSD,
+          2,
+        );
+        const sharePrice = bigNumberService.toFixedParam(bigNumberService.quotient(portfolioCostInUSD, numOfShares), 2);
+        const totalProfitLost = bigNumberService.toFixedParam(
+          bigNumberService.product(
+            bigNumberService.quotient(
+              bigNumberService.difference(
+                portfolioCostInUSD,
+                totalInvestment,
+              ),
+              totalInvestment,
+            ),
+            100,
+          ),
+          2,
+        );
+        const result = { name, address, totalInvestment, numOfShares, portfolioCostInUSD, sharePrice, totalProfitLost };
+        return result;
+      } catch (error) {
+        return res.status(400).send(error);
+      }
+    });
+    await Promise.all(portfolioArray)
+      .then(data => res.status(200).send(data))
+      .catch(err => res.status(400).send(err));
+  };
+
   const sync = async (req, res, addresses) => {
     const portfolioArray = addresses.map(async (address) => {
       try {
@@ -428,7 +469,7 @@ const portfolioController = (repository) => {
         console.log(error);
       }
     });
-    await Promise.all(portfolioArray).then(() => {
+    await Promise.all(portfolioArray).then((data) => {
       console.log('================== END PORTFOLIOS =========================================');
     });
   };
@@ -443,6 +484,7 @@ const portfolioController = (repository) => {
     getAlpha,
     getShareHistory,
     setName,
+    getStats,
   };
 };
 

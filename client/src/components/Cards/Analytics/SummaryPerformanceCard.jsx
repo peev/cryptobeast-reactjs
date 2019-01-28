@@ -59,10 +59,6 @@ const SummaryPerformanceCard = inject('Analytics', 'PortfolioStore')(observer(({
         <p>last 7d:</p>
         <p>{PortfolioStore.portfolueValueLastWeek}%</p>
       </div>
-      {/* <div className={classes.item}>
-        <p>top performer:</p>
-        <p>{Analytics.performanceTopPerformer}</p>
-      </div> */}
     </Paper>
   );
 }));

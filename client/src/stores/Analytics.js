@@ -1,5 +1,4 @@
 import { observable, action, computed } from 'mobx';
-import requester from '../services/requester';
 import PortfolioStore from './PortfolioStore';
 import MarketStore from './MarketStore';
 
@@ -14,8 +13,6 @@ class Analytics {
     this.currentPortfolioClosingSharePrices = [];
     this.currentPortfolioPriceHistoryForPeriod = [];
     this.selectedTimeInPerformance = '';
-
-    // onBecomeObserved(this, 'currentPortfolioClosingSharePrices', this.getClosingSharePriceHistory);
   }
 
   @computed
@@ -101,50 +98,6 @@ class Analytics {
   }
 
   @computed
-  // eslint-disable-next-line class-methods-use-this
-  get performanceLast24H() {
-    if (PortfolioStore.currentPortfolioPrices.length > 0) {
-      const currentArray = PortfolioStore.currentPortfolioPrices;
-      const date = new Date();
-      date.setDate(date.getDate() - 1);
-      const result = currentArray.filter(el => date <= new Date(el.createdAt));
-      if (result.length > 0) {
-        return ((result[result.length - 1].price - result[0].price) / result[0].price) * 100;
-      }
-    }
-
-    return 0;
-  }
-
-  @computed
-  // eslint-disable-next-line class-methods-use-this
-  get performanceLast7D() {
-    if (PortfolioStore.currentPortfolioPrices.length > 0) {
-      const currentArray = PortfolioStore.currentPortfolioPrices;
-      const date = new Date();
-      date.setDate(date.getDate() - 7);
-      const result = currentArray.filter((el) => {
-        return date.getTime() <= new Date(el.createdAt).getTime()
-      });
-      if(!result[0]) {
-        console.log('No info for the last 7 days.');
-        return 0;
-      } else {
-        return (((result[result.length - 1].price - result[0].price) / result[0].price) / 7) * 100;
-      }
-    }
-
-    return 0;
-  }
-
-  @computed
-  // eslint-disable-next-line class-methods-use-this
-  get performanceTopPerformer() {
-    // NOTE: add read data
-    return '-';
-  }
-
-  @computed
   get currentPortfolioPriceHistoryBreakdown() {
     if (PortfolioStore.selectedPortfolio && MarketStore.baseCurrencies.length > 0 &&
       (this.currentPortfolioPriceHistoryForPeriod.length > 0 ||
@@ -163,112 +116,9 @@ class Analytics {
     return [];
   }
 
-  @computed
-  get currentPortfolioPriceChangeBreakdown() {
-    if (this.currentPortfolioPriceHistoryBreakdown.length > 0) {
-      const initialPortfolioCost = this.currentPortfolioPriceHistoryBreakdown[0][1];
-
-      return this.currentPortfolioPriceHistoryBreakdown
-        .map((ph, i) => {
-          const currentPrice = ph[1];
-          const change = i > 0 ? (((currentPrice - initialPortfolioCost) / initialPortfolioCost) * 100) : 0;
-          const value = Number(`${Math.round(`${change}e2`)}e-2`);
-          return [ph[0], value, null];
-        });
-    }
-
-    return [];
-  }
-
-  @computed
-  get currentPortfolioClosingSharePricesBreakdown() {
-    if (PortfolioStore.selectedPortfolio && this.currentPortfolioClosingSharePrices.length > 0) {
-      return this.currentPortfolioClosingSharePrices
-        .filter(el => el.isClosingPrice === true)
-        .map((el) => {
-          const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
-          return [timeOfCreation, el.price, null];
-        });
-    }
-
-    return [];
-  }
-
   @action
   selectTimeInPerformance(value) {
     this.selectedTimeInPerformance = value;
-  }
-
-  @action.bound
-  btcPriceHistoryForPeriod() {
-    if (PortfolioStore.currentPortfolioPrices.length > 1) {
-      const sortedPrices = PortfolioStore.currentPortfolioPrices.slice();
-      const portfolioPriceHistory = sortedPrices
-        .sort((a, b) => a.id - b.id);
-      const firstDate = portfolioPriceHistory[0].createdAt;
-      const secondDate = portfolioPriceHistory[portfolioPriceHistory.length - 1].createdAt;
-      let fromDate = firstDate < secondDate ? firstDate : secondDate;
-      fromDate = fromDate.toString().substr(0, 10);
-      const toDate = firstDate > secondDate ? firstDate : secondDate;
-
-      requester.Market.getBaseTickerHistory({ fromDate, toDate })
-        .then(action((result) => {
-          const convertedData = result.data
-            .sort((a, b) => a.id - b.id)
-            .map((el) => {
-              const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
-              return [timeOfCreation, el.last, null];
-            });
-          this.currentPortfolioBTCPriceHistory = convertedData;
-        }))
-        .catch(error => console.log(error));
-    } else {
-      this.currentPortfolioBTCPriceHistory = [];
-    }
-  }
-
-  @computed
-  get currentBtcPriceChangeBreakdown() {
-    if (this.currentPortfolioBTCPriceHistory.length > 0) {
-      const initialBtcPrice = this.currentPortfolioBTCPriceHistory[0][1];
-      const btcPriceHistoryBreakdown = this.currentPortfolioBTCPriceHistory
-        .map((ph, i) => {
-          const currentPrice = ph[1];
-          const change = i > 0 ? (((currentPrice - initialBtcPrice) / initialBtcPrice) * 100) : 0;
-          const value = Number(`${Math.round(`${change}e2`)}e-2`);
-          return [ph[0], value, null];
-        });
-
-      return btcPriceHistoryBreakdown;
-    }
-
-    return [];
-  }
-
-  @action.bound
-  getPortfolioPriceHistoryForTimePeriod() {
-    const searchedHistoryItems = {
-      portfolioId: PortfolioStore.selectedPortfolioId,
-      selectedPeriod: this.selectedTimeInPerformance,
-    };
-
-    requester.Portfolio.getPriceHistoryForPeriod(searchedHistoryItems)
-      .then(action((result) => {
-        this.currentPortfolioPriceHistoryForPeriod = result.data;
-      }));
-  }
-
-  @action.bound
-  getClosingSharePriceHistory() {
-    const searchedHistoryItems = {
-      portfolioId: PortfolioStore.selectedPortfolioId,
-      isClosingPrice: true,
-    };
-
-    requester.Portfolio.getSharePriceHistory(searchedHistoryItems)
-      .then(action((result) => {
-        this.currentPortfolioClosingSharePrices = result.data;
-      }));
   }
 
   @action.bound

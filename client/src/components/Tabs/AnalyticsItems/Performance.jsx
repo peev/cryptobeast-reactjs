@@ -49,8 +49,6 @@ class Performance extends React.Component<Props, State> {
   //     return;
   //   }
 
-  //   this.props.Analytics.selectTimeInPerformance(data);
-  //   this.props.Analytics.getPortfolioPriceHistoryForTimePeriod();
   // };
 
   render() {

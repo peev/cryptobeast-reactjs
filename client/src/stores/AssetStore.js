@@ -120,6 +120,26 @@ class AssetStore {
     return [];
   }
 
+  @computed
+  get assetsVariance() {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+      const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.filter((asset: Object) => asset.amount > 0);
+      const items = assets.map((asset: Object) => asset.tokenName).sort();
+      return items.map((assetName: string) => {
+        const assetsTotal = this.getAssetTotals(assetName);
+        const asset = {
+          ticker: assetName,
+          alpha: null,
+          rsq: null,
+          adjR: null,
+          variance: Number(BigNumberService.toFixedParam(ubique.varc(assetsTotal), 4)),
+        };
+        return asset;
+      });
+    }
+    return [];
+  }
+
   @action
   getAssetHistoryByTokenIdAndPeriod(tokenName: string, period: string) {
     const { tokenId } = CurrencyStore.currencies.filter((currency: object) => currency.tokenName === tokenName)[0];

@@ -32,8 +32,7 @@ class PortfolioSelect extends React.Component<Props> {
 
   render() {
     const { classes, PortfolioStore } = this.props;
-
-    const portfoliosToShow = PortfolioStore.portfolios.map((el: Object, i: number) => (
+    const portfoliosToShow = PortfolioStore.stats.map((el: Object, i: number) => (
       <MenuItem
         classes={{ selected: classes.selectedListItem }}
         className={classes.listItem}
@@ -43,13 +42,13 @@ class PortfolioSelect extends React.Component<Props> {
       // select={i === 1 ? el.id : undefined}
       >
         <div className={classes.listItemContainer}>
-          <div className={classes.listItemName}>{el.portfolioName || el.userAddress}</div>
+          <div className={classes.listItemName}>{el.name || el.address}</div>
           <div className={classes.listItemDescription}>
-            <div style={{ padding: '0 15px', margin: '0 -7px' }}>
-              <DropDownArrow className={classes.upArrow} />
-              4{0.45 + i}%
+            <div className={el.totalProfitLost >= 0 ? classes.positive : classes.negative}>
+              <DropDownArrow className={el.totalProfitLost >= 0 ? classes.upArrow : classes.downArrow} />
+              {el.totalProfitLost}%
             </div>
-            <div>{103.90 + i}</div>
+            <div>${el.portfolioCostInUSD}</div>
           </div>
         </div>
       </MenuItem>

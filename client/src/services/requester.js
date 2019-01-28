@@ -62,6 +62,7 @@ const Portfolio = {
   getAlpha: (id, period, benchmark) => requests.get(`/portfolio/alpha/${id}/${period}/${benchmark}`),
   getShareHistory: id => requests.get(`/portfolio/shareHistory/${id}`),
   setName: (requestParams, id) => requests.put(`/portfolio/setName/${id}`, requestParams), // id + newName
+  getPortfoliosStats: addresses => requests.post('/portfolio/all/stats', addresses),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 

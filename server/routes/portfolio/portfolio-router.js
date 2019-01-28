@@ -13,6 +13,7 @@ const attachTo = (app, repository, jobs) => {
     .get('/historyByPeriod/:id/:period', controller.getPortfolioValueByIdAndPeriod)
     .get('/alpha/:id/:period/:benchmark', controller.getAlpha)
     .get('/shareHistory/:portfolioId/', controller.getShareHistory)
+    .post('/all/stats', controller.getStats)
     .put('/setName/:id', validator.verifyUpdatePortfolioName, controller.setName);
 
   app.use('/portfolio', router);

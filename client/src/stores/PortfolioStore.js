@@ -49,6 +49,7 @@ class PortfolioStore {
   @observable alphaData;
   @observable sharesHistory;
   @observable allPortfoliosData;
+  @observable stats;
 
   constructor() {
     this.portfolios = [];
@@ -68,10 +69,12 @@ class PortfolioStore {
     this.alphaData = null;
     this.sharesHistory = [];
     this.allPortfoliosData = [];
+    this.stats = [];
 
     // only start data fetching if those properties are actually used!
     // onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
     onBecomeObserved(this, 'currentPortfolioInvestors', this.getCurrentPortfolioInvestors);
+    onBecomeObserved(this, 'stats', this.getPortfoliosStats);
     // TODO for delete getCurrentPortfolioTransactions
     // onBecomeObserved(this, 'currentPortfolioTransactions', this.getCurrentPortfolioTransactions);
     // onBecomeObserved(this, 'currentPortfolioTrades', this.getCurrentPortfolioTrades);
@@ -92,6 +95,23 @@ class PortfolioStore {
     } else {
       this.portfolioValueHistory = [];
     }
+  }
+
+  @action.bound
+  getPortfoliosStats() {
+    storage.getPortfolioAddresses().then((data: Object) => {
+      if (data && data.length > 0) {
+        requester.Portfolio.getPortfoliosStats(data)
+          .then(action((result: object) => {
+            this.stats = result.data;
+          }))
+          .catch(() => {
+            this.portfolioValueHistory = [];
+          });
+      } else {
+        this.portfolioValueHistory = [];
+      }
+    });
   }
 
   @action.bound

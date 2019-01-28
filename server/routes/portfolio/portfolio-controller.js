@@ -426,6 +426,7 @@ const portfolioController = (repository) => {
         const assets = await intReqService.getAssetsByPortfolioId(portfolio.id);
         const transactions = await intReqService.getTransactionsByPortfolioIdAsc(portfolio.id);
 
+        const { id } = portfolio;
         const name = portfolio.portfolioName;
         const address = portfolio.userAddress;
         const totalInvestment = bigNumberService.toFixedParam(portfolio.totalInvestmentUSD, 2);
@@ -448,7 +449,7 @@ const portfolioController = (repository) => {
           ),
           2,
         );
-        const result = { name, address, totalInvestment, numOfShares, portfolioCostInUSD, sharePrice, totalProfitLost };
+        const result = { id, name, address, totalInvestment, numOfShares, portfolioCostInUSD, sharePrice, totalProfitLost };
         return result;
       } catch (error) {
         return res.status(400).send(error);

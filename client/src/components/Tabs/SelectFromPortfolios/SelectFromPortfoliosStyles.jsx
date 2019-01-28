@@ -36,9 +36,18 @@ const selectFromPortfoliosStyles = () => ({
   portfolioName: {
     textTransform: 'capitalize',
     fontWeight: '600',
+    lineHeight: 1,
+    display: 'inline-block',
+    width: '70%',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden !important',
+    textOverflow: 'ellipsis',
   },
   portfolioPercent: {
-    paddingLeft: '50px',
+    width: '30%',
+    textAlign: 'right',
+    padding: '0',
+    display: 'inline-block',
   },
   positivePercent: {
     color: '#50B692',

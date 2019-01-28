@@ -37,13 +37,21 @@ const portfolioSelectStyles = (theme: object) => ({
       margin: '0',
     },
     '& :first-child': {
-      color: '#39b493',
       fontWeight: '700',
+      padding: '0 7px',
     },
     '& :last-child': {
       color: '#D0D0D0',
       fontSize: '14px',
     },
+  },
+  positive: {
+    color: '#39b493',
+    fontWeight: '700',
+  },
+  negative: {
+    color: '#B94A48',
+    fontWeight: '700',
   },
   menuItemContainer: {
     marginTop: '64px',

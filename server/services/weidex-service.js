@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+// const fetch = require('node-fetch');
 const request = require('requestretry');
 const requester = require('../services/requester-service');
 const http = require('../services/http');
@@ -8,66 +8,6 @@ const staging = 'http://staging-core-java.herokuapp.com';
 const dataFeeder = 'https://production-datafeeder.herokuapp.com';
 
 const WeidexService = (repository) => {
-  const getUser = async (address) => {
-    return fetch(staging + `/user/${address}`, {
-      method: 'GET',
-    })
-  };
-
-  const getAllTokens = async () => {
-    return fetch(staging + `/token/all`, {
-      method: 'GET',
-    })
-  };
-
-  const getBalanceByUser = async (address) => {
-    return fetch(staging + `/balance/user/${address}`, {
-      method: 'GET',
-    })
-  };
-
-  const getUserDeposit = async (id) => {
-    return fetch(staging + `/deposit/user/${id}`, {
-      method: 'GET',
-    })
-  };
-
-  const getUserWithdraw = async (id) => {
-    return fetch(staging + `/withdraw/user/${id}`, {
-      method: 'GET',
-    })
-  };
-
-  const getUserOpenOrders = async (userId, tokenId) => {
-    return fetch(staging + `/order/user/${userId}/token/${tokenId}`, {
-      method: 'GET',
-    })
-  };
-
-  const getUserOpenOrdersByOrderType = async (tokenId, type) => {
-    return fetch(staging + `/order/open/token/${tokenId}/type/${type}`, {
-      method: 'GET',
-    })
-  };
-
-  const getUserOrderHistoryByToken = async (userId, tokenId) => {
-    return fetch(staging + `/orderHistory/user/${userId}/token/${tokenId}`, {
-      method: 'GET',
-    })
-  };
-
-  const getUserOrderHistoryByUser = async (userId) => {
-    return fetch(staging + `/orderHistory/user/${userId}`, {
-      method: 'GET',
-    })
-  };
-
-  const getUserOrderHistoryByUserAndToken = async (tokenId) => {
-    return fetch(staging + `/orderHistory/token/${tokenId}`, {
-      method: 'GET',
-    })
-  };
-
   const getTokenTicker = tokenId => new Promise((resolve, reject) => {
     http.get(`${staging}/token/ticker/${tokenId}`)
       .then((response) => {
@@ -99,11 +39,6 @@ const WeidexService = (repository) => {
       })
       .catch(err => reject(err)); // eslint-disable-line
   });
-
-  const getTokenPriceByTimestamp = async (tokenId, timestamp) => fetch(
-    `${staging}/token/${tokenId}/price/${timestamp}`,
-    { method: 'GET' },
-  );
 
   const getUserDepositHttp = id => new Promise((resolve, reject) => {
     http.get(`${staging}/deposit/user/${id}`)
@@ -194,25 +129,14 @@ const WeidexService = (repository) => {
   });
 
   return {
-    getUser,
     getUserHttp,
-    getBalanceByUser,
     getBalanceByUserHttp,
-    getUserDeposit,
     getUserDepositHttp,
     getUserWithdrawHttp,
     getUserOrderHistoryByUserHttp,
-    getUserWithdraw,
-    getUserOpenOrders,
-    getUserOpenOrdersByOrderType,
-    getUserOrderHistoryByToken,
-    getUserOrderHistoryByUser,
-    getUserOrderHistoryByUserAndToken,
     getTokenTicker,
     getCurrencyStats,
-    getAllTokens,
     getAllTokensHttp,
-    getTokenPriceByTimestamp,
     getTokenValueByTimestampHttp,
     getTokensValuesHistoryHttp,
   };

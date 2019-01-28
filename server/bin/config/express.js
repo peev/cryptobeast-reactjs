@@ -87,7 +87,6 @@ const init = async (repository) => {
   require('./../../routes/user/user-router').attachTo(app, repository, jobs);
   require('./../../routes/investor/investor-router').attachTo(app, repository);
   require('./../../routes/asset/asset-router').attachTo(app, repository, jobs);
-  require('./../../routes/weidex/weidex-router').attachTo(app, repository, jobs);
   require('./../../routes/currency/currency-router').attachTo(app, repository, jobs);
   require('./../../routes/allocations/allocations-router').attachTo(app, repository);
   require('./../../routes/portfolio/portfolio-router').attachTo(app, repository, jobs);

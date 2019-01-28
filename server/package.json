@@ -31,7 +31,6 @@
     "kraken-api": "^1.0.0",
     "morgan": "^1.9.0",
     "node-bittrex-api": "^0.8.3",
-    "node-fetch": "2.2.0",
     "nodemon": "^1.18.3",
     "pg": "^7.4.2",
     "pg-hstore": "^2.3.2",

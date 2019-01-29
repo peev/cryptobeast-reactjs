@@ -11,6 +11,7 @@ import NotificationStore from './NotificationStore';
 import LoadingStore from './LoadingStore';
 import BigNumberService from '../services/BigNumber';
 import CurrencyStore from './CurrencyStore';
+import Statistic from '../services/Statistic';
 
 
 class AssetStore {
@@ -79,6 +80,17 @@ class AssetStore {
     return [];
   }
 
+  getAssetTotalsUSD = (assetName: string) => {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+      const assetTotals = [];
+      this.assetsValueHistory.map((item: object) =>
+        item.assets.map((asset: object) =>
+          ((asset.tokenName === assetName) ? assetTotals.push(asset.totalUsd) : null)));
+      return assetTotals;
+    }
+    return [];
+  }
+
   @computed
   get assetsStdDeviation() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
@@ -122,17 +134,21 @@ class AssetStore {
 
   @computed
   get assetsVariance() {
+    console.log(JSON.stringify(this.assetsValueHistory));
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
       const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.filter((asset: Object) => asset.amount > 0);
       const items = assets.map((asset: Object) => asset.tokenName).sort();
       return items.map((assetName: string) => {
-        const assetsTotal = this.getAssetTotals(assetName);
+        const assetsTotal = this.getAssetTotalsUSD(assetName);
+        console.log(assetsTotal);
+        const variance = Statistic.getVariance(assetsTotal);
+        console.log(variance);
         const asset = {
           ticker: assetName,
           alpha: null,
           rsq: null,
           adjR: null,
-          variance: Number(BigNumberService.toFixedParam(ubique.varc(assetsTotal), 4)),
+          variance: Number(ubique.varc(assetsTotal)),
         };
         return asset;
       });

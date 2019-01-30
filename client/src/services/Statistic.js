@@ -23,7 +23,7 @@ const Statistic = {
     const benchmarkValue = BigNumberService.product(
       BigNumberService.quotient(
         BigNumberService.difference(
-          benchmarkData[1],
+          benchmarkData[benchmarkData.length - 1],
           benchmarkData[0],
         ),
         benchmarkData[0],
@@ -33,7 +33,7 @@ const Statistic = {
     const dataValue = BigNumberService.product(
       BigNumberService.quotient(
         BigNumberService.difference(
-          data[1],
+          data[data.length - 1],
           data[0],
         ),
         data[0],

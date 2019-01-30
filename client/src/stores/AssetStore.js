@@ -13,7 +13,6 @@ import BigNumberService from '../services/BigNumber';
 import CurrencyStore from './CurrencyStore';
 import Statistic from '../services/Statistic';
 
-
 class AssetStore {
   @observable selectedExchangeBasicInput;
   @observable selectedExchangeCreateAccount;
@@ -139,12 +138,19 @@ class AssetStore {
       const items = assets.map((asset: Object) => asset.tokenName).sort();
       return items.map((assetName: string) => {
         const assetsTotal = this.getAssetTotalsUSD(assetName);
+        const benchmarkData = MarketStore.ethHistory.map((item: Object) => item.priceUsd);
+        // If start data starts with 0 (no records);
+        const assetsTotalStartIndex = assetsTotal.findIndex((item: Object) => item !== 0);
+        if (assetsTotalStartIndex > 0) {
+          assetsTotal.splice(0, assetsTotalStartIndex);
+          benchmarkData.splice(0, assetsTotalStartIndex);
+        }
         const asset = {
           ticker: assetName,
-          alpha: null,
+          alpha: Statistic.getAlpha(benchmarkData, assetsTotal),
           rsq: null,
           adjR: null,
-          variance: Statistic.getVariance(assetsTotal),
+          variance: BigNumberService.toFixedParam(ubique.varc(assetsTotal), 2),
         };
         return asset;
       });

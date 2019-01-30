@@ -84,11 +84,13 @@ class Volatility extends React.Component<Props, State> {
     super(props);
     this.state = {
       selectPeriod: 30,
+      selectBenchmark: 'ETH',
     };
   }
 
   componentDidMount() {
     this.props.PortfolioStore.setStandardDeviationPeriod(this.state.selectPeriod);
+    this.props.PortfolioStore.getAlphaData(this.state.selectPeriod, this.state.selectBenchmark);
   }
 
   componentWillUpdate(nextProps: object, nextState: object) {
@@ -167,6 +169,6 @@ class Volatility extends React.Component<Props, State> {
       </Grid >
     );
   }
-};
+}
 
 export default withStyles(styles)(Volatility);

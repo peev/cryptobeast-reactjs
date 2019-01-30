@@ -8,6 +8,7 @@ import {
   TableBody,
   TableCell,
 } from '@material-ui/core';
+import { inject, observer } from 'mobx-react';
 import Paper from '@material-ui/core/Paper';
 import uuid from 'uuid/v4';
 import AssetStore from '../../stores/AssetStore';
@@ -42,11 +43,10 @@ type Props = {
   classes: Object,
 };
 
-function VolatilityTable(props: Props) {
+const VolatilityTable = inject('AssetStore')(observer(({ ...props }: Props) => {
   const { classes } = props;
   const data = AssetStore.assetsVariance;
-  console.log(data);
-  
+
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
@@ -63,9 +63,9 @@ function VolatilityTable(props: Props) {
           {data.map((ROW: Object) => (
             <TableRow key={uuid()}>
               <TableCell>{ROW.ticker}</TableCell>
-              <TableCell numeric>{ROW.alpha}</TableCell>
-              <TableCell numeric>{ROW.rsq}</TableCell>
-              <TableCell numeric>{ROW.adjR}</TableCell>
+              <TableCell numeric>{ROW.alpha}%</TableCell>
+              <TableCell numeric>N/A</TableCell>
+              <TableCell numeric>N/A</TableCell>
               <TableCell numeric>{ROW.variance}</TableCell>
             </TableRow>
             ))}
@@ -73,6 +73,6 @@ function VolatilityTable(props: Props) {
       </Table>
     </Paper>
   );
-}
+}));
 
 export default withStyles(styles)(VolatilityTable);

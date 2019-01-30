@@ -134,25 +134,27 @@ class AssetStore {
 
   @computed
   get assetsVariance() {
-    console.log(JSON.stringify(this.assetsValueHistory));
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
       const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.filter((asset: Object) => asset.amount > 0);
       const items = assets.map((asset: Object) => asset.tokenName).sort();
       return items.map((assetName: string) => {
         const assetsTotal = this.getAssetTotalsUSD(assetName);
-        console.log(assetsTotal);
-        const variance = Statistic.getVariance(assetsTotal);
-        console.log(variance);
         const asset = {
           ticker: assetName,
           alpha: null,
           rsq: null,
           adjR: null,
-          variance: Number(ubique.varc(assetsTotal)),
+          variance: Statistic.getVariance(assetsTotal),
         };
         return asset;
       });
     }
+    return [];
+  }
+
+  @computed
+  // eslint-disable-next-line class-methods-use-this
+  get assetsAlpha() {
     return [];
   }
 

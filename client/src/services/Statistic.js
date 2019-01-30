@@ -15,8 +15,38 @@ const Statistic = {
     return BigNumberService.quotient(sum, data.length);
   },
 
-  getStdDev() {
-    return Math.sqrt(this.getVariance());
+  getStdDev(data: Array<number>) {
+    return BigNumberService.pow(this.getVariance(data), 2);
+  },
+
+  getAlpha(benchmarkData: Array<number>, data: Array<number>) {
+    const benchmarkValue = BigNumberService.product(
+      BigNumberService.quotient(
+        BigNumberService.difference(
+          benchmarkData[1],
+          benchmarkData[0],
+        ),
+        benchmarkData[0],
+      ),
+      100,
+    );
+    const dataValue = BigNumberService.product(
+      BigNumberService.quotient(
+        BigNumberService.difference(
+          data[1],
+          data[0],
+        ),
+        data[0],
+      ),
+      100,
+    );
+    return Number(BigNumberService.toFixedParam(
+      BigNumberService.difference(
+        dataValue,
+        benchmarkValue,
+      ),
+      2,
+    ));
   },
 
   // median() {
@@ -25,6 +55,6 @@ const Statistic = {
   //       return (data[(data.length / 2) - 1] + data[data.length / 2]) / 2.0;
   //    return data[data.length / 2];
   // }
-}
+};
 
 export default Statistic;

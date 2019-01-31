@@ -346,15 +346,16 @@ class PortfolioStore {
         .toFixedParam(BigNumberService
           .quotient(this.currentPortfolioCostInUSD, TransactionStore.numOfShares), 2));
     }
+
     return 0;
   }
 
   @computed
   get currentPortfolioCostInUSD() {
-    if (this.currentPortfolioAssets.length && this.currentPortfolioAssets.length > 0) {
-      return BigNumberService.toFixedParam((this.currentPortfolioAssets
-        .reduce((acc: number, obj: number) => BigNumberService.sum(acc, obj.totalUSD), 0)), 2);
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return BigNumberService.toFixedParam(this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd, 2);
     }
+
     return 0;
   }
 

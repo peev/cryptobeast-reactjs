@@ -267,9 +267,7 @@ class InvestorStore {
   @computed
   get individualUSDEquivalent() {
     if (this.selectedInvestorIndividualSummary) {
-      const calculatedIndividualUSDEquivalent = this.selectedInvestorTotalSharesHeld * PortfolioStore.currentPortfolioSharePrice;
-
-      return calculatedIndividualUSDEquivalent;
+      return PortfolioStore.summaryTotalInvestmentInUSD;
     }
 
     return null;
@@ -281,6 +279,7 @@ class InvestorStore {
       const btc = MarketStore.marketPriceHistory.BTC;
       return BigNumberService.quotient(this.individualETHEquivalent, btc.price);
     }
+
     return null;
   }
 
@@ -289,6 +288,7 @@ class InvestorStore {
     if (this.selectedInvestorIndividualSummary && MarketStore.ethToUsd) {
       return BigNumberService.quotient(this.individualUSDEquivalent, MarketStore.ethToUsd);
     }
+
     return null;
   }
 

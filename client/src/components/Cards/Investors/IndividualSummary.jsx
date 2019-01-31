@@ -7,6 +7,7 @@ import SelectInvestor from '../../Selectors/SelectInvestor';
 
 import AddInvestorWrapped from '../../../components/Modal/InvestorModals/AddInvestor';
 import EditInvestorWrapped from '../../../components/Modal/InvestorModals/EditInvestor';
+import PortfolioStore from '../../../stores/PortfolioStore';
 
 
 const styles = () => ({
@@ -112,8 +113,8 @@ class IndividualSummary extends React.Component<Props> {
           <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>
             <div className={classes.item}>
               <p>USD Equivalent:</p>
-              <span>{InvestorStore.individualUSDEquivalent !== null
-                ? InvestorStore.nearZeroRounding(InvestorStore.individualUSDEquivalent, 2)
+              <span>{PortfolioStore.currentPortfolioCostInUSD !== null
+                ? InvestorStore.nearZeroRounding(PortfolioStore.currentPortfolioCostInUSD, 2)
                 : ''}
               </span>
             </div>

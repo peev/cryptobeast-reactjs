@@ -73,8 +73,6 @@ class CurrentSharePrice extends React.Component<Props, State> {
 
   handleOpen = () => {
     this.setState({ open: true });
-
-    // this.props.Analytics.getClosingSharePriceHistory();
   };
 
   handleClose = () => {

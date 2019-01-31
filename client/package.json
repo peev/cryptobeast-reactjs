@@ -26,7 +26,6 @@
     "react-dom": "16.5.0",
     "react-highcharts": "16.0.2",
     "react-jsx-highcharts": "3.2.1",
-    "react-jsx-highstock": "3.2.1",
     "react-material-ui-form-validator": "2.0.1",
     "react-router-dom": "4.3.1",
     "react-scripts": "1.1.5",

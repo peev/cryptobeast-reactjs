@@ -7,9 +7,8 @@ import { inject, observer } from 'mobx-react';
 
 import MotionSelect from '../../Selectors/MotionSelect';
 import VolatilityColumnChart from '../../HighCharts/VolatilityDevSkew';
-import VolatilityAndRisk from '../../HighCharts/VolatilityAndRisk';
 import VolatilityTable from '../../CustomTables/VolatilityTable';
-import VolatilitySpider from '../../HighCharts/VolatilitySpider';
+import VolatilityRiskCard from '../../Cards/Analytics/VolatilityRiskCard';
 
 const styles = () => ({
   root: {
@@ -85,11 +84,13 @@ class Volatility extends React.Component<Props, State> {
     super(props);
     this.state = {
       selectPeriod: 30,
+      selectBenchmark: 'ETH',
     };
   }
 
   componentDidMount() {
     this.props.PortfolioStore.setStandardDeviationPeriod(this.state.selectPeriod);
+    this.props.PortfolioStore.getAlphaData(this.state.selectPeriod, this.state.selectBenchmark);
   }
 
   componentWillUpdate(nextProps: object, nextState: object) {
@@ -129,7 +130,7 @@ class Volatility extends React.Component<Props, State> {
   }
 
   render() {
-    const { classes, PortfolioStore } = this.props;
+    const { classes } = this.props;
     return (
       <Grid container className={classes.root}>
         <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
@@ -156,25 +157,8 @@ class Volatility extends React.Component<Props, State> {
           </Grid>
 
           <Grid item xs={5} className={[classes.topItem, classes.topHeight].join(' ')}>
-            <Paper className={classes.padding}>
-              <VolatilitySpider style={{ width: '100%' }} />
-            </Paper>
+            <VolatilityRiskCard style={{ width: '100%' }} />
           </Grid>
-        </Grid>
-
-        <Grid container className={classes.bigTopPadding}>
-          <Paper className={['VolatilityPaper', classes.maxWidth, classes.padding].join(' ')}>
-            <h5 className={classes.noMargin}>PORTFOLIO VOLATILITY AND RISK</h5>
-
-            <Grid container>
-              <Grid item xs={3}><p>STANDARD DEVIATION: <b>{PortfolioStore.standardDeviation}</b></p></Grid>
-              <Grid item xs={3}><p>PORTFOLIO ALPHA: <b>{PortfolioStore.portfolioAlpha}%</b></p></Grid>
-              <Grid item xs={3}><p>PORTFOLIO BETA: <b>0.65%</b></p></Grid>
-              <Grid item xs={3}><p>PORTFOLIO VARIANCE: <b>0.65</b></p></Grid>
-            </Grid>
-
-            <VolatilityAndRisk />
-          </Paper>
         </Grid>
 
         <Grid container className={classes.bigTopPadding}>
@@ -185,6 +169,6 @@ class Volatility extends React.Component<Props, State> {
       </Grid >
     );
   }
-};
+}
 
 export default withStyles(styles)(Volatility);

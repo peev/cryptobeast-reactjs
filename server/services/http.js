@@ -5,6 +5,9 @@ const get = url => new Promise((resolve, reject) => {
     let data = '';
     response.setEncoding('utf8');
     if (response.statusCode < 200 || response.statusCode > 299) {
+      console.log('------------------------------------');
+      console.log(url);
+      console.log('------------------------------------');
       reject(new Error(`Failed to load page, status code: ${response.statusCode}`));
     }
 

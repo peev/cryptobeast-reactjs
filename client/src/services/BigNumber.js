@@ -20,6 +20,8 @@ const BigNumberService = {
   quotient: (a, b) => new BigNumber(a).dividedBy(new BigNumber(b)).toNumber(),
 
   pow: (a, b) => new BigNumber(a).pow(new BigNumber(b)).toNumber(),
+
+  floor: number => new BigNumber(Math.floor(new BigNumber(number).multipliedBy(100))).dividedBy(100).toNumber(),
 };
 
 export default BigNumberService;

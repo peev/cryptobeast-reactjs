@@ -10,6 +10,7 @@ import {
 } from 'mobx';
 import math from 'mathjs';
 import moment from 'moment';
+import ubique from 'ubique';
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import InvestorStore from './InvestorStore';
@@ -20,6 +21,7 @@ import LoadingStore from './LoadingStore';
 import TransactionStore from './TransactionStore';
 import AssetStore from './AssetStore';
 import Allocations from './Allocations';
+import Statistic from '../services/Statistic';
 
 // TODO handle if selected_portfolio_id has no set parameter
 let persistedUserData = 0;
@@ -364,6 +366,29 @@ class PortfolioStore {
     if (this.selectedPortfolio) {
       return Number(BigNumberService.toFixedParam(this.selectedPortfolio.totalInvestmentUSD, 2));
     }
+
+    return 0;
+  }
+
+  @computed
+  get portfolioVariance() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      const history = this.portfolioValueHistory.map((item: Object) => item.usd);
+      return BigNumberService.toFixedParam(ubique.varc(history), 2);
+    }
+
+    return 0;
+  }
+
+  @computed
+  get portfolioBeta() {
+    // TODO finish
+    console.log(AssetStore.assetsVariance);
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0 &&
+      AssetStore.assetsVariance.lengt && AssetStore.assetsVariance.length > 0) {
+      return Statistic.getPortfolioBeta(this.currentPortfolioCostInUSD, AssetStore.assetsVariance);
+    }
+
     return 0;
   }
 

@@ -145,13 +145,18 @@ class AssetStore {
           assetsTotal.splice(0, assetsTotalStartIndex);
           benchmarkData.splice(0, assetsTotalStartIndex);
         }
+        const assetObj = assets.find((as: Object) => as.tokenName === assetName);
         const asset = {
           ticker: assetName,
+          totalUsd: assetObj.totalUsd,
+          totalEth: assetObj.total,
           alpha: Statistic.getAlpha(benchmarkData, assetsTotal),
+          beta: Statistic.getBeta(benchmarkData, assetsTotal),
           rsq: null,
           adjR: null,
           variance: BigNumberService.toFixedParam(ubique.varc(assetsTotal), 2),
         };
+        console.log(asset);
         return asset;
       });
     }

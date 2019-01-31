@@ -40,11 +40,11 @@ const VolatilityRiskCard = inject('Analytics', 'PortfolioStore')(observer(({ ...
       </div>
       <div className={classes.item}>
         <p>PORTFOLIO BETA:</p>
-        <p>0.65%</p>
+        <p>{isNaN(PortfolioStore.portfolioBeta) ? 0 : PortfolioStore.portfolioBeta}</p>
       </div>
       <div className={classes.item}>
         <p>PORTFOLIO VARIANCE:</p>
-        <p>0.65</p>
+        <p>{isNaN(PortfolioStore.portfolioVariance) ? 0 : PortfolioStore.portfolioVariance}</p>
       </div>
     </Paper>
   );

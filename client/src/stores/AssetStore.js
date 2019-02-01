@@ -92,14 +92,13 @@ class AssetStore {
     return [];
   }
 
-  getAssetTotalsEthPrice = (assetName: string, currency: string, benchmarkData: Array<number>) => {
+  getAssetTotalsPrice = (assetName: string, currency: string, benchmarkData: Array<number>) => {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
       const assetTotals = [];
       this.assetsValueHistory.map((item: object, index: number) =>
         item.assets.map((asset: object) => {
-          console.log(asset);
           // assume that there is only ETH and USD
-          const curr = currency === 'ETH' ? asset.price : benchmarkData[index];
+          const curr = Analytics.riskCurrency === 'ETH' ? asset.price : BigNumberService.product(asset.price, benchmarkData[index]);
           return (asset.tokenName === assetName) ? assetTotals.push(curr) : null;
         }));
       return assetTotals;
@@ -161,11 +160,7 @@ class AssetStore {
           MarketStore.ethHistory.map(() => 1) :
           MarketStore.ethHistory.map((item: Object) => item.priceUsd);
 
-        const assetsTotal = this.getAssetTotalsEthPrice(assetName, Analytics.riskCurrency, benchmarkData);
-        console.log('------------------------------------');
-        console.log(assetsTotal);
-        console.log(benchmarkData);
-        console.log('------------------------------------');
+        const assetsTotal = this.getAssetTotalsPrice(assetName, Analytics.riskCurrency, benchmarkData);
 
         // If data starts with 0 (no records);
         const assetsTotalStartIndex = assetsTotal.findIndex((item: Object) => item !== 0);

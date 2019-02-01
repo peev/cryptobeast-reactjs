@@ -394,11 +394,6 @@ class PortfolioStore {
   get portfolioBeta() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0 &&
       AssetStore.assetsVariance.length && AssetStore.assetsVariance.length > 0) {
-      
-      console.log('------------------------------------');
-      console.log(this.currentPortfolioCostInUSD);
-      console.log(AssetStore.assetsVariance);
-      console.log('------------------------------------');
       const data = AssetStore.assetsVariance.map((item: Object) =>
         // Change when new benchmarks are added
         ({ beta: item.beta, value: Analytics.riskCurrency === 'ETH' ? item.totalEth : item.totalUsd }));

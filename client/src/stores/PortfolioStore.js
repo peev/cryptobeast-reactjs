@@ -382,11 +382,9 @@ class PortfolioStore {
 
   @computed
   get portfolioBeta() {
-    // TODO finish
-    console.log(AssetStore.assetsVariance);
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0 &&
-      AssetStore.assetsVariance.lengt && AssetStore.assetsVariance.length > 0) {
-      return Statistic.getPortfolioBeta(this.currentPortfolioCostInUSD, AssetStore.assetsVariance);
+      AssetStore.assetsVariance.length && AssetStore.assetsVariance.length > 0) {
+      return BigNumberService.toFixedParam(Statistic.getPortfolioBeta(this.currentPortfolioCostInUSD, AssetStore.assetsVariance), 2);
     }
 
     return 0;

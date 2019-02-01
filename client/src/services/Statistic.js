@@ -51,13 +51,19 @@ const Statistic = {
   },
 
   getBeta(benchmarkData: Array<number>, data: Array<number>) {
-    const covar = ubique.cov(benchmarkData, data, 0);
-    const variance = ubique.varc(data);
-    return BigNumberService.quotient(covar[0][1], variance);
+    if (data && data.length > 0 && benchmarkData && benchmarkData.length > 0) {
+      // console.log(data)
+      // console.log(benchmarkData);
+      const covar = ubique.cov(benchmarkData, data, 0);
+      const variance = ubique.varc(data);
+      return BigNumberService.quotient(covar[0][1], variance);
+    }
+
+    return 0;
   },
 
   getPortfolioBeta(totalWeight: number, data: Array<number>) {
-    data.reduce(
+    return data.reduce(
       (acc: number, item: Object) =>
         BigNumberService.product(
           BigNumberService.product(

@@ -133,18 +133,35 @@ class AssetStore {
 
   @computed
   get assetsVariance() {
-    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0 &&
+      MarketStore.ethHistory && MarketStore.ethHistory.length > 0) {
+      console.log(this.assetsValueHistory.length);
       const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.filter((asset: Object) => asset.amount > 0);
       const items = assets.map((asset: Object) => asset.tokenName).sort();
       return items.map((assetName: string) => {
         const assetsTotal = this.getAssetTotalsUSD(assetName);
         const benchmarkData = MarketStore.ethHistory.map((item: Object) => item.priceUsd);
-        // If start data starts with 0 (no records);
+        // If data starts with 0 (no records);
         const assetsTotalStartIndex = assetsTotal.findIndex((item: Object) => item !== 0);
         if (assetsTotalStartIndex > 0) {
           assetsTotal.splice(0, assetsTotalStartIndex);
           benchmarkData.splice(0, assetsTotalStartIndex);
         }
+        // If data is shorter than benchmark data
+        // console.log('------------------------------------');
+        // console.log(assetsTotal.length);
+        // console.log(benchmarkData.length);
+        // console.log('------------------------------------');
+        if (assetsTotal.length < benchmarkData.length) {
+          console.log('wee');
+          const rem = benchmarkData.length - assetsTotal.length;
+          benchmarkData.splice(rem, assetsTotal.length);
+        }
+        console.log('------------------------------------');
+        console.log(assetsTotal);
+        console.log(benchmarkData);
+        console.log('------------------------------------');
+        
         const assetObj = assets.find((as: Object) => as.tokenName === assetName);
         const asset = {
           ticker: assetName,
@@ -156,7 +173,6 @@ class AssetStore {
           adjR: null,
           variance: BigNumberService.toFixedParam(ubique.varc(assetsTotal), 2),
         };
-        console.log(asset);
         return asset;
       });
     }

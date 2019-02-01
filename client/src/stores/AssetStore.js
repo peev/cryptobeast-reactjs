@@ -12,6 +12,7 @@ import LoadingStore from './LoadingStore';
 import BigNumberService from '../services/BigNumber';
 import CurrencyStore from './CurrencyStore';
 import Statistic from '../services/Statistic';
+import Analytics from './Analytics';
 
 class AssetStore {
   @observable selectedExchangeBasicInput;
@@ -52,6 +53,7 @@ class AssetStore {
 
   @action.bound
   getAssetsValueHistory() {
+    this.assetsValueHistory = [];
     requester.Asset.getAssetsValueHistory(PortfolioStore.selectedPortfolioId)
       .then(action((result: object) => {
         this.assetsValueHistory = result.data;
@@ -85,6 +87,21 @@ class AssetStore {
       this.assetsValueHistory.map((item: object) =>
         item.assets.map((asset: object) =>
           ((asset.tokenName === assetName) ? assetTotals.push(asset.totalUsd) : null)));
+      return assetTotals;
+    }
+    return [];
+  }
+
+  getAssetTotalsEthPrice = (assetName: string, currency: string, benchmarkData: Array<number>) => {
+    if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
+      const assetTotals = [];
+      this.assetsValueHistory.map((item: object, index: number) =>
+        item.assets.map((asset: object) => {
+          console.log(asset);
+          // assume that there is only ETH and USD
+          const curr = currency === 'ETH' ? asset.price : benchmarkData[index];
+          return (asset.tokenName === assetName) ? assetTotals.push(curr) : null;
+        }));
       return assetTotals;
     }
     return [];
@@ -135,12 +152,21 @@ class AssetStore {
   get assetsVariance() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0 &&
       MarketStore.ethHistory && MarketStore.ethHistory.length > 0) {
-      console.log(this.assetsValueHistory.length);
       const assets = this.assetsValueHistory[this.assetsValueHistory.length - 1].assets.filter((asset: Object) => asset.amount > 0);
       const items = assets.map((asset: Object) => asset.tokenName).sort();
+
       return items.map((assetName: string) => {
-        const assetsTotal = this.getAssetTotalsUSD(assetName);
-        const benchmarkData = MarketStore.ethHistory.map((item: Object) => item.priceUsd);
+        // Change when new benchmarks are added
+        const benchmarkData = Analytics.riskCurrency === 'ETH' ?
+          MarketStore.ethHistory.map(() => 1) :
+          MarketStore.ethHistory.map((item: Object) => item.priceUsd);
+
+        const assetsTotal = this.getAssetTotalsEthPrice(assetName, Analytics.riskCurrency, benchmarkData);
+        console.log('------------------------------------');
+        console.log(assetsTotal);
+        console.log(benchmarkData);
+        console.log('------------------------------------');
+
         // If data starts with 0 (no records);
         const assetsTotalStartIndex = assetsTotal.findIndex((item: Object) => item !== 0);
         if (assetsTotalStartIndex > 0) {
@@ -148,20 +174,18 @@ class AssetStore {
           benchmarkData.splice(0, assetsTotalStartIndex);
         }
         // If data is shorter than benchmark data
-        // console.log('------------------------------------');
-        // console.log(assetsTotal.length);
-        // console.log(benchmarkData.length);
-        // console.log('------------------------------------');
         if (assetsTotal.length < benchmarkData.length) {
-          console.log('wee');
           const rem = benchmarkData.length - assetsTotal.length;
           benchmarkData.splice(rem, assetsTotal.length);
         }
-        console.log('------------------------------------');
-        console.log(assetsTotal);
-        console.log(benchmarkData);
-        console.log('------------------------------------');
-        
+
+        // Slice data according selected period
+        if (assetsTotal.length > Analytics.riskPeriod) {
+          const startIdx = assetsTotal.length - Analytics.riskPeriod;
+          assetsTotal.splice(0, startIdx);
+          benchmarkData.splice(0, startIdx);
+        }
+
         const assetObj = assets.find((as: Object) => as.tokenName === assetName);
         const asset = {
           ticker: assetName,

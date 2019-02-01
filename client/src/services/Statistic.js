@@ -55,7 +55,7 @@ const Statistic = {
       // console.log(data)
       // console.log(benchmarkData);
       const covar = ubique.cov(benchmarkData, data, 0);
-      const variance = ubique.varc(data);
+      const variance = ubique.varc(benchmarkData);
       return BigNumberService.quotient(covar[0][1], variance);
     }
 
@@ -66,12 +66,9 @@ const Statistic = {
     return data.reduce(
       (acc: number, item: Object) =>
         BigNumberService.product(
-          BigNumberService.product(
-            BigNumberService.quotient(
-              item.totalUsd,
-              totalWeight,
-            ),
-            100,
+          BigNumberService.quotient(
+            item.value,
+            totalWeight,
           ),
           item.beta,
         ),

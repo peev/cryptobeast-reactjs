@@ -22,6 +22,7 @@ import TransactionStore from './TransactionStore';
 import AssetStore from './AssetStore';
 import Allocations from './Allocations';
 import Statistic from '../services/Statistic';
+import Analytics from './Analytics';
 
 // TODO handle if selected_portfolio_id has no set parameter
 let persistedUserData = 0;
@@ -362,6 +363,15 @@ class PortfolioStore {
   }
 
   @computed
+  get currentPortfolioCostInETH() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return BigNumberService.toFixedParam(this.portfolioValueHistory[this.portfolioValueHistory.length - 1].eth, 2);
+    }
+
+    return 0;
+  }
+
+  @computed
   get summaryTotalInvestmentInUSD() {
     if (this.selectedPortfolio) {
       return Number(BigNumberService.toFixedParam(this.selectedPortfolio.totalInvestmentUSD, 2));
@@ -384,7 +394,15 @@ class PortfolioStore {
   get portfolioBeta() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0 &&
       AssetStore.assetsVariance.length && AssetStore.assetsVariance.length > 0) {
-      return BigNumberService.toFixedParam(Statistic.getPortfolioBeta(this.currentPortfolioCostInUSD, AssetStore.assetsVariance), 2);
+      
+      console.log('------------------------------------');
+      console.log(this.currentPortfolioCostInUSD);
+      console.log(AssetStore.assetsVariance);
+      console.log('------------------------------------');
+      const data = AssetStore.assetsVariance.map((item: Object) =>
+        // Change when new benchmarks are added
+        ({ beta: item.beta, value: Analytics.riskCurrency === 'ETH' ? item.totalEth : item.totalUsd }));
+      return Statistic.getPortfolioBeta(this.currentPortfolioCostInUSD, data);
     }
 
     return 0;

@@ -6,6 +6,7 @@ import {
   withStyles,
 } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
+import BigNumberService from '../../../services/BigNumber';
 
 const styles = () => ({
   container: {
@@ -32,7 +33,7 @@ const VolatilityRiskCard = inject('Analytics', 'PortfolioStore')(observer(({ ...
     <Paper className={classes.container}>
       <div className={classes.item}>
         <p>STANDARD DEVIATION:</p>
-        <p>${isNaN(PortfolioStore.standardDeviation) ? 0 : PortfolioStore.standardDeviation}</p>
+        <p>{isNaN(PortfolioStore.standardDeviation) ? 0 : PortfolioStore.standardDeviation}</p>
       </div>
       <div className={classes.item}>
         <p>PORTFOLIO ALPHA:</p>
@@ -40,11 +41,11 @@ const VolatilityRiskCard = inject('Analytics', 'PortfolioStore')(observer(({ ...
       </div>
       <div className={classes.item}>
         <p>PORTFOLIO BETA:</p>
-        <p>0.65%</p>
+        <p>{isNaN(PortfolioStore.portfolioBeta) ? 0 : BigNumberService.floor(PortfolioStore.portfolioBeta)}</p>
       </div>
       <div className={classes.item}>
         <p>PORTFOLIO VARIANCE:</p>
-        <p>0.65</p>
+        <p>{isNaN(PortfolioStore.portfolioVariance) ? 0 : PortfolioStore.portfolioVariance}</p>
       </div>
     </Paper>
   );

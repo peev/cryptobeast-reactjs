@@ -69,6 +69,7 @@ const styles = () => ({
 type Props = {
   classes: Object,
   PortfolioStore: Object,
+  Analytics: Object,
 };
 
 type State = {
@@ -77,7 +78,7 @@ type State = {
   selectedCurrency: string,
 };
 
-@inject('PortfolioStore')
+@inject('PortfolioStore', 'Analytics')
 @observer
 class Volatility extends React.Component<Props, State> {
   constructor(props: Object) {
@@ -106,17 +107,9 @@ class Volatility extends React.Component<Props, State> {
     if (!data) {
       return;
     }
+    this.props.Analytics.riskPeriod = Number(data.split(' ')[0]);
     this.setState({
       selectPeriod: Number(data.split(' ')[0]),
-    });
-  }
-
-  handleSelectedCurrency = (data: string) => {
-    if (!data) {
-      return;
-    }
-    this.setState({
-      selectedCurrency: data,
     });
   }
 
@@ -124,8 +117,20 @@ class Volatility extends React.Component<Props, State> {
     if (!data) {
       return;
     }
+    // eslint-disable-next-line prefer-destructuring
+    this.props.Analytics.riskBenchmark = data.split(' ')[0];
     this.setState({
       selectBenchmark: data.split(' ')[0],
+    });
+  }
+
+  handleSelectedCurrency = (data: string) => {
+    if (!data) {
+      return;
+    }
+    this.props.Analytics.riskCurrency = data;
+    this.setState({
+      selectedCurrency: data,
     });
   }
 
@@ -136,14 +141,13 @@ class Volatility extends React.Component<Props, State> {
         <Grid item xs={7} className={[classes.topItem, classes.topHeight, classes.leftTopItem].join(' ')}>
           <Grid container spacing={24}>
             <Grid item xs={4}>
-              <MotionSelect defaultValueIndex={0} title="Select period" selectedValue={this.handleSelectPeriod} values={['30 days']} />
+              <MotionSelect defaultValueIndex={0} title="Select period" selectedValue={this.handleSelectPeriod} values={['30 days', '7 days']} />
             </Grid>
             <Grid item xs={4}>
-              <MotionSelect defaultValueIndex={0} title="Select benchmark" selectedValue={this.handleSelectedBenchmark} values={['BTC price', 'ETH price']} />
-              {/* <SelectBenchmark /> */}
+              <MotionSelect defaultValueIndex={0} title="Select benchmark" selectedValue={this.handleSelectedBenchmark} values={['ETH price']} />
             </Grid>
             <Grid item xs={4}>
-              <MotionSelect defaultValueIndex={0} title="Select currency" className={classes.padding} selectedValue={this.handleSelectedCurrency} values={['ETH', 'USD']} />
+              <MotionSelect defaultValueIndex={0} title="Select currency" className={classes.padding} selectedValue={this.handleSelectedCurrency} values={['USD', 'ETH']} />
             </Grid>
           </Grid>
         </Grid>

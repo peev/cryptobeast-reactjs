@@ -1,4 +1,5 @@
 // @flow
+import ubique from 'ubique';
 import BigNumberService from './BigNumber';
 
 const Statistic = {
@@ -47,6 +48,30 @@ const Statistic = {
       ),
       2,
     ));
+  },
+
+  getBeta(benchmarkData: Array<number>, data: Array<number>) {
+    if (data && data.length > 0 && benchmarkData && benchmarkData.length > 0) {
+      const covar = ubique.cov(benchmarkData, data, 0);
+      const variance = ubique.varc(benchmarkData);
+      return BigNumberService.quotient(covar[0][1], variance);
+    }
+
+    return 0;
+  },
+
+  getPortfolioBeta(totalWeight: number, data: Array<number>) {
+    return data.reduce(
+      (acc: number, item: Object) =>
+        BigNumberService.product(
+          BigNumberService.quotient(
+            item.value,
+            totalWeight,
+          ),
+          item.beta,
+        ),
+      0,
+    );
   },
 
   // median() {

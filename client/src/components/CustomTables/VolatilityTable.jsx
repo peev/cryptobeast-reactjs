@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 // @flow
 import React from 'react';
 import {
@@ -12,6 +13,7 @@ import { inject, observer } from 'mobx-react';
 import Paper from '@material-ui/core/Paper';
 import uuid from 'uuid/v4';
 import AssetStore from '../../stores/AssetStore';
+import BigNumberService from '../../services/BigNumber';
 
 const styles = () => ({
   root: {
@@ -30,15 +32,6 @@ const styles = () => ({
   },
 });
 
-// const data = [
-//   { ticker: 'BTC', alpha: `${0.0000}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-//   { ticker: 'ETH', alpha: `${0.0012}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-//   { ticker: 'XRP', alpha: `${0.0012}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-//   { ticker: 'NEO', alpha: `${0.0012}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-//   { ticker: 'XRP', alpha: `${0.0012}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-//   { ticker: 'NEO', alpha: `${0.0012}%`, Rsq: 0.71286, adjR: 0.71015, variance: 0.00350 },
-// ];
-
 type Props = {
   classes: Object,
 };
@@ -54,6 +47,7 @@ const VolatilityTable = inject('AssetStore')(observer(({ ...props }: Props) => {
           <TableRow>
             <TableCell>TICKER</TableCell>
             <TableCell className={classes.right}>ALPHA</TableCell>
+            <TableCell className={classes.right}>BETA</TableCell>
             <TableCell className={classes.right}>R^2</TableCell>
             <TableCell className={classes.right}>ADJUSTED R</TableCell>
             <TableCell className={classes.right}>EST.VARIANCE</TableCell>
@@ -63,10 +57,11 @@ const VolatilityTable = inject('AssetStore')(observer(({ ...props }: Props) => {
           {data.map((ROW: Object) => (
             <TableRow key={uuid()}>
               <TableCell>{ROW.ticker}</TableCell>
-              <TableCell numeric>{ROW.alpha}%</TableCell>
+              <TableCell numeric>{isNaN(ROW.alpha) ? 0 : ROW.alpha}%</TableCell>
+              <TableCell numeric>{isNaN(ROW.beta) ? 0 : BigNumberService.floor(ROW.beta)}</TableCell>
               <TableCell numeric>N/A</TableCell>
               <TableCell numeric>N/A</TableCell>
-              <TableCell numeric>{ROW.variance}</TableCell>
+              <TableCell numeric>{isNaN(ROW.variance) ? 0 : ROW.variance}</TableCell>
             </TableRow>
             ))}
         </TableBody>

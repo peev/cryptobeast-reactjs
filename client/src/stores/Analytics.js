@@ -7,12 +7,18 @@ class Analytics {
   @observable currentPortfolioClosingSharePrices;
   @observable currentPortfolioPriceHistoryForPeriod;
   @observable selectedTimeInPerformance;
+  @observable riskPeriod;
+  @observable riskBenchmark;
+  @observable riskCurrency;
 
   constructor() {
     this.currentPortfolioBTCPriceHistory = [];
     this.currentPortfolioClosingSharePrices = [];
     this.currentPortfolioPriceHistoryForPeriod = [];
     this.selectedTimeInPerformance = '';
+    this.riskPeriod = 30;
+    this.riskBenchmark = 'ETH';
+    this.riskCurrency = 'USD';
   }
 
   @computed

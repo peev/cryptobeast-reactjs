@@ -2,10 +2,11 @@ const requester = require('../services/requester-service');
 
 const baseURL = 'https://api.etherscan.io/api';
 const ropsten = 'https://ropsten.etherscan.io/api';
+const etherScanApiKey = '74FPPAPT8HZTVGZIZHN3HTMY3URY1GJ9AQ';
 
 const etherScanServices = () => {
   const getETHUSDPrice = () => new Promise((resolve) => {
-    requester.get(`${baseURL}?module=stats&action=ethprice`)
+    requester.get(`${baseURL}?module=stats&action=ethprice&apikey=${etherScanApiKey}`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
         resolve(parsedResult.result.ethusd);

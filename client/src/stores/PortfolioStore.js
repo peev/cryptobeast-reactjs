@@ -383,8 +383,17 @@ class PortfolioStore {
   @computed
   get portfolioVariance() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
-      const history = this.portfolioValueHistory.map((item: Object) => item.usd);
-      return BigNumberService.toFixedParam(ubique.varc(history), 2);
+      const data = Analytics.riskCurrency === 'ETH' ?
+        this.portfolioValueHistory.map((item: Object) => BigNumberService.tokenToEth(item.eth, 18).toNumber()) :
+        this.portfolioValueHistory.map((item: Object) => item.usd);
+
+      // Slice data according selected period
+      if (data.length > Analytics.riskPeriod) {
+        const startIdx = data.length - Analytics.riskPeriod;
+        data.splice(0, startIdx);
+      }
+
+      return BigNumberService.toFixedParam(ubique.varc(data), 2);
     }
 
     return 0;

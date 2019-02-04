@@ -190,7 +190,7 @@ class AssetStore {
           beta: Statistic.getBeta(benchmarkData, assetsTotal),
           rsq: null,
           adjR: null,
-          variance: BigNumberService.toFixedParam(ubique.varc(assetsTotal), 2),
+          variance: ubique.varc(assetsTotal),
         };
         return asset;
       });

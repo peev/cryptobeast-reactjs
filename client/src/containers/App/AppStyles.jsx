@@ -98,12 +98,15 @@ const appStyles = (theme: object) => ({
       },
     },
   },
+  arrowButton: {
+    margin: '0 8px 0 0',
+  },
   centerDisabledSidebarArrows: {
     paddingLeft: '6px',
-    margin: '0 auto',
+    margin: '5px 0 0 8px',
   },
   centerActiveSidebarArrows: {
-    marginLeft: '-3px',
+    margin: '5px 0 0 8px',
   },
   logo: {
     fontSize: '50px',

@@ -14,6 +14,7 @@ import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
 import UpdatePortfolioModal from '../Modal/UpdatePortfolio';
 import tableStyle from '../../variables/styles/tableStyle';
+import BigNumberService from '../../services/BigNumber';
 
 type Props = {
   classes: Object,
@@ -41,9 +42,9 @@ function createPortfolioSortableObjectFromArray(portfolioAsArray: Array) {
   if (portfolioAsArray.length === 6) {
     return {
       name: portfolioAsArray[0],
-      numShares: portfolioAsArray[1],
-      sharePrice: portfolioAsArray[2],
-      totalUSD: portfolioAsArray[3],
+      numShares: BigNumberService.floor(portfolioAsArray[1]),
+      sharePrice: BigNumberService.floor(portfolioAsArray[2]),
+      totalUSD: BigNumberService.floor(portfolioAsArray[3]),
       update: portfolioAsArray[4],
       id: portfolioAsArray[5],
     };

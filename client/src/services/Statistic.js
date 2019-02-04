@@ -41,13 +41,13 @@ const Statistic = {
       ),
       100,
     );
-    return Number(BigNumberService.toFixedParam(
+    return Number(
       BigNumberService.difference(
         dataValue,
         benchmarkValue,
       ),
       2,
-    ));
+    );
   },
 
   getBeta(benchmarkData: Array<number>, data: Array<number>) {

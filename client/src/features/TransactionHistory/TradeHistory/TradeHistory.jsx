@@ -191,7 +191,7 @@ class HistoryTable extends React.Component<Props, State> {
                         if (ind === 7) {
                           return (
                             <TableCell className={classes.tableCellBuy} key={uuid()}>
-                              {BigNumberService.toFixedParam(transaction[el], 2)}
+                              {BigNumberService.floor(transaction[el])}
                             </TableCell>
                           );
                         }
@@ -218,7 +218,7 @@ class HistoryTable extends React.Component<Props, State> {
                         if (ind === 7) {
                           return (
                             <TableCell className={classes.tableCellSell} key={uuid()}>
-                              {BigNumberService.toFixedParam(transaction[el], 2)}
+                              {BigNumberService.floor(transaction[el])}
                             </TableCell>
                           );
                         }

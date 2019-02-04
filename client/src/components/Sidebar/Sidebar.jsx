@@ -36,14 +36,16 @@ const Sidebar = ({ ...props }: Props) => {
             className={`${classes.item} ${!closed ? classes.itemClosed : ''}`}
             activeClassName="active"
           >
-            <ListItemIcon className={classes.itemIcon}>
-              <prop.icon />
-            </ListItemIcon>
-            <ListItemText
-              primary={prop.sidebarName}
-              className={classes.itemText}
-              disableTypography
-            />
+            <div className={classes.itemWrapper}>
+              <ListItemIcon className={classes.itemIcon}>
+                <prop.icon />
+              </ListItemIcon>
+              <ListItemText
+                primary={prop.sidebarName}
+                className={classes.itemText}
+                disableTypography
+              />
+            </div>
           </NavLink>
         </ListItem>
       ))}

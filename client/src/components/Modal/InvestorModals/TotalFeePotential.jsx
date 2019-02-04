@@ -3,7 +3,7 @@ import React from 'react';
 import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import Paper from '@material-ui/core/Paper';
-
+import BigNumberService from '../../../services/BigNumber';
 
 const styles = () => ({
   paper: {
@@ -37,7 +37,7 @@ const TotalFeePotential = inject('InvestorStore')(observer(({ ...props }: Props)
     <Grid container>
       <Grid item xs={12} sm={12} md={12}>
         <Paper className={classes.paper}>
-          <h4 className={`headingText ${classes.title}`}>{`$${InvestorStore.totalFeePotential}`}</h4>
+          <h4 className={`headingText ${classes.title}`}>{`$${BigNumberService.floor(InvestorStore.totalFeePotential)}`}</h4>
           <p className={`labelText ${classes.label}`} > Total Fee Potential</p>
         </Paper>
       </Grid >

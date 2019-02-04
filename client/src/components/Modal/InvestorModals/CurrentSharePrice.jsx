@@ -9,6 +9,7 @@ import InvestorCard from '../../CustomElements/InvestorCard';
 import Button from '../../CustomButtons/Button';
 import InvestorCardButton from '../../CustomButtons/InvestorCardButton';
 import SharePriceChart from '../../HighCharts/SharePriceChart';
+import BigNumberService from '../../../services/BigNumber';
 
 const getModalStyle = () => {
   const top = 22;
@@ -87,7 +88,7 @@ class CurrentSharePrice extends React.Component<Props, State> {
         <InvestorCardButton
           onClick={this.handleOpen}
         >
-          <InvestorCard headerText={`$${PortfolioStore.currentPortfolioSharePrice.toFixed(2)}`} labelText="Current Share Price" />
+          <InvestorCard headerText={`$${BigNumberService.floor(PortfolioStore.currentPortfolioSharePrice)}`} labelText="Current Share Price" />
         </InvestorCardButton>
 
         <Modal

@@ -160,7 +160,7 @@ class PortfolioStore {
       this.sharesHistory.forEach((item: Object) => {
         this.portfolioValueHistory.forEach((pItem: Object) => {
           if (item.timestamp === pItem.timestamp) {
-            result.push(Number(BigNumberService.toFixedParam(BigNumberService.quotient(pItem.usd, item.shares), 2)));
+            result.push(Number(BigNumberService.floor(BigNumberService.quotient(pItem.usd, item.shares))));
           }
         });
       });
@@ -172,18 +172,15 @@ class PortfolioStore {
   @computed
   get portfolueValueLastDay() {
     if (this.portfolioValueHistoryByPeriod.length && this.portfolioValueHistoryByPeriod.length > 0) {
-      return Number(BigNumberService.toFixedParam(
-        BigNumberService.product(
-          BigNumberService.quotient(
-            BigNumberService.difference(
-              this.portfolioValueHistoryByPeriod[0].usd,
-              this.portfolioValueHistoryByPeriod[1].usd,
-            ),
+      return Number(BigNumberService.product(
+        BigNumberService.quotient(
+          BigNumberService.difference(
             this.portfolioValueHistoryByPeriod[0].usd,
+            this.portfolioValueHistoryByPeriod[1].usd,
           ),
-          100,
+          this.portfolioValueHistoryByPeriod[0].usd,
         ),
-        2,
+        100,
       ));
     }
     return 0;
@@ -192,18 +189,15 @@ class PortfolioStore {
   @computed
   get portfolueValueLastWeek() {
     if (this.portfolioValueHistoryByPeriod.length && this.portfolioValueHistoryByPeriod.length > 0) {
-      return Number(BigNumberService.toFixedParam(
-        BigNumberService.product(
-          BigNumberService.quotient(
-            BigNumberService.difference(
-              this.portfolioValueHistoryByPeriod[0].usd,
-              this.portfolioValueHistoryByPeriod[this.portfolioValueHistoryByPeriod.length - 1].usd,
-            ),
+      return Number(BigNumberService.product(
+        BigNumberService.quotient(
+          BigNumberService.difference(
             this.portfolioValueHistoryByPeriod[0].usd,
+            this.portfolioValueHistoryByPeriod[this.portfolioValueHistoryByPeriod.length - 1].usd,
           ),
-          100,
+          this.portfolioValueHistoryByPeriod[0].usd,
         ),
-        2,
+        100,
       ));
     }
     return 0;
@@ -216,7 +210,20 @@ class PortfolioStore {
         .map((item: object) =>
           ([
             Number(new Date(item.timestamp).getTime()),
-            Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(item.eth), 4)),
+            Number(BigNumberService.floorFour(BigNumberService.gweiToEth(item.eth))),
+          ]));
+    }
+    return [];
+  }
+
+  @computed
+  get totalAssetsValueUSD() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
+      return this.portfolioValueHistory
+        .map((item: object) =>
+          ([
+            Number(new Date(item.timestamp).getTime()),
+            Number(BigNumberService.floor(item.usd)),
           ]));
     }
     return [];
@@ -241,19 +248,6 @@ class PortfolioStore {
   }
 
   @computed
-  get totalAssetsValueUSD() {
-    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
-      return this.portfolioValueHistory
-        .map((item: object) =>
-          ([
-            Number(new Date(item.timestamp).getTime()),
-            Number(BigNumberService.toFixedParam(item.usd, 2)),
-          ]));
-    }
-    return [];
-  }
-
-  @computed
   get portfolioValueHistoryBreakdownDates() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
       return this.portfolioValueHistory
@@ -275,19 +269,16 @@ class PortfolioStore {
       return this.portfolioValueHistory
         .map((el: object, i: number) => {
           if (i !== 0) {
-            return Number(BigNumberService.toFixedParam(
-              BigNumberService.product(
-                BigNumberService.quotient(
-                  BigNumberService.difference(
-                    this.portfolioValueHistory[i].eth,
-                    this.portfolioValueHistory[i - 1].eth,
-                  ),
+            return Number(BigNumberService.floor(BigNumberService.product(
+              BigNumberService.quotient(
+                BigNumberService.difference(
+                  this.portfolioValueHistory[i].eth,
                   this.portfolioValueHistory[i - 1].eth,
                 ),
-                100,
+                this.portfolioValueHistory[i - 1].eth,
               ),
-              2,
-            ));
+              100,
+            )));
           } else {
             return 100;
           }
@@ -302,19 +293,16 @@ class PortfolioStore {
       return this.portfolioValueHistory
         .map((el: object, i: number) => {
           if (i !== 0) {
-            return Number(BigNumberService.toFixedParam(
-              BigNumberService.product(
-                BigNumberService.quotient(
-                  BigNumberService.difference(
-                    this.portfolioValueHistory[i].usd,
-                    this.portfolioValueHistory[i - 1].usd,
-                  ),
+            return Number(BigNumberService.floor(BigNumberService.product(
+              BigNumberService.quotient(
+                BigNumberService.difference(
+                  this.portfolioValueHistory[i].usd,
                   this.portfolioValueHistory[i - 1].usd,
                 ),
-                100,
+                this.portfolioValueHistory[i - 1].usd,
               ),
-              2,
-            ));
+              100,
+            )));
           } else {
             return 100;
           }
@@ -330,9 +318,7 @@ class PortfolioStore {
         this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - this.standardDeviationPeriod, 1)) :
         this.portfolioValueHistory;
       this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.eth);
-      return Number(BigNumberService
-        .toFixedParam(BigNumberService
-          .gweiToEth(math.std(this.standardDeviationData)), 2));
+      return Number(BigNumberService.gweiToEth(math.std(this.standardDeviationData)));
     }
     return null;
   }
@@ -345,9 +331,7 @@ class PortfolioStore {
   @computed
   get currentPortfolioSharePrice() {
     if (this.selectedPortfolio && TransactionStore.transactions.length > 0) {
-      return Number(BigNumberService
-        .toFixedParam(BigNumberService
-          .quotient(this.currentPortfolioCostInUSD, TransactionStore.numOfShares), 2));
+      return Number(BigNumberService.quotient(this.currentPortfolioCostInUSD, TransactionStore.numOfShares));
     }
 
     return 0;
@@ -356,7 +340,7 @@ class PortfolioStore {
   @computed
   get currentPortfolioCostInUSD() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
-      return BigNumberService.toFixedParam(this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd, 2);
+      return this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd;
     }
 
     return 0;
@@ -365,7 +349,7 @@ class PortfolioStore {
   @computed
   get currentPortfolioCostInETH() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
-      return BigNumberService.toFixedParam(this.portfolioValueHistory[this.portfolioValueHistory.length - 1].eth, 2);
+      return this.portfolioValueHistory[this.portfolioValueHistory.length - 1].eth;
     }
 
     return 0;
@@ -374,7 +358,7 @@ class PortfolioStore {
   @computed
   get summaryTotalInvestmentInUSD() {
     if (this.selectedPortfolio) {
-      return Number(BigNumberService.toFixedParam(this.selectedPortfolio.totalInvestmentUSD, 2));
+      return Number(this.selectedPortfolio.totalInvestmentUSD);
     }
 
     return 0;
@@ -393,7 +377,7 @@ class PortfolioStore {
         data.splice(0, startIdx);
       }
 
-      return BigNumberService.toFixedParam(ubique.varc(data), 2);
+      return ubique.varc(data);
     }
 
     return 0;
@@ -447,18 +431,15 @@ class PortfolioStore {
   @computed
   get summaryTotalProfitLoss() {
     if (this.selectedPortfolio && TransactionStore.transactions.length > 0 && this.selectedPortfolio.totalInvestmentUSD !== 0) {
-      return Number(BigNumberService.toFixedParam(
-        BigNumberService.product(
-          BigNumberService.quotient(
-            BigNumberService.difference(
-              this.currentPortfolioCostInUSD,
-              this.selectedPortfolio.totalInvestmentUSD,
-            ),
+      return Number(BigNumberService.product(
+        BigNumberService.quotient(
+          BigNumberService.difference(
+            this.currentPortfolioCostInUSD,
             this.selectedPortfolio.totalInvestmentUSD,
           ),
-          100,
+          this.selectedPortfolio.totalInvestmentUSD,
         ),
-        2,
+        100,
       ));
     }
     return 0;
@@ -467,12 +448,9 @@ class PortfolioStore {
   @computed
   get summaryTotalProfitLossUsd() {
     if (this.selectedPortfolio && this.portfolioValueHistory.length > 0 && this.selectedPortfolio.totalInvestmentUSD !== 0) {
-      return Number(BigNumberService.toFixedParam(
-        BigNumberService.difference(
-          this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
-          this.selectedPortfolio.totalInvestmentUSD,
-        ),
-        2,
+      return Number(BigNumberService.difference(
+        this.portfolioValueHistory[this.portfolioValueHistory.length - 1].usd,
+        this.selectedPortfolio.totalInvestmentUSD,
       ));
     }
     return 0;
@@ -481,56 +459,19 @@ class PortfolioStore {
   @computed
   get avgChange() {
     if (this.selectedPortfolio && TransactionStore.transactions.length > 0 && this.selectedPortfolio.totalInvestmentUSD !== 0) {
-      return Number(BigNumberService.toFixedParam(
-        BigNumberService.quotient(BigNumberService.product(
-          BigNumberService.quotient(
-            BigNumberService.difference(
-              this.currentPortfolioCostInUSD,
-              this.selectedPortfolio.totalInvestmentUSD,
-            ),
+      return Number(BigNumberService.quotient(BigNumberService.product(
+        BigNumberService.quotient(
+          BigNumberService.difference(
+            this.currentPortfolioCostInUSD,
             this.selectedPortfolio.totalInvestmentUSD,
           ),
-          100,
-        ), this.portfolioValueHistory.length),
-        2,
-      ));
+          this.selectedPortfolio.totalInvestmentUSD,
+        ),
+        100,
+      ), this.portfolioValueHistory.length));
     }
     return 0;
   }
-
-  // @computed
-  // get portfolioAlpha() {
-  //   if (this.selectedPortfolioId !== null && this.selectedPortfolioId !== undefined && this.alphaData !== null) {
-  //     const ethValue = BigNumberService.product(
-  //       BigNumberService.quotient(
-  //         BigNumberService.difference(
-  //           this.alphaData[1].ethUsd,
-  //           this.alphaData[0].ethUsd,
-  //         ),
-  //         this.alphaData[0].ethUsd,
-  //       ),
-  //       100,
-  //     );
-  //     const sharePrice = BigNumberService.product(
-  //       BigNumberService.quotient(
-  //         BigNumberService.difference(
-  //           this.alphaData[1].sharePrice,
-  //           this.alphaData[0].sharePrice,
-  //         ),
-  //         this.alphaData[0].sharePrice,
-  //       ),
-  //       100,
-  //     );
-  //     return Number(BigNumberService.toFixedParam(
-  //       BigNumberService.difference(
-  //         sharePrice,
-  //         ethValue,
-  //       ),
-  //       2,
-  //     ));
-  //   }
-  //   return 0;
-  // }
 
   @action
   setFetchingPortfolios(value: boolean) {
@@ -619,8 +560,8 @@ class PortfolioStore {
   @computed
   get summaryAssetsBreakdown() {
     return this.currentPortfolioAssets.map((el: object) => ({
-      y: Number(BigNumberService.toFixedParam(el.weight, 2)),
-      name: `${el.tokenName} ${Number(BigNumberService.toFixedParam(el.weight, 2))}%`,
+      y: Number(BigNumberService.floor(el.weight)),
+      name: `${el.tokenName} ${Number(BigNumberService.floor(el.weight))}%`,
     }));
   }
 
@@ -857,8 +798,8 @@ class PortfolioStore {
       requester.Portfolio.getPortfolioAssetsByPortfolioId(portfolioId)
         .then(action((result: object) => {
           if (result.data.length && result.data.length > 0) {
-            return resolve(BigNumberService.toFixedParam((result.data
-              .reduce((acc: number, obj: Object) => BigNumberService.sum(acc, obj.totalUSD), 0)), 2));
+            return resolve((result.data
+              .reduce((acc: number, obj: Object) => BigNumberService.sum(acc, obj.totalUSD), 0)));
           }
           return resolve(0);
         }))
@@ -873,7 +814,7 @@ class PortfolioStore {
       requester.Transaction.getAllTransactions(portfolioId)
         .then(action((result: object) => {
           if (result.data.length && result.data.length > 0) {
-            return resolve(BigNumberService.toFixedParam((result.data[result.data.length - 1].numSharesAfter), 2));
+            return resolve((result.data[result.data.length - 1].numSharesAfter));
           }
           return resolve(0);
         }))
@@ -886,9 +827,7 @@ class PortfolioStore {
   // eslint-disable-next-line class-methods-use-this
   getPortfolioSharePrice(portfolioCostInUSD: number, numOfSares: number) {
     if (numOfSares !== 0 && portfolioCostInUSD !== 0) {
-      return Number(BigNumberService
-        .toFixedParam(BigNumberService
-          .quotient(portfolioCostInUSD, numOfSares), 2));
+      return Number(BigNumberService.quotient(portfolioCostInUSD, numOfSares));
     }
     return 0;
   }

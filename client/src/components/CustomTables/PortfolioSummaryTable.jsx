@@ -223,21 +223,21 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
             if (i === 1 || i === 2) {
               return (
                 <TableCell className={classes.tableCell} key={uuid()}>
-                  {BigNumberService.toFixed(COL)}
+                  {BigNumberService.floorFour(COL)}
                 </TableCell>
               );
             }
             if (i === 3 || i === 4) {
               return (
                 <TableCell className={classes.tableCell} key={uuid()}>
-                  {BigNumberService.toFixedParam(COL, 2)}
+                  {BigNumberService.floor(COL)}
                 </TableCell>
               );
             }
             if (i === 5) {
               return (
                 <TableCell className={classes.tableCell} key={uuid()}>
-                  <div className={classes.progressBar} data-label={`${BigNumberService.toFixedParam(COL, 2)}%`}>
+                  <div className={classes.progressBar} data-label={`${BigNumberService.floor(COL)}%`}>
                     <span className={classes.value} style={{ width: `${COL}px` }} />
                   </div>
                 </TableCell>

@@ -129,15 +129,19 @@ class App extends React.Component<Props> {
                   {checkPortfolioNumber ?
                     <SidebarRightArrows className={classes.centerDisabledSidebarArrows} /> :
                     (checkPortfolioNumber === false && this.state.open === false) ?
-                      <IconButton>
+                      <IconButton
+                        onClick={this.handleDrawerOpen}
+                        className={classes.arrowButton}
+                      >
                         <SidebarRightArrows
                           className={classes.centerActiveSidebarArrows}
-                          onClick={this.handleDrawerOpen}
                         />
                       </IconButton> :
                       (checkPortfolioNumber === false && this.state.open === true) ?
-                        <IconButton>
-                          <SidebarLeftArrows onClick={this.handleDrawerClose} />
+                        <IconButton onClick={this.handleDrawerClose}>
+                          <SidebarLeftArrows
+                            className={classes.centerActiveSidebarArrows}
+                          />
                         </IconButton>
                         : null
                   }

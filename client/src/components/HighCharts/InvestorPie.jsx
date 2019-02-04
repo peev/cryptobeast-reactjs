@@ -16,7 +16,7 @@ const InvestorPieChart = (observer(({ ...props }: Props) => {
   const pieData = filterEmpty.map((inv: Object) => {
     const invSharesWeight = (inv.shares / total) * 100;
     return {
-      name: `${inv.name} ${BigNumberService.toFixedParam(inv.shares, 2)} (${Number(`${Math.round(`${invSharesWeight}e2`)}e-2`) || 0}%)`,
+      name: `${inv.name} ${BigNumberService.floor(inv.shares)} (${Number(`${Math.round(`${invSharesWeight}e2`)}e-2`) || 0}%)`,
       y: Number(`${Math.round(`${invSharesWeight}e2`)}e-2`),
     };
   });

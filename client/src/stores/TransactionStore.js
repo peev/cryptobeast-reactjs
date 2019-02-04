@@ -3,9 +3,7 @@ import { observable, action, computed } from 'mobx';
 import requester from '../services/requester';
 
 import PortfolioStore from './PortfolioStore';
-import BigNumberService from '../services/BigNumber';
 import NotificationStore from './NotificationStore';
-
 
 class TransactionStore {
   @observable transactions;
@@ -28,7 +26,7 @@ class TransactionStore {
   @computed
   get numOfShares() {
     if (this.transactions.length && this.transactions.length > 0) {
-      return BigNumberService.toFixedParam((this.transactions[this.transactions.length - 1].numSharesAfter), 2);
+      return (this.transactions[this.transactions.length - 1].numSharesAfter);
     }
     return 0;
   }
@@ -36,7 +34,7 @@ class TransactionStore {
   @computed
   get sharePrice() {
     if (this.transactions.length && this.transactions.length > 0) {
-      return BigNumberService.toFixedParam((this.transactions[this.transactions.length - 1].currentSharePriceUSD), 2);
+      return (this.transactions[this.transactions.length - 1].currentSharePriceUSD);
     }
     return 0;
   }

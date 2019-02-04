@@ -57,11 +57,11 @@ const VolatilityTable = inject('AssetStore')(observer(({ ...props }: Props) => {
           {data.map((ROW: Object) => (
             <TableRow key={uuid()}>
               <TableCell>{ROW.ticker}</TableCell>
-              <TableCell numeric>{isNaN(ROW.alpha) ? 0 : ROW.alpha}%</TableCell>
+              <TableCell numeric>{isNaN(ROW.alpha) ? 0 : BigNumberService.floor(ROW.alpha)}%</TableCell>
               <TableCell numeric>{isNaN(ROW.beta) ? 0 : BigNumberService.floor(ROW.beta)}</TableCell>
               <TableCell numeric>N/A</TableCell>
               <TableCell numeric>N/A</TableCell>
-              <TableCell numeric>{isNaN(ROW.variance) ? 0 : ROW.variance}</TableCell>
+              <TableCell numeric>{isNaN(ROW.variance) ? 0 : BigNumberService.floor(ROW.variance)}</TableCell>
             </TableRow>
             ))}
         </TableBody>

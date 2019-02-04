@@ -135,14 +135,35 @@ const sidebarStyle = theme => ({
     listStyle: 'none',
   },
   item: {
-    padding: '0 15px',
+    padding: '0',
     position: 'relative',
     display: 'block',
     textDecoration: 'none',
     '&.active': {
-      borderLeft: '3px solid #366d72',
-      padding: '0 12px',
+      padding: '0',
+      '&:after': {
+        width: '3px',
+        height: '50%',
+        content: '""',
+        background: '#366d72',
+        position: 'absolute',
+        top: '24%',
+        left: '0',
+      },
     },
+  },
+  itemWrapper: {
+    padding: '16px 13px',
+  },
+  indicator: {
+    position: 'absolute',
+    width: '3px',
+    height: '50%',
+    background: '#366d72',
+    verticalAlign: 'middle',
+    left: '0',
+    top: '24%',
+    display: 'table-cell',
   },
   itemClosed: {
     transition: theme.transitions.create(['width', 'margin'], {
@@ -155,7 +176,7 @@ const sidebarStyle = theme => ({
     borderRadius: '3px',
     position: 'relative',
     display: 'block',
-    padding: '20px 0 10px 0',
+    padding: '0',
     backgroundColor: 'transparent',
     ...defaultFont,
   },

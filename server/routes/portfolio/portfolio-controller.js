@@ -371,14 +371,11 @@ const portfolioController = (repository) => {
         const { id } = portfolio;
         const name = portfolio.portfolioName;
         const address = portfolio.userAddress;
-        const totalInvestment = bigNumberService.toFixedParam(portfolio.totalInvestmentUSD, 2);
-        const numOfShares = bigNumberService.toFixedParam(transactions[transactions.length - 1].numSharesAfter, 2);
-        const portfolioCostInUSD = bigNumberService.toFixedParam(
-          assets.reduce((acc, obj) => ({ totalUSD: bigNumberService.sum(acc.totalUSD, obj.totalUSD) })).totalUSD,
-          2,
-        );
-        const sharePrice = bigNumberService.toFixedParam(bigNumberService.quotient(portfolioCostInUSD, numOfShares), 2);
-        const totalProfitLost = bigNumberService.toFixedParam(
+        const totalInvestment = portfolio.totalInvestmentUSD;
+        const numOfShares = transactions[transactions.length - 1].numSharesAfter;
+        const portfolioCostInUSD = assets.reduce((acc, obj) => ({ totalUSD: bigNumberService.sum(acc.totalUSD, obj.totalUSD) })).totalUSD;
+        const sharePrice = bigNumberService.quotient(portfolioCostInUSD, numOfShares);
+        const totalProfitLost =
           bigNumberService.product(
             bigNumberService.quotient(
               bigNumberService.difference(
@@ -388,9 +385,7 @@ const portfolioController = (repository) => {
               totalInvestment,
             ),
             100,
-          ),
-          2,
-        );
+          );
         const result = { id, name, address, totalInvestment, numOfShares, portfolioCostInUSD, sharePrice, totalProfitLost };
         return result;
       } catch (error) {

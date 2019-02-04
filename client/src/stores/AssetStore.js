@@ -114,7 +114,7 @@ class AssetStore {
       const items = assets.map((asset: Object) => asset.tokenName).sort();
       items.map((assetName: string) => {
         const assetTotals = this.getAssetTotals(assetName);
-        return result.push(Number(BigNumberService.toFixedParam(BigNumberService.gweiToEth(math.std(assetTotals)), 4)));
+        return result.push(Number(BigNumberService.floor(BigNumberService.gweiToEth(math.std(assetTotals)))));
       });
       return result;
     }
@@ -128,7 +128,7 @@ class AssetStore {
       const items = assets.map((asset: Object) => asset.tokenName).sort();
       return items.map((assetName: string) => {
         const assetsTotal = this.getAssetTotals(assetName);
-        return Number(BigNumberService.toFixedParam(ubique.skewness(assetsTotal), 4));
+        return Number(BigNumberService.floor(ubique.skewness(assetsTotal)));
       });
     }
     return [];
@@ -141,7 +141,7 @@ class AssetStore {
       const items = assets.map((asset: Object) => asset.tokenName).sort();
       return items.map((assetName: string) => {
         const assetsTotal = this.getAssetTotals(assetName);
-        return Number(BigNumberService.toFixedParam(ubique.kurtosis(assetsTotal), 4));
+        return Number(BigNumberService.floor(ubique.kurtosis(assetsTotal)));
       });
     }
     return [];
@@ -244,10 +244,10 @@ class AssetStore {
           return 0;
         } else {
           return Number(BigNumberService
-            .toFixedParam(BigNumberService
+            .floor(BigNumberService
               .product(BigNumberService
                 .quotient(BigNumberService
-                  .difference(el.value, this.assetHistory[index - 1].value), this.assetHistory[index - 1].value), 100), 2));
+                  .difference(el.value, this.assetHistory[index - 1].value), this.assetHistory[index - 1].value), 100)));
         }
       });
       result.shift();

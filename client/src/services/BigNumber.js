@@ -21,9 +21,9 @@ const BigNumberService = {
 
   pow: (a, b) => new BigNumber(a).pow(new BigNumber(b)).toNumber(),
 
-  floor: number => new BigNumber(Math.floor(new BigNumber(number).multipliedBy(100))).dividedBy(100).toNumber(),
+  floor: number => new BigNumber(Math.floor(new BigNumber(number).multipliedBy(100))).dividedBy(100).toFixed(2),
 
-  floorFour: number => new BigNumber(Math.floor(new BigNumber(number).multipliedBy(10000))).dividedBy(10000).toNumber(),
+  floorFour: number => new BigNumber(Math.floor(new BigNumber(number).multipliedBy(10000))).dividedBy(10000).toFixed(4),
 };
 
 export default BigNumberService;

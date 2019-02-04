@@ -173,7 +173,7 @@ class InvestorStore {
           result = BigNumberService.difference(result, tr.sharesLiquidated);
         }
       });
-      return BigNumberService.toFixedParam(result, 2);
+      return result;
     }
     return '';
     // if (this.selectedInvestorIndividualSummary) {
@@ -351,7 +351,7 @@ class InvestorStore {
         totalFeeValue += result * (el.fee / 100) * PortfolioStore.currentPortfolioSharePrice;
       });
 
-      return BigNumberService.toFixedParam(totalFeeValue, 2);
+      return totalFeeValue;
     }
 
     return 0;

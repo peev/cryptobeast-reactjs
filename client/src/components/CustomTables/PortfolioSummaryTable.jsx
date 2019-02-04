@@ -223,7 +223,7 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
             if (i === 1 || i === 2) {
               return (
                 <TableCell className={classes.tableCell} key={uuid()}>
-                  {BigNumberService.toFixed(COL)}
+                  {BigNumberService.floorFour(COL)}
                 </TableCell>
               );
             }

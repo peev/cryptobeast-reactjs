@@ -6,6 +6,7 @@ import {
   withStyles,
 } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
+import BigNumberService from '../../../services/BigNumber';
 
 const styles = () => ({
   container: {
@@ -45,19 +46,19 @@ const SummaryPerformanceCard = inject('Analytics', 'PortfolioStore')(observer(({
       </div>
       <div className={classes.item}>
         <p>profit/loss:</p>
-        <p>{PortfolioStore.summaryTotalProfitLoss}%</p>
+        <p>{isNaN(PortfolioStore.summaryTotalProfitLoss) ? 0 : BigNumberService.floor(PortfolioStore.summaryTotalProfitLoss)}%</p>
       </div>
       <div className={classes.item}>
         <p>avg. change:</p>
-        <p>{isNaN(PortfolioStore.avgChange) ? 0 : PortfolioStore.avgChange}%</p>
+        <p>{isNaN(PortfolioStore.avgChange) ? 0 : BigNumberService.floor(PortfolioStore.avgChange)}%</p>
       </div>
       <div className={classes.item}>
         <p>last 24h:</p>
-        <p>{PortfolioStore.portfolueValueLastDay}%</p>
+        <p>{BigNumberService.floor(PortfolioStore.portfolueValueLastDay)}%</p>
       </div>
       <div className={classes.item}>
         <p>last 7d:</p>
-        <p>{PortfolioStore.portfolueValueLastWeek}%</p>
+        <p>{BigNumberService.floor(PortfolioStore.portfolueValueLastWeek)}%</p>
       </div>
     </Paper>
   );

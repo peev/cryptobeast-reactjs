@@ -10,6 +10,7 @@ import Button from '../../CustomButtons/Button';
 import InvestorCardButton from '../../CustomButtons/InvestorCardButton';
 import buttonStyle from '../../../variables/styles/buttonStyle';
 import InvestorPieChart from '../../HighCharts/InvestorPie';
+import BigNumberService from '../../../services/BigNumber';
 // import Portfolio from '../../Tabs/SummaryItems/Portfolio';
 
 const getModalStyle = () => {
@@ -94,7 +95,7 @@ class SharesInCirculation extends React.Component<Props, State> {
     return (
       <Grid container className={classes.buttonStyle}>
         <InvestorCardButton onClick={this.handleOpen}>
-          <InvestorCard headerText={portfolioShares} labelText="Shares in Circulation" />
+          <InvestorCard headerText={BigNumberService.floor(portfolioShares)} labelText="Shares in Circulation" />
         </InvestorCardButton>
 
         <Modal

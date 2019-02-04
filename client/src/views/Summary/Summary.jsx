@@ -13,6 +13,7 @@ import SummaryCard from './../../components/Cards/Summary/SummaryCard';
 import AssetBreakdown from './../../components/Cards/Summary/AssetBreakdown';
 import SummaryTabs from './../../components/Tabs/SummaryTabs';
 import PortfolioSummaryTable from './../../components/CustomTables/PortfolioSummaryTable';
+import BigNumberService from '../../services/BigNumber';
 
 const styles = () => ({
   container: {
@@ -64,7 +65,7 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             title="Total number of shares"
             // eslint-disable-next-line no-restricted-globals
             description={TransactionStore.numOfShares !== 0 && !isNaN(TransactionStore.numOfShares)
-              ? `${TransactionStore.numOfShares}` : ''}
+              ? `${BigNumberService.floor(TransactionStore.numOfShares)}` : ''}
             // eslint-disable-next-line no-restricted-globals
             hasInfo={TransactionStore.numOfShares === 0 || isNaN(TransactionStore.numOfShares)}
             infoMessage="Please add an investment to see your number of shares"
@@ -76,7 +77,7 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             title="Share price"
             // eslint-disable-next-line no-restricted-globals
             description={PortfolioStore.currentPortfolioSharePrice !== 0 && !isNaN(PortfolioStore.currentPortfolioSharePrice)
-              ? `$${PortfolioStore.currentPortfolioSharePrice}` : ''}
+              ? `$${BigNumberService.floor(PortfolioStore.currentPortfolioSharePrice)}` : ''}
             // eslint-disable-next-line no-restricted-globals
             hasInfo={PortfolioStore.currentPortfolioSharePrice === 0 || isNaN(PortfolioStore.currentPortfolioSharePrice)}
             infoMessage="Please add an investment to see your current share price"
@@ -87,7 +88,7 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             iconColor="gray"
             title="USD equivalent"
             description={PortfolioStore.currentPortfolioCostInUSD !== 0
-              ? `$${PortfolioStore.currentPortfolioCostInUSD}` : ''}
+              ? `$${BigNumberService.floor(PortfolioStore.currentPortfolioCostInUSD)}` : ''}
             hasInfo={PortfolioStore.currentPortfolioCostInUSD === 0}
             infoMessage="Please add assets to your portfolio"
           />
@@ -97,7 +98,7 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             iconColor="gray"
             title="Total investment"
             description={PortfolioStore.summaryTotalInvestmentInUSD !== 0
-              ? `$${PortfolioStore.summaryTotalInvestmentInUSD}` : ''}
+              ? `$${BigNumberService.floor(PortfolioStore.summaryTotalInvestmentInUSD)}` : ''}
             hasInfo={PortfolioStore.summaryTotalInvestmentInUSD === 0}
             infoMessage="Please add new investor or edit your personal investment amount"
           />
@@ -106,11 +107,12 @@ const Summary = inject('PortfolioStore', 'TransactionStore')(observer(({ ...prop
             icon={AnalyticsIcon}
             iconColor="gray"
             title="Total profit/loss"
-            description={PortfolioStore.summaryTotalProfitLoss === 0
+            // second prevent ui mutation
+            description={PortfolioStore.summaryTotalProfitLoss === 0 || PortfolioStore.summaryTotalProfitLoss === -100
               ? ''
               : PortfolioStore.summaryTotalProfitLoss > 0
-                ? `+${PortfolioStore.summaryTotalProfitLoss}%`
-                : `${PortfolioStore.summaryTotalProfitLoss}%`}
+                ? `+${BigNumberService.floor(PortfolioStore.summaryTotalProfitLoss)}%`
+                : `${BigNumberService.floor(PortfolioStore.summaryTotalProfitLoss)}%`}
             hasInfo={(PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD > 0)
               || (PortfolioStore.summaryTotalInvestmentInUSD > 0 && PortfolioStore.currentPortfolioCostInUSD === 0)
               || (PortfolioStore.summaryTotalInvestmentInUSD === 0 && PortfolioStore.currentPortfolioCostInUSD === 0)}

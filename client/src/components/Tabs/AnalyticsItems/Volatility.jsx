@@ -91,15 +91,11 @@ class Volatility extends React.Component<Props, State> {
 
   componentDidMount() {
     this.props.PortfolioStore.setStandardDeviationPeriod(this.state.selectPeriod);
-    this.props.PortfolioStore.getAlphaData(this.state.selectPeriod, this.state.selectBenchmark);
   }
 
   componentWillUpdate(nextProps: object, nextState: object) {
     if (nextState.selectPeriod !== this.state.selectPeriod) {
       this.props.PortfolioStore.setStandardDeviationPeriod(nextState.selectPeriod);
-    }
-    if (nextState.selectBenchmark !== this.state.selectBenchmark) {
-      this.props.PortfolioStore.getAlphaData(nextState.selectPeriod, nextState.selectBenchmark);
     }
   }
 

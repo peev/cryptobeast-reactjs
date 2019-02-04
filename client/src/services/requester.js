@@ -59,7 +59,6 @@ const Portfolio = {
   delete: id => requests.delete(`/portfolio/delete/${id}`),
   getPortfolioValueHistory: id => requests.get(`/portfolio/history/${id}`),
   getPortfolioValueHistoryByPeriod: (id, period) => requests.get(`/portfolio/historyByPeriod/${id}/${period}`),
-  getAlpha: (id, period, benchmark) => requests.get(`/portfolio/alpha/${id}/${period}/${benchmark}`),
   getShareHistory: id => requests.get(`/portfolio/shareHistory/${id}`),
   setName: (requestParams, id) => requests.put(`/portfolio/setName/${id}`, requestParams), // id + newName
   getPortfoliosStats: addresses => requests.post('/portfolio/all/stats', addresses),

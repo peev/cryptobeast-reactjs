@@ -348,64 +348,6 @@ const portfolioController = (repository) => {
     }
   };
 
-  const getAlphaResult = async (transaction, allocation, timestamp, ethUsd, ethPriceHistory) => {
-    const numOfShares = transaction.dataValues.numSharesAfter;
-    const { balance } = allocation.dataValues;
-    const tokenPricesByDate = await getTokensPriceByDate([timestamp]);
-    const portfolioValue = await calculatePortfolioValueHistory([timestamp / 1000], tokenPricesByDate, [{ balance }], ethPriceHistory, true);
-    const sharePrice = bigNumberService.quotient(portfolioValue[0].usd, numOfShares);
-    return { timestamp, ethUsd, sharePrice };
-  };
-
-  const getAlpha = async (req, res) => {
-    const { id } = req.params;
-    const { period } = req.params;
-    // const { benchmark } = req.params;
-    try {
-      const startingDate = new Date();
-      startingDate.setDate(startingDate.getDate() - period);
-      const periodTs = startingDate.getTime();
-      const firstDeposit = await intReqService.getFirstDeposit(id);
-      const firstDepositTs = new Date((firstDeposit.txTimestamp).toString()).getTime();
-      const nowTs = new Date().getTime();
-      const ethUsdNow = await commonService.getEthToUsdMiliseconds(nowTs);
-
-      let transaction = null;
-      let allocation = null;
-      let ethUsd = null;
-      let start = null;
-
-      // Get eth price arr from portfolio creation date
-      const allocations = await intReqService.getAllocationsByPortfolioIdAsc(id);
-      const today = new Date().getTime();
-      const begin = new Date((allocations[0].timestamp).toString()).getTime();
-      const timestampsMiliseconds = commonService.calculateDays(commonService.getEndOfDay(begin), commonService.getEndOfDay(today));
-      const ethHistory = await commonService.getEthHistoryDayValue(timestampsMiliseconds[0], timestampsMiliseconds[timestampsMiliseconds.length - 1]);
-      const ethPriceHistory = commonService.defineEthHistory(timestampsMiliseconds, ethHistory);
-
-      if (firstDepositTs > periodTs) {
-        transaction = firstDeposit;
-        allocation = await intReqService.getAllocationByPortfolioIdAndTimestamp(id, firstDepositTs);
-        ethUsd = await commonService.getEthToUsdMiliseconds(firstDepositTs);
-        start = await getAlphaResult(transaction, allocation, firstDepositTs, ethUsd, ethPriceHistory);
-      } else {
-        transaction = await intReqService.getTransactionBeforeTimestampByPortfolioId(id, periodTs);
-        allocation = await intReqService.getAllocationBeforeTimestampByPortfolioId(id, periodTs);
-        ethUsd = await commonService.getEthToUsdMiliseconds(periodTs);
-        start = await getAlphaResult(transaction, allocation, periodTs, ethUsd, ethPriceHistory);
-      }
-
-      const lastTransaction = await intReqService.getLastTransactionByPortfolioId(id);
-      const lastAllocation = await intReqService.getLastAllocationByPortfolioId(id);
-
-      const end = await getAlphaResult(lastTransaction, lastAllocation, nowTs, ethUsdNow, ethPriceHistory);
-      res.status(200).send([start, end]);
-    } catch (error) {
-      console.log(error);
-      res.status(400).send(error);
-    }
-  };
-
   const setName = async (req, res) => {
     const { id } = req.params;
     const { portfolioName } = req.body;
@@ -482,7 +424,6 @@ const portfolioController = (repository) => {
     getPortfolioAssetsByPortfolioId,
     getPortfolioValueHistory,
     getPortfolioValueByIdAndPeriod,
-    getAlpha,
     getShareHistory,
     setName,
     getStats,

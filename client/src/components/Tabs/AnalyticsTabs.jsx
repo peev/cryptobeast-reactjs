@@ -10,8 +10,6 @@ import { inject, observer } from 'mobx-react';
 import Volatility from './AnalyticsItems/Volatility';
 import Performance from './AnalyticsItems/Performance';
 import ProfitLoss from './AnalyticsItems/ProfitLoss';
-import Liquidity from './AnalyticsItems/Liquidity';
-import CorrelationMatrix from './AnalyticsItems/CorrelationMatrix';
 
 const styles = () => ({
   // TODO: Refactor this

@@ -383,8 +383,17 @@ class PortfolioStore {
   @computed
   get portfolioVariance() {
     if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
-      const history = this.portfolioValueHistory.map((item: Object) => item.usd);
-      return BigNumberService.toFixedParam(ubique.varc(history), 2);
+      const data = Analytics.riskCurrency === 'ETH' ?
+        this.portfolioValueHistory.map((item: Object) => BigNumberService.tokenToEth(item.eth, 18).toNumber()) :
+        this.portfolioValueHistory.map((item: Object) => item.usd);
+
+      // Slice data according selected period
+      if (data.length > Analytics.riskPeriod) {
+        const startIdx = data.length - Analytics.riskPeriod;
+        data.splice(0, startIdx);
+      }
+
+      return BigNumberService.toFixedParam(ubique.varc(data), 2);
     }
 
     return 0;
@@ -397,7 +406,39 @@ class PortfolioStore {
       const data = AssetStore.assetsVariance.map((item: Object) =>
         // Change when new benchmarks are added
         ({ beta: item.beta, value: Analytics.riskCurrency === 'ETH' ? item.totalEth : item.totalUsd }));
-      return Statistic.getPortfolioBeta(this.currentPortfolioCostInUSD, data);
+      const totalWeight = Analytics.riskCurrency === 'ETH' ? this.currentPortfolioCostInETH : this.currentPortfolioCostInUSD;
+      return Statistic.getPortfolioBeta(totalWeight, data);
+    }
+
+    return 0;
+  }
+
+  @computed
+  get portfolioAlpha() {
+    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0 &&
+      MarketStore.ethHistory.length && MarketStore.ethHistory.length > 0) {
+      // Change when new benchmarks are added
+      const benchmarkData = Analytics.riskCurrency === 'ETH' ?
+        MarketStore.ethHistory.map(() => 1) :
+        MarketStore.ethHistory.map((item: Object) => item.priceUsd);
+      // Change when new benchmarks are added
+      const data = Analytics.riskCurrency === 'ETH' ?
+        this.portfolioValueHistory.map((item: Object) => item.eth) :
+        this.portfolioValueHistory.map((item: Object) => item.usd);
+
+      // If data is shorter than benchmark data
+      if (data.length < benchmarkData.length) {
+        const rem = benchmarkData.length - data.length;
+        benchmarkData.splice(rem, data.length);
+      }
+
+      // Slice data according selected period
+      if (data.length > Analytics.riskPeriod) {
+        const startIdx = data.length - Analytics.riskPeriod;
+        data.splice(0, startIdx);
+        benchmarkData.splice(0, startIdx);
+      }
+      return Statistic.getAlpha(benchmarkData, data);
     }
 
     return 0;
@@ -457,57 +498,39 @@ class PortfolioStore {
     return 0;
   }
 
-  @action.bound
-  getAlphaData(period: number, benchmark: string) {
-    if (this.selectedPortfolioId !== null && this.selectedPortfolioId !== undefined) {
-      LoadingStore.setShowLoading(true);
-      requester.Portfolio.getAlpha(this.selectedPortfolioId, period, benchmark)
-        .then(action((result: Object) => {
-          this.alphaData = result.data;
-          LoadingStore.setShowLoading(false);
-        }))
-        .catch(action((error: Object) => {
-          console.log(error);
-          this.alphaData = null;
-          LoadingStore.setShowLoading(false);
-        }));
-    }
-    return null;
-  }
-
-  @computed
-  get portfolioAlpha() {
-    if (this.selectedPortfolioId !== null && this.selectedPortfolioId !== undefined && this.alphaData !== null) {
-      const ethValue = BigNumberService.product(
-        BigNumberService.quotient(
-          BigNumberService.difference(
-            this.alphaData[1].ethUsd,
-            this.alphaData[0].ethUsd,
-          ),
-          this.alphaData[0].ethUsd,
-        ),
-        100,
-      );
-      const sharePrice = BigNumberService.product(
-        BigNumberService.quotient(
-          BigNumberService.difference(
-            this.alphaData[1].sharePrice,
-            this.alphaData[0].sharePrice,
-          ),
-          this.alphaData[0].sharePrice,
-        ),
-        100,
-      );
-      return Number(BigNumberService.toFixedParam(
-        BigNumberService.difference(
-          sharePrice,
-          ethValue,
-        ),
-        2,
-      ));
-    }
-    return 0;
-  }
+  // @computed
+  // get portfolioAlpha() {
+  //   if (this.selectedPortfolioId !== null && this.selectedPortfolioId !== undefined && this.alphaData !== null) {
+  //     const ethValue = BigNumberService.product(
+  //       BigNumberService.quotient(
+  //         BigNumberService.difference(
+  //           this.alphaData[1].ethUsd,
+  //           this.alphaData[0].ethUsd,
+  //         ),
+  //         this.alphaData[0].ethUsd,
+  //       ),
+  //       100,
+  //     );
+  //     const sharePrice = BigNumberService.product(
+  //       BigNumberService.quotient(
+  //         BigNumberService.difference(
+  //           this.alphaData[1].sharePrice,
+  //           this.alphaData[0].sharePrice,
+  //         ),
+  //         this.alphaData[0].sharePrice,
+  //       ),
+  //       100,
+  //     );
+  //     return Number(BigNumberService.toFixedParam(
+  //       BigNumberService.difference(
+  //         sharePrice,
+  //         ethValue,
+  //       ),
+  //       2,
+  //     ));
+  //   }
+  //   return 0;
+  // }
 
   @action
   setFetchingPortfolios(value: boolean) {

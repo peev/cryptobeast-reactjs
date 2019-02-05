@@ -13,7 +13,6 @@ import moment from 'moment';
 import ubique from 'ubique';
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
-import InvestorStore from './InvestorStore';
 import NotificationStore from './NotificationStore';
 import storage from '../services/storage';
 import BigNumberService from '../services/BigNumber';
@@ -35,57 +34,37 @@ try {
 
 
 class PortfolioStore {
-  @observable fetchingPortfolios;
   @observable portfolios;
   @observable selectedPortfolio;
   @observable selectedPortfolioId;
   @observable currentPortfolioAssets;
   @observable currentPortfolioInvestors;
-  @observable currentPortfolioTransactions;
   @observable currentPortfolioTrades;
-  @observable currentPortfolioApiTradeHistory;
-  @observable currentPortfolioPrices;
-  @observable newPortfolioName;
   @observable portfolioValueHistory;
   @observable portfolioValueHistoryByPeriod;
   @observable standardDeviationPeriod;
-  @observable alphaData;
   @observable sharesHistory;
   @observable allPortfoliosData;
   @observable stats;
 
   constructor() {
     this.portfolios = [];
-    this.fetchingPortfolios = false;
     this.selectedPortfolio = null;
     this.selectedPortfolioId = persistedUserData;
     this.currentPortfolioAssets = [];
     this.currentPortfolioInvestors = [];
-    this.currentPortfolioTransactions = [];
     this.currentPortfolioTrades = [];
-    this.currentPortfolioApiTradeHistory = [];
-    this.currentPortfolioPrices = [];
-    this.newPortfolioName = '';
     this.portfolioValueHistory = [];
     this.portfolioValueHistoryByPeriod = [];
     this.standardDeviationPeriod = null;
-    this.alphaData = null;
     this.sharesHistory = [];
     this.allPortfoliosData = [];
     this.stats = [];
 
     // only start data fetching if those properties are actually used!
-    // onBecomeObserved(this, 'currentPortfolioAssets', this.getCurrentPortfolioAssets);
     onBecomeObserved(this, 'currentPortfolioInvestors', this.getCurrentPortfolioInvestors);
     onBecomeObserved(this, 'stats', this.getPortfoliosStats);
-    // TODO for delete getCurrentPortfolioTransactions
-    // onBecomeObserved(this, 'currentPortfolioTransactions', this.getCurrentPortfolioTransactions);
-    // onBecomeObserved(this, 'currentPortfolioTrades', this.getCurrentPortfolioTrades);
-    // TODO for delete getCurrentPortfolioPrices
-    // onBecomeObserved(this, 'currentPortfolioPrices', this.getCurrentPortfolioPrices);
-    // onBecomeObserved(this, 'portfolioValueHistory', this.getPortfolioValueHistory);
     onBecomeObserved(this, 'portfolioValueHistoryByPeriod', this.getPortfolioValueHistoryByPeriod);
-    // onBecomeObserved(this, 'sharesHistory', this.getShareHistory);
   }
 
   @action.bound
@@ -138,6 +117,7 @@ class PortfolioStore {
         })
         .catch((err: object) => console.log(err));
     }
+
     this.sharesHistory = [];
   }
 
@@ -150,6 +130,7 @@ class PortfolioStore {
       });
       return result;
     }
+
     return [];
   }
 
@@ -166,6 +147,7 @@ class PortfolioStore {
       });
       return result;
     }
+
     return [];
   }
 
@@ -183,6 +165,7 @@ class PortfolioStore {
         100,
       ));
     }
+
     return 0;
   }
 
@@ -200,6 +183,7 @@ class PortfolioStore {
         100,
       ));
     }
+
     return 0;
   }
 
@@ -213,6 +197,7 @@ class PortfolioStore {
             Number(BigNumberService.floorFour(BigNumberService.gweiToEth(item.eth))),
           ]));
     }
+
     return [];
   }
 
@@ -226,6 +211,7 @@ class PortfolioStore {
             Number(BigNumberService.floor(item.usd)),
           ]));
     }
+
     return [];
   }
 
@@ -233,8 +219,9 @@ class PortfolioStore {
   get performanceMin() {
     if (this.selectedPortfolio && this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
       const arr = this.portfolioValueHistory.map((el: Object) => el.usd);
-      return Math.min(...arr).toFixed(2);
+      return BigNumberService.floor(Math.min(...arr));
     }
+
     return 0;
   }
 
@@ -242,8 +229,9 @@ class PortfolioStore {
   get performanceMax() {
     if (this.selectedPortfolio && this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
       const arr = this.portfolioValueHistory.map((el: Object) => el.usd);
-      return Math.max(...arr).toFixed(2);
+      return BigNumberService.floor(Math.max(...arr));
     }
+
     return 0;
   }
 
@@ -260,6 +248,7 @@ class PortfolioStore {
           return `${date.getDate()}-${month}-${date.getFullYear()}`;
         });
     }
+
     return [];
   }
 
@@ -320,6 +309,7 @@ class PortfolioStore {
       this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.eth);
       return Number(BigNumberService.gweiToEth(math.std(this.standardDeviationData)));
     }
+
     return null;
   }
 
@@ -474,26 +464,6 @@ class PortfolioStore {
   }
 
   @action
-  setFetchingPortfolios(value: boolean) {
-    this.fethingPortfolios = value;
-  }
-  // ======= Computed =======
-  // #region Computed
-  // #region Summary Page
-  @computed
-  get summaryTotalNumberOfShares() {
-    return 0;
-  }
-
-  @computed
-  get summaryTotalInvestmentInETH() {
-    if (this.selectedPortfolio) {
-      return this.selectedPortfolio.totalInvestmentETH;
-    }
-    return 0;
-  }
-
-  @action
   sync = (addresses: Array<string>) => {
     LoadingStore.setShowLoading(true);
     LoadingStore.setSyncing(true);
@@ -511,34 +481,6 @@ class PortfolioStore {
       });
   };
 
-  @computed
-  get groupedCurrentPortfolioAssets() {
-    if (this.selectedPortfolio && this.currentPortfolioAssets.length > 0 &&
-      MarketStore.baseCurrencies.length > 0 && MarketStore.marketSummaries.hasOwnProperty('BTC-ETH')) {
-      const groupedAssets = Object.values(this.currentPortfolioAssets.reduce((grouped, asset) => {
-        if (!grouped[asset.currency] && asset.balance > 0) {
-          grouped[asset.currency] = Object.assign({}, asset); // eslint-disable-line no-param-reassign
-
-          return grouped;
-        }
-
-        if (grouped[asset.currency]) {
-          grouped[asset.currency].balance += Number(asset.balance); // eslint-disable-line no-param-reassign
-          grouped[asset.currency].lastBTCEquivalent += Number(asset.lastBTCEquivalent); // eslint-disable-line no-param-reassign
-
-          return grouped;
-        }
-
-        return grouped;
-      }, {}));
-
-      return groupedAssets;
-    }
-
-    return [];
-  }
-
-  // used !!!
   @computed
   get currentMarketSummaryPercentageChange() {
     if (this.selectedPortfolio) {
@@ -573,47 +515,6 @@ class PortfolioStore {
 
     return 0;
   }
-  // #endregion
-
-  // ======= Action =======
-  // Portfolio -> Create, Update, Delete
-  // #region Portfolio
-  @action.bound
-  addTransaction(transactionData) {
-    this.currentPortfolioTransactions.push(transactionData);
-  }
-
-  @action.bound
-  setNewPortfolioName(newValue) {
-    this.newPortfolioName = newValue;
-  }
-
-  @action
-  // eslint-disable-next-line class-methods-use-this
-  handlePortfolioValidation() {
-    const { newPortfolioName } = this;
-    const { portfolios } = this;
-    let hasErrors = false;
-    if (portfolios.length) {
-      const result = this.portfolios.filter(x => x.name === newPortfolioName);
-
-      if (result.length > 0) {
-        NotificationStore.addMessage('errorMessages', 'Portfolio Name already Exists');
-        hasErrors = true;
-      }
-    }
-    if (MarketStore.selectedBaseCurrency && InvestorStore.newInvestorValues.depositedAmount === '') {
-      NotificationStore.addMessage('errorMessages', 'Please add investment amount');
-      hasErrors = true;
-    }
-
-    if (InvestorStore.newInvestorValues.depositedAmount && MarketStore.selectedBaseCurrency === null) {
-      NotificationStore.addMessage('errorMessages', 'Please select currency');
-      hasErrors = true;
-    }
-
-    return hasErrors;
-  }
 
   @action
   updatePortfolio(portfolioName: string, id: number) {
@@ -638,8 +539,6 @@ class PortfolioStore {
         console.log(err.response.data.message);
       });
   }
-
-  // #endregion
 
   @action.bound
   selectPortfolio(id: number, loadData: boolean) {
@@ -667,40 +566,11 @@ class PortfolioStore {
   }
 
   @action
-  getPortfolios() {
-    // this.fetchingPortfolios = true;
-    return new Promise((resolve, reject) => {
-      this.portfolios = []
-      // this.fetchingPortfolios = false;
-      resolve(true);
-      // TODO: Enable when we have portfolios
-      // We dont have user at the moment. Uncoment when we have!
-      // requester.Portfolio.getAll()
-      //   .then(action((result) => {
-      //     ApiAccountStore.initializeUserApis(result.data.userApis);
-      //     this.portfolios = result.data.portfolios;
-      //     if (this.selectedPortfolioId > 0) {
-      //       this.selectPortfolio(this.selectedPortfolioId);
-      //     }
-      //     resolve(true);
-      //     this.fetchingPortfolios = false;
-      //   }))
-      //   .catch(action((err) => {
-      //     this.fethingPortfolios = false;
-      //     console.log(err);
-      //     reject(err);
-      //   }));
-    });
-  }
-
-  @action
   getPortfoliosByAddresses(addresses: Array<string>) {
-    this.setFetchingPortfolios(true);
     requester.Portfolio.getPortfoliosByUserAddresses(addresses)
       .then(action((result: object) => {
         storage.setPortfolioAddresses(addresses);
         this.portfolios = result.data;
-        this.setFetchingPortfolios(false);
         LoadingStore.setShowContent(true);
         LoadingStore.handleRedirect();
       }))
@@ -708,7 +578,6 @@ class PortfolioStore {
         LoadingStore.ableToLogin = false;
         LoadingStore.showErrorPage = true;
         LoadingStore.setShowContent(true);
-        this.setFetchingPortfolios(false);
         console.log(err);
       }));
   }
@@ -736,18 +605,6 @@ class PortfolioStore {
     }
   }
 
-  // @action.bound
-  // getCurrentPortfolioPrices() {
-  //   const searchedItem = {
-  //     portfolioId: this.selectedPortfolioId,
-  //     item: 'PortfolioPrice',
-  //   };
-  //   requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
-  //     .then(action((result) => {
-  //       this.currentPortfolioPrices = result.data;
-  //     }));
-  // }
-
   @action.bound
   getCurrentPortfolioInvestors() {
     if (this.selectedPortfolioId !== null && this.selectedPortfolioId !== undefined) {
@@ -772,11 +629,6 @@ class PortfolioStore {
         console.log(err);
         LoadingStore.setShowLoading(false);
       }));
-  }
-
-  @action.bound
-  resetPortfolio() {
-    this.newPortfolioName = '';
   }
 
   @action

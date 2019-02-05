@@ -49,20 +49,11 @@ const Portfolio = {
   getPortfoliosByUserAddresses: addresses => requests.post('/portfolio/getPortfoliosByAddresses', addresses),
   getPortfolioAssetsByPortfolioId: id => requests.get(`/portfolio/getPortfolioAssetsByPortfolioId/${id}`),
   getPortfolioTradesByPortfolioId: id => requests.get(`/trade/all/${id}`),
-  getAll: () => requests.get('/portfolio/all'),
-  create: portfolioName => requests.post('/portfolio/create', portfolioName),
-  // searchItemsInCurrentPortfolio: requestParams => requests.get(`/portfolio/${requestParams.portfolioId}/${requestParams.item}`),
-  getSharePrice: id => requests.post('/portfolio/getPortfolioSharePrice', id),
-  getSharePriceHistory: requestParams => requests.post('/portfolio/sharePriceHistory', requestParams),
-  getPriceHistory: requestParams => requests.post('/portfolio/priceHistory', requestParams),
-  getPriceHistoryForPeriod: requestParams => requests.post('/portfolio/periodPriceHistory', requestParams),
-  delete: id => requests.delete(`/portfolio/delete/${id}`),
   getPortfolioValueHistory: id => requests.get(`/portfolio/history/${id}`),
   getPortfolioValueHistoryByPeriod: (id, period) => requests.get(`/portfolio/historyByPeriod/${id}/${period}`),
   getShareHistory: id => requests.get(`/portfolio/shareHistory/${id}`),
   setName: (requestParams, id) => requests.put(`/portfolio/setName/${id}`, requestParams), // id + newName
   getPortfoliosStats: addresses => requests.post('/portfolio/all/stats', addresses),
-  sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
 const Investor = {

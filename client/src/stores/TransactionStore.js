@@ -10,8 +10,6 @@ class TransactionStore {
 
   constructor() {
     this.transactions = [];
-
-    // onBecomeObserved(this, 'transactions', this.getTransactions);
   }
 
   @action.bound

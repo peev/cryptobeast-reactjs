@@ -1,5 +1,4 @@
 import { observable, action } from 'mobx';
-import PortfolioStore from './PortfolioStore';
 
 class Analytics {
   @observable currentPortfolioPriceHistoryForPeriod;
@@ -24,8 +23,7 @@ class Analytics {
   @action.bound
   currentPriceHistory() {
     return this.currentPortfolioPriceHistoryForPeriod.length > 0 ?
-      this.currentPortfolioPriceHistoryForPeriod :
-      PortfolioStore.currentPortfolioPrices;
+      this.currentPortfolioPriceHistoryForPeriod : [];
   }
 }
 

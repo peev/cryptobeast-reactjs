@@ -6,7 +6,6 @@ import { ValidatorForm } from 'react-material-ui-form-validator';
 import SelectInvestor from '../../Selectors/SelectInvestor';
 import AddInvestorWrapped from '../../../components/Modal/InvestorModals/AddInvestor';
 import EditInvestorWrapped from '../../../components/Modal/InvestorModals/EditInvestor';
-import PortfolioStore from '../../../stores/PortfolioStore';
 import BigNumberService from '../../../services/BigNumber';
 
 const styles = () => ({

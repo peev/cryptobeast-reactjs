@@ -11,7 +11,7 @@ const attachTo = (app, repository, jobs) => {
     .get('/:address', controller.getPortfolio)
     .get('/history/:id', controller.getPortfolioValueHistory)
     .get('/historyByPeriod/:id/:period', controller.getPortfolioValueByIdAndPeriod)
-    .get('/shareHistory/:portfolioId/', controller.getShareHistory)
+    .get('/shareHistory/:portfolioId', controller.getShareHistory)
     .post('/all/stats', controller.getStats)
     .put('/setName/:id', validator.verifyUpdatePortfolioName, controller.setName);
 

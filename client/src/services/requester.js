@@ -73,21 +73,9 @@ const Investor = {
 };
 
 const Market = {
-  getSummaries: () => requests.get('/market/summaries'),
-  getSyncedSummaries: () => requests.get('/market/syncSummaries'),
-  getBaseCurrencies: () => requests.get('/market/baseCurrencies'),
-  getAllTickers: () => requests.get('/market/allTickers'),
-  syncCurrencies: () => requests.get('/market/syncCurrencies'),
-  getBaseTickers: searchedCurrencies => requests.post('/market/syncBaseTickers', searchedCurrencies),
-  getMarketPriceHistory: () => requests.get('/market/getMarketPriceHistory'),
-  getBaseTickerHistory: requestParams => requests.post('/market/periodPriceHistory', requestParams),
-  getProfitAndLossHistory: requestParams => requests.get('/market/profitAndLossHistory', requestParams),
-  getLiquidityHistory: requestParams => requests.get('/market/liquidityHistory', requestParams),
-  getCorrelationMatrixHistory: requestParams => requests.get('/market/correlationMatrixHistory', requestParams),
   getTickersFromCoinMarketCap: () => requests.get('/market/tickersFromCoinMarketCap'),
   getEthToUsd: () => requests.get('/market/getEthToUsd'),
   getEthHistory: portfolioId => requests.get(`/market/ethHistory/${portfolioId}`),
-  sync: data => requests.get(`/weidex/sync/${data.id}`),
 };
 
 const Currency = {

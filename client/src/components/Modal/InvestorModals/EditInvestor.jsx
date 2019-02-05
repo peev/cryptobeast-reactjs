@@ -74,11 +74,6 @@ const styles = (theme: Object) => ({
       },
     },
   },
-  selectBaseCurrency: {
-    width: '75%',
-    textTransform: 'uppercase',
-    fontSize: '13px',
-  },
   btnIcon: {
     height: '28px',
     width: '28px',

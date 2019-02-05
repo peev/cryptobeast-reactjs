@@ -12,16 +12,14 @@ import storage from '../../services/storage';
 
 type Props = {
   MarketStore: {
-    getSyncedSummaries: Function,
-    getBaseCurrencies: Function,
+    getTickersFromCoinMarketCap: Function,
   },
   PortfolioStore: Object,
 };
 
 const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }: Props) => {
-  const getMarketSummaries = () => {
-    props.MarketStore.getSyncedSummaries();
-    props.MarketStore.getBaseCurrencies();
+  const getTickersFromCoinMarketCap = () => {
+    props.MarketStore.getTickersFromCoinMarketCap();
   };
 
   const syncData = () => {
@@ -57,7 +55,7 @@ const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }:
       </ItemGrid>
 
       <ItemGrid xs={12} sm={3} md={3}>
-        <RegularButton color="primary" onClick={() => getMarketSummaries()}>
+        <RegularButton color="primary" onClick={() => getTickersFromCoinMarketCap()}>
           Get Markets
         </RegularButton>
       </ItemGrid>

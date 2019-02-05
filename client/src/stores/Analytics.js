@@ -75,53 +75,6 @@ class Analytics {
     return 0;
   }
 
-  @computed
-  get performanceAverageChange() {
-    if (this.currentPortfolioPriceHistoryForPeriod.length > 0 ||
-      PortfolioStore.currentPortfolioPrices.length > 0) {
-      const currentArray = this.currentPriceHistory();
-
-      let time;
-      switch (this.selectedTimeInPerformance) {
-        case '1d':
-          time = 1;
-          break;
-        case '1m':
-          time = 31;
-          break;
-        case '1y':
-          time = 365;
-          break;
-        default:
-          time = 365;
-          break;
-      }
-
-      return (((currentArray[currentArray.length - 1].price - currentArray[0].price) / currentArray[0].price) / time) * 100;
-    }
-
-    return 0;
-  }
-
-  @computed
-  get currentPortfolioPriceHistoryBreakdown() {
-    if (PortfolioStore.selectedPortfolio && MarketStore.baseCurrencies.length > 0 &&
-      (this.currentPortfolioPriceHistoryForPeriod.length > 0 ||
-        PortfolioStore.currentPortfolioPrices.length > 0)) {
-      return PortfolioStore.currentPortfolioPrices
-        .sort((a, b) => (a.id - b.id))
-        .map((el) => {
-          const timeOfCreation = Math.round(new Date(el.createdAt).getTime());
-          const usdEquivalent = el.price * MarketStore.baseCurrencies[3].last;
-          const usdEquivalentRounded = Number(`${Math.round(`${usdEquivalent}e2`)}e-2`);
-
-          return [timeOfCreation, usdEquivalentRounded, null];
-        });
-    }
-
-    return [];
-  }
-
   @action
   selectTimeInPerformance(value) {
     this.selectedTimeInPerformance = value;

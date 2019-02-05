@@ -76,22 +76,19 @@ class SelectBaseCurrency extends React.Component<Props, State> {
   handleChange = (event: SyntheticEvent) => {
     if (event) {
       this.props.MarketStore.selectBaseCurrency(event.value);
-      // What Does This Do?
-      this.props.InvestorStore.convertedUsdEquiv; // eslint-disable-line
-
-      this.setState({ 
+      this.setState({
         baseCurrency: {
           label: event.value,
-          value: event.value
-        }
+          value: event.value,
+        },
       });
     } else {
       this.props.MarketStore.selectBaseCurrency('');
-      this.setState({ 
+      this.setState({
         baseCurrency: {
           label: '',
-          value: ''
-        } 
+          value: '',
+        },
       });
     }
   };

@@ -758,18 +758,6 @@ class PortfolioStore {
     }
   }
 
-  // @action.bound
-  // getCurrentPortfolioTransactions() {
-  //   const searchedItem = {
-  //     portfolioId: this.selectedPortfolioId,
-  //     item: 'Transaction',
-  //   };
-  //   requester.Portfolio.searchItemsInCurrentPortfolio(searchedItem)
-  //     .then(action((result: Object) => {
-  //       this.currentPortfolioTransactions = result.data;
-  //     }));
-  // }
-
   @action.bound
   getCurrentPortfolioTrades() {
     action(() => {

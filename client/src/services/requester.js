@@ -68,8 +68,6 @@ const Portfolio = {
 const Investor = {
   add: investorData => requests.post('/investor/add', investorData),
   getAllInvestors: portfolioId => requests.get(`/investor/all/${portfolioId}`),
-  addDeposit: requestParams => requests.put('/investor/deposit', requestParams),
-  withdrawal: requestParams => requests.put('/investor/withdrawal', requestParams),
   update: (id, requestParams) => requests.put(`/investor/update/${id}`, requestParams),
   sync: data => requests.get(`/weidex/sync/${data.id}`),
 };

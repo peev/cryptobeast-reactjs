@@ -4,11 +4,10 @@ import { withStyles, Grid } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import { ValidatorForm } from 'react-material-ui-form-validator';
 import SelectInvestor from '../../Selectors/SelectInvestor';
-
 import AddInvestorWrapped from '../../../components/Modal/InvestorModals/AddInvestor';
 import EditInvestorWrapped from '../../../components/Modal/InvestorModals/EditInvestor';
 import PortfolioStore from '../../../stores/PortfolioStore';
-
+import BigNumberService from '../../../services/BigNumber';
 
 const styles = () => ({
   gridColumn: {
@@ -104,7 +103,7 @@ class IndividualSummary extends React.Component<Props> {
             <div className={classes.item}>
               <p>Weighted entry price:</p>
               <span>{InvestorStore.individualWeightedEntryPrice !== null
-                ? `$ ${InvestorStore.nearZeroRounding(InvestorStore.individualWeightedEntryPrice, 2)}`
+                ? `$ ${BigNumberService.floor(InvestorStore.individualWeightedEntryPrice)}`
                 : ''}
               </span>
             </div>
@@ -113,8 +112,8 @@ class IndividualSummary extends React.Component<Props> {
           <Grid item xs={12} md={6} lg={3} className={classes.gridColumn}>
             <div className={classes.item}>
               <p>USD Equivalent:</p>
-              <span>{PortfolioStore.currentPortfolioCostInUSD !== null
-                ? InvestorStore.nearZeroRounding(PortfolioStore.currentPortfolioCostInUSD, 2)
+              <span>{InvestorStore.individualUSDEquivalent !== null
+                ? BigNumberService.floor(InvestorStore.individualUSDEquivalent)
                 : ''}
               </span>
             </div>
@@ -124,7 +123,7 @@ class IndividualSummary extends React.Component<Props> {
             <div className={classes.item}>
               <p>BTC Equivalent:</p>
               <span>{InvestorStore.individualBTCEquivalent !== null
-                ? InvestorStore.nearZeroRounding(InvestorStore.individualBTCEquivalent, 4)
+                ? BigNumberService.floorFour(InvestorStore.individualBTCEquivalent)
                 : ''}
               </span>
             </div>
@@ -150,7 +149,7 @@ class IndividualSummary extends React.Component<Props> {
                   : ''}
               >
                 {InvestorStore.individualProfit !== null
-                  ? `${InvestorStore.nearZeroRounding(InvestorStore.individualProfit, 2)} %`
+                  ? `${BigNumberService.floor(InvestorStore.individualProfit)} %`
                   : ''}
               </span>
             </div>
@@ -160,7 +159,7 @@ class IndividualSummary extends React.Component<Props> {
             <div className={classes.item}>
               <p>ETH Equivalent:</p>
               <span>{InvestorStore.individualETHEquivalent !== null
-                ? InvestorStore.nearZeroRounding(InvestorStore.individualETHEquivalent, 4)
+                ? BigNumberService.floorFour(InvestorStore.individualETHEquivalent)
                 : ''}
               </span>
             </div>
@@ -170,7 +169,7 @@ class IndividualSummary extends React.Component<Props> {
             <div className={classes.item}>
               <p>Fee Potential:</p>
               <span>{InvestorStore.individualFeePotential !== null
-                ? `$ ${InvestorStore.nearZeroRounding(InvestorStore.individualFeePotential, 2)}`
+                ? `$ ${BigNumberService.floor(InvestorStore.individualFeePotential)}`
                 : ''}
               </span>
             </div>

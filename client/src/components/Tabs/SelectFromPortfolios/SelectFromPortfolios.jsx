@@ -4,7 +4,7 @@ import { withStyles, Grid, Paper } from '@material-ui/core';
 import { inject, observer } from 'mobx-react';
 import selectFromPortfoliosStyles from './SelectFromPortfoliosStyles';
 import history from '../../../services/History';
-
+import BigNumberService from '../../../services/BigNumber';
 
 type Props = {
   classes: Object,
@@ -27,13 +27,13 @@ const SelectFromPortfolios = inject('PortfolioStore', 'UserStore')(observer(({ .
           <div>
             <p className={`${classes.generalPStyle} ${classes.portfolioName}`}>{el.name || el.address}</p>
             <span className={`${classes.portfolioPercent} ${el.totalProfitLost >= 0 ? classes.positivePercent : classes.negativePercent}`}>
-              {el.totalProfitLost >= 0 ? '^' : null} {el.totalProfitLost}%
+              {el.totalProfitLost >= 0 ? '^' : null} {BigNumberService.floor(el.totalProfitLost)}%
             </span>
           </div>
 
           <div className={classes.marginTop}>
             <p className={classes.generalPStyle}>USD</p>
-            <span className={classes.portfolioValue}>{el.portfolioCostInUSD}</span>
+            <span className={classes.portfolioValue}>{BigNumberService.floor(el.portfolioCostInUSD)}</span>
           </div>
         </div>
 

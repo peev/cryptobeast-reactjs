@@ -5,6 +5,7 @@ import Select from '@material-ui/core/Select';
 import { inject, observer } from 'mobx-react';
 import DropDownArrow from '../../CustomIcons/DropDown/DropDownArrow';
 import portfolioSelectStyles from './PortfolioSelectStyles';
+import BigNumberService from '../../../services/BigNumber';
 
 
 type Props = {
@@ -46,9 +47,9 @@ class PortfolioSelect extends React.Component<Props> {
           <div className={classes.listItemDescription}>
             <div className={el.totalProfitLost >= 0 ? classes.positive : classes.negative}>
               <DropDownArrow className={el.totalProfitLost >= 0 ? classes.upArrow : classes.downArrow} />
-              {el.totalProfitLost}%
+              {BigNumberService.floor(el.totalProfitLost)}%
             </div>
-            <div>${el.portfolioCostInUSD}</div>
+            <div>${BigNumberService.floor(el.portfolioCostInUSD)}</div>
           </div>
         </div>
       </MenuItem>

@@ -22,7 +22,7 @@ const marketService = (repository) => {
         marketFunction();
       },
       start: true,
-      timeZone: 'America/New_York',
+      timeZone: 'Europe/London',
     });
   };
 

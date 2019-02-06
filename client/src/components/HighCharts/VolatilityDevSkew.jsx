@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
-import ReactHighcharts from 'react-highcharts';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import { inject, observer } from 'mobx-react';
 
 const VolatilityColumnChart = inject('AssetStore')(observer(({ ...props }: Props) => {
@@ -31,7 +32,10 @@ const VolatilityColumnChart = inject('AssetStore')(observer(({ ...props }: Props
   };
 
   return (
-    <ReactHighcharts config={config} />
+    <HighchartsReact
+      highcharts={Highcharts}
+      options={config}
+    />
   );
 }));
 

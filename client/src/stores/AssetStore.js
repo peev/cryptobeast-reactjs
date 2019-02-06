@@ -1,7 +1,6 @@
 // @flow
 /* eslint no-console: 0 */
 import { observable, action, computed } from 'mobx';
-import math from 'mathjs';
 import ubique from 'ubique';
 import requester from '../services/requester';
 

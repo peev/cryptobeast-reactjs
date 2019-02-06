@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import Highcharts from 'highcharts';
-import ReactHighcharts from 'react-highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import { inject, observer } from 'mobx-react';
 
 type Props = {
@@ -93,7 +93,10 @@ const TotalAssetsValue = inject('PortfolioStore')(observer(({ ...props }: Props)
   };
 
   return (
-    <ReactHighcharts config={config} />
+    <HighchartsReact
+      highcharts={Highcharts}
+      options={config}
+    />
   );
 }));
 

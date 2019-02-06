@@ -51,7 +51,7 @@ class App extends React.Component<Props> {
       const selectedPortfolioId = storage.getSelectedPortfolioId();
       Promise.all([addresses, selectedPortfolioId]).then(([addressesData, portfolioIdData]: any) => {
         if (addressesData && addressesData.length && portfolioIdData && portfolioIdData > 0) {
-          this.props.PortfolioStore.getPortfoliosByAddresses(addressesData);
+          this.props.PortfolioStore.sync(addressesData);
         } else {
           history.push('/');
         }

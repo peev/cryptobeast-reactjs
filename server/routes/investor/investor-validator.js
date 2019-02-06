@@ -23,12 +23,12 @@ const investorValidator = () => {
 
     if (!payload || !payload.hasOwnProperty('portfolioId') || typeof payload.portfolioId !== 'number') {
       isFormValid = false;
-      errors.phone = 'Investor must have valid user portfolio ID number!';
+      errors.portfolioId = 'Investor must have valid user portfolio ID number!';
     }
 
-    if (!payload || !payload.hasOwnProperty('fee') || !validator.isLength(payload.fee, { min: 1, max: 50 })) {
+    if (!payload || !payload.hasOwnProperty('fee') || typeof payload.portfolioId !== 'number' || payload.fee < 0 || payload.fee > 100) {
       isFormValid = false;
-      errors.phone = 'Investor must have valid user portfolio ID number!';
+      errors.fee = 'Investor must have valid fee!';
     }
 
     if (!isFormValid) {
@@ -63,11 +63,11 @@ const investorValidator = () => {
       }
       if (!payload || !payload.hasOwnProperty('portfolioId') || typeof payload.portfolioId !== 'number') {
         isFormValid = false;
-        errors.phone = 'Investor must have valid user portfolio ID number!';
+        errors.portfolioId = 'Investor must have valid user portfolio ID number!';
       }
-      if (!payload || !payload.hasOwnProperty('fee') || !validator.isLength(payload.fee, { min: 1, max: 50 })) {
+      if (!payload || !payload.hasOwnProperty('fee') || typeof payload.portfolioId !== 'number' || payload.fee < 0 || payload.fee > 100) {
         isFormValid = false;
-        errors.phone = 'Investor must have valid user portfolio ID number!';
+        errors.fee = 'Investor must have valid fee!';
       }
     }
 

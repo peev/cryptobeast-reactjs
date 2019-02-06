@@ -6,7 +6,6 @@ class Currencies {
 
   constructor() {
     this.currencies = [];
-    this.currenciesHistory = [];
   }
 
   init() {

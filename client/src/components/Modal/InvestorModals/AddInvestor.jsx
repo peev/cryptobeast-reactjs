@@ -78,11 +78,6 @@ const styles = (theme: Object) => ({
       },
     },
   },
-  selectBaseCurrency: {
-    width: '75%',
-    textTransform: 'uppercase',
-    fontSize: '13px',
-  },
   font: {
     fontFamily: '\'Lato\', \'Helvetica\', \'Arial\', sans-serif',
   },
@@ -129,8 +124,6 @@ class AddInvestor extends React.Component<Props, State> {
 
   handleClose = () => {
     this.props.InvestorStore.reset();
-    this.props.MarketStore.resetMarket();
-
     this.setState({ open: false });
   };
 

@@ -18,7 +18,7 @@ const coinMarketCapServices = () => {
       .then((response) => {
         const parsedResult = JSON.parse(response);
         const dataObject = parsedResult.data;
-        console.log(`CRON SYNCER SUCCESS...................................................................... ${dataObject.length}`);
+        console.log(`CRON SYNCER SUCCESS ${dataObject.length}`);
         return resolve(Object.keys(dataObject).map(el => ({
           currency: dataObject[el].symbol,
           currencyLong: dataObject[el].name,
@@ -32,7 +32,7 @@ const coinMarketCapServices = () => {
         })));
       })
       .catch((err) => {
-        console.log(`CRON SYNCER ERROR...................................................................... ${err}`);
+        console.log(`CRON SYNCER ERROR ${err}`);
         return reject(err);
       });
   });

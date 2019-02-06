@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
 import { inject, observer } from 'mobx-react';
 
 import IndividualSummary from './IndividualSummary';

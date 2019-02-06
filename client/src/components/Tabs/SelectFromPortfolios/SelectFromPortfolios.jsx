@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
-import { withStyles, Grid, Paper } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import { inject, observer } from 'mobx-react';
 import selectFromPortfoliosStyles from './SelectFromPortfoliosStyles';
 import history from '../../../services/History';

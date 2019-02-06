@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
-import { TextField } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
 import Edit from '@material-ui/icons/Edit';

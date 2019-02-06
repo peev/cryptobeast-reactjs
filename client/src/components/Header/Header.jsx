@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
-import { withStyles, Toolbar } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Toolbar from '@material-ui/core/Toolbar';
 import { inject, observer } from 'mobx-react';
 
 import PortfolioSelect from '../Selectors/PortfolioSelect/PortfolioSelect';

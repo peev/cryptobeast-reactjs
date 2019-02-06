@@ -1,10 +1,8 @@
 /* eslint-disable no-restricted-globals */
 // @flow
 import React from 'react';
-import {
-  Paper,
-  withStyles,
-} from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import withStyles from '@material-ui/core/styles/withStyles';
 import { inject, observer } from 'mobx-react';
 import BigNumberService from '../../../services/BigNumber';
 

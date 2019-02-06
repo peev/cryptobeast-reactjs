@@ -3,13 +3,12 @@ import React from 'react';
 import uuid from 'uuid/v4';
 import { NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
-import {
-  withStyles,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+
 import SidebarStyle from './SidebarStyle';
 
 type Props = {

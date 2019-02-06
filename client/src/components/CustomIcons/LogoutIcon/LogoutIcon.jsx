@@ -2,7 +2,6 @@ import React from 'react';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import '../icon.css';
 
-
 const wrapSvgPath = (path, viewBox = '0 0 20.96 22.5') => props => (
   <SvgIcon {...props} viewBox={viewBox}>
     {path}

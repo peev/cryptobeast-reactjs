@@ -1,6 +1,9 @@
 // @flow
 import React from 'react';
-import { withStyles, Grid, Paper, Typography } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { inject, observer } from 'mobx-react';

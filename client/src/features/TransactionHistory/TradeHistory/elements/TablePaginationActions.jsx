@@ -1,9 +1,7 @@
 // @flow
 import React from 'react';
-import {
-  withStyles,
-  IconButton,
-} from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import IconButton from '@material-ui/core/IconButton';
 import FirstPageIcon from '../../../../components/CustomIcons/TablePagination/FirstPageIcon';
 import LastPageIcon from '../../../../components/CustomIcons/TablePagination/LastPageIcon';
 import KeyboardArrowLeft from '../../../../components/CustomIcons/TablePagination/KeyboardArrowLeft';

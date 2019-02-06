@@ -1,7 +1,11 @@
 // @flow
 import React from 'react';
 import uuid from 'uuid/v4';
-import { FormControl, InputLabel, Select, MenuItem, withStyles } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const styles = (theme: Object) => ({
   button: {

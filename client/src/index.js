@@ -5,7 +5,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { configure } from 'mobx';
 import { Provider } from 'mobx-react';
 import uuid from 'uuid/v4';
-import { MuiThemeProvider } from '@material-ui/core';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 
 import './assets/css/material-dashboard-react.css';
 import { THEME } from './variables/theme';

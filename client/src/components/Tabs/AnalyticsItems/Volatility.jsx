@@ -2,7 +2,8 @@
 // @flow
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
-import { withStyles, Grid } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Grid from '@material-ui/core/Grid';
 import { inject, observer } from 'mobx-react';
 
 import MotionSelect from '../../Selectors/MotionSelect';

@@ -15,27 +15,12 @@ const marketService = (repository) => {
 
   const createCronJob = marketFunction =>
     new CronJob('00,10,20,30,40,50 * * * *', () => {
-      console.log(`CRON START...................................................................... ${new Date()}`);
-      console.log('You will see this message every second');
+      console.log(`CRON START: ${new Date()}`);
       return marketFunction();
     }, null, true, 'UTC');
 
-  const createMarketJob = (marketFunction, time) => {
-    const { hour = '*', minute = '*', second = '*' } = time;
-    return new CronJob({
-      cronTime: `${second} ${minute} ${hour} * * *`,
-      onTick: () => {
-        console.log(`CRON START...................................................................... ${new Date()}`);
-        marketFunction();
-      },
-      start: true,
-      timeZone: 'Europe/London',
-    });
-  };
-
   return {
     syncTickersFromCoinMarketCap,
-    createMarketJob,
     createCronJob,
   };
 };

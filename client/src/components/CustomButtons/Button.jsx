@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
-import { withStyles, Button } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Button from '@material-ui/core/Button';
 import cx from 'classnames';
-
 import buttonStyle from './../../variables/styles/buttonStyle';
 
 type Props = {

@@ -8,7 +8,6 @@ import {
   computed,
   onBecomeObserved,
 } from 'mobx';
-import math from 'mathjs';
 import moment from 'moment';
 import ubique from 'ubique';
 import requester from '../services/requester';
@@ -307,7 +306,7 @@ class PortfolioStore {
         this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - this.standardDeviationPeriod, 1)) :
         this.portfolioValueHistory;
       this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.eth);
-      return Number(BigNumberService.gweiToEth(math.std(this.standardDeviationData)));
+      return Number(BigNumberService.gweiToEth(ubique.std(this.standardDeviationData)));
     }
 
     return null;

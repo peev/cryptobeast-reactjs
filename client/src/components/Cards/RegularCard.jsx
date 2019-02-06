@@ -1,12 +1,9 @@
 // @flow
 import * as React from 'react';
-import {
-  withStyles,
-  Card,
-  CardContent,
-  CardHeader,
-  // CardActions,
-} from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 import cx from 'classnames';
 
 import regularCardStyle from './../../variables/styles/regularCardStyle';

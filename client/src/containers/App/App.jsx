@@ -2,14 +2,12 @@
 import * as React from 'react';
 import { inject, observer } from 'mobx-react';
 import classNames from 'classnames';
-import {
-  withStyles,
-  Drawer,
-  AppBar,
-  Toolbar,
-  IconButton,
-  CircularProgress,
-} from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Drawer from '@material-ui/core/Drawer';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 
 import appRoutes from './../../routes/app';

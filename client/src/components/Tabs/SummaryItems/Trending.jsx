@@ -1,14 +1,13 @@
 // @flow
 import React from 'react';
-import {
-  withStyles,
-  Grid,
-  Table,
-  TableHead,
-  TableRow,
-  TableBody,
-  TableCell,
-} from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Grid from '@material-ui/core/Grid';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+
 import uuid from 'uuid/v4';
 import { inject, observer } from 'mobx-react';
 import UpArrowIcon from '../../CustomIcons/Summary/UpArrowIcon';

@@ -1,10 +1,10 @@
 // @flow
 import React from 'react';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { withStyles, Grid } from '@material-ui/core';
-import { inject, observer } from 'mobx-react';
-
 import Modal from '@material-ui/core/Modal';
+import { inject, observer } from 'mobx-react';
 import InvestorCard from '../../CustomElements/InvestorCard';
 import Button from '../../CustomButtons/Button';
 import InvestorCardButton from '../../CustomButtons/InvestorCardButton';

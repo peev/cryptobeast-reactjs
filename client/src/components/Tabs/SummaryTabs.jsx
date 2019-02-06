@@ -2,13 +2,11 @@
 import React from 'react';
 import SwipeableViews from 'react-swipeable-views';
 import { inject, observer } from 'mobx-react';
-import {
-  Tabs,
-  Tab,
-  withStyles,
-  Grid,
-  Paper,
-} from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 
 import Portfolio from './SummaryItems/Portfolio';
 import Trending from './SummaryItems/Trending';

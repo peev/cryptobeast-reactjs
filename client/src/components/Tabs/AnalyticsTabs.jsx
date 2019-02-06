@@ -1,11 +1,10 @@
 // @flow
 import React from 'react';
 import SwipeableViews from 'react-swipeable-views';
-import {
-  Tabs,
-  Tab,
-  withStyles,
-} from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+
 import { inject, observer } from 'mobx-react';
 import Volatility from './AnalyticsItems/Volatility';
 import Performance from './AnalyticsItems/Performance';

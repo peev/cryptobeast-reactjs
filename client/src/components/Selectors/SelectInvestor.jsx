@@ -1,11 +1,8 @@
 // @flow
 import React, { SyntheticEvent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-// import { InputLabel } from '@material-ui/core/Input';
+import withStyles from '@material-ui/core/styles/withStyles';
 import Select from 'react-select';
-
 import FormControl from '@material-ui/core/FormControl';
-// import Select from '@material-ui/core/Select';
 
 import { inject, observer } from 'mobx-react';
 

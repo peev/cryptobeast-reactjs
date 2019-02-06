@@ -1,8 +1,8 @@
 // @flow
 import React from 'react';
-import { withStyles, IconButton } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import IconButton from '@material-ui/core/IconButton';
 import Edit from '@material-ui/icons/Edit';
-
 import iconButtonStyle from './../../variables/styles/iconButtonStyle';
 
 type Props = {

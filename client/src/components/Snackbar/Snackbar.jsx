@@ -1,11 +1,13 @@
 // @flow
 import React from 'react';
-import { withStyles, Snackbar as Snack, IconButton } from '@material-ui/core';
+// import { withStyles, Snackbar as Snack, IconButton } from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Snack from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
 import Close from '@material-ui/icons/Close';
 import cx from 'classnames';
 
 import snackbarContentStyle from './../../variables/styles/snackbarContentStyle';
-
 
 // const styles = () => ({
 //   layout: {

@@ -1,14 +1,13 @@
 // @flow
 import React from 'react';
-import {
-  withStyles,
-  Table,
-  TableHead,
-  TableRow,
-  TableBody,
-  TableCell,
-} from '@material-ui/core';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
 import Paper from '@material-ui/core/Paper';
+
 import uuid from 'uuid/v4';
 
 const styles = (theme: Object) => ({

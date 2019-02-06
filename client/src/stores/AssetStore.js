@@ -98,14 +98,14 @@ class AssetStore {
         // assume that there is only ETH and USD
         if (Analytics.riskCurrency === 'ETH') {
           const assetsTotal = this.getAssetTotals(assetName, data);
-          std.push(Number(BigNumberService.floor(BigNumberService.gweiToEth(ubique.std(assetsTotal)))) || 0);
-          skewness.push(Number(BigNumberService.floor(BigNumberService.gweiToEth(ubique.skewness(assetsTotal)))) || 0);
-          kurtosis.push(Number(BigNumberService.floor(BigNumberService.gweiToEth(ubique.kurtosis(assetsTotal)))) || 0);
+          std.push(Number(BigNumberService.floorFour(BigNumberService.gweiToEth(ubique.std(assetsTotal)))) || 0);
+          skewness.push(Number(BigNumberService.floorFour(BigNumberService.gweiToEth(ubique.skewness(assetsTotal)))) || 0);
+          kurtosis.push(Number(BigNumberService.floorFour(BigNumberService.gweiToEth(ubique.kurtosis(assetsTotal)))) || 0);
         } else {
           const assetsTotal = this.getAssetTotalsUSD(assetName, data);
-          std.push(Number(BigNumberService.floorFour(ubique.std(assetsTotal))) || 0);
-          skewness.push(Number(BigNumberService.floorFour(ubique.skewness(assetsTotal))) || 0);
-          kurtosis.push(Number(BigNumberService.floorFour(ubique.kurtosis(assetsTotal))) || 0);
+          std.push(Number(BigNumberService.floor(ubique.std(assetsTotal))) || 0);
+          skewness.push(Number(BigNumberService.floor(ubique.skewness(assetsTotal))) || 0);
+          kurtosis.push(Number(BigNumberService.floor(ubique.kurtosis(assetsTotal))) || 0);
         }
       });
       const result = { std, skewness, kurtosis };

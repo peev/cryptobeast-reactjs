@@ -84,7 +84,6 @@ const init = async (repository) => {
   // #endregion
 
   // TODO: Create router for every new model and add it here
-  require('./../../routes/user/user-router').attachTo(app, repository, jobs);
   require('./../../routes/investor/investor-router').attachTo(app, repository);
   require('./../../routes/asset/asset-router').attachTo(app, repository, jobs);
   require('./../../routes/currency/currency-router').attachTo(app, repository, jobs);

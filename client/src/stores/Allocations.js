@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 // @flow
 import { observable, action } from 'mobx';
 import PortfolioStore from './PortfolioStore';

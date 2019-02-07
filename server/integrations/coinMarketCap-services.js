@@ -5,6 +5,7 @@ const baseURL = 'pro-api.coinmarketcap.com';
 
 const coinMarketCapServices = () => {
   const getTickers = convertCurrency => new Promise((resolve, reject) => {
+    console.log(`GET START ${new Date()}`);
     const options = {
       hostname: baseURL,
       path: `/v1/cryptocurrency/listings/latest?limit=100&convert=${convertCurrency}`,
@@ -18,7 +19,7 @@ const coinMarketCapServices = () => {
       .then((response) => {
         const parsedResult = JSON.parse(response);
         const dataObject = parsedResult.data;
-        console.log(`CRON SYNCER SUCCESS ${dataObject.length}`);
+        console.log(`GET SUCCESS ${dataObject.length}`);
         return resolve(Object.keys(dataObject).map(el => ({
           currency: dataObject[el].symbol,
           currencyLong: dataObject[el].name,
@@ -32,7 +33,7 @@ const coinMarketCapServices = () => {
         })));
       })
       .catch((err) => {
-        console.log(`CRON SYNCER ERROR ${err}`);
+        console.log(`GET ERROR ${err}`);
         return reject(err);
       });
   });

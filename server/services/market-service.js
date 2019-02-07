@@ -1,4 +1,5 @@
 const { CronJob } = require('../node_modules/cron');
+const cron = require('node-cron');
 const { coinMarketCapServices } = require('../integrations/coinMarketCap-services');
 
 const marketService = (repository) => {
@@ -20,9 +21,16 @@ const marketService = (repository) => {
       return marketFunction();
     }, null, true);
 
+  const createNodeCron = (marketFunction, time) =>
+    cron.schedule(time, () => {
+      console.log(`CRON START: ${new Date()}`);
+      return marketFunction();
+    });
+
   return {
     syncTickersFromCoinMarketCap,
     createCronJob,
+    createNodeCron,
   };
 };
 

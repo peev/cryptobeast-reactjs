@@ -66,7 +66,7 @@ const init = async (repository) => {
   // }
 
   // Market jobs
-  marketService.createCronJob(marketService.syncTickersFromCoinMarketCap); // sync every 10 minutes
+  marketService.createNodeCron(marketService.syncTickersFromCoinMarketCap, '0,10,20,30,40,50 * * * *'); // sync every 10 minutes
 
 
   // Initialize all portfolio jobs and pass them to portfolio-controller

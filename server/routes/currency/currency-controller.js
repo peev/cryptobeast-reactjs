@@ -45,13 +45,16 @@ const currencyController = (repository) => {
       const change24HStats = (req.name === 'ETH') ? 0 : calculateCurrencyChange(yesterdayValue, todayValue);
       const change7DStats = (req.name === 'ETH') ? 0 : calculateCurrencyChange(lastWeekValue, todayValue);
 
+      // eslint-disable-next-line no-nested-ternary
+      const lastPriceETH = (priceResponse.lastPrice !== null && priceResponse.lastPrice !== undefined) ?
+        req.name === 'ETH' ? 1 : priceResponse.lastPrice : 0;
+
       newCurrencyObject = {
         tokenId: req.id,
         tokenName: req.name,
         tokenNameLong: req.fullName,
         decimals: req.decimals,
-        // eslint-disable-next-line no-nested-ternary
-        lastPriceETH: (priceResponse.lastPrice !== null && priceResponse.lastPrice !== undefined) ? priceResponse.lastPrice : req.name === 'ETH' ? 1 : 0,
+        lastPriceETH,
         volume24H: volume24HStats || 0,
         high24H: high24HStats || 0,
         low24H: low24HStats || 0,

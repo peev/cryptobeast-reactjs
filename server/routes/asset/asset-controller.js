@@ -9,6 +9,8 @@ const assetController = (repository) => {
   const createAssetObject = async (req, lastPriceETHParam, priceUSD) => {
     let newAssetObject;
     try {
+      // eslint-disable-next-line no-nested-ternary
+      const lastPriceETH = (lastPriceETHParam !== null && lastPriceETHParam !== undefined) ? req.tokenName === 'ETH' ? 1 : lastPriceETHParam : 0;
       newAssetObject = {
         tokenName: req.tokenName,
         userID: req.userAddress,
@@ -16,9 +18,8 @@ const assetController = (repository) => {
         available: req.availableAmount,
         inOrder: bigNumberService.difference(req.fullAmount, req.availableAmount),
         portfolioId: req.portfolioId,
-        // eslint-disable-next-line no-nested-ternary
-        lastPriceETH: lastPriceETHParam !== null && lastPriceETHParam !== undefined ? lastPriceETHParam : req.tokenName === 'ETH' ? 1 : 0,
-        lastPriceUSD: bigNumberService.product(lastPriceETHParam, priceUSD) || 0,
+        lastPriceETH,
+        lastPriceUSD: bigNumberService.product(lastPriceETH, priceUSD) || 0,
         totalETH: bigNumberService.product(req.fullAmount, lastPriceETHParam) || 0,
         totalUSD: commonService.tokenToEthToUsd(req.fullAmount, lastPriceETHParam, priceUSD) || 0,
         weight: 0,

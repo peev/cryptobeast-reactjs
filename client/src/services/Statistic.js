@@ -75,7 +75,7 @@ const Statistic = {
     const returns = [];
     for (let i = 0; i < data.length; i += 1) {
       if (i > 0) {
-        returns.push(BigNumberService.product(BigNumberService.quotient(BigNumberService.difference(data[i], data[i - 1]), data[i - 1]), 100));
+        returns.push(BigNumberService.quotient(BigNumberService.difference(data[i], data[i - 1]), data[i - 1]));
       }
     }
     const mean = BigNumberService.quotient(returns.reduce((acc: number, obj: number) => BigNumberService.sum(acc, obj), 0), data.length - 1);

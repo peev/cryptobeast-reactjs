@@ -62,6 +62,7 @@ type Props = {
   transaction: Object,
   classes: Object,
   InvestorStore: Object,
+  PortfolioStore: Object,
 };
 
 type State = {
@@ -133,6 +134,7 @@ class AssignInvestor extends React.Component<Props, State> {
                   <div className={classes.gridRow}>
                     <SelectInvestor
                       handleChange={this.handleSelectInvestor}
+                      currentPortfolioInvestors={this.props.PortfolioStore.currentPortfolioInvestors}
                       style={{
                         marginTop: '12px',
                         border: 'none',

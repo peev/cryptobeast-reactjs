@@ -132,16 +132,25 @@ class InvestorStore {
     return null;
   }
 
+  sortByTimestamp = array => array.sort((a, b) => new Date(a.txTimestamp).getTime() - new Date(b.txTimestamp).getTime());
+
+  calculatedIndividualInvestmentPeriod = (date) => {
+    const oneDay = 1000 * 60 * 60 * 24;
+    const currentDate = new Date();
+    return Math.round((currentDate - date) / oneDay);
+  }
+
   @computed
   get individualInvestmentPeriod() {
-    if (this.selectedInvestorIndividualSummary) {
-      // Get 1 day in milliseconds
-      const oneDay = 1000 * 60 * 60 * 24;
-      const currentDate = new Date();
-      const dateOfEntryConverted = new Date(this.selectedInvestorIndividualSummary.createdAt);
-      const calculatedIndividualInvestmentPeriod = Math.round((currentDate - dateOfEntryConverted) / oneDay);
-
-      return calculatedIndividualInvestmentPeriod;
+    if (this.selectedInvestorIndividualSummary !== null) {
+      const transactions = TransactionStore.transactions.filter(tr => tr.investorId === this.selectedInvestorIndividualSummary.id);
+      if (transactions.length) {
+        const sortedTransactions = this.sortByTimestamp(transactions);
+        return this.calculatedIndividualInvestmentPeriod(new Date(sortedTransactions[0].txTimestamp));
+      } else {
+        const dateOfEntryConverted = new Date(this.selectedInvestorIndividualSummary.createdAt);
+        return this.calculatedIndividualInvestmentPeriod(dateOfEntryConverted);
+      }
     }
 
     return null;

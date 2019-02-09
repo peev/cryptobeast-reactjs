@@ -42,9 +42,10 @@ const styles = () => ({
 type Props = {
   classes: Object,
   InvestorStore: Object,
+  PortfolioStore: Object,
 };
 
-@inject('InvestorStore')
+@inject('InvestorStore', 'PortfolioStore')
 @observer
 class IndividualSummary extends React.Component<Props> {
   componentWillUnmount() {
@@ -71,6 +72,7 @@ class IndividualSummary extends React.Component<Props> {
             <SelectInvestor
               isClearable
               handleChange={this.handleSelectInvestorForSummary}
+              currentPortfolioInvestors={this.props.PortfolioStore.currentPortfolioInvestors}
               style={{
                 border: 'none',
                 borderRadius: 0,

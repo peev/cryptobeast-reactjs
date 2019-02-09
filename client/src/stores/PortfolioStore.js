@@ -21,6 +21,7 @@ import AssetStore from './AssetStore';
 import Allocations from './Allocations';
 import Statistic from '../services/Statistic';
 import Analytics from './Analytics';
+import InvestorStore from './InvestorStore';
 
 // TODO handle if selected_portfolio_id has no set parameter
 let persistedUserData = 0;
@@ -579,6 +580,8 @@ class PortfolioStore {
     AssetStore.getAssetsValueHistory();
     this.getShareHistory();
     Allocations.getAllocations();
+    this.getCurrentPortfolioInvestors();
+    InvestorStore.resetSelectedInvestor();
   }
 
   @action

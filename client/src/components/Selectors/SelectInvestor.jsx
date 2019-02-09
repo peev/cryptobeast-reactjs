@@ -47,15 +47,25 @@ const styles = (theme: Object) => ({
 type Props = {
   classes: Object,
   handleChange: PropTypes.func,
-  PortfolioStore: Object,
   value: string,
   isClearable: boolean,
+  currentPortfolioInvestors: Array<Object>,
 };
 
-
-@inject('InvestorStore', 'PortfolioStore')
+@inject('InvestorStore')
 @observer
 class SelectInvestor extends React.Component<Props> {
+  constructor() {
+    super();
+    this.btnRef = React.createRef();
+  }
+
+  componentWillUpdate(nextProps: Object) {
+    if (nextProps.currentPortfolioInvestors !== this.props.currentPortfolioInvestors) {
+      this.btnRef.current.select.clearValue();
+    }
+  }
+
   handleChange = (event: SyntheticEvent) => {
     if (event) {
       this.props.handleChange({
@@ -72,10 +82,9 @@ class SelectInvestor extends React.Component<Props> {
   );
 
   render() {
-    const { classes, PortfolioStore, value, isClearable } = this.props;
-    const { currentPortfolioInvestors } = PortfolioStore;
+    const { classes, value, isClearable } = this.props;
     const investorsToShow = [];
-    currentPortfolioInvestors.map((investor: object) => ({ value: investor.id, label: investor.name }))
+    this.props.currentPortfolioInvestors.map((investor: object) => ({ value: investor.id, label: investor.name }))
       .forEach((investor: object) => {
         investorsToShow.push(investor);
       });
@@ -84,6 +93,7 @@ class SelectInvestor extends React.Component<Props> {
       <div autoComplete="off" >
         <FormControl className={classes.formControl} style={{ margin: 0 }}>
           <Select
+            ref={this.btnRef}
             name="investor"
             placeholder="Select investor*"
             // open={this.state.open}

@@ -14,7 +14,10 @@ const WeidexService = (repository) => {
         const parsedResult = JSON.parse(response);
         return resolve(parsedResult);
       })
-      .catch(err => reject(err)); // eslint-disable-line
+      .catch((err) => {
+        console.log(err);
+        return reject(err);
+      });
     // request({
     //   url: `${staging}/token/ticker/${tokenId}`,
     //   json: true,

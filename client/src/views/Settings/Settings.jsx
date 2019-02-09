@@ -54,11 +54,11 @@ const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }:
         />
       </ItemGrid>
 
-      <ItemGrid xs={12} sm={3} md={3}>
+      {/* <ItemGrid xs={12} sm={3} md={3}>
         <RegularButton color="primary" onClick={() => getTickersFromCoinMarketCap()}>
           Get Markets
         </RegularButton>
-      </ItemGrid>
+      </ItemGrid> */}
 
       <ItemGrid xs={12} sm={3} md={3}>
         <RegularButton color="primary" onClick={() => syncData()}>

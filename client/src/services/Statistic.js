@@ -48,7 +48,7 @@ const Statistic = {
   },
 
   getBeta(benchmarkData: Array<number>, data: Array<number>) {
-    if (data && data.length > 0 && benchmarkData && benchmarkData.length > 0) {
+    if (data && data.length > 0 && benchmarkData && benchmarkData.length > 0 && data.length === benchmarkData.length) {
       const covar = ubique.cov(benchmarkData, data, 0);
       const variance = ubique.varc(benchmarkData);
       return BigNumberService.quotient(covar[0][1], variance);
@@ -69,6 +69,21 @@ const Statistic = {
         ),
       0,
     );
+  },
+
+  getAssetVariance(data: Array<number>) {
+    const returns = [];
+    for (let i = 0; i < data.length; i += 1) {
+      if (i > 0) {
+        returns.push(BigNumberService.product(BigNumberService.quotient(BigNumberService.difference(data[i], data[i - 1]), data[i - 1]), 100));
+      }
+    }
+    const mean = BigNumberService.quotient(returns.reduce((acc: number, obj: number) => BigNumberService.sum(acc, obj), 0), data.length - 1);
+    const resultArr = [];
+    for (let i = 0; i < returns.length; i += 1) {
+      resultArr.push(BigNumberService.pow(BigNumberService.difference(returns[i], mean), 2));
+    }
+    return BigNumberService.quotient(resultArr.reduce((acc: number, obj: number) => BigNumberService.sum(acc, obj), 0), returns.length);
   },
 };
 

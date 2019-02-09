@@ -151,6 +151,23 @@ class PortfolioStore {
   }
 
   @computed
+  get sharePriceBreakdownSharesETH() {
+    if (this.sharesHistory.length > 0 && this.portfolioValueHistory.length > 0) {
+      const result = [];
+      this.sharesHistory.forEach((item: Object) => {
+        this.portfolioValueHistory.forEach((pItem: Object) => {
+          if (item.timestamp === pItem.timestamp) {
+            result.push(Number(BigNumberService.quotient(pItem.eth, item.shares)));
+          }
+        });
+      });
+      return result;
+    }
+
+    return [];
+  }
+
+  @computed
   get portfolueValueLastDay() {
     if (this.portfolioValueHistoryByPeriod.length && this.portfolioValueHistoryByPeriod.length > 0) {
       return Number(BigNumberService.product(
@@ -396,8 +413,8 @@ class PortfolioStore {
         MarketStore.ethHistory.map((item: Object) => item.priceUsd);
       // Change when new benchmarks are added
       const data = Analytics.riskCurrency === 'ETH' ?
-        this.portfolioValueHistory.map((item: Object) => item.eth) :
-        this.portfolioValueHistory.map((item: Object) => item.usd);
+        this.sharePriceBreakdownSharesETH.map((item: number) => Number(BigNumberService.tokenToEth(item, 18))) :
+        this.sharePriceBreakdownShares.map((item: number) => item);
 
       // If data is shorter than benchmark data
       if (data.length < benchmarkData.length) {

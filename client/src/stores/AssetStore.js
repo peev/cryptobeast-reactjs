@@ -114,6 +114,17 @@ class AssetStore {
     return [];
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  @action
+  // eslint-disable-next-line class-methods-use-this
+  assetVariance(assetsTotal: Array<number>) {
+    if (assetsTotal.length > Analytics.riskPeriod) {
+      const startIdx = (assetsTotal.length - 1) - Analytics.riskPeriod;
+      assetsTotal.splice(0, startIdx);
+    }
+    return Statistic.getAssetVariance(assetsTotal);
+  }
+
   @computed
   get assetsVariance() {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0 &&
@@ -141,6 +152,10 @@ class AssetStore {
           benchmarkData.splice(rem, assetsTotal.length);
         }
 
+        // Calculate variance before data splice because it requires data length + 1
+        const dataForVariance = assetsTotal.map((item: number) => item);
+        const variance = this.assetVariance(dataForVariance);
+
         // Slice data according selected period
         if (assetsTotal.length > Analytics.riskPeriod) {
           const startIdx = assetsTotal.length - Analytics.riskPeriod;
@@ -149,6 +164,7 @@ class AssetStore {
         }
 
         const assetObj = assets.find((as: Object) => as.tokenName === assetName);
+
         const asset = {
           ticker: assetName,
           totalUsd: assetObj.totalUsd,
@@ -157,7 +173,7 @@ class AssetStore {
           beta: Statistic.getBeta(benchmarkData, assetsTotal),
           rsq: null,
           adjR: null,
-          variance: ubique.varc(assetsTotal),
+          variance,
         };
         return asset;
       });

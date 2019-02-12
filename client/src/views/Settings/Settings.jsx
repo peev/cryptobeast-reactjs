@@ -11,17 +11,10 @@ import NotificationSnackbar from '../../components/Modal/NotificationSnackbar';
 import storage from '../../services/storage';
 
 type Props = {
-  MarketStore: {
-    getTickersFromCoinMarketCap: Function,
-  },
   PortfolioStore: Object,
 };
 
 const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }: Props) => {
-  const getTickersFromCoinMarketCap = () => {
-    props.MarketStore.getTickersFromCoinMarketCap();
-  };
-
   const syncData = () => {
     storage.getPortfolioAddresses()
       .then((data: Array<string>) => props.PortfolioStore.sync(data));
@@ -53,12 +46,6 @@ const Settings = inject('MarketStore', 'PortfolioStore')(observer(({ ...props }:
           content={<TimeSettings />}
         />
       </ItemGrid>
-
-      {/* <ItemGrid xs={12} sm={3} md={3}>
-        <RegularButton color="primary" onClick={() => getTickersFromCoinMarketCap()}>
-          Get Markets
-        </RegularButton>
-      </ItemGrid> */}
 
       <ItemGrid xs={12} sm={3} md={3}>
         <RegularButton color="primary" onClick={() => syncData()}>

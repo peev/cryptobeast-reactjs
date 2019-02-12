@@ -83,15 +83,18 @@ const currencyController = (repository) => {
   };
 
   const syncCurrency = async (req, res, tokenPricesByDate) => {
-    const currency = req.body;
+    try {
+      const currency = req.body;
+      const currencyObject = await getCurrencyObject(currency, tokenPricesByDate);
+      const currencyFound = await fetchCurrencyObject(currency.name);
 
-    const currencyObject = await getCurrencyObject(currency, tokenPricesByDate);
-    const currencyFound = await fetchCurrencyObject(currency.name);
-
-    if (currencyFound === null || currencyFound === undefined) {
-      await createAction(req, res, currencyObject, true);
-    } else {
-      await updateAction(req, res, Number(currencyFound.id), currencyObject, true);
+      if (currencyFound === null || currencyFound === undefined) {
+        await createAction(req, res, currencyObject, true);
+      } else {
+        await updateAction(req, res, Number(currencyFound.id), currencyObject, true);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -135,18 +138,22 @@ const currencyController = (repository) => {
   };
 
   const sync = async (req, res) => {
-    const tokens = await weidexService.getAllTokensHttp();
-    const today = Math.floor(Date.now() / 1000);
-    let tokensValues = await weidexService.getTokensValuesHistoryHttp(today, 8);
-    tokensValues = commonService.sortTokensByDateAsc(tokensValues);
-    const tokenArray = await tokens.map(async (token) => {
-      const bodyWrapper = Object.assign({ body: token });
-      const tokenPricesByDate = definePeriodTokenValues(tokensValues, token.name);
-      return syncCurrency(bodyWrapper, res, tokenPricesByDate);
-    });
-    await Promise.all(tokenArray).then(() => {
-      console.log('================== END CURRENCY ==================');
-    });
+    try {
+      const tokens = await weidexService.getAllTokensHttp();
+      const today = Math.floor(Date.now() / 1000);
+      let tokensValues = await weidexService.getTokensValuesHistoryHttp(today, 8);
+      tokensValues = commonService.sortTokensByDateAsc(tokensValues);
+      const tokenArray = await tokens.map(async (token) => {
+        const bodyWrapper = Object.assign({ body: token });
+        const tokenPricesByDate = definePeriodTokenValues(tokensValues, token.name);
+        return syncCurrency(bodyWrapper, res, tokenPricesByDate);
+      });
+      await Promise.all(tokenArray).then(() => {
+        console.log('================== END CURRENCY ==================');
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return {

@@ -31,7 +31,7 @@ const VolatilityRiskCard = inject('Analytics', 'PortfolioStore')(observer(({ ...
     <Paper className={classes.container}>
       <div className={classes.item}>
         <p>STANDARD DEVIATION:</p>
-        <p>{isNaN(PortfolioStore.standardDeviation) ? 0 : BigNumberService.floor(PortfolioStore.standardDeviation)}</p>
+        <p>{isNaN(PortfolioStore.standardDeviation) ? 0 : BigNumberService.floor(PortfolioStore.standardDeviation)}%</p>
       </div>
       <div className={classes.item}>
         <p>PORTFOLIO ALPHA:</p>
@@ -43,7 +43,7 @@ const VolatilityRiskCard = inject('Analytics', 'PortfolioStore')(observer(({ ...
       </div>
       <div className={classes.item}>
         <p>PORTFOLIO VARIANCE:</p>
-        <p>{isNaN(PortfolioStore.portfolioVariance) ? 0 : BigNumberService.floor(PortfolioStore.portfolioVariance)}</p>
+        <p>{isNaN(PortfolioStore.portfolioVariance) ? 0 : BigNumberService.floorFour(PortfolioStore.portfolioVariance)}</p>
       </div>
     </Paper>
   );

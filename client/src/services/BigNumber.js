@@ -24,6 +24,8 @@ const BigNumberService = {
   floor: number => new BigNumber(Math.floor(new BigNumber(number).multipliedBy(100))).dividedBy(100).toFixed(2),
 
   floorFour: number => new BigNumber(Math.floor(new BigNumber(number).multipliedBy(10000))).dividedBy(10000).toFixed(4),
+
+  sqrt: number => new BigNumber(String(number)).sqrt(),
 };
 
 export default BigNumberService;

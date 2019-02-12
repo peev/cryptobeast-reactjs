@@ -99,21 +99,34 @@ const Statistic = {
   getPortfolioVariance(data: Array<Object>) {
     const allData = [[13, 14, 15, 12, 7, 18, 10, 16, 13], [12, 7, 18, 16, 13, 14, 12, 7, 18], [16, 13, 10, 7, 18, 7, 16, 13, 13]];
     const weights = data.map((item: Object) => item.weight);
-    console.log(weights);
     const returns = allData.map((item: Array<number>) => this.getAssetReturn(item));
-    console.log(returns);
     const variances = returns.map((item: Array<number>) => ubique.varc(item));
-    console.log(variances);
     const stDeviatiions = returns.map((item: Array<number>) => ubique.std(item));
-    console.log(stDeviatiions);
     const covariances = [];
+    const assets = data.map((item: Object, i: number) =>
+      ({ weight: weights[i], variance: variances[i], stDev: stDeviatiions[i] }));
+
+    const finalArr = [];
     for (let i = 0; i < returns.length; i += 1) {
       for (let j = i + 1; j < returns.length; j += 1) {
-        covariances.push(ubique.cov(returns[i], returns[j]));
+        const cov = covariances.push(ubique.cov(returns[i], returns[j]));
+        const weightMultVariance = BigNumberService.product(assets[i].weight, assets[i].variance);
+
+        const weightsMultiply = BigNumberService.product(assets[i].weight, assets[j].weight);
+        const weightProductMultCov = BigNumberService.product(weightsMultiply, cov);
+        const multiplyByTwo = BigNumberService.product(weightProductMultCov, 2);
+
+        finalArr.push(weightMultVariance);
+        finalArr.push(multiplyByTwo);
       }
     }
+    const coovariancesFiltered = covariances.map((cov: Array<number>) => cov[0][1]);
+
+    const test = finalArr.reduce((acc: number, obj: number) => BigNumberService.sum(acc, obj), 0);
     console.log('------------------------------------');
-    console.log(covariances);
+    console.log(assets);
+    console.log(coovariancesFiltered);
+    console.log(test);
     console.log('------------------------------------');
     return [];
   },

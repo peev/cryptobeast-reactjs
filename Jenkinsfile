@@ -29,10 +29,10 @@ node {
 
     stage('Deploy Front-End') {
       if (env.BRANCH_NAME == "refactored") {
-        sh 'scp -i ~/.ssh/id_rsa -r client/build/. ubuntu@ip-172-31-35-186:/var/www/cryptobeast'
+        sh 'scp -i ~/.ssh/id_rsa -r .client/build/* ubuntu@ip-172-31-35-186:/var/www/cryptobeast'
       }
       if (env.BRANCH_NAME == "weibeast") {
-        sh 'scp -i ~/.ssh/id_rsa -r client/build/. ubuntu@ip-172-31-35-186:/var/www/weibeast'
+        sh 'scp -i ~/.ssh/id_rsa -r client/build/* ubuntu@ip-172-31-35-186:/var/www/weibeast'
       }
     }
 

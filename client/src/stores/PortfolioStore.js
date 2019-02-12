@@ -9,7 +9,6 @@ import {
   onBecomeObserved,
 } from 'mobx';
 import moment from 'moment';
-import ubique from 'ubique';
 import requester from '../services/requester';
 import MarketStore from './MarketStore';
 import NotificationStore from './NotificationStore';
@@ -319,12 +318,8 @@ class PortfolioStore {
 
   @computed
   get standardDeviation() {
-    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0 && this.standardDeviationPeriod) {
-      const portfolioValueHistoryArr = this.portfolioValueHistory.length > 30 ?
-        this.portfolioValueHistory.slice(Math.max(this.portfolioValueHistory.length - this.standardDeviationPeriod, 1)) :
-        this.portfolioValueHistory;
-      this.standardDeviationData = portfolioValueHistoryArr.map((el: object) => el.eth);
-      return Number(BigNumberService.gweiToEth(ubique.std(this.standardDeviationData)));
+    if (this.portfolioVariance && this.portfolioValueHistory.length !== 0) {
+      return Number(BigNumberService.product(BigNumberService.sqrt(this.portfolioVariance), 100));
     }
 
     return null;
@@ -373,18 +368,37 @@ class PortfolioStore {
 
   @computed
   get portfolioVariance() {
-    if (this.portfolioValueHistory.length && this.portfolioValueHistory.length > 0) {
-      const data = Analytics.riskCurrency === 'ETH' ?
-        this.portfolioValueHistory.map((item: Object) => BigNumberService.tokenToEth(item.eth, 18).toNumber()) :
-        this.portfolioValueHistory.map((item: Object) => item.usd);
+    if (this.selectedPortfolio && this.currentPortfolioAssets && this.currentPortfolioAssets.length &&
+      AssetStore.assetsValueHistory && AssetStore.assetsValueHistory.length) {
+      const data = AssetStore.assetsValueHistory.map((item: Object) => item);
+      const assets = data[data.length - 1].assets.filter((asset: Object) => asset.amount > 0);
+
+      // If data starts with 0 (no records);
+      const assetsTotalStartIndex = data.findIndex((item: Object) => item !== 0);
+      if (assetsTotalStartIndex > 0) {
+        data.splice(0, assetsTotalStartIndex);
+      }
 
       // Slice data according selected period
       if (data.length > Analytics.riskPeriod) {
-        const startIdx = data.length - Analytics.riskPeriod;
+        const startIdx = data.length - (Analytics.riskPeriod + 1);
         data.splice(0, startIdx);
       }
 
-      return ubique.varc(data);
+      const items = assets.map((asset: Object) => asset.tokenName).sort();
+      const result = items.map((item: stirng) => {
+        let assetTotals = [];
+        // assume that there is only ETH and USD
+        if (Analytics.riskCurrency === 'ETH') {
+          assetTotals = data.map((el: Object) => el.assets.filter((asset: Object) => asset.tokenName === item)[0].total);
+        } else {
+          assetTotals = data.map((el: Object) => el.assets.filter((asset: Object) => asset.tokenName === item)[0].totalUsd);
+        }
+        const { weight } = this.currentPortfolioAssets.filter((ast: Object) => ast.tokenName === item)[0];
+        return { tokenName: item, data: assetTotals, weight: BigNumberService.quotient(weight, 100) };
+      });
+
+      return Statistic.getPortfolioVariance(result);
     }
 
     return 0;

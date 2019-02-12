@@ -97,38 +97,30 @@ const Statistic = {
   },
 
   getPortfolioVariance(data: Array<Object>) {
-    const allData = [[13, 14, 15, 12, 7, 18, 10, 16, 13], [12, 7, 18, 16, 13, 14, 12, 7, 18], [16, 13, 10, 7, 18, 7, 16, 13, 13]];
+    const allData = data.map((item: Object) => item.data);
     const weights = data.map((item: Object) => item.weight);
     const returns = allData.map((item: Array<number>) => this.getAssetReturn(item));
     const variances = returns.map((item: Array<number>) => ubique.varc(item));
     const stDeviatiions = returns.map((item: Array<number>) => ubique.std(item));
-    const covariances = [];
     const assets = data.map((item: Object, i: number) =>
       ({ weight: weights[i], variance: variances[i], stDev: stDeviatiions[i] }));
 
     const finalArr = [];
     for (let i = 0; i < returns.length; i += 1) {
       for (let j = i + 1; j < returns.length; j += 1) {
-        const cov = covariances.push(ubique.cov(returns[i], returns[j]));
-        const weightMultVariance = BigNumberService.product(assets[i].weight, assets[i].variance);
-
+        const cov = ubique.cov(returns[i], returns[j])[0][1];
         const weightsMultiply = BigNumberService.product(assets[i].weight, assets[j].weight);
         const weightProductMultCov = BigNumberService.product(weightsMultiply, cov);
         const multiplyByTwo = BigNumberService.product(weightProductMultCov, 2);
-
-        finalArr.push(weightMultVariance);
         finalArr.push(multiplyByTwo);
       }
     }
-    const coovariancesFiltered = covariances.map((cov: Array<number>) => cov[0][1]);
 
-    const test = finalArr.reduce((acc: number, obj: number) => BigNumberService.sum(acc, obj), 0);
-    console.log('------------------------------------');
-    console.log(assets);
-    console.log(coovariancesFiltered);
-    console.log(test);
-    console.log('------------------------------------');
-    return [];
+    for (let i = 0; i < data.length; i += 1) {
+      finalArr.push(BigNumberService.product(assets[i].weight, assets[i].variance));
+    }
+
+    return finalArr.reduce((acc: number, obj: number) => BigNumberService.sum(acc, obj), 0);
   },
 };
 

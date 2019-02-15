@@ -1,10 +1,9 @@
 const requester = require('./requester-service');
-
-const weidexFiatMsUrl = 'https://weibeast.motiontest.eu/microapi';
+const constants = require('../utils/constants');
 
 const WeidexFiatMsService = () => {
   const getFiatValueByTimestamp = timestamp => new Promise((resolve, reject) => {
-    requester.get(`${weidexFiatMsUrl}/fiat/currenciesByTimestamp?timestamp=${timestamp}`)
+    requester.get(`${constants.urls.weibeastFiatMs}/fiat/currenciesByTimestamp?timestamp=${timestamp}`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
         resolve(parsedResult);
@@ -13,7 +12,7 @@ const WeidexFiatMsService = () => {
   });
 
   const getEtherValueByTimestamp = timestamp => new Promise((resolve, reject) => {
-    requester.get(`${weidexFiatMsUrl}/ether/etherPriceByTimestamp?timestamp=${timestamp}`)
+    requester.get(`${constants.urls.weibeastFiatMs}/ether/etherPriceByTimestamp?timestamp=${timestamp}`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
         resolve(parsedResult);
@@ -22,7 +21,7 @@ const WeidexFiatMsService = () => {
   });
 
   const getEtherPriceByRangeDayValue = (start, end) => new Promise((resolve, reject) => {
-    requester.get(`${weidexFiatMsUrl}/ether/etherPriceByRangeDayValue?start=${start}&end=${end}`)
+    requester.get(`${constants.urls.weibeastFiatMs}/ether/etherPriceByRangeDayValue?start=${start}&end=${end}`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
         resolve(parsedResult);

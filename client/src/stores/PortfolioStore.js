@@ -318,7 +318,7 @@ class PortfolioStore {
 
   @computed
   get standardDeviation() {
-    if (this.portfolioVariance && this.portfolioValueHistory.length !== 0) {
+    if (this.portfolioValueHistory.length !== 0) {
       return Number(BigNumberService.product(BigNumberService.sqrt(this.portfolioVariance), 100));
     }
 
@@ -373,6 +373,11 @@ class PortfolioStore {
       const data = AssetStore.assetsValueHistory.map((item: Object) => item);
       const assets = data[data.length - 1].assets.filter((asset: Object) => asset.amount > 0);
 
+      // assume that there is only ETH and USD
+      const benchmarkData = Analytics.riskCurrency === 'ETH' ?
+        MarketStore.ethHistory.map(() => 1) :
+        MarketStore.ethHistory.map((item: Object) => item.priceUsd);
+
       // If data starts with 0 (no records);
       const assetsTotalStartIndex = data.findIndex((item: Object) => item !== 0);
       if (assetsTotalStartIndex > 0) {
@@ -380,19 +385,20 @@ class PortfolioStore {
       }
 
       // Slice data according selected period
-      if (data.length > Analytics.riskPeriod) {
+      if (data.length > Analytics.riskPeriod + 1) {
         const startIdx = data.length - (Analytics.riskPeriod + 1);
         data.splice(0, startIdx);
       }
 
       const items = assets.map((asset: Object) => asset.tokenName).sort();
-      const result = items.map((item: stirng) => {
+      const result = items.map((item: string) => {
         let assetTotals = [];
         // assume that there is only ETH and USD
         if (Analytics.riskCurrency === 'ETH') {
-          assetTotals = data.map((el: Object) => el.assets.filter((asset: Object) => asset.tokenName === item)[0].total);
+          assetTotals = data.map((el: Object) => el.assets.filter((asset: Object) => asset.tokenName === item)[0].price);
         } else {
-          assetTotals = data.map((el: Object) => el.assets.filter((asset: Object) => asset.tokenName === item)[0].totalUsd);
+          assetTotals = data.map((el: Object, index: number) =>
+            BigNumberService.product(el.assets.filter((asset: Object) => asset.tokenName === item)[0].price, benchmarkData[index]));
         }
         const { weight } = this.currentPortfolioAssets.filter((ast: Object) => ast.tokenName === item)[0];
         return { tokenName: item, data: assetTotals, weight: BigNumberService.quotient(weight, 100) };

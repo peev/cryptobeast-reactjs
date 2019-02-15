@@ -82,8 +82,8 @@ class AssetStore {
     if (this.assetsValueHistory.length && this.assetsValueHistory.length > 0) {
       const data = this.assetsValueHistory.map((item: Object) => item);
       // Slice data according selected period
-      if (data.length > Analytics.riskPeriod) {
-        const startIdx = data.length - Analytics.riskPeriod;
+      if (data.length > Analytics.riskPeriod + 1) {
+        const startIdx = data.length - (Analytics.riskPeriod + 1);
         data.splice(0, startIdx);
       }
       const std = [];
@@ -92,19 +92,27 @@ class AssetStore {
       const assets = data[data.length - 1].assets.filter((asset: Object) => asset.amount > 0);
       const items = assets.map((asset: Object) => asset.tokenName).sort();
 
+      // assume that there is only ETH and USD
+      const benchmarkData = Analytics.riskCurrency === 'ETH' ?
+        MarketStore.ethHistory.map(() => 1) :
+        MarketStore.ethHistory.map((item: Object) => item.priceUsd);
+
       // eslint-disable-next-line array-callback-return
-      items.map((assetName: string) => {
+      items.map((item: string) => {
         // assume that there is only ETH and USD
         if (Analytics.riskCurrency === 'ETH') {
-          const assetsTotal = this.getAssetTotals(assetName, data);
-          std.push(Number(BigNumberService.floorFour(BigNumberService.gweiToEth(ubique.std(assetsTotal)))) || 0);
-          skewness.push(Number(BigNumberService.floorFour(BigNumberService.gweiToEth(ubique.skewness(assetsTotal)))) || 0);
-          kurtosis.push(Number(BigNumberService.floorFour(BigNumberService.gweiToEth(ubique.kurtosis(assetsTotal)))) || 0);
+          const assetTotals = data.map((el: Object) => el.assets.filter((asset: Object) => asset.tokenName === item)[0].price);
+          const returns = Statistic.getAssetReturn(assetTotals);
+          std.push(Number(BigNumberService.floorFour(BigNumberService.gweiToEth(ubique.std(returns)))) || 0);
+          skewness.push(Number(BigNumberService.floorFour(BigNumberService.gweiToEth(ubique.skewness(returns)))) || 0);
+          kurtosis.push(Number(BigNumberService.floorFour(BigNumberService.gweiToEth(ubique.kurtosis(returns)))) || 0);
         } else {
-          const assetsTotal = this.getAssetTotalsUSD(assetName, data);
-          std.push(Number(BigNumberService.floor(ubique.std(assetsTotal))) || 0);
-          skewness.push(Number(BigNumberService.floor(ubique.skewness(assetsTotal))) || 0);
-          kurtosis.push(Number(BigNumberService.floor(ubique.kurtosis(assetsTotal))) || 0);
+          const assetTotals = data.map((el: Object, index: number) =>
+            BigNumberService.product(el.assets.filter((asset: Object) => asset.tokenName === item)[0].price, benchmarkData[index]));
+          const returns = Statistic.getAssetReturn(assetTotals);
+          std.push(Number(BigNumberService.floor(ubique.std(returns))) || 0);
+          skewness.push(Number(BigNumberService.floor(ubique.skewness(returns))) || 0);
+          kurtosis.push(Number(BigNumberService.floor(ubique.kurtosis(returns))) || 0);
         }
       });
       const result = { std, skewness, kurtosis };

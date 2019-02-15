@@ -385,13 +385,13 @@ class PortfolioStore {
       }
 
       // Slice data according selected period
-      if (data.length > Analytics.riskPeriod) {
+      if (data.length > Analytics.riskPeriod + 1) {
         const startIdx = data.length - (Analytics.riskPeriod + 1);
         data.splice(0, startIdx);
       }
 
       const items = assets.map((asset: Object) => asset.tokenName).sort();
-      const result = items.map((item: stirng) => {
+      const result = items.map((item: string) => {
         let assetTotals = [];
         // assume that there is only ETH and USD
         if (Analytics.riskCurrency === 'ETH') {

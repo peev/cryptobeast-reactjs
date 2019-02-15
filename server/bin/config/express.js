@@ -4,13 +4,8 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-// const jwksRsa = require('jwks-rsa');
-// const jwt = require('express-jwt');
-// const path = require('path');
-
 
 const init = async (repository) => {
-  // const portfolioService = require('../../services/portfolio-service')(repository);
   const marketService = require('../../services/market-service')(repository);
 
   const app = express();
@@ -36,42 +31,8 @@ const init = async (repository) => {
     next();
   });
 
-  // Middleware for checking the JWT
-  // const checkJwt = jwt({
-  //   // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint
-  //   secret: jwksRsa.expressJwtSecret({
-  //     cache: true,
-  //     rateLimit: true,
-  //     jwksRequestsPerMinute: 5,
-  //     jwksUri: 'https://cryptobeast.eu.auth0.com/.well-known/jwks.json',
-  //   }),
-
-  //   // Validate the audience and the issuer
-  //   audience: 'ro3TfD3x5qWYVH7EhI7IlpoHPK330NeQ',
-  //   issuer: 'https://cryptobeast.eu.auth0.com/',
-  //   algorithms: ['RS256'],
-  // });
-
-  // Enable Authentication on all API Endpoints
-  // app.use(checkJwt);
-
-
-  // Initialize market summaries, base tickers and their sync jobs
-  // const currencies = await repository.find({ modelName: 'Currency' });
-  // if (!currencies) {
-  //   marketService.syncCurrenciesFromApi();
-  //   marketService.syncSummaries();
-  //   marketService.syncTickersFromKraken();
-  //   marketService.syncTickersFromCoinMarketCap();
-  // }
-
   // Market jobs
   marketService.createNodeCron(marketService.syncTickersFromCoinMarketCap, '0,10,20,30,40,50 * * * *'); // sync every 10 minutes
-  // dummies
-  marketService.dummyNodeCron('3,13,23,33,43,53 * * * *'); // sync every 10 minutes
-  marketService.dummyCron('4,14,24,34,44,54 * * * *'); // sync every 10 minutes
-  marketService.dummyRequestNodeCron(marketService.dummy, '5,15,25,35,45,55 * * * *'); // sync every 10 minutes
-  marketService.dummyRequestCron(marketService.dummy, '6,16,26,36,46,56 * * * *'); // sync every 10 minutes
 
   // Initialize all portfolio jobs and pass them to portfolio-controller
   const jobs = {

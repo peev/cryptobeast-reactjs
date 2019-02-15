@@ -139,15 +139,9 @@ const assetController = (repository) => {
     const timestamps = getDatesArray(period);
 
     try {
-      console.log('------------------------------------');
-      console.log('.....................................START GET CURRENCY FROM DB');
       const currency = await intReqService.getCurrencyByTokenId(tokenId);
-      console.log('.....................................END GET CURRENCY FROM DB');
-      console.log('.....................................START GET http://staging-core-java.herokuapp.com/token/all/price/$price/days/$days');
       const tokensValues = await weidexService
         .getTokensValuesHistoryHttp(commonService.millisecondsToTimestamp(timestamps[0]), timestamps.length);
-      console.log('.....................................END GET http://staging-core-java.herokuapp.com/token/all/price/$price/days/$days');
-      console.log('------------------------------------');
       const tokenPricesByDate = definePeriodTokenValues(tokensValues, currency.tokenName);
       return res.status(200).send(tokenPricesByDate);
     } catch (error) {

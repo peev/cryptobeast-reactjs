@@ -1,35 +1,32 @@
+const constants = require('../utils/constants');
 const requester = require('../services/requester-service');
-
-const baseURL = 'https://api.etherscan.io/api';
-const ropsten = 'https://ropsten.etherscan.io/api';
-const etherScanApiKey = '74FPPAPT8HZTVGZIZHN3HTMY3URY1GJ9AQ';
 
 const etherScanServices = () => {
   const getETHUSDPrice = () => new Promise((resolve) => {
-    requester.get(`${baseURL}?module=stats&action=ethprice&apikey=${etherScanApiKey}`)
+    requester.get(`${constants.urls.etherScan}?module=stats&action=ethprice&apikey=${constants.apiKeys.etherScanApiKey}`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
         resolve(parsedResult.result.ethusd);
       })
-      .catch(err => console.log(err)); // eslint-disable-line
+      .catch(err => console.log(err));
   });
 
   const getTransactionByHash = txHash => new Promise((resolve, reject) => {
-    requester.get(`${ropsten}?module=proxy&action=eth_getTransactionByHash&txhash=${txHash}`)
+    requester.get(`${constants.urls.ropsten}?module=proxy&action=eth_getTransactionByHash&txhash=${txHash}`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
         resolve(parsedResult.result);
       })
-      .catch(err => reject(err)); // eslint-disable-line
+      .catch(err => reject(err));
   });
 
   const getBlockByNumber = blockNumber => new Promise((resolve, reject) => {
-    requester.get(`${ropsten}?module=proxy&action=eth_getBlockByNumber&tag=${blockNumber}&boolean=true`)
+    requester.get(`${constants.urls.ropsten}?module=proxy&action=eth_getBlockByNumber&tag=${blockNumber}&boolean=true`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
         resolve(parsedResult.result);
       })
-      .catch(err => reject(err)); // eslint-disable-line
+      .catch(err => reject(err));
   });
 
   return {

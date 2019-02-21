@@ -15,7 +15,7 @@ const CreateStartPortfolio = inject('PortfolioStore')(observer(({ classes, Portf
   return (
     <Grid container className={classes.container}>
       <Grid item className={classes.container}>
-        <h1 className={classes.tittle}>WeiBeast</h1>
+        <h1 className={classes.tittle}>CryptoBeast</h1>
         <p className={classes.subTitle}>
           You currently have no portfolio to display. Please create a portfolio to start
         </p>

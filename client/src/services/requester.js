@@ -5,7 +5,7 @@ let API_ROOT;
 if (process.env.NODE_ENV === 'development') {
   API_ROOT = 'http://localhost:3200';
 } else {
-  API_ROOT = 'https://weibeast.motiontest.eu/api';
+  API_ROOT = 'https://cryptobeast.motion-software.com/api';
 }
 const idToken = window.localStorage.getItem('id_token'); // eslint-disable-line
 const options = { headers: { Authorization: `Bearer ${idToken}` } };

@@ -34,6 +34,9 @@ node {
       if (env.BRANCH_NAME == "weibeast") {
         sh 'scp -i ~/.ssh/id_rsa -r client/build/* ubuntu@ip-172-31-35-186:/var/www/weibeast'
       }
+      if (env.BRANCH_NAME == "weibeast-production") {
+        sh 'scp -i ~/.ssh/id_rsa -r client/build/* ubuntu@3.122.88.91:/var/www/cryptobeast.motion-software.com'
+      }
     }
 
     stage('Deploy Back-End') {
@@ -42,6 +45,28 @@ node {
       }
       if (env.BRANCH_NAME == "weibeast") {
         sh 'ssh ubuntu@ip-172-31-35-186 "cd weibeast-deploy && bash buildanddeploy.sh"'
+      }
+      if (env.BRANCH_NAME == "weibeast-production") {
+        withCredentials([
+          string(credentialsId: 'weibeast_aws_rds_hostname', variable: 'DBHOST'),
+          string(credentialsId: 'weibeast_aws_rds_username', variable: 'DBUSER'),
+          string(credentialsId: 'weibeast_aws_rds_password', variable: 'DBPASS'),
+        ]) {
+          def DBPORT = 5432
+          def DBNAME = "weibeast"
+
+          def apiEnv = """
+            DBHOST=${DBHOST}
+            DBPORT=${DBPORT}
+            DBNAME=${DBNAME}
+            DBUSER=${DBUSER}
+            DBPASS=${DBPASS}
+          """
+
+          sh "echo -e '${apiEnv}' >> .env && scp .env ubuntu@3.122.88.91:/home/ubuntu/weibeast-deploy"
+          sh 'ssh ubuntu@3.122.88.91 "cd weibeast-deploy && bash buildanddeploy.sh"'
+          sh 'rm .env'
+        }
       }
     }
 

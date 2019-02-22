@@ -147,16 +147,6 @@ const portfolioController = (repository) => {
       .catch(err => console.log(err));
   };
 
-  const getTokensPriceByDate = async (timestamps) => {
-    const result = timestamps.map(async (timestamp) => {
-      const tokenPrice = await getTokenPriceByDate(timestamp);
-      return tokenPrice;
-    });
-    return Promise.all(result)
-      .then(data => data)
-      .catch(err => console.log(err));
-  };
-
   const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp, ethPrices, isAlpha) => {
     const result = tokenPricesArr.map(async (token) => {
       if (balance.tokenName === token.tokenName) {
@@ -263,17 +253,11 @@ const portfolioController = (repository) => {
     let result = { timestamp, eth: 0, usd: 0 };
     if (balance !== null) {
       result = balance.map(async (item) => {
-        // TODO test
-        // const currency = await intReqService.getCurrencyByTokenName(item.tokenName);
         const ethToUsd = ethPriceHistory.find(el => (el.timestamp === timestamp));
-        // TODO
         const ts = commonService.millisecondsToTimestamp(timestamp);
         const tokenPriceInEth = (item.tokenName === 'ETH') ? 1 : tokensValues[ts * 1000][item.tokenName];
-        // TODO test /portfolio/historyByPeriod/9/w
-        // const tokenPriceInEth = (item.tokenName === 'ETH') ? 1 :
-        //   await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commonService.millisecondsToTimestamp(timestamp));
-        const eth = bigNumberService.product(item.amount, tokenPriceInEth);
-        const usd = commonService.ethToUsd(eth, ethToUsd.priceUsd);
+        const eth = bigNumberService.product(item.amount, tokenPriceInEth) || 0;
+        const usd = commonService.ethToUsd(eth, ethToUsd.priceUsd) || 0;
         return { timestamp, eth, usd };
       });
     } else {
@@ -283,8 +267,11 @@ const portfolioController = (repository) => {
   };
 
   const resolveAllocationsBalances = async (allocations, ethPriceHistory, tokensValues) => {
-    const result = await allocations.map(async allocation => sumAllocationBalance(allocation.balance, allocation.timestamp, ethPriceHistory, tokensValues));
-    return Promise.all(result).then(data =>
+    const result = await allocations.map(async allocation =>
+      sumAllocationBalance(allocation.balance, allocation.timestamp, ethPriceHistory, tokensValues));
+    const resultPromise = await Promise.all(result).then(data => data);
+    const filteredData = await resultPromise.filter(item => item.length !== 0);
+    return Promise.all(filteredData).then(data =>
       data.map((item) => {
         const eth = item.reduce((acc, obj) => (bigNumberService.sum(acc, obj.eth)), 0);
         const usd = item.reduce((acc, obj) => (bigNumberService.sum(acc, obj.usd)), 0);

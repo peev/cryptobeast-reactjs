@@ -173,7 +173,9 @@ const assetController = (repository) => {
     const ethToUsd = ethPriceHistory.find(item => (item.timestamp === timestamp));
     const result = await balancesArr.map(async balance =>
       defineTokenPricesArr(tokenPricesArr, balance, timestamp, ethToUsd));
-    return Promise.all(result).then(data => ({ timestamp, assets: data }));
+    const resultPromise = await Promise.all(result).then(data => data);
+    const filteredData = await resultPromise.filter(item => item !== undefined);
+    return Promise.all(filteredData).then(data => ({ timestamp, assets: data }));
   };
 
   /**

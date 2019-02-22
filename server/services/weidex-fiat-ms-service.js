@@ -11,6 +11,7 @@ const WeidexFiatMsService = () => {
       .catch(err => reject(err));
   });
 
+  // Test
   const getEtherValueByTimestamp = timestamp => new Promise((resolve, reject) => {
     requester.get(`${constants.urls.weibeastFiatMs}/ether/etherPriceByTimestamp?timestamp=${timestamp}`)
       .then((response) => {

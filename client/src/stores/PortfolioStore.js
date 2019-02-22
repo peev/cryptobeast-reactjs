@@ -21,6 +21,7 @@ import Allocations from './Allocations';
 import Statistic from '../services/Statistic';
 import Analytics from './Analytics';
 import InvestorStore from './InvestorStore';
+import CurrencyStore from './CurrencyStore';
 
 // TODO handle if selected_portfolio_id has no set parameter
 let persistedUserData = 0;
@@ -594,6 +595,7 @@ class PortfolioStore {
     this.getPortfolioValueHistory();
     this.getCurrentPortfolioAssets();
     this.getCurrentPortfolioTrades();
+    CurrencyStore.getCurrencies();
     TransactionStore.getTransactions();
     MarketStore.getTickersFromCoinMarketCap();
     MarketStore.getEthHistory();

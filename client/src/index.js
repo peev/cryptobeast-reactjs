@@ -17,7 +17,6 @@ import history from './services/History';
 
 import stores from './stores';
 
-stores.CurrencyStore.init();
 // ====================================
 // For easier debugging MobX
 stores.MarketStore.init();

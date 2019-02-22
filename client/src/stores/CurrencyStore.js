@@ -8,10 +8,6 @@ class Currencies {
     this.currencies = [];
   }
 
-  init() {
-    this.getCurrencies();
-  }
-
   @action.bound
   getCurrencies() {
     requester.Currency.getAllCurrencies()

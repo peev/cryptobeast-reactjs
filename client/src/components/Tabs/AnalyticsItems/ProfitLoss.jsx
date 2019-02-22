@@ -131,7 +131,6 @@ class ProfitLoss extends React.Component<Props, State> {
 
     return (
       <Grid container className={classes.overflowNone}>
-
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
             <ProfitLossGlobalChart
@@ -141,16 +140,20 @@ class ProfitLoss extends React.Component<Props, State> {
             />
           </Paper>
         </Grid>
-
         <Grid container className={classes.bigTopPadding}>
           <Grid item xs={2} className={[classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
             <MotionSelect defaultValueIndex={1} selectedValue={this.handleSelectPeriod} values={['1w', '1m', '1y']} />
           </Grid>
-          <Grid item xs={2} className={[classes.paddingLeft, classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
-            <MotionSelect defaultValueIndex={defaultIndex} selectedValue={this.handleSelectCurrency} values={profitLossCurrencies} title="Select currency" />
-          </Grid>
+          {
+            CurrencyStore.currencies.length > 0
+            ?
+            <Grid item xs={2} className={[classes.paddingLeft, classes.flex, classes.flexCenter, classes.textLeft].join(' ')}>
+              <MotionSelect defaultValueIndex={defaultIndex} selectedValue={this.handleSelectCurrency} values={profitLossCurrencies} title="Select currency" />
+            </Grid>
+            :
+            null
+          }
         </Grid>
-
         <Grid container className={classes.bigTopPadding}>
           <Paper className={[classes.maxWidth, classes.padding].join(' ')}>
             <ProfitLossChart
@@ -160,19 +163,6 @@ class ProfitLoss extends React.Component<Props, State> {
             />
           </Paper>
         </Grid>
-
-        {/* <Grid container className={classes.bigTopPadding}>
-          <Grid item xs={6} className={[classes.paddingRight].join(' ')}>
-            <Paper>
-              <ProfitLossTable asc={true} />
-            </Paper>
-          </Grid>
-          <Grid item xs={6} className={[classes.paddingLeft].join(' ')}>
-            <Paper>
-              <ProfitLossTable asc={false} />
-            </Paper>
-          </Grid>
-        </Grid> */}
       </Grid>
     );
   }

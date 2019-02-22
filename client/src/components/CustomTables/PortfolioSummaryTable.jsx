@@ -113,7 +113,6 @@ function getChange7D(allCurrencies: Array, assetAsArray: Array) {
 }
 
 function createAssetObjectFromArray(assetAsArray: Array, allCurrencies: Array) {
-  // eslint-disable-next-line prefer-destructuring
   const { decimals } = allCurrencies.find((currency: object) => currency.tokenName === assetAsArray.tokenName);
   return {
     ticker: assetAsArray.tokenName,
@@ -213,75 +212,142 @@ class PortfolioSummaryTable extends React.Component<Props, State> {
       />
     );
 
-    const tableBodyContent = PortfolioStore.currentPortfolioAssets
-      .map((assetsArray: Array) => createAssetObjectFromArray(assetsArray, CurrencyStore.currencies))
-      .sort(getSorting(order, orderBy))
-      .map((ROW: Object) => (
-        <TableRow key={uuid()}>
-          {Object.values(ROW).map((COL: Object, i: number) => {
-            if (i === 1 || i === 2) {
-              return (
-                <TableCell className={classes.tableCell} key={uuid()}>
-                  {BigNumberService.floorFour(COL)}
-                </TableCell>
-              );
-            }
-            if (i === 3 || i === 4) {
-              return (
-                <TableCell className={classes.tableCell} key={uuid()}>
-                  {BigNumberService.floor(COL)}
-                </TableCell>
-              );
-            }
-            if (i === 5) {
-              return (
-                <TableCell className={classes.tableCell} key={uuid()}>
-                  <div className={classes.progressBar} data-label={`${BigNumberService.floor(COL)}%`}>
-                    <span className={classes.value} style={{ width: `${COL}px` }} />
-                  </div>
-                </TableCell>
-              );
-            }
-            if ((i === 6 || i === 7) && COL !== undefined) {
-              if (COL === 'n/a') {
-                return (
-                  <TableCell className={classes.tableCell} key={uuid()} >
-                    <p className={classes.changeNoIcon}>{COL}</p>
-                  </TableCell>
-                );
-              } else {
-                if (parseFloat(COL) === 0) {
-                  return (
-                    <TableCell className={classes.tableCell} key={uuid()} >
-                      <p className={classes.change}>{COL}%</p>
-                    </TableCell>
-                  );
-                }
-                return (
-                  <TableCell className={classes.tableCell} key={uuid()} >
-                    {parseFloat(COL) > 0 ?
-                      <UpArrowIcon className={classes.upArrow} /> :
-                      <DownArrowIcon className={classes.downArrow} />}
-                    <p className={classes.change}>{COL}%</p>
-                  </TableCell>
-                );
-              }
-            }
-            return (
-              <TableCell className={classes.tableCell} key={uuid()}>
-                {COL}
-              </TableCell>
-            );
-          })}
-        </TableRow>
-      ));
+    // const tableBodyContent = PortfolioStore.currentPortfolioAssets
+    //   .map((assetsArray: Array) => createAssetObjectFromArray(assetsArray, CurrencyStore.currencies))
+    //   .sort(getSorting(order, orderBy))
+    //   .map((ROW: Object) => (
+    //     <TableRow key={uuid()}>
+    //       {Object.values(ROW).map((COL: Object, i: number) => {
+    //         if (i === 1 || i === 2) {
+    //           return (
+    //             <TableCell className={classes.tableCell} key={uuid()}>
+    //               {BigNumberService.floorFour(COL)}
+    //             </TableCell>
+    //           );
+    //         }
+    //         if (i === 3 || i === 4) {
+    //           return (
+    //             <TableCell className={classes.tableCell} key={uuid()}>
+    //               {BigNumberService.floor(COL)}
+    //             </TableCell>
+    //           );
+    //         }
+    //         if (i === 5) {
+    //           return (
+    //             <TableCell className={classes.tableCell} key={uuid()}>
+    //               <div className={classes.progressBar} data-label={`${BigNumberService.floor(COL)}%`}>
+    //                 <span className={classes.value} style={{ width: `${COL}px` }} />
+    //               </div>
+    //             </TableCell>
+    //           );
+    //         }
+    //         if ((i === 6 || i === 7) && COL !== undefined) {
+    //           if (COL === 'n/a') {
+    //             return (
+    //               <TableCell className={classes.tableCell} key={uuid()} >
+    //                 <p className={classes.changeNoIcon}>{COL}</p>
+    //               </TableCell>
+    //             );
+    //           } else {
+    //             if (parseFloat(COL) === 0) {
+    //               return (
+    //                 <TableCell className={classes.tableCell} key={uuid()} >
+    //                   <p className={classes.change}>{COL}%</p>
+    //                 </TableCell>
+    //               );
+    //             }
+    //             return (
+    //               <TableCell className={classes.tableCell} key={uuid()} >
+    //                 {parseFloat(COL) > 0 ?
+    //                   <UpArrowIcon className={classes.upArrow} /> :
+    //                   <DownArrowIcon className={classes.downArrow} />}
+    //                 <p className={classes.change}>{COL}%</p>
+    //               </TableCell>
+    //             );
+    //           }
+    //         }
+    //         return (
+    //           <TableCell className={classes.tableCell} key={uuid()}>
+    //             {COL}
+    //           </TableCell>
+    //         );
+    //       })}
+    //     </TableRow>
+    //   ));
 
     return (
       <Paper className={classes.paper}>
         <Table className={classes.table} style={{ tableLayout: 'auto' }} >
           {tableHead !== undefined ? header : null}
           <TableBody>
-            {tableBodyContent}
+            {
+              CurrencyStore.currencies.length > 0
+              ?
+                PortfolioStore.currentPortfolioAssets
+                .map((assetsArray: Array) => createAssetObjectFromArray(assetsArray, CurrencyStore.currencies))
+                .sort(getSorting(order, orderBy))
+                .map((ROW: Object) => (
+                  <TableRow key={uuid()}>
+                    {Object.values(ROW).map((COL: Object, i: number) => {
+                      if (i === 1 || i === 2) {
+                        return (
+                          <TableCell className={classes.tableCell} key={uuid()}>
+                            {BigNumberService.floorFour(COL)}
+                          </TableCell>
+                        );
+                      }
+                      if (i === 3 || i === 4) {
+                        return (
+                          <TableCell className={classes.tableCell} key={uuid()}>
+                            {BigNumberService.floor(COL)}
+                          </TableCell>
+                        );
+                      }
+                      if (i === 5) {
+                        return (
+                          <TableCell className={classes.tableCell} key={uuid()}>
+                            <div className={classes.progressBar} data-label={`${BigNumberService.floor(COL)}%`}>
+                              <span className={classes.value} style={{ width: `${COL}px` }} />
+                            </div>
+                          </TableCell>
+                        );
+                      }
+                      if ((i === 6 || i === 7) && COL !== undefined) {
+                        if (COL === 'n/a') {
+                          return (
+                            <TableCell className={classes.tableCell} key={uuid()} >
+                              <p className={classes.changeNoIcon}>{COL}</p>
+                            </TableCell>
+                          );
+                        } else {
+                          if (parseFloat(COL) === 0) {
+                            return (
+                              <TableCell className={classes.tableCell} key={uuid()} >
+                                <p className={classes.change}>{COL}%</p>
+                              </TableCell>
+                            );
+                          }
+                          return (
+                            <TableCell className={classes.tableCell} key={uuid()} >
+                              {parseFloat(COL) > 0 ?
+                                <UpArrowIcon className={classes.upArrow} /> :
+                                <DownArrowIcon className={classes.downArrow} />}
+                              <p className={classes.change}>{COL}%</p>
+                            </TableCell>
+                          );
+                        }
+                      }
+                      return (
+                        <TableCell className={classes.tableCell} key={uuid()}>
+                          {COL}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))
+              :
+              []
+            }
           </TableBody>
         </Table>
       </Paper >

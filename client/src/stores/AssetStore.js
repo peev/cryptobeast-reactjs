@@ -191,17 +191,19 @@ class AssetStore {
 
   @action
   getAssetHistoryByTokenIdAndPeriod(tokenName: string, period: string) {
-    const { tokenId } = CurrencyStore.currencies.filter((currency: object) => currency.tokenName === tokenName)[0];
-    LoadingStore.setShowLoading(true);
-    requester.Asset.getAssetHistory(tokenId, period)
-      .then(action((result: object) => {
-        this.assetHistory = result.data.reverse();
-        LoadingStore.setShowLoading(false);
-      }))
-      .catch(action((err: object) => {
-        LoadingStore.setShowLoading(false);
-        console.log(err);
-      }));
+    if (CurrencyStore.currencies && CurrencyStore.currencies.length > 0) {
+      const { tokenId } = CurrencyStore.currencies.filter((currency: object) => currency.tokenName === tokenName)[0];
+      LoadingStore.setShowLoading(true);
+      requester.Asset.getAssetHistory(tokenId, period)
+        .then(action((result: object) => {
+          this.assetHistory = result.data.reverse();
+          LoadingStore.setShowLoading(false);
+        }))
+        .catch(action((err: object) => {
+          LoadingStore.setShowLoading(false);
+          console.log(err);
+        }));
+    }
   }
 
   @computed

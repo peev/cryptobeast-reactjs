@@ -55,7 +55,7 @@ const tradeController = (repository) => {
     try {
       const transaction = await etherScanServices().getTransactionByHash(trade.txHash);
       const transactionFee = calculateTransactionFee(transaction);
-      const timestamp = await commomService.getTimestampByTxHash(trade.txHash);
+      const timestamp = new Date(trade.createdAt).getTime();
       const ethUsd = await commomService.getEthToUsdMiliseconds(timestamp);
       const priceUSD = bigNumberService.product(trade.price, ethUsd);
       const priceTotalUSD = await commomService.tokenToEthToUsd(trade.amount, trade.price, ethUsd);

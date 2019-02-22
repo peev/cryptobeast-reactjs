@@ -40,11 +40,10 @@ const portfolioController = (repository) => {
     }
     const transactionsArray = await items.map(async (tr) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
-      const etherScanTrBlock = await etherScanServices().getBlockByNumber(etherScanTransaction.blockNumber);
-      const ethToUsd = await commonService.getEthToUsd(etherScanTrBlock.timestamp);
+      const ethToUsd = await commonService.getEthToUsd(new Date(tr.createdAt).getTime());
       const currency = await intReqService.getCurrencyByTokenName(tr.tokenName);
       const tokenPriceInEth = await (tr.tokenName === 'ETH') ? 1 :
-        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, Number(etherScanTrBlock.timestamp));
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, new Date(tr.createdAt).getTime());
       return (etherScanTransaction !== null && etherScanTransaction !== undefined) ?
         {
           eth: commonService.tokenToEth(tr.amount, tokenPriceInEth),

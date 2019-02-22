@@ -178,7 +178,8 @@ const portfolioController = (repository) => {
 
   const resolveAssets = async (balancesArr, tokenPricesArr, timestamp, ethPrices, isAlpha) => {
     const result = await balancesArr.map(async balance => defineTokenPricesArr(tokenPricesArr, balance, timestamp, ethPrices, isAlpha));
-    const filteredData = result.filter(item => item.length === 0);
+    const resultPromise = await Promise.all(result).then(data => data);
+    const filteredData = await resultPromise.filter(item => item.length !== 0);
     return Promise.all(filteredData).then((data) => {
       const eth = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].eth)), 0);
       const usd = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].usd)), 0);
@@ -196,7 +197,7 @@ const portfolioController = (repository) => {
    * @param {*} isAlpha
    */
   const calculatePortfolioValueHistory = async (timestamps, tokenPrices, balances, ethPriceHistory, isAlpha) => {
-    const result = timestamps.map(async (timestamp, index) => {
+    const result = await timestamps.map(async (timestamp, index) => {
       const balancesArr = balances[index].balance;
       const tokenPricesArr = tokenPrices[index];
       return resolveAssets(balancesArr, tokenPricesArr, timestamp, ethPriceHistory, isAlpha);

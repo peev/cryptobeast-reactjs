@@ -178,7 +178,8 @@ const portfolioController = (repository) => {
 
   const resolveAssets = async (balancesArr, tokenPricesArr, timestamp, ethPrices, isAlpha) => {
     const result = await balancesArr.map(async balance => defineTokenPricesArr(tokenPricesArr, balance, timestamp, ethPrices, isAlpha));
-    return Promise.all(result).then((data) => {
+    const filteredData = result.filter(item => item.length === 0);
+    return Promise.all(filteredData).then((data) => {
       const eth = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].eth)), 0);
       const usd = data.reduce((acc, obj) => (bigNumberService.sum(acc, obj[0].usd)), 0);
       return { timestamp: timestamp * 1000, eth, usd };

@@ -247,8 +247,9 @@ const assetController = (repository) => {
         const lastPriceUSD = await commonService.getEthToUsdNow();
         const portfolio = await intReqService.getPortfolioByUserAddress(address);
         const assets = await weidexService.getBalanceByUserHttp(portfolio.userAddress);
+        const filterEmtyBalanceAssets = assets.filter(item => item.fullAmount !== 0);
 
-        await syncAssets(req, res, assets, lastPriceUSD, portfolio.id);
+        await syncAssets(req, res, filterEmtyBalanceAssets, lastPriceUSD, portfolio.id);
         await updateAssetsWeight(req, res, portfolio.id);
       } catch (error) {
         console.log(error);

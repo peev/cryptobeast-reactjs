@@ -183,8 +183,8 @@ const transactionController = (repository) => {
     }
     const tokensValue = allocation.dataValues.balance.map(async (token) => {
       const currency = await intReqService.getCurrencyByTokenName(token.tokenName);
-      const tokenPriceInEth = (token.tokenName === 'ETH') ? 1 :
-        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp);
+      const tokenPriceInEth = ((token.tokenName === 'ETH') ? 1 :
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp)) || 0;
       return bigNumberService.product(token.amount, tokenPriceInEth);
     });
 

@@ -1,10 +1,9 @@
 const requester = require('../services/requester-service');
-const http = require('../services/http');
 const constants = require('../utils/constants');
 
 const WeidexService = () => {
   const getTokenTicker = tokenId => new Promise((resolve, reject) => {
-    http.get(`${constants.urls.weidex}/token/ticker/${tokenId}`)
+    requester.get(`${constants.urls.weidex}/token/ticker/${tokenId}`)
       .then((response) => {
         const parsedResult = JSON.parse(response);
         return resolve(parsedResult);
@@ -25,7 +24,7 @@ const WeidexService = () => {
   });
 
   const getUserDepositHttp = id => new Promise((resolve, reject) => {
-    http.get(`${constants.urls.weidex}/deposit/user/${id}`)
+    requester.get(`${constants.urls.weidex}/deposit/user/${id}`)
       .then((response) => {
         resolve(JSON.parse(response));
       })
@@ -36,7 +35,7 @@ const WeidexService = () => {
   });
 
   const getUserWithdrawHttp = id => new Promise((resolve, reject) => {
-    http.get(`${constants.urls.weidex}/withdraw/user/${id}`)
+    requester.get(`${constants.urls.weidex}/withdraw/user/${id}`)
       .then((response) => {
         resolve(JSON.parse(response));
       })
@@ -47,7 +46,7 @@ const WeidexService = () => {
   });
 
   const getUserOrderHistoryByUserHttp = userId => new Promise((resolve, reject) => {
-    http.get(`${constants.urls.weidex}/orderHistory/user/${userId}`)
+    requester.get(`${constants.urls.weidex}/orderHistory/user/${userId}`)
       .then((response) => {
         resolve(JSON.parse(response));
       })
@@ -58,7 +57,7 @@ const WeidexService = () => {
   });
 
   const getUserHttp = address => new Promise((resolve, reject) => {
-    http.get(`${constants.urls.weidex}/user/${address}`)
+    requester.get(`${constants.urls.weidex}/user/${address}`)
       .then((response) => {
         resolve(JSON.parse(response));
       })
@@ -69,7 +68,7 @@ const WeidexService = () => {
   });
 
   const getAllTokensHttp = () => new Promise((resolve, reject) => {
-    http.get(`${constants.urls.weidex}/token/all`)
+    requester.get(`${constants.urls.weidex}/token/all`)
       .then((response) => {
         resolve(JSON.parse(response));
       })
@@ -80,7 +79,7 @@ const WeidexService = () => {
   });
 
   const getBalanceByUserHttp = address => new Promise((resolve, reject) => {
-    http.get(`${constants.urls.weidex}/balance/user/${address}`)
+    requester.get(`${constants.urls.weidex}/balance/user/${address}`)
       .then((response) => {
         resolve(JSON.parse(response));
       })
@@ -91,7 +90,7 @@ const WeidexService = () => {
   });
 
   const getTokenValueByTimestampHttp = (id, timestamp) => new Promise((resolve, reject) => {
-    http.get(`${constants.urls.weidex}/token/${id}/price/${timestamp}`)
+    requester.get(`${constants.urls.weidex}/token/${id}/price/${timestamp}`)
       .then((response) => {
         resolve(response);
       })
@@ -102,7 +101,7 @@ const WeidexService = () => {
   });
 
   const getTokensValuesHistoryHttp = (timestamp, days) => new Promise((resolve, reject) => {
-    http.get(`${constants.urls.weidex}/token/all/price/${timestamp}/days/${days}`)
+    requester.get(`${constants.urls.weidex}/token/all/price/${timestamp}/days/${days}`)
       .then((response) => {
         resolve(JSON.parse(response));
       })

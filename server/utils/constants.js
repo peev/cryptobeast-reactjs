@@ -4,7 +4,7 @@ const urls = {
   weidex: 'https://core.weidex.market',
   //  weidex: 'http://staging-core-java.herokuapp.com',
   weidexDataFeeder: ' https://production-datafeeder.herokuapp.com',
-  weibeastFiatMs: 'https://cryptobeast.motion-software.com/microapi',
+  weibeastFiatMs: 'https://weibeast.motiontest.eu',
   coinMarketCapApi: 'pro-api.coinmarketcap.com',
 };
 

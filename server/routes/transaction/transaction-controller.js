@@ -84,7 +84,7 @@ const transactionController = (repository) => {
         await weidexService.getTokenValueByTimestampHttp(currency.tokenId, new Date(tr.createdAt).getTime());
       const ethTotalValue = (tr.type === 'd') ?
         await bigNumberService.toNumber(etherScanTransaction.value) : bigNumberService.product(tr.amount, tokenPriceInEth);
-      const ethUsd = await commomService.getEthToUsd(new Date(tr.createdAt).getTime());
+      const ethUsd = await commomService.getEthToUsdMiliseconds(new Date(tr.createdAt).getTime());
       const tokenPriceUSD = bigNumberService.product(tokenPriceInEth, ethUsd);
       const totalValueUSD = commomService.tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);
 

@@ -43,7 +43,7 @@ const portfolioController = (repository) => {
       const currency = await intReqService.getCurrencyByTokenName(tr.tokenName);
       // eslint-disable-next-line no-nested-ternary
       const tokenPriceInEth = tr.tokenName === 'ETH' ? 1 : currency ?
-        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, new Date(tr.createdAt).getTime()) || 0 : 0;
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commonService.millisecondsToTimestamp(new Date(tr.createdAt).getTime())) || 0 : 0;
       return ({
         eth: commonService.tokenToEth(tr.amount, tokenPriceInEth),
         usd: commonService.tokenToEthToUsd(tr.amount, tokenPriceInEth, ethToUsd),
@@ -122,23 +122,6 @@ const portfolioController = (repository) => {
     } catch (error) {
       return res.status(500).send(error);
     }
-  };
-
-  const getTokenPriceByDate = async (timestamp) => {
-    const currencies = await intReqService.getCurrencies();
-    const result = currencies.map(async (currency) => {
-      const tokenValue = (currency.tokenName === 'ETH') ? 1 :
-        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp)
-          .then(data => ((data.length > 0) ? data : 0));
-      return {
-        timestamp,
-        tokenName: currency.tokenName,
-        value: tokenValue,
-      };
-    });
-    return Promise.all(result)
-      .then(data => data)
-      .catch(err => console.log(err));
   };
 
   const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp, ethPrices, isAlpha) => {

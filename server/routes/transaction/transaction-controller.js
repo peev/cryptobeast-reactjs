@@ -81,7 +81,7 @@ const transactionController = (repository) => {
       const etherScanTransaction = await etherScanServices().getTransactionByHash(tr.txHash);
       const currency = await intReqService.getCurrencyByTokenName(tr.tokenName);
       const tokenPriceInEth = (tr.tokenName === 'ETH') ? 1 :
-        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, new Date(tr.createdAt).getTime());
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commomService.millisecondsToTimestamp(new Date(tr.createdAt).getTime()));
       const ethTotalValue = (tr.type === 'd') ?
         await bigNumberService.toNumber(etherScanTransaction.value) : bigNumberService.product(tr.amount, tokenPriceInEth);
       const ethUsd = await commomService.getEthToUsdMiliseconds(new Date(tr.createdAt).getTime());
@@ -183,7 +183,7 @@ const transactionController = (repository) => {
     const tokensValue = allocation.dataValues.balance.map(async (token) => {
       const currency = await intReqService.getCurrencyByTokenName(token.tokenName);
       const tokenPriceInEth = ((token.tokenName === 'ETH') ? 1 :
-        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, timestamp)) || 0;
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commomService.millisecondsToTimestamp(timestamp))) || 0;
       return bigNumberService.product(token.amount, tokenPriceInEth);
     });
 
@@ -230,14 +230,14 @@ const transactionController = (repository) => {
     for (const tr of transactions) {
       const currency = await intReqService.getCurrencyByTokenName(tr.tokenName);
       const tokenPriceInEth = (tr.tokenName === 'ETH') ? 1 :
-        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, tr.txTimestamp.getTime());
+        await weidexService.getTokenValueByTimestampHttp(currency.tokenId, commomService.millisecondsToTimestamp(tr.txTimestamp.getTime()));
       const ethUsd = await commomService.getEthToUsdMiliseconds(tr.txTimestamp.getTime());
       const totalValueUsd = commomService.tokenToEthToUsd(tr.amount, tokenPriceInEth, ethUsd);
 
       const isFirstDeposit = await calculateIsFirstDeposit(tr, portfolioId);
       const portfolioValueBeforeTx = await calculatePortfolioValueBeforeTx(portfolioId, tr, isFirstDeposit, ethUsd);
       const numSharesBefore = await calculateNumSharesBefore(tr.txHash, isFirstDeposit, allTransactions, transactionsForUpdate, portfolioId);
-      const currentSharePriceUSD = await calculateCurrentSharePriceUSD(isFirstDeposit, portfolioValueBeforeTx, numSharesBefore);
+      const currentSharePriceUSD = await calculateCurrentSharePriceUSD(isFirstDeposit, portfolioValueBeforeTx, numSharesBefore) || 0;
       const sharesCreated = await calculateSharesCreated(tr.type, totalValueUsd, currentSharePriceUSD);
       const sharesLiquidated = await calculateSharesLiquidated(tr.type, totalValueUsd, currentSharePriceUSD);
       const numSharesAfter = await calculateNumSharesAfter(tr.type, isFirstDeposit, numSharesBefore, sharesCreated, sharesLiquidated);

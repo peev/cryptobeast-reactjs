@@ -164,7 +164,10 @@ class HistoryTable extends React.Component<Props, State> {
         <Table className={classes.table}>
           {tableHead !== undefined ? header : null}
           <TableBody>
-            {trades
+          {
+            CurrencyStore.currencies.length > 0
+            ?
+            trades
               .map((tradesArray: Array) => getTransationSortableObject(tradesArray, CurrencyStore.currencies))
               .sort(getSorting(order, orderBy))
               .map((obj: Object) => Object.values(obj))
@@ -229,7 +232,10 @@ class HistoryTable extends React.Component<Props, State> {
                       }
                     })}
                   </TableRow>
-                ))}
+                ))
+              :
+              []
+            }
             {emptyRows > 0 && (
               <TableRow style={{ height: 48 * emptyRows }}>
                 <TableCell colSpan={6} />

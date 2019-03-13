@@ -13,9 +13,20 @@ import appRoutes from './routes/app';
 import App from './containers/App/App';
 import CustomRoute from './components/CustomRoute';
 import CreatePortfolioView from './views/CreatePortfolio/Index';
+import AuthService from './services/Authentication';
 import history from './services/History';
 
 import stores from './stores';
+
+if (AuthService.isAuthenticated()) {
+  stores.PortfolioStore.getPortfolios().then(() => {
+    stores.MarketStore.init();
+  });
+} else {
+  if (!AuthService.isSignedOut()) {
+    AuthService.signOut();
+  }
+}
 
 // ====================================
 // For easier debugging MobX

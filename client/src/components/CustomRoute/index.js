@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Route } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
+import CustomRedirect from './CustomRedirect';
 
 type Props = {
   component: React.ComponentType<*>,
@@ -21,7 +22,7 @@ class CustomRoute extends React.Component<Props> {
         render={(props: Object) => (
           ([...PortfolioStore.portfolios].length > 0 && PortfolioStore.selectedPortfolioId)
             ? <ComponentToRender {...props} />
-            : <ComponentToRender {...props} />)
+            : <CustomRedirect to="/" />)
         }
       />
     );

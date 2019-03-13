@@ -11,6 +11,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 
 import appRoutes from './../../routes/app';
+import AuthService from './../../services/Authentication';
 import { Header, Sidebar } from './../../components';
 import Logo from '../../components/CustomIcons/Sidebar/Logo';
 import LogoText from '../../components/CustomIcons/Sidebar/LogoText';
@@ -54,6 +55,13 @@ class App extends React.Component<Props> {
           history.push('/');
         }
       });
+    }
+    if (!AuthService.isAuthenticated()) {
+      if (/access_token|id_token|error/.test(this.props.location.hash)) {
+        AuthService.receiveAuthentication(this.props.location.hash);
+      } else {
+        AuthService.signIn();
+      }
     }
   }
 

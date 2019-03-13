@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-=======
 // const { CronJob } = require('cron');
 const { responseHandler } = require('../utilities/response-handler');
 const AManagement = require('../../integrations/Auth0ManagementAPI');
 
 const Auth0ManagementApi = new AManagement();
->>>>>>> parent of c027c28... deleting auth0
 const modelName = 'Portfolio';
 
 const portfolioController = (repository) => {
@@ -132,7 +129,6 @@ const portfolioController = (repository) => {
     }
   };
 
-<<<<<<< HEAD
   const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp, ethPrices, isAlpha) => {
     const result = tokenPricesArr.map(async (token) => {
       if (balance.tokenName === token.tokenName) {
@@ -151,7 +147,8 @@ const portfolioController = (repository) => {
     });
     return Promise.all(result).then(data => data.filter(el => el !== null));
   };
-=======
+
+  
   const getAllPortfolios = async (req, res) => {
     try {
       const returnedUser = await Auth0ManagementApi.getUser(req);
@@ -161,7 +158,30 @@ const portfolioController = (repository) => {
           where: { owner: req.user.email },
         },
       });
->>>>>>> parent of e0ad0c9... deleting auth0 more deletions
+
+      if (returnedUser.user_metadata) {
+        const userMetadata = returnedUser.user_metadata;
+        const userApis = {};
+        Object.keys(userMetadata).forEach(async (apiData) => {
+          if (apiData.includes('api_account')) {
+            // eslint-disable-next-line
+            userApis[apiData] = {
+              exchange: userMetadata[apiData].exchange,
+              account: userMetadata[apiData].account,
+              isActive: userMetadata[apiData].isActive,
+              portfolioId: userMetadata[apiData].portfolioId,
+            };
+          }
+        });
+
+        return res.status(200).send({ userApis, portfolios: allProfilesFound });
+      }
+
+      return res.status(200).send({ userApis: {}, portfolios: allProfilesFound });
+    } catch (error) {
+      return res.status(400).send(error);
+    }
+  };
 
   const resolveAssets = async (balancesArr, tokenPricesArr, timestamp, ethPrices, isAlpha) => {
     const result = await balancesArr.map(async balance => defineTokenPricesArr(tokenPricesArr, balance, timestamp, ethPrices, isAlpha));
@@ -401,6 +421,7 @@ const portfolioController = (repository) => {
   return {
     getPortfolio,
     sync,
+    getAllPortfolios,
     getPortfoliosByAddresses,
     getPortfolioAssetsByPortfolioId,
     getPortfolioValueHistory,

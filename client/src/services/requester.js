@@ -46,6 +46,7 @@ const Transaction = {
 };
 
 const Portfolio = {
+  getAll: () => requests.get('/portfolio/getAllPortfolios'),
   getPortfoliosByUserAddresses: addresses => requests.post('/portfolio/getPortfoliosByAddresses', addresses),
   getPortfolioAssetsByPortfolioId: id => requests.get(`/portfolio/getPortfolioAssetsByPortfolioId/${id}`),
   getPortfolioTradesByPortfolioId: id => requests.get(`/trade/all/${id}`),

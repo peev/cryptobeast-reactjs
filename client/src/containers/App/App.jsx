@@ -69,6 +69,10 @@ class App extends React.Component<Props> {
 
   render() {
     const { classes, theme, PortfolioStore, WeidexStore, LoadingStore, location, children, ...rest } = this.props;
+    //const { classes, theme, PortfolioStore, children, ...rest } = this.props;
+    const { fetchingPortfolios } = PortfolioStore;
+
+    if (fetchingPortfolios) return <p style={{ textAlign: 'center', marginTop: '50px' }}> loading...</p>;
 
     // this is used for portfolio select start screen, because those views doesn't have header
     const checkPortfolioNumber = location.pathname === '/' && (PortfolioStore.portfolios.length === 0 || PortfolioStore.portfolios.length > 1);

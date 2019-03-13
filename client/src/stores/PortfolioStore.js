@@ -605,6 +605,28 @@ class PortfolioStore {
     this.getCurrentPortfolioInvestors();
     InvestorStore.resetSelectedInvestor();
   }
+  // @action
+  // getPortfolios() {        
+  //   this.fetchingPortfolios = true;
+  //   return new Promise((resolve, reject) => {
+  //     console.log('weee');
+  //     requester.Portfolio.getAll()
+  //       .then(action((result) => {
+  //         ApiAccountStore.initializeUserApis(result.data.userApis);
+  //         this.portfolios = result.data.portfolios;
+  //         if (this.selectedPortfolioId > 0) {
+  //           this.selectPortfolio(this.selectedPortfolioId);
+  //         }
+  //         resolve(true);
+  //         this.fetchingPortfolios = false;
+  //       }))
+  //       .catch(action((err) => {
+  //         this.fethingPortfolios = false;
+  //         console.log(err);
+  //         reject(err);
+  //       }));
+  //   });
+  // }
 
   @action
   getPortfoliosByAddresses(addresses: Array<string>) {

@@ -124,6 +124,7 @@ const portfolioController = (repository) => {
     }
   };
 
+<<<<<<< HEAD
   const defineTokenPricesArr = async (tokenPricesArr, balance, timestamp, ethPrices, isAlpha) => {
     const result = tokenPricesArr.map(async (token) => {
       if (balance.tokenName === token.tokenName) {
@@ -142,6 +143,24 @@ const portfolioController = (repository) => {
     });
     return Promise.all(result).then(data => data.filter(el => el !== null));
   };
+=======
+  const getAllPortfolios = async (req, res) => {
+    // const allProfilesFound = await repository.find({
+    //   modelName,
+    //   options: {
+    //     where: { owner: req.user.email },
+    //   },
+    // });
+    // return res.status(200).send({ userApis: {}, portfolios: allProfilesFound });
+    try {
+      const returnedUser = await req.body.user;
+      const allProfilesFound = await repository.find({
+        modelName,
+        options: {
+          where: { owner: req.user.email },
+        },
+      });
+>>>>>>> parent of e0ad0c9... deleting auth0 more deletions
 
   const resolveAssets = async (balancesArr, tokenPricesArr, timestamp, ethPrices, isAlpha) => {
     const result = await balancesArr.map(async balance => defineTokenPricesArr(tokenPricesArr, balance, timestamp, ethPrices, isAlpha));

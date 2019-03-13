@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+=======
+// const { CronJob } = require('cron');
+const { responseHandler } = require('../utilities/response-handler');
+const AManagement = require('../../integrations/Auth0ManagementAPI');
+
+const Auth0ManagementApi = new AManagement();
+>>>>>>> parent of c027c28... deleting auth0
 const modelName = 'Portfolio';
 
 const portfolioController = (repository) => {
@@ -145,15 +153,8 @@ const portfolioController = (repository) => {
   };
 =======
   const getAllPortfolios = async (req, res) => {
-    // const allProfilesFound = await repository.find({
-    //   modelName,
-    //   options: {
-    //     where: { owner: req.user.email },
-    //   },
-    // });
-    // return res.status(200).send({ userApis: {}, portfolios: allProfilesFound });
     try {
-      const returnedUser = await req.body.user;
+      const returnedUser = await Auth0ManagementApi.getUser(req);
       const allProfilesFound = await repository.find({
         modelName,
         options: {

@@ -31,8 +31,6 @@ const init = async (repository) => {
     next();
   });
 
-<<<<<<< HEAD
-=======
   // Middleware for checking the JWT
   const checkJwt = jwt({
     // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint
@@ -62,7 +60,6 @@ const init = async (repository) => {
   //   marketService.syncTickersFromCoinMarketCap();
   // }
 
->>>>>>> parent of e0ad0c9... deleting auth0 more deletions
   // Market jobs
   marketService.createNodeCron(marketService.syncTickersFromCoinMarketCap, '0,10,20,30,40,50 * * * *'); // sync every 10 minutes
 

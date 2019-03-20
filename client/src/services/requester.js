@@ -8,7 +8,15 @@ if (process.env.NODE_ENV === 'development') {
   API_ROOT = 'https://cryptobeast.motion-software.com/api';
 }
 const idToken = window.localStorage.getItem('id_token'); // eslint-disable-line
-const options = { headers: { Authorization: `Bearer ${idToken}` } };
+const options = { headers: { 
+                    Authorization: `Bearer ${idToken}`,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Access-Control-*, Origin, X-Requested-With, Content-Type, Accept'
+                  } 
+                };
 
 const requests = {
   get: url => axios.get(`${API_ROOT}${url}`, options),
